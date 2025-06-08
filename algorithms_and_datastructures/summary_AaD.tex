@@ -2278,7 +2278,7 @@ isosceles triangle apex angle=47,
   \node[below] at ($(#1.lower side)$) {$#3$};
 }
 
-% right-hand tree
+% left  tree
 \begin{scope}[shift={(0,0)}, local bounding box=T2, scale=0.75]
 
 \node[root] (x2) {};
@@ -2287,7 +2287,11 @@ isosceles triangle apex angle=47,
 \node[node,below right=1mm and 6mm of x2] (b2) {$b$};
 \node[node,below left=6mm and 10mm of b2] (a2) {$a$};
 
+\node[root,above left=1mm and 6mm of a2] (l) {};
+\node[lab,left=0pt of l] {$l$};
+
 \draw[->,bend left=20] (x2) to (b2);
+\draw[->,bend left=20] (l) to (a2);
 \draw[thickedge] (b2) to (a2);
 
 \coordinate (alpha2) at ($(a2) + (-\xdistance,-\ydistance)$);
@@ -2302,7 +2306,7 @@ isosceles triangle apex angle=47,
 
 \end{scope}
 
-% left-hand tree
+% right tree
 \begin{scope}[shift={(8,0)}, local bounding box=T1, scale=0.75]
 
 \node[root] (x1) {};
@@ -2311,7 +2315,11 @@ isosceles triangle apex angle=47,
 \node[node,below right=1mm and 6mm of x1] (a1) {$a$};
 \node[node,below right=6mm and 10mm of a1] (b1) {$b$};
 
+\node[root,above right=1mm and 6mm of b1] (r) {};
+\node[lab,right=0pt of r] {$r$};
+
 \draw[->,bend left=20] (x1) to (a1);
+\draw[->,bend right=20] (r) to (b1);
 \draw[thickedge] (a1) to (b1);
 
 \coordinate (alpha1) at ($(a1) + (-\xdistance,-\ydistance)$);
@@ -2577,15 +2585,15 @@ The complexity for different operations is summarized in the following table.
 \textbf{Task}                                             & \multicolumn{2}{c}{\textbf{Representation}} \\
 &                             {Adjacency List} &                                                        {Adjacency Matrix}\\
 \midrule
-accessing vertex $u$ &        \cellcolor{Green!25}\makecell{$O(1)$\\optimal} &                          \cellcolor{Green!25}\makecell{$O(1)$\\optimal}                    \\
+accessing vertex $u$ &        \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal} &                          \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                    \\
 \addlinespace[2pt]
-iteration through $V$ &       \cellcolor{Green!25}\makecell{$\Theta(|V|)$\\optimal} &                   \cellcolor{Green!25}\makecell{$\Theta(|V|)$\\optimal}             \\
+iteration through $V$ &       \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|)$\\optimal} &                  \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|)$\\optimal}             \\
 \addlinespace[2pt]
-iteration through $E$ &       \cellcolor{Yellow!25}\makecell{$\Theta(|V|+|E|)$\\okay (not optimal)} &   \cellcolor{Red!25}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
+iteration through $E$ &       \cellcolor{Yellow!\mixcolor}\makecell{$\Theta(|V|+|E|)$\\okay (not optimal)} &  \cellcolor{Red!\mixcolor}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
 \addlinespace[2pt]
-checking $(u,v)\in E$ &       \cellcolor{Red!25}\makecell{$O(|V|)$\\bad} &                              \cellcolor{Green!25}\makecell{$O(1)$\\optimal}                    \\
+checking $(u,v)\in E$ &       \cellcolor{Red!\mixcolor}\makecell{$O(|V|)$\\bad} &                             \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                    \\
 \addlinespace[2pt]
-space complexity &            \cellcolor{Green!25}\makecell{$\Theta(|V|+|E|)$\\optimal} &               \cellcolor{Red!25}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
+space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|E|)$\\optimal} &              \cellcolor{Red!\mixcolor}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2612,11 +2620,13 @@ It is a forest.
 \begin{algorithm}[H]
 \caption{Breadth-First Search}\label{alg:bfs}
 \begin{algorithmic}[1]
-\Function{BFS}{$G=(V,E),\,s$}
-  \State Initialize $\attrib{v}{color}\gets\white$, $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-  \State $\attrib{s}{color}\gets\gray$
-  \State $\attrib{s}{distance}\gets 0$
-  \State $\attrib{s}{\pi}\gets\nil$
+\Function{BFS}{$G=(V,E),\,s$} \Comment{\(s\) is the source}
+  \ForAll{$u\in V \setminus \{s\}$}
+    \State $\attrib{u}{color},\attrib{u}{distance},\attrib{u}{\pi}\gets \white,\infty,\nil$
+  \EndFor
+  % \State Initialize $\attrib{v}{color}\gets\white$, $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attrib{s}{color},\attrib{s}{distance},\attrib{s}{\pi}\gets \gray,0,\nil$
+  \State $Q\gets\emptyset$ \Comment{queue for vertices to visit}
   \State \Call{Enqueue}{$Q,s$}
   \While{$Q\neq\emptyset$}
     \State $u\gets$ \Call{Dequeue}{$Q$}
