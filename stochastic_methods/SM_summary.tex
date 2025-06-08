@@ -1,0 +1,2028 @@
+% \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
+\documentclass[11pt, headings=standardclasses, parskip=half, twoside]{scrartcl}
+
+\usepackage[automark]{scrlayer-scrpage}
+\clearpairofpagestyles           % start from a blank header/footer
+\lofoot*{\pagemark}              % odd pages → number bottom left
+\refoot*{\pagemark}              % even pages → number bottom right
+%          ↑ star = also valid for the plain style (ToC, chapter, …)
+\pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+\usepackage{pdflscape}   % for \begin{landscape}...\end{landscape}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hhline}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{pifont}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, graphs}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} % newest version is 1.18 (april 4, 2025)
+
+% define colors
+\definecolor{greenhaze}{rgb}{0.0, 0.64, 0.41}
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+
+% theorem environments
+\usepackage{thmtools}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+% \declaretheoremstyle[headfont=\bfseries\color{greenhaze},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{greenhaze}\blacktriangleleft},postheadspace=1em]{definitionstyle}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ding{45},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition]{definition}
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example,]{example}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark,]{remark}
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=6pt,spacebelow=6pt,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression]{digression}
+
+
+
+\usepackage{algorithm}
+\usepackage[italicComments=false]{algpseudocodex}
+
+% notation makros ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+\newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\vec{{#1}}\,}
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+
+% \algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+
+\newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+\usepackage{caption, subcaption}
+
+
+% \usepackage[colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black]{hyperref}
+\usepackage[
+  colorlinks=false,        % don't wrap links in a colour
+  pdfborder={0 0 0}        % no border around links
+]{hyperref}
+
+
+
+\title{Stochastic Methods}
+
+\author{Fabian Bosshard}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+
+% table of contents
+\pagenumbering{roman}
+\thispagestyle{empty}
+\tableofcontents
+
+% \pagebreak
+
+
+\clearpage
+\pagenumbering{arabic}
+\section{Random Numbers}
+A \textit{random number} is an unpredictable value generated independently of other numbers, lacking any discernible pattern.
+
+\subsection{Random Number Generators}
+
+\begin{definition}[Random Number Generator]
+    A Random Number Generator (RNG) is an algorithm that produces a sequence of numbers that appears random. Formally, an RNG is a function
+    \[
+    R: S \rightarrow T
+    \]
+    where:
+    \begin{itemize}[before={\parskip=0pt}, nosep]
+        \item $S$ is the \textit{seed space} (a finite set of initial states). A seed \(s \in S\) is used to initialize the RNG.
+        \item $T$ is the \textit{target space} (typically the interval $[0,1)$ or a set of integers).
+        \item The function $R$ maps each seed $s \in S$ to a target $u \in T$ in a manner that appears random. \qedhere
+    \end{itemize}
+\end{definition}
+
+A high-quality random number generator should have the following properties:
+    \begin{itemize}[before={\parskip=0pt}, nosep]
+        \item \textbf{Unpredictability}: Future values cannot be deduced without knowing the seed and algorithm.
+        \item \textbf{Reproducibility}: Given the same seed, the RNG should produce the same sequence of numbers.
+        \item \textbf{Representation of True Randomness}: All outcomes have an equitable chance.
+        \item \textbf{Long period}: The sequence of numbers should be long before repeating.
+        \item \textbf{Efficiency}: The RNG should generate numbers quickly.
+    \end{itemize}
+
+\begin{example}
+    The \textit{linear congruential generator} generates a sequence of random numbers via the following linear recurrence relation:
+    \[
+    X_{n+1}=\left(a X_{n}+c\right) \bmod m
+    \]
+    where:
+    \begin{itemize}[before={\parskip=0pt}, nosep]
+        \item $X_{n+1}$ is the next number in the sequence.
+        \item $X_{n}$ is the current number.
+        \item $a, c$, and $m$ are constants, known as the \textit{multiplier}, \textit{increment}, and \textit{modulus}, respectively.
+        \item mod denotes the modulus operation.
+        \item The initial or seed value $X_{0}=S$ is required to start the sequence. \qedhere
+    \end{itemize}
+\end{example}
+
+\begin{example}
+    The \textit{PCG64 RNG} is the default generator in newer versions of NumPy. 
+    It combines a 128-bit lLCG with an output permutation to produce high-quality 64-bit pseudorandom numbers. 
+    The algorithm proceeds in two main stages:
+    \begin{enumerate}
+        \item \textbf{State Update}: The 128-bit state $s_{n}$ is updated via the LCG:
+        \[
+        s_{n+1}=\left(s_{n} \cdot a+c\right) \bmod 2^{128},
+        \]
+        where:
+        \begin{itemize}[before={\parskip=0pt}, nosep]
+            \item $a$ is a carefully chosen 128-bit multiplier,
+            \item $c$ is a 128-bit odd increment (ensuring a full period).
+        \end{itemize}
+        \item \textbf{Output Permutation}: A permutation is applied to the updated state to produce the final output.
+    \end{enumerate}
+    This combination yields high-quality 64-bit pseudorandom numbers that are uniform, independent, and have an extremely long period. 
+\end{example}
+
+
+
+
+\subsection{Inverse Transform Sampling}
+
+\def\numlines{40} % number of gray lines / red dots
+\tikzmath
+{
+  integer \i;
+  function F(\x)
+  {
+    return (1 + 0.00165264063 * (ln(1 + exp(-\x/0.82347307439 + 3.27828832050))^3.41198528753))^(-7.36525492695);
+  };
+  function Finv(\y)
+  {
+    return 0.82347307439 * (3.27828832050 - ln(exp((((\y)^(-1/7.36525492695)-1)/0.00165264063)^(1/3.41198528753)) - 1));
+  };
+  for \i in {1,...,\numlines-1}
+  {
+    % Evenly spaced ordinates in (0,1)
+    \y{pt\i} = (1 * \i / \numlines);
+    % Compute the corresponding abscissa by applying F^{-1} to y
+    \t{pt\i} = Finv(\y{pt\i});
+  };
+}
+\begin{center}
+\begin{tikzpicture}
+
+    \pgfdeclarelayer{background}
+    \pgfdeclarelayer{foreground}
+    \pgfsetlayers{background,main,foreground}
+    
+    \begin{axis}
+        [
+            axis on top, % otherwise the gray lines are drawn on top of the axis
+            xmin=-2.5, xmax=2.5,
+            ymin=0, ymax=1,
+            domain=-2.5:2.5, samples=100,
+            axis x line=middle,
+            axis y line=left,
+            y=6cm,
+            x=2.4cm,
+            xlabel={$X$},
+            ylabel={$U$},
+            y label style={
+                rotate=-90,
+                at={(ticklabel cs:0.5)},
+                font=\normalsize,
+                xshift=3mm,
+            },
+            x label style={
+                at={(ticklabel cs:1.0)},
+                font=\normalsize,
+                yshift=3mm,
+            },
+            xtick=\empty,
+            ytick={0, 1}
+        ]
+
+        % gray L-shaped lines
+        \pgfplotsextra{
+        \begin{pgfonlayer}{background}
+            \foreach \i in {1,...,\numexpr\numlines-1\relax} {
+            \draw [gray, line width=0.5pt] (axis cs: {\t{pt\i}},0) |- (axis cs:-2.5, {\y{pt\i}});
+            }
+        \end{pgfonlayer}
+        }
+
+        % red dots in the foreground layer
+        \pgfplotsextra{
+        \begin{pgfonlayer}{foreground}
+            \foreach \i in {1,...,\numexpr\numlines-1\relax} {
+            \fill [red] (axis cs: {\t{pt\i}}, 0) circle (1.5pt);
+            }
+        \end{pgfonlayer}
+        }
+
+        % cdf function
+        \addplot [thick, black] {F(x)} node [pos=0.97, anchor=north, inner sep=5pt] {$F(x)$};
+
+    \end{axis}
+\end{tikzpicture}
+\end{center}
+
+
+
+\begin{theorem}[Inverse Transform Sampling]
+Let $U$ be uniformly distributed on $[0,1]$ and let $F_{X}(x)$ be the CDF of a random variable $X$ with an invertible inverse $F_{X}^{-1}(u)$. Then the variable
+\[
+X=F_{X}^{-1}(U)
+\]
+has CDF $F_{X}(x)$.
+\end{theorem}
+
+\begin{proof}
+We show that for any $x \in \mathbb{R}$,
+\[
+\begin{aligned}
+\operatorname{P}(X \leq x) & =P\left(F_{X}^{-1}(U) \leq x\right) \\
+& =P\left(U \leq F_{X}(x)\right) \quad \text { (since } F_{X} \text { is strictly increasing) } \\
+& =F_{X}(x) \quad \text { (because } U \text { is uniformly distributed on }[0,1]).
+\end{aligned}
+\]
+Thus, $X=F_{X}^{-1}(U)$ indeed has CDF $F_{X}(x)$.
+\end{proof}
+
+Because every number in $[0,1]$ is equally likely, the uniform distribution is ideal for generating samples from other distributions via inverse transform sampling.
+
+
+
+
+Often, we require random numbers in the continuous interval $[0,1)$.
+A common technique to achieve this is to normalize the LCG's output.
+If the LCG produces integers in $\{0,1, \ldots, m-1\}$, then we define
+\[
+\boxed{
+U_{n+1} = \frac{X_{n+1}}{m}
+}
+\]
+This operation maps each integer to a real number in $[0,1)$.
+
+Many experiments have outcomes defined on different sets.
+By running an RNG and then mapping its output (for example, via a modulus operation or parity check), we can sample from these universes.
+In essence, we first generate a number in $[0,1)$ and then use a suitable transformation to obtain the desired outcome.
+
+
+% \pagebreak, which has an optional argument with an integer between 1 and 4: \pagebreak[1] to \pagebreak[4]. 1 inserts a \@lowpenalty, 2 a \@medpenalty, 3 a \@highpenalty and 4 is mostly equal to \newpage.
+\pagebreak[2]
+
+\section{Random Variables}
+
+\subsection{Lebesgue Measure and Probability Measures}
+
+To provide a unified framework for probability, we define a standard measure on the interval $[0,1]$. 
+For any subinterval $[a, b] \subseteq[0,1]$ with $0 \leq a<b \leq 1$, we assign
+\[
+\mu([a, b]) = \text{Leb}[a, b] = b - a .
+\]
+
+This measure represents the length of the interval and, when normalized so that $\mu([0,1])=1$, it serves as the canonical probability measure on $[0,1]$. 
+In practice, every set that can be constructed from intervals by countable unions, intersections, and complements (the so-called Borel sets) is measurable with respect to $\mu$.
+
+This construction is universal. Many experiments yield outcomes defined on various sets.
+Often we generate a random number in $[0,1)$ using an RNG - say, by normalizing an LCG's output-and then map that number to the desired set. 
+More generally, if there is a measurable mapping
+\[
+\phi: U \rightarrow[0,1],
+\]
+we can define a probability measure $\operatorname{P}_{U}$ on $U$ by \textit{pulling back} $\mu$:
+\[
+\operatorname{P}_{U}(A)=\mu(\phi(A)),
+\]
+for any measurable subset $A \subset U$. 
+This approach transfers the well-understood properties of the Lebesgue measure on $[0,1]$ to any outcome space $U$, ensuring that probabilities are assigned consistently.
+
+\begin{definition}{Borel Sets on $[0,1]$}{}
+The Borel $\sigma$-algebra on $[0,1]$, denoted by $\mathcal{B}([0,1])$, is the collection of all sets that can be formed from open intervals in $[0,1]$ by applying countable unions, countable intersections, and complementation.
+\end{definition}
+
+With a probability measure $P$ established on our sample space $U$, we now introduce random variables as functions that assign numerical values to outcomes.
+
+
+\subsection{Random Variables}
+
+\begin{definition}[Random Variable]{}
+    Let $(U, \mathcal{F}, P)$ be a probability space, where $U$ is the sample space, $\mathcal{F}$ is a collection of measurable subsets of $U$ (for instance, the Borel sets when $U \subset \mathbb{R}$), and $P$ is the probability measure. 
+    A random variable is a measurable function
+    \[
+    X: U \rightarrow \mathbb{R},
+    \]
+    meaning that for every Borel set $B \subset \mathbb{R}$, the preimage $X^{-1}(B)$ is in $\mathcal{F}$.
+    The set
+    \[
+    R(X)=\{X(u): u \in U\} \subset \mathbb{R}
+    \]
+    is called the range or image of $X$.
+    If $R(X)$ is countable, $X$ is said to be discrete.
+\end{definition}
+
+% For discrete random variables, the distribution is fully characterized by the function $f_{X}$ defined on $R(X)$.
+
+\begin{definition}[Probability Mass Function]{}
+    Let $X$ be a discrete random variable with range $R(X)$. The \textit{probability mass function} (pmf) of $X$ is the function
+    \[
+    f_{X}: R(X) \rightarrow[0,1]
+    \]
+    defined by
+    \[
+    f_{X}(x)=\operatorname{P}(\{u \in U: X(u)=x\}), \quad \text { for each } x \in R(X).
+    \]
+    The function $f_{X}$ must satisfy:  \begin{enumerate}
+      \item $0 \leq f_{X}(x) \leq 1$ for all $x \in R(X)$,
+      \item $\sum_{x \in R(X)} f_{X}(x)=1$. \qedhere
+    \end{enumerate}
+    \end{definition}
+% \vspace{-5em}
+\begin{center}
+    \begin{tikzpicture}
+        % Define the sample space
+        \def\rotationangle{40}
+        \begin{scope}[rotate=\rotationangle]
+        \node[draw, thick, ellipse, minimum width=5cm, minimum height=6cm, rotate=\rotationangle] (sigmafield) at (0, 0){};
+        \node[below left=0mm of sigmafield] {\large $\mathcal{F}$};
+        
+        % Define the universal set Omega
+        \node[draw, thick, ellipse, minimum width=2cm, minimum height=2cm] (omega) at ([xshift=0cm, yshift=1.5cm]sigmafield.center) {};
+        \node[below left=0mm of omega] {$U$};
+        
+        % Define points in the sample space
+        \node[fill=black, circle, inner sep=2.0pt, outer sep=0pt] (w1) at ([xshift=-0.2cm, yshift=0.5cm]omega.center) {};
+        \node[fill=black, circle, inner sep=2.0pt, outer sep=0pt] (w2) at ([xshift=0.6cm, yshift=0cm]omega.center) {};
+        \node[fill=black, circle, inner sep=2.0pt, outer sep=0pt] (w3) at ([xshift=-0.2cm, yshift=-0.5cm]omega.center) {};
+        \node[below right =-3pt of w1] {\small $\omega_1$};
+        \node[left = -1.8pt of w2] {\small $\omega_2$};
+        \node[left=-1.8pt of w3] {\small $\omega_3$};
+        
+        % Define subsets
+        \node[draw, thick, ellipse, minimum width=1.5cm, minimum height=1.5cm] (A) at ([xshift=1.3cm, yshift=-0.6cm]sigmafield.center) {};
+        \node[below left=-1mm of A] {$X^{-1}(B)$};
+        
+        % Single event in A
+        \node[fill=black, circle, inner sep=2.0pt, outer sep=0pt] (w4) at (A.center) {};
+        \node[below left=-3pt of w4] {\small $\omega_1$};
+        
+        % Empty set
+        \node[draw, thick, ellipse, minimum width=0.5cm, minimum height=0.5cm] (emptyset) at ([xshift=-0.5cm, yshift=-2cm]sigmafield.center) {};
+        \node[below left = -1.8pt of emptyset] {$\emptyset$};
+        \end{scope}
+
+
+
+        % Borel sets
+        \node[draw, thick, ellipse, minimum width=5.0cm, minimum height=5.0cm] (epsilon) at (6, 3.5){};
+        % \node[right=0mm of epsilon] {\large $\mathcal{E} \overset{\text{e.g.}}{=} \mathcal{B}(\mathbb{R}) $};
+        \node[right=0mm of epsilon] {\large $\mathcal{B}(\mathbb{R})$};
+
+        \node[draw, thick, ellipse, minimum width=2cm, minimum height=2cm] (E) at ([xshift=-1cm, yshift=.5cm]epsilon.center) {};
+        % \node[above right=-1mm of E] { $E \overset{\text{e.g.}}{=} \mathbb{R}$};
+        \node[above right=-1mm of E] { $\mathbb{R}$};
+        
+        \node[draw, thick, ellipse, minimum width=1.5cm, minimum height=1.5cm] (B) at ([xshift=0.2cm, yshift=-1.2cm]epsilon.center) {};
+        \node[above right=0mm of B] { $B$};
+        
+
+        
+        % Draw the real number line and create named anchors
+        \coordinate (start_R) at (8, -3);
+        \coordinate (end_R) at (12, 2);
+        \draw[thick, ->] (start_R) -- (end_R) node[right=0.1cm] {\large $\mathbb{R}$};
+        \path (start_R) -- (end_R)
+            node[coordinate, pos=0.1] (p0) {}
+            node[coordinate, pos=0.3] (p_A) {}
+            node[coordinate, pos=0.8] (p1) {}; % By default, a \node is an invisible rectangle that can contain text. If no text is provided, it is still a rectangle that has a minimum nonzero size. If you want your nodes to be points, use \node [coordinate].
+    
+        \node at ($(p0)!0.4cm!-90:(end_R)$) {$0$};
+        \node at ($(p_A)!0.8cm!-90:(end_R)$) {$\operatorname{P}(X^{-1}(B))$};
+        \node at ($(p1)!0.4cm!-90:(end_R)$) {$1$};
+    
+        % Add tick marks for 0 and 1
+        \draw[thick] ($(p0)!0.2cm!90:(end_R)$) -- ($(p0)!0.2cm!-90:(end_R)$);
+        \draw[thick] ($(p1)!0.2cm!90:(end_R)$) -- ($(p1)!0.2cm!-90:(end_R)$);
+
+        % Define probability measure mapping arrows 
+        \pgfmathanglebetweenpoints{\pgfpointanchor{start_R}{center}}{\pgfpointanchor{end_R}{center}}
+        \let\lineangle\pgfmathresult
+        \pgfmathsetmacro{\perpangle}{\lineangle + 90}
+        \path[->, thick] (A)     edge[out=55, in=190] node[above left] { ${X}$} (B);
+        \path[-> , thick] (B)    edge[out=230, in=15] node[below right] { ${X^{-1}}$} (A);
+        \path[->, thick] (A)     edge[out=-60, in=\perpangle] node[above] { ${\operatorname{P}}$} (p_A);
+        \path[->, thick, red] (B)     edge[out=-40, in=\perpangle] node[above right] { $f_{X} = \operatorname{P} \circ X^{-1}$} (p_A);
+
+    \end{tikzpicture}
+\end{center}
+
+% \begin{example}
+%     Discrete Uniform Distribution: Suppose $X$ takes values in the finite set $\{a, a+1, \ldots, b\}$ with equal likelihood. Then, for every $x \in\{a, a+1, \ldots, b\}$, $f_{X}(x)=\frac{1}{b-a+1}$.
+% \end{example}
+
+\begin{definition}[Probability Density Function]{}
+For a continuous random variable $X$ with range $R(X) \subseteq \mathbb{R}$, the distribution is described by the \textit{probability density function} (pdf) $f_{X}$. This function is nonnegative and satisfies
+\[
+\operatorname{P}(a \leq X \leq b)=\int_{a}^{b} f_{X}(x) \mathrm{d} x
+\]
+for any interval $[a, b] \subseteq R(X)$, with the normalization
+\[
+\int_{R(X)} f_{X}(x) \mathrm{d} x=1
+\]
+\end{definition}
+
+\begin{definition}{Cumulative Distribution Function}{}
+    The \textit{cumulative distribution function} (CDF) of a random variable $X$ is defined by
+    \[
+    F(x)=\operatorname{P}(X \leq x) .
+    \]
+\end{definition}
+
+For a discrete random variable, this can be written as
+\[
+F(x)=\sum_{t \leq x} f(t),
+\]
+and for a continuous random variable with PDF $f(x)$, it is given by
+\[
+F(x)=\int_{-\infty}^{x} f(t) \mathrm{d} t .
+\]
+In both cases, $F(x)$ represents the total probability that $X$ does not exceed $x$.
+
+
+
+
+
+
+\clearpage
+\section{Expectation and Variance}
+
+\subsection{Expectation}
+
+\begin{definition}[Expected Value]{}
+    If $X$ is a random variable defined on a probability space $(U, \mathcal{F}, P)$, its expected value is defined by the integral
+    \[
+    \operatorname{E}[X]=\int_{-\infty}^{\infty} x \, \dif \Prob(x) .
+    \]
+\end{definition}
+
+For a continuous random variable with probability density function $f_{X}(x)$, the expected value is
+\[
+\operatorname{E}[X]=\int_{-\infty}^{\infty} x \, f_{X}(x) \dif x.
+\]
+For a discrete random variable - where the probability measure $P$ is concentrated on a countable set $R(X)=\{x_{1}, x_{2}, \ldots\}$ - the integral reduces to the sum
+\[
+\operatorname{E}[X]=\sum_{i} x_{i} \, \operatorname{P}(\{x_{i}\})=\sum_{x \in R(X)} x \, f_{X}(x),
+\]
+since the measure of a singleton $\{x\}$ is given by $\operatorname{P}(\{x\})=f_{X}(x)$.
+
+\begin{theorem}[Linearity of Expectation]{}
+    Let $X_{1}, \ldots, X_{n}$ be random variables (not necessarily independent). For any constants $a_{1}, \ldots, a_{n}$, the expectation of their linear combination is given by
+    \[
+    \operatorname{E}\left[\sum_{i=1}^{n} a_{i} X_{i}\right]=\sum_{i=1}^{n} a_{i} \operatorname{E}\left[X_{i}\right].
+    \]
+\end{theorem}
+
+\begin{proof}
+    \[
+      \operatorname{E}\left[\sum_{i=1}^{n} a_i X_i\right]
+      \;=\;
+      \int \left(\sum_{i=1}^{n} a_i X_i\right)\,\mathrm{d}\operatorname{P}
+        \;=\;
+        \sum_{i=1}^n a_i \int X_i \,\mathrm{d}\mathrm{P}
+        \;=\;
+        \sum_{i=1}^n a_i \operatorname{E}[X_i].
+    \]
+\end{proof}
+
+
+\subsection{Variance}
+\begin{definition}[Variance]{}
+    For a random variable $X$ with expected value $\mu = \operatorname{E}[X]$, the \emph{variance} is defined as
+    \[
+    \operatorname{Var}[X]=\operatorname{E}\left[(X-\mu)^{2}\right]=\operatorname{E}[X^{2}]-\mu^{2} \text{.}
+    \]
+\end{definition}
+
+
+
+\subsection{Law of Large Numbers}
+
+The Law of Large Numbers (LLN) guarantees that, under specific conditions, the sample average converges to the theoretical expectation as the number of samples increases. This law underpins the intuitive notion that as we collect more independent observations, their average tends towards the true mean of the distribution.
+\begin{theorem}[(Weak) Law of Large Numbers]{}
+    \label{thm:lln}
+    Let $X_{1}, \ldots, X_{n}$ be a sequence of i.i.d. random variables with a finite expectation $\operatorname{E}[X_{i}]$. Then, as $n$ approaches infinity, the sample average converges in probability to the expected value:
+    \[
+    \frac{1}{n} \sum_{i=1}^{n} X_{i} \xrightarrow[n \rightarrow \infty]{p} \operatorname{E}[X_{i}]
+    \]
+    In practical terms, the average outcome from a large number of trials will approximate the expected value, and this approximation improves with more trials.
+\end{theorem}
+
+\subsection{Central Limit Theorem}
+
+The Central Limit Theorem (CLT) is a fundamental result in probability theory and statistics. It states that the sum of a large number of independent and identically distributed (i.i.d.) random variables, each with finite mean and variance, tends to be normally distributed, regardless of the original distribution of the variables.
+
+\begin{theorem}[Central Limit Theorem]{}
+    \label{thm:clt}
+    Let $X_{1}, \ldots, X_{n}$ be a sequence of i.i.d. random variables with expectation $\operatorname{E}[X_{i}]=\mu$ and variance $\operatorname{Var}[X_{i}]=\sigma^{2}$, both finite.
+    Then, as $n$ approaches infinity, the standardized sum converges in distribution to the standard normal distribution:
+    \[
+    \frac{\sum_{i=1}^{n} X_{i}-n \mu}{\sigma \sqrt{n}} \xrightarrow[n \rightarrow \infty]{d} \mathcal{N}(0,1)
+    \]
+    where $\mathcal{N}(0,1)$ denotes the standard normal distribution.
+\end{theorem}
+
+
+To understand this theorem, let's analyze the characteristics of this result.
+
+\subsubsection{Aggregation of Random Effects}
+When summing many independent random variables, each contributing its own randomness, individual irregularities tend to "average out," leading to predictable overall behavior.
+
+Consider $n$ i.i.d. random variables $X_{1}, \ldots, X_{n}$, each with mean $\mu$ and variance $\sigma^{2}$.
+\[
+\begin{aligned}
+S_{n} &= {\textstyle \sum_{i=1}^{n}} X_{i} \\ %= X_{1}+\cdots+X_{n} \\
+\operatorname{E}[S_{n}] &=n \mu \\
+\operatorname{Var}(S_{n}) &=n \sigma^{2}
+\end{aligned}
+\]
+
+To analyze the behavior as $n$ grows, we standardize the sum:
+\[
+Z_{n}=\frac{S_{n}-n \mu}{\sigma \sqrt{n}}
+\]
+
+As $n$ increases, the standardized sum $Z_{n}$ becomes more stable. The "aggregation" of individual random effects leads to a reduction in relative fluctuations, making $Z_{n}$ less influenced by the variability of any single $X_{i}$.
+
+\subsubsection{Symmetry Through Averaging}
+
+\begin{figure}[ht]
+% from https://www.reddit.com/r/LaTeX/comments/2hh08e/best_way_to_draw_a_bell_curve_and_some_skewed/
+\scriptsize
+\centering
+\begin{subfigure}{0.25\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[axis lines=none, ticks=none, xmax=0.5, ymax=0.5, width=5cm, height=4cm]
+\addplot[thick,black, no markers, samples=200, domain=-5:0] {-x*exp(x)};
+\draw[dashed] (axis cs:-1.68,0) -- (axis cs:-1.68,0.31) node [above, anchor=south east, xshift=0.1cm] {Median};
+\draw[dashed] (axis cs:-2,0) -- (axis cs:-2,0.27) node [above, anchor=east, xshift=-0.1cm] {Mean};
+\draw[dashed] (axis cs:-1,0) -- (axis cs:-1,0.37) node [above] {Mode};
+\end{axis}
+\end{tikzpicture}
+\caption*{Negative / Left Skew}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.25\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[axis lines=none, ticks=none, xmax=3, xmin=-3, ymax=1.5, width=5cm, height=4cm]
+\addplot[thick,black, no markers, samples=200] {exp(-x^2)};
+\draw[dashed] (axis cs:0,0) -- (axis cs:0,1) node [above] {Mean, Median, Mode};
+\end{axis}
+\end{tikzpicture}
+\caption*{Symmetric}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.25\textwidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[axis lines=none, ticks=none, xmin=0, ymax=0.5, width=5cm, height=4cm]
+\addplot[thick,black, no markers, samples=200, domain=0:5] {abs(x)*exp(-x)};
+\draw[dashed] (axis cs:1.68,0) -- (axis cs:1.68,0.31) node [above, anchor=south west, xshift=-0.1cm] {Median};
+\draw[dashed] (axis cs:2,0) -- (axis cs:2,0.27) node [above, anchor=west, xshift=0.1cm] {Mean};
+\draw[dashed] (axis cs:1,0) -- (axis cs:1,0.37) node [above] {Mode};
+\end{axis}
+\end{tikzpicture}
+\caption*{Positive / Right Skew}
+\end{subfigure}
+\end{figure}
+
+As more variables are added, the influence of any single variable diminishes. This averaging effect induces symmetry in the distribution of the sum.
+
+Define the standardized individual variables:
+\[
+Y_{i}=\frac{X_{i}-\mu}{\sigma}
+\]
+
+Thus, the standardized sum can be expressed as:
+\[
+Z_{n}=\frac{1}{\sqrt{n}} \sum_{i=1}^{n} Y_{i}
+\]
+
+Each $Y_{i}$ has:
+\[
+\operatorname{E}[Y_{i}]=0, \quad \operatorname{Var}(Y_{i})=1
+\]
+
+The Law of Large Numbers ensures that:
+\[
+\frac{1}{n} \sum_{i=1}^{n} Y_{i} \xrightarrow{p} 0 \quad \text{as} \quad n \to \infty
+\]
+
+ If the original distribution of $Y_{i}$ is skewed, the sum $\sum Y_{i}$ tends to balance out the skewness as positive and negative deviations cancel each other out. The skewness of $Z_{n}$ diminishes as $n$ increases:
+\[
+\operatorname{Skewness}(Z_{n})=\frac{\operatorname{E}[Z_{n}^{3}]}{(\operatorname{Var}(Z_{n}))^{3 / 2}}=\frac{\gamma}{\sqrt{n}} \to 0 \quad \text{as} \quad n \to \infty
+\]
+
+Where $\gamma$ is the third central moment of $Y_{i}$.
+
+The distribution of $Z_{n}$ becomes increasingly symmetric around zero as $n$ grows, regardless of the original distribution's symmetry. This emerging symmetry is a crucial step toward the normal distribution's characteristic bell shape.
+
+\subsubsection{Emergence of the Bell Curve}
+The normal distribution (bell curve) is inherently symmetric and arises naturally when multiple independent random factors contribute to a single outcome.
+
+
+\begin{proof}
+The characteristic function of $Z_{n}$ is given by:
+% \[
+%     \varphi_{Z_{n}}(t) = \operatorname{E}\left[e^{\imath t Z_{n}}\right] = \operatorname{E}\left[e^{\imath t \frac{\sum_{i=1}^{n} Y_{i}}{\sqrt{n}}}\right] = \operatorname{E}\left[e^{\sum_{i=1}^{n} \imath \frac{t}{\sqrt{n}} Y_{i}}\right] = \operatorname{E}\left[\prod_{i=1}^{n} e^{\imath \frac{t}{\sqrt{n}} Y_{i}}\right] \overset{\text{ind.}}{=} \prod_{i=1}^{n} \operatorname{E}\left[e^{\imath \frac{t}{\sqrt{n}}Y_{i}}\right] \overset{\text{id.}}{=} \left(\varphi_{Y_{i}}\left(\frac{t}{\sqrt{n}}\right)\right)^{n}
+% \]
+% \begin{align*}
+%     \varphi_{Z_{n}}(t) &= \operatorname{E}\left[e^{\imath t Z_{n}}\right] \\
+%     &= \operatorname{E}\left[e^{\imath t \frac{\sum_{i=1}^{n} Y_{i}}{\sqrt{n}}}\right] \\
+%     &= \operatorname{E}\left[e^{\sum_{i=1}^{n} \imath \frac{t}{\sqrt{n}} Y_{i}}\right] \\
+%     &= \operatorname{E}\left[\prod_{i=1}^{n} e^{\imath \frac{t}{\sqrt{n}} Y_{i}}\right] \\
+%     &\overset{\text{independent}}{=} \prod_{i=1}^{n} \operatorname{E}\left[e^{\imath \frac{t}{\sqrt{n}}Y_{i}}\right] \\
+%     &\overset{\text{identically}}{=} \left(\varphi_{Y_{i}}\left(\frac{t}{\sqrt{n}}\right)\right)^{n}
+% \end{align*}
+\begin{align*}
+    \varphi_{Z_{n}}(t) &= \operatorname{E}\left[e^{\imath t Z_{n}}\right] \\
+    &= \operatorname{E}\left[e^{\imath t \frac{\sum_{i=1}^{n} Y_{i}}{\sqrt{n}}}\right] \\
+    &= \operatorname{E}\left[e^{\sum_{i=1}^{n} \imath \frac{t}{\sqrt{n}} Y_{i}}\right] \\
+    &= \operatorname{E}\left[\prod_{i=1}^{n} e^{\imath \frac{t}{\sqrt{n}} Y_{i}}\right] \\
+    &= \prod_{i=1}^{n} \operatorname{E}\left[e^{\imath \frac{t}{\sqrt{n}}Y_{i}}\right] \quad \text{(independent)} \\
+    &= \left(\varphi_{Y_{i}}\left(\frac{t}{\sqrt{n}}\right)\right)^{n} \quad \text{(identically)}
+\end{align*}
+
+
+The expansion of the characteristic function of $Y_{i}$ around $t=0$ is given by:
+% \[
+% \varphi_{Y_{i}}(t) = \operatorname{E}\left[e^{\imath t Y_{i}}\right] = \operatorname{E}\left[1 + \imath t Y_{i} - \frac{t^2 Y_{i}^2}{2} + o(t^2)\right] = 1 + \imath t\,\operatorname{E}\left[Y_{i}\right] - \frac{t^2}{2}\,\operatorname{E}\left[Y_{i}^2\right] + o(t^2).
+% \]
+\begin{align*}
+    \varphi_{Y_{i}}(t) &= \operatorname{E}\left[e^{\imath t Y_{i}}\right] \\
+    &= \operatorname{E}\left[1 + \imath t Y_{i} - \frac{t^2 Y_{i}^2}{2} + o(t^2)\right] \\
+    &= 1 + \imath t\,\operatorname{E}\left[Y_{i}\right] - \frac{t^2}{2}\,\operatorname{E}\left[Y_{i}^2\right] + o(t^2).
+\end{align*}
+
+Assuming that $Y_{i}$ is standardized, i.e. 
+\[
+\operatorname{E}\left[Y_{i}\right]=0 \quad \text{and} \quad \operatorname{E}\left[Y_{i}^2\right]=1,
+\]
+we obtain
+\[
+\varphi_{Y_{i}}(t) = 1 - \frac{t^2}{2} + o(t^2).
+\]
+
+Substituting $\frac{t}{\sqrt{n}}$ for $t$, it follows that
+% \[
+% \varphi_{Y_{i}}\left(\frac{t}{\sqrt{n}}\right) = 1 - \frac{1}{2}\left(\frac{t}{\sqrt{n}}\right)^2 + o\left(\left(\frac{t}{\sqrt{n}}\right)^2\right) = 1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right).
+% \]
+\begin{align*}
+    \varphi_{Y_{i}}\left(\frac{t}{\sqrt{n}}\right) &= 1 - \frac{1}{2}\left(\frac{t}{\sqrt{n}}\right)^2 + o\left(\left(\frac{t}{\sqrt{n}}\right)^2\right) \\
+    &= 1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right).
+\end{align*}
+
+
+
+Then,
+\[
+    \varphi_{Z_{n}}(t) = \left(1 - \frac{t^2}{2n} + o\left(\frac{t^2}{n}\right)\right)^{n} \xrightarrow[n \rightarrow \infty]{} e^{-t^{2} / 2}
+\]
+
+The characteristic function $e^{-t^{2} / 2}$ uniquely corresponds to the standard normal distribution $\mathcal{N}(0,1)$.
+
+As $n$ increases, the characteristic function of $Z_{n}$ converges to that of the normal distribution, indicating that $Z_{n}$ approaches $\mathcal{N}(0,1)$.
+\end{proof}
+
+
+
+
+
+
+
+\clearpage
+\section{Monte Carlo Methods}\label{sec:mc_methods}
+
+Monte Carlo methods are a versatile set of computational techniques that employ random sampling to approximate solutions for problems that are difficult or impossible to solve analytically.
+A central application is
+
+\subsection{Monte Carlo Integration}\label{subsec:mc_integration}
+
+Let $f(x)$ be a real-valued function defined on a domain $D$ with finite measure \(|D|\) and suppose we wish to evaluate the integral
+\[
+I=\int_D f(x) \dif x \text{.}
+\]
+If $X$ is drawn uniformly\footnote{i.e. with pdf $p(x)=\frac{1}{|D|}\mathbf{1}_{D}(x)$, where $\mathbf{1}_{D}(x)$ is the indicator function that is $1$ if $x \in D$ and $0$ otherwise} from $D$, then the expected value of $f(X)$ is
+\[
+\operatorname{E}[f(X)]
+=\int f(x) p(x) \dif x
+=\frac{1}{|D|} \int_{D} f(x) \, \mathrm{d} x 
+= \frac{I}{|D|} 
+\text{,}
+\]
+or equivalently,
+\[
+\int_{D} f(x) \, \mathrm{d} x=|D| \operatorname{E}[f(X)] = I \text{.}
+\]
+%
+A Monte Carlo estimator for this integral is
+\[
+\boxed{
+  \hat{I}_{N}=|D| \frac{1}{N} \sum_{i=1}^{N} f\left(x_{i}\right)
+}
+\]
+where $x_{1}, \ldots, x_{N}$ are independent samples drawn uniformly from $D$.
+%
+% Suppose we wish to evaluate an integral
+% \[
+% I=\int_D f(x) \dif x,
+% \]
+% where \(D\) is a domain with finite measure \(|D|\). 
+% If \(x_1,\ldots,x_N\) are independent random samples uniformly drawn from \(D\), then the estimator
+% \[
+% \hat{I}_N=|D|\cdot \frac{1}{N}\sum_{i=1}^N f(x_i)
+% \]
+% approximates \(I\).
+By the LLN (Theorem~\ref{thm:lln}), as \(N\to\infty\), \(\hat{I}_N\) converges to \(I\).
+
+% \subsubsection{Monte Carlo Estimation of Integrals}
+
+% Consider the problem of estimating an integral of a function \(f(x)\) over an interval \([a,b]\). The target integral is given by
+% \[
+% I=\int_a^b f(x)\dif x.
+% \]
+% A straightforward Monte Carlo approach is to sample \(x_1,x_2,\ldots,x_N\) independently from a uniform distribution on \([a,b]\) with PDF
+% \[
+% p(x)=\frac{1}{b-a},\quad x\in[a,b].
+% \]
+% The expected value of \(f(x)\) under this distribution is
+% \[
+% E[f(x)]=\int_a^b f(x)p(x)\dif x=\frac{I}{b-a},
+% \]
+% so that
+% \[
+% I=(b-a)E[f(x)].
+% \]
+% In practice, the expected value is estimated by computing the sample mean:
+% \[
+% \hat{I}=\frac{b-a}{N}\sum_{i=1}^N f(x_i).
+% \]
+
+\subsubsection{Importance Sampling}
+
+In many practical applications, sampling uniformly is inefficient, especially in high-dimensional spaces. 
+Instead, one often resorts to \emph{importance sampling} where one samples from a more convenient density \(p(x)\) and rewrites the integral as:
+\[
+I=\int_D f(x)\dif x=\int_D \frac{f(x)}{p(x)}p(x)\dif x=\Exp_{p}\Bigl[\frac{f(x)}{p(x)}\Bigr].
+\]
+The corresponding Monte Carlo estimator is
+\[
+\hat{I}=\frac{1}{N}\sum_{i=1}^N \frac{f(x_i)}{p(x_i)},
+\]
+with the \(x_i\) drawn according to \(p(x)\). The variance of this estimator is given by
+\[
+\Var(\hat{I})=\frac{1}{N}\Var\Bigl[\frac{f(x)}{p(x)}\Bigr]\text{,}
+\]
+which implies that the standard error decreases as \(1/\sqrt{N}\).
+Choosing a sampling distribution \(p(x)\) that closely resembles \(f(x)\) can reduce the variance.
+
+
+\subsection{Rejection Sampling (als known as Accept-Reject Method)}
+\label{subsec:rejection}
+In many scenarios, direct sampling from the target distribution \(f(x)\) is challenging while a proposal distribution \(q(x)\) is readily available. Suppose there exists a constant \(c\ge 1\) such that
+\[
+f(x)\le c\,q(x),\quad \text{for all } x.
+\]
+Then the rejection sampling algorithm can be used to generate samples from \(f(x)\).
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+  \begin{axis}[domain=-6:6,
+    ticks=none,
+    x=1cm,
+    legend cell align=left,
+    clip mode=individual]
+    \addplot[black,dashed,domain=-6:6, thick,samples=101] {exp(-x^2*0.1)};
+    \addlegendentry{\footnotesize{Proposal: $c\,q(x)$}}
+    \addplot[black,domain=-6:6, thick,samples=101] {exp(-abs(x*0.8))};
+    \addlegendentry{\footnotesize{Target: $f(x)$}}
+    \draw[red,dotted, very thick] (axis cs:2,{exp(-abs(2*0.8))}) -- node[midway, right, anchor=west, xshift=0.1cm, fill=white, fill opacity=1, inner sep=1pt] {\textcolor{black}{\footnotesize{Reject}}} (axis cs:2,{exp(-2^2*0.1)});
+    \draw[green,dotted, very thick] (axis cs:2,0) -- node[midway, right, anchor=west, xshift=0.1cm, fill=white, fill opacity=1, inner sep=1pt] {\textcolor{black}{\footnotesize{Accept}}} (axis cs:2,{exp(-abs(2*0.8))});
+  \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+\begin{theorem}[Rejection Sampling]\label{thm:rej}
+Let \(f(x)\) be the target density and \(q(x)\) be a proposal density, and suppose there exists a constant \(c\ge 1\) such that
+\[
+f(x)\le c\,q(x),\quad \text{for all } x.
+\]
+Define the indicator random variable
+\[
+I(X,U)=\mathbf{1}\Bigl\{U\le \frac{f(X)}{c\,q(X)}\Bigr\},
+\]
+where \(X\sim q(x)\) and \(U\sim \operatorname{Uniform}(0,1)\) are independent. Then, the conditional distribution of \(X\) given \(I(X,U)=1\) is exactly \(f(x)\).
+\end{theorem}
+
+\begin{proof}
+  First we need the joint density \eqref{eq:joint_density_many} of \(X\) and \(I\):
+  \[
+    f_{X,I}(x, i)
+    = \underbrace{f_X(x)}_{q(x)} \cdot \underbrace{f_{I \mid X}(i \mid  x)}_{\text{Bern}\left(\frac{f(x)}{c q(x)}\right)} 
+    = q(x) \left( \frac{f(x)}{c q(x)} \right)^i \left( 1 - \frac{f(x)}{c q(x)} \right)^{1-i}, \quad i \in \{0, 1\}
+  \]
+  
+  The conditional probability distribution (Def. \ref{def:condprob}) of $X$ given $I(X,U)$ is
+  \[
+  f_{X \mid I}(x \mid i) = \frac{f_{X,I}(x, i)}{f_I(i)}
+  \]
+  
+  For the denominator, integrate out $x$:
+  \begin{align*}
+  f_I(i) &= \int_{-\infty}^{\infty} f_{X,I}(x, i) \, \dif x \\
+  &= \int_{-\infty}^{\infty} q(x) \left( \frac{f(x)}{c q(x)} \right)^i \left( 1 - \frac{f(x)}{c q(x)} \right)^{1-i} \dif x \\
+  &= 
+  \begin{cases}
+  \int_{-\infty}^{\infty} \frac{f(x)}{c} \, \dif x, & i = 1 \\
+  \int_{-\infty}^{\infty} q(x) - \frac{f(x)}{c} \, \dif x, & i = 0
+  \end{cases} \\
+  &= 
+  \begin{cases}
+  \frac{1}{c}, & i = 1 \\
+  1 - \frac{1}{c}, & i = 0
+  \end{cases} \\
+  &= \left( \frac{1}{c} \right)^i \left( 1 - \frac{1}{c} \right)^{1-i}
+  \end{align*}
+  
+  So we have
+  \begin{align*}
+    f_{X \mid I}(x \mid i) &= \frac{f_{X,I}(x, i)}{f_I(i)} \\
+    &= \frac{q(x) \left( \frac{f(x)}{c q(x)} \right)^i \left( 1 - \frac{f(x)}{c q(x)} \right)^{1-i}}{\left( \frac{1}{c} \right)^i \left( 1 - \frac{1}{c} \right)^{1-i}}
+  \end{align*}
+  and the conditional distribution of $X$ given $I(X,U) = 1$ is
+  \begin{align*}
+  f_{X \mid I=1}(x \mid i = 1) &= \frac{f_{X,I}(x, i=1)}{f_I(i=1)} \\
+  &= \frac{q(x) \left( \frac{f(x)}{c q(x)} \right)}{\frac{1}{c}} \\
+  &= f(x) \qedhere
+  \end{align*}
+\end{proof}
+
+% \begin{proof}
+% Since \(X\) and \(U\) are independent, their joint density is 
+% \[
+% h(x,u)=q(x),\quad u\in[0,1].
+% \]
+% The candidate \(x\) is accepted when
+% \[
+% U\le \frac{f(x)}{c\,q(x)}.
+% \]
+% Thus, the joint density of accepted samples is
+% \[
+% h_{\mathrm{acc}}(x,u)=q(x)\,\mathbf{1}\Bigl\{u\le \frac{f(x)}{c\,q(x)}\Bigr\}.
+% \]
+% Integrating out \(u\) gives the marginal density for accepted \(x\):
+% \[
+% g(x)=\int_0^1 h_{\mathrm{acc}}(x,u)\dif u = q(x)\frac{f(x)}{c\,q(x)}=\frac{f(x)}{c}.
+% \]
+% The overall probability of acceptance is
+% \[
+% \Prob(I=1)=\int g(x)\dif x=\frac{1}{c}\int f(x)\dif x=\frac{1}{c}.
+% \]
+% Hence, the conditional density of \(x\) given acceptance is
+% \[
+% f_{X|I=1}(x)=\frac{g(x)}{\Prob(I=1)}=\frac{f(x)/c}{1/c}=f(x).
+% \]
+% \end{proof}
+
+
+% The rejection sampling algorithm is then:
+% \begin{enumerate}
+%   \item Sample \(X\) from the proposal density \(q(x)\).
+%   \item Independently sample \(U\sim \operatorname{Uniform}(0,1)\).
+%   \item If \(U\le \frac{f(X)}{c\,q(X)}\), accept \(X\) as a sample from \(f(x)\); otherwise, reject \(X\) and repeat.
+% \end{enumerate}
+
+\subsection{Dependence \& Independence}\label{subsec:independence}
+Independence is a fundamental property in probability theory, ensuring that the realization of one random variable does not alter the distribution of another. 
+
+\begin{definition}[Independence]\label{def:independence}
+Two random variables \(X\) and \(Y\) are independent if their joint density function factorizes as
+\[
+f_{X,Y}(x,y)=f_X(x)f_Y(y),
+\]
+which implies that knowing \(X=x\) does not influence the probability law of \(Y\).
+\end{definition}
+This definition is purely mathematical, but its justification often stems from physical intuition. 
+If two sources of randomness arise from non-interacting systems, their outcomes are expected to be independent. 
+However, the assumption of independence is not always evident, and distinguishing between physical and statistical independence requires careful consideration.
+
+
+% \begin{example}[Dice Rolls]
+% Consider two fair dice rolled separately. Their outcomes are independent because
+% \[
+% p_{X,Y}(i,j)=p_X(i)p_Y(j)=\frac{1}{6}\cdot\frac{1}{6}=\frac{1}{36}.
+% \]
+% However, if the dice are rolled in a setting where only a function of both outcomes (such as the sum's parity) is observed, then knowing one outcome may restrict the possibilities for the other, and independence is lost.
+% \end{example}
+
+\begin{definition}[Indicator Function of an Event]\label{def:indicator}
+For an event \(A\subset \Omega\), the indicator function \(\mathbf{1}_A(x)\) is defined as
+\[
+\mathbf{1}_A(x)=
+\begin{cases}
+1, & x\in A,\\[1mm]
+0, & \text{otherwise}.
+\end{cases}
+\]
+If \(X\) is a random variable with density \(p(x)\), then
+\[
+\Prob(A)=\Exp\bigl[\mathbf{1}_A(X)\bigr]=\int \mathbf{1}_A(x)p(x)\dif x.
+\]
+\end{definition}
+
+If \(A\) and \(B\) are two events, then their joint probability is
+\[
+\Prob(A\cap B)=\Exp\bigl[\mathbf{1}_A(X)\mathbf{1}_B(X)\bigr].
+\]
+If \(X\) and \(Y\) are independent, then
+\[
+\Exp[XY]=\Exp[X]\,\Exp[Y].
+\]
+
+So we have the following equivalence:
+\[
+\text{$A$ and $B$ are independent} \iff \Prob(A\cap B)=\Prob(A)\Prob(B) \text{.}
+\]
+
+\begin{definition}[Conditional Probability]\label{def:condprob}
+Given two random variables \(X\) and \(Y\) with \(\Prob(Y=y)>0\), the conditional probability of \(X=x\) given \(Y=y\) is defined as:
+\[
+p_{X|Y}(x|y)=\frac{p_{X,Y}(x,y)}{p_Y(y)}.
+\]
+\end{definition}
+
+A direct consequence is the multiplication rule:
+\[
+p_{X,Y}(x,y)=p_{X|Y}(x|y)p_Y(y)=p_{Y|X}(y|x)p_X(x).
+\]
+It provides a foundational link between joint and conditional probabilities, allowing for systematic computation of joint probabilities.
+
+For many random variables \(X_1,\ldots,X_n\), the joint probability is given by:
+\begin{equation}
+\label{eq:joint_density_many}
+p_{X_1,\ldots,X_n}(x_1,\ldots,x_n)=\prod_{i=1}^n p_{X_i|X_1,\ldots,X_{i-1}}(x_i|x_1,\ldots,x_{i-1}).
+\end{equation}
+
+\begin{definition}[Marginal Probability]\label{def:marginal}
+Given a joint probability distribution \(p_{X,Y}(x,y)\), the marginal probability \(p_X(x)\) of any outcome \(x\) for the random variable \(X\) is obtained by summing the join tprobabilities over all possible outcomes \(y\) for \(Y\):
+\[
+p_X(x)=\sum_{y \in \im(Y)} p_{X,Y}(x,y)
+\]
+where the sum is over all possible outcomes of \(Y\).
+\end{definition}
+The connection between marginal and conditional probability can be udnerstood through the \emph{law of total probability}:
+\[
+p_X(x)=\sum_{y \in \im(Y)} p_{X|Y}(x|y)p_Y(y) \text{.}
+\]
+
+
+\begin{theorem}[Bayes' Theorem]\label{thm:bayes}
+Let \(X\) and \(Y\) be random variables with \(p_Y(y)\neq 0\). Then, the posterior probability is given by
+\[
+p_{X|Y}(x|y)=\frac{p_{Y|X}(y|x)p_X(x)}{p_Y(y)}.
+\]
+\end{theorem}
+
+\begin{proof}
+Symmetry of joint probabilities.
+% Since 
+% \[
+% p_{X,Y}(x,y)=p_{Y|X}(y|x)p_X(x)=p_{X|Y}(x|y)p_Y(y),
+% \]
+% solving for \(p_{X|Y}(x|y)\) gives the stated result.
+\end{proof}
+
+Bayes' theorem is foundational for the fields of Bayesian statistics and machine learning. 
+It provides a mechanism to update our beliefs in light of new evidence, making it central to numerous applications.
+The theorem reminds us of the importance of prior knowledge and illustrates how, in a world filled with data, we can use this data to make more informed decisions and predictions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\section{Random Networks}\label{sec:networks}
+Random network models provide a probabilistic framework for studying the structure and dynamics of complex systems.
+
+\subsection{Fundamental Concepts}\label{subsec:graph}
+\begin{definition}[Graph]\label{def:graph}
+A graph \(G\) is defined as a pair \(G=(V,E)\), where:
+\begin{itemize}[before={\parskip = 0em}, nosep]
+  \item \(V\) is a set of nodes (or vertices),
+  \item \(E\) is a set of edges connecting pairs of nodes. \qedhere
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Adjacency Matrix]\label{def:adjacency}
+For a graph \(G=(V,E)\) with \(N=|V|\) nodes, the adjacency matrix \(\matr{A}\) is an \(N\times N\) matrix defined by
+\[
+(\matr{A})_{uv}=
+\begin{cases}
+1, & \text{if there is an edge between nodes } u \text{ and } v,\\[1mm]
+0, & \text{otherwise}.
+\end{cases} 
+\]
+\end{definition}
+
+\begin{theorem}\label{thm:walks}
+Let \(\matr{A}\) be the adjacency matrix of a graph \(G\). Then, the entry \((\matr{A}^k)_{uv}\) equals the number of walks of length \(k\) from node \(u\) to node \(v\).
+\end{theorem}
+\begin{proof}
+(Induction)
+For \(k=1\), the claim holds by definition. 
+Assume that \((\matr{A}^k)_{uv}\) counts the number of walks of length \(k\) from \(u\) to \(v\).
+For \(k+1\), we have:
+\[
+(\matr{A}^{k+1})_{uv}=\sum_{w\in V} (\matr{A}^k)_{uw}(\matr{A})_{wv} \text{.}
+\]
+Each term \((\matr{A}^k)_{uw}\) counts the number of walks of length \(k\) from \(u\) to \(w\), and \((\matr{A})_{wv}\) indicates the presence of an edge from \(w\) to \(v\).
+Summing over all \(w\) gives the total number of walks of length \(k+1\) from \(u\) to \(v\), completing the induction.
+\end{proof}
+
+\subsection{Random Network Models}\label{subsec:models}
+Random network models provide a fundamental framework for generating graphs using simple probabilistic rules. 
+These models help us understand how local random interactions can lead to the emergence of complex global network structures.
+
+\begin{definition}[Degree Distribution]\label{def:degree-distribution}
+For a graph \(G=(V,E)\), the degree of a node is defined as the number of edges incident to it. 
+The \emph{degree distribution} \(P(k)\) is the probability that a randomly selected node has degree \(k\):
+\[
+P(k)=\frac{|\{u\in V: \deg(u)=k\}|}{|V|} \text{,}
+\]
+with the normalization condition \(\sum_{k}P(k)=1\).
+\end{definition}
+
+\subsubsection{Erdős-Rényi Model}\label{subsubsec:ER}
+\begin{definition}[Erdős-Rényi Model]\label{def:ER}
+The Erdős-Rényi model, denoted by \(G(n,p)\), is one of the simplest random graph models. 
+It constructs a graph with \(n\) nodes by considering each of the \(\binom{n}{2}\) possible edges and including each edge independently with probability \(p\). 
+That is, for any pair of distinct nodes \(u\) and \(v\),
+\[
+P((u,v)\in E)=p.
+\]
+\end{definition}
+Key properties include:
+\begin{itemize}
+  \item \textbf{Degree Distribution:} In \(G(n,p)\), the degree \(k\) of any node follows a binomial distribution,
+  \[
+  P(k)=\binom{n-1}{k} p^k (1-p)^{n-1-k}.
+  \]
+  For large \(n\) and small \(p\) (with \(np\) constant), this can be approximated by a Poisson distribution:
+  \[
+  P(k)\approx \frac{(np)^k}{k!} \mathrm{e}^{-np}.
+  \]
+  \item \textbf{Connectivity and Phase Transition:}
+  A critical phenomenon occurs at the threshold
+  \[
+  p_c\approx \frac{\ln(n)}{n},
+  \]
+  where the graph transitions from having many small disconnected components to containing a single giant component.
+  \item \textbf{Clustering Coefficient:} 
+  Because edges are formed independently, the clustering coefficient (the probability that two neighbors of a node are connected) is low, roughly equal to \(p\).
+\end{itemize}
+
+Due to its simplicity, the Erdős-Rényi model is mathematically tractable and provides valuable insights into the fundamental behavior of random graphs.
+However, its assumptions of independent and uniform edge formation limit its ability to capture clustering and degree heterogeneity observed in many real-world networks.
+
+\subsubsection{Small–World Networks: The Watts–Strogatz Model}\label{subsubsec:WS}
+Small–world networks feature high local clustering and short average path lengths.
+
+\begin{definition}[Regular Ring Lattice]\label{def:ringlattice}
+A regular ring lattice with \(n\) nodes is constructed by arranging the nodes in a circle and connecting each node to its \(k/2\) nearest neighbors on each side.
+\end{definition}
+
+\begin{definition}[Watts–Strogatz Model]\label{def:WS}
+Given a regular ring lattice with \(n\) nodes and degree \(k\), the Watts–Strogatz model introduces randomness by \emph{rewiring} each edge with a probability \(p\). 
+For each edge \((i,j)\) in the lattice, with probability \(p\):
+\begin{enumerate}[label=\arabic*., before={\parskip = 0em}, nosep]
+  \item Remove the edge \((i,j)\).
+  \item Choose a new node \(l\) uniformly at random from all nodes such that \(l \neq i\) and there is no existing edge between \(i\) and \(l\).
+  \item Add the edge \((i,l)\) to the graph. \qedhere
+\end{enumerate} 
+\end{definition}
+
+Key properties include the preservation of high clustering for small \(p\) and a dramatic reduction in the average path length due to long–range shortcuts.
+
+\subsubsection{Scale–Free Networks: The Barabási–Albert Model}\label{subsubsec:BA}
+Scale–free networks are characterized by the presence of hubs.
+
+\begin{definition}[Barabási–Albert Model]\label{def:BA}
+The Barabási–Albert model constructs a network via preferential attachment:
+\begin{enumerate}[label=\arabic*.]
+  \item Start with a small, connected network of \(m_0\) nodes.
+  \item At each time step, add a new node with \(m\) edges (with \(m\le m_0\)). The probability \(\Pi(k_i)\) that the new node attaches to an existing node \(i\) is proportional to the degree \(k_i\):
+  \[
+  \Pi(k_i)=\frac{k_i}{\sum_j k_j}.
+  \] \qedhere
+\end{enumerate}
+\end{definition}
+
+This “rich–get–richer” mechanism leads to a power–law degree distribution \(P(k)\sim k^{-\gamma}\) (typically \(\gamma\approx 3\)).
+
+\subsection{The Friendship Paradox}\label{subsec:friendship}
+The friendship paradox is the counterintuitive phenomenon that on average, your friends tend to have more friends than you do. Let \(G=(V,E)\) be an undirected graph with \(N\) nodes, where each node \(i\) has degree \(d_i\). Define
+\[
+\mu=\frac{1}{N}\sum_{i=1}^N d_i.
+\]
+When an edge is chosen uniformly at random, the probability that its endpoint has degree \(k\) is proportional to \(k\,P(k)\). Hence, the expected degree of a node reached by following a random edge is
+\[
+E[d_{\mathrm{friend}}]=\frac{E[k^2]}{\mu}.
+\]
+Since \(E[k^2]\ge \mu^2\) (with equality only if all nodes have the same degree),
+\[
+E[d_{\mathrm{friend}}]\ge \mu.
+\]
+The following theorem captures this formally.
+
+\begin{theorem}[Friendship Paradox]\label{thm:friendship}
+In any graph whose degree distribution is not uniform, the average degree of a randomly selected neighbor is strictly larger than the average degree of a randomly selected node:
+\[
+E[d_{\mathrm{friend}}]=\frac{E[k^2]}{\mu}\ge \mu,
+\]
+with equality if and only if all nodes have the same degree.
+\end{theorem}
+
+\begin{proof}
+Let \(P(k)\) be the probability that a randomly chosen node has degree \(k\). Since a node of degree \(k\) is \(k\) times more likely to be reached by following a random edge, the probability for a neighbor having degree \(k\) is
+\[
+P_{\mathrm{friend}}(k)=\frac{kP(k)}{\mu}.
+\]
+Thus,
+\[
+E[d_{\mathrm{friend}}]=\sum_{k} k\,P_{\mathrm{friend}}(k)=\frac{1}{\mu}\sum_{k} k^2 P(k)=\frac{E[k^2]}{\mu}.
+\]
+Expressing \(E[k^2]\) as \(\mu^2+\Var(k)\) shows that \(E[d_{\mathrm{friend}}]\ge \mu\) with equality only if \(\Var(k)=0\).
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Stochastic Processes and Markov Chains}\label{sec:markov}
+\begin{definition}[Stochastic Process]\label{def:stochastic}
+A \emph{stochastic process} is a collection of random variables \(\{X_n\}_{n\ge0}\) defined on a common probability space, where the index \(n\) typically represents time.
+\end{definition}
+
+\begin{definition}[Markov Chain]\label{def:markov}
+A stochastic process \(\{X_n\}_{n\ge0}\) is called a \emph{Markov chain} if for all \(n\ge0\) and for all states \(s_0,s_1,\ldots,s_{n+1}\) we have
+\[
+\Prob\Bigl(X_{n+1}=s_{n+1}\mid X_n=s_n, X_{n-1}=s_{n-1},\ldots,X_0=s_0\Bigr)=\Prob\Bigl(X_{n+1}=s_{n+1}\mid X_n=s_n\Bigr)
+\]
+for all states \(s \in S\), where \(S\) is the (countable) state space.
+\end{definition}
+In other words, the future depends on the past only through the current state.
+
+Let \(T\) denote the waiting time (in number of steps) until a transition occurs (i.e., the first time the chain leaves its current state). The Markov property implies that if no transition occurs by time \(n\), the additional waiting time is independent of the past. Thus, if no transition has occurred by time \(n\), then for any \(m\in\N\)
+\[
+\Prob(T>n+m\mid T>n)=\frac{\Prob(T>n+m)}{\Prob(T>n)}=\Prob(T>m).
+\]
+Defining \(G(k)=\Prob(T>k)\) (with \(G(0)=1\)), we have
+\[
+G(n+m)=G(n)G(m),\quad \forall n,m\in\N.
+\]
+It is known that the only solution to this functional equation is
+\[
+G(k)=q^k,\quad 0<q<1.
+\]
+Thus, the probability mass function for \(T\) is
+\[
+\Prob(T=k)=G(k-1)-G(k)=q^{k-1}(1-q),\quad k\ge 1.
+\]
+This derivation shows that the only discrete distribution satisfying the memoryless property is the geometric distribution.
+
+For a Markov chain with a finite state space of size \(N\), the transition probabilities are represented by the \textcolor{red}{transition matrix},
+\[
+  %\llap{\textbf{!}\enspace}
+  {\color{red}
+  \setlength{\fboxrule}{1pt}
+  \boxed{ 
+  \color{black}
+  \matr{P}=[p_{ij}] \in \R^{N \times N} \text{,} \quad \text{where} \quad p_{ij}=\Prob(X_{t+1}=j\mid X_t=i)\text{,}
+  }
+  }
+\]
+with each row summing to 1:
+\[
+\sum_{j=1}^{N} p_{ij}=1,\quad \text{for all } i.
+\]
+
+\begin{example}[Random Walk]\label{ex:randomwalk}
+A random walk is a classic example of a Markov chain. In the simplest one–dimensional random walk:
+\begin{enumerate}[before={\parskip = 0em}, nosep]
+  \item Start at position 0.
+  \item At each time step, flip a fair coin:
+  \begin{itemize}[before={\parskip = 0em}, nosep]
+    \item If heads, move one step to the right (\(+1\)).
+    \item If tails, move one step to the left (\(-1\)).
+  \end{itemize}
+  \item Record the position after each step.
+\end{enumerate}
+The future position depends only on the current position and the coin flip, not on how the current position was reached.
+\end{example}
+
+A two–dimensional random walk can be similarly defined by allowing moves in four directions (up, down, left, right).
+
+
+
+
+
+\subsection{Multi-Step Transitions}\label{subsec:multistep_transitions}
+\begin{definition}[\(n\)-Step Transition Probability]\label{def:n-step}
+  The \(n\)-step transition probability \(P_{ij}^{(n)}\) is defined as the probability of transitioning from state \(i\) to state \(j\) in \(n\) steps:
+  \[
+  P_{ij}^{(n)}=\Prob(X_{k+n}=j\mid X_k=i)
+  \]
+  for any \(k\ge0\) and \(i,j\in S\).
+  In particular, \(P_{ij}^{(1)}=p_{ij}\) are the one-step probabilities.
+\end{definition}
+The \(n\)-step transition probabilities can be computed from the transition matrix \(\matr{P}\) as follows:
+\begin{theorem}[Chapman-Kolmogorov]\label{thm:chapman-kolmogorov}
+  For any nonnegative integers \(n,m \ge 0\),
+  \[
+  P_{ij}^{(n+m)}=\sum_{k\in S} P_{ik}^{(n)}P_{kj}^{(m)}
+  \]
+  or, in matrix form,
+  \[
+  \matr{P}^{(n+m)}=\matr{P}^{(n)}\matr{P}^{(m)}
+  \]
+  Hence, \(\matr{P}^{(n)}=\matr{P}^n\), i.e. \(\matr{P}^{(n)}\) is the \(n\)-th power of the transition matrix \(\matr{P}\).
+\end{theorem}
+
+
+
+
+\subsection{Classification of States}\label{subsec:classification}
+Understanding how a Markov chain behaves over many steps requires classifying its states and determining whether certain long-term distributions exist.
+\subsubsection{Communicating Classes and Irreducibility}
+\label{subsubsec:communicating_classes}
+\begin{definition}[Communication]\label{def:communicating}
+  States \(i\) and \(j\) \emph{communicate} if \(P_{ij}^{(n)}>0\) for some \(n\) and \(P_{ji}^{(m)}>0\) for some \(m\).
+  A set of states \(C\) is a \emph{communicating class} if every pair of states in \(C\) communicates and no state outside \(C\) communicates with a state in \(C\).
+\end{definition}
+\begin{definition}[Irreducibility]\label{def:irreducible}
+A Markov chain is \emph{irreducible} if, for every pair of states \(i\) and \(j\), there exists an integer \(n\ge1\) such that
+\[
+P_{ij}^{(n)}>0
+\]
+i.e. the entire state space \(S\) is one single communicating class. 
+In other words, one can get from any state \(i\) to any other state \(j\) in a finite number of steps with positive probability.
+\end{definition}
+
+\subsubsection{Recurrence and Transience}
+\label{subsubsec:recurrence_transience}
+\begin{definition}[Recurrence, Transience]\label{def:recurrence_transience}
+A state \(i\) is \emph{recurrent} if, starting from \(i\), the expected number of visits to \(i\) is infinite;
+equivalently, the probability of returning to \(i\) at some time in the future is \(1\).
+If that probability is less than \(1\), then \(i\) is \emph{transient}.
+\end{definition}
+In finite Markov chains, irreducible classes are automatically recurrent (and at least one class may be absorbing if there is a state with \(P_{ii}=1\)).
+
+\begin{definition}[Positive Recurrence]\label{def:posrec}
+A state \(i\) is \emph{positive recurrent} if the expected return time to \(i\), starting from \(i\), is finite:
+\[
+\Exp_i[T_i]=\sum_{n=1}^{\infty} n\,\Prob(T_i=n)<\infty
+\]
+where \(T_i\) is the first return time to state \(i\).
+A Markov chain is positive recurrent if all states are positive recurrent.
+\end{definition}
+
+\subsubsection{Periodicity}
+\label{subsubsec:periodicity}
+
+\begin{definition}[Period]\label{def:period}
+  The \emph{period} of a state \(i\) is
+  \[
+  d(i)=\gcd\{n\ge 1: P_{ii}^{(n)}>0\}
+  \]
+  where \(\gcd\) is the greatest common divisor.
+  If \(d(i)=1\), the state \(i\) is \emph{aperiodic}.
+  A Markov chain is \emph{aperiodic} if all its states are aperiodic.
+  In an irreducable chain, it suffices to check just one state.
+\end{definition}
+If a Markov chain is irreducible and aperiodic (i.e. ergodic), it has some nice properties (see \ref{subsubsec:stationary_distributions}).
+
+\subsubsection{Stationary Distributions}\label{subsubsec:stationary_distributions}
+\begin{definition}[Ergodicity]\label{def:ergodic}
+A Markov chain is \emph{ergodic} if it is irreducible, aperiodic, and positive recurrent. 
+\end{definition}
+A probability vector \(\vect{\pi}=(\pi_i)_{i\in S}\) is called a \emph{stationary distribution} if
+\[
+\vect{\pi} \matr{P}=\vect{\pi},\quad \sum_{j}\pi_j=1
+\]
+For a finite irreducible aperiodic chain, there exists a unique stationary distribution \(\vect{\pi}\) and, moreover, the long-run behavior is given by
+\[
+\lim_{n\to\infty} P_{ij}^{(n)}=\pi_j,\quad \text{for all states } i
+\]
+This means the chain forgets its initial state in the long run and converges to \(\vect{\pi}\).
+
+In the context of Markov chains, the terms “invariant distribution” and “stationary distribution” are usually used interchangeably. 
+% For a transition matrix \(\matr{P}=[p_{ij}]\) on state space \(S\), a probability distribution \(\vect{\pi}=(\pi_i)_{i\in S}\) is invariant if
+% \[
+% \vect{\pi} \matr{P}=\vect{\pi},\quad \sum_{i\in S} \pi_i=1
+% \]
+
+\begin{example}[Doubly Stochastic Chain]\label{ex:doubly_stochastic_chain}
+  Let the stace space be \(S=\{1,\ldots,N\}\) and suppose the transition matrix \(\matr{P} = [p(j \mid i)]\) satisfies
+  \[
+  \sum_{i=1}^N p(j \mid i) = 1,\quad \forall j\in S
+  \]
+  i.e., the sum of each column is 1 (in addition to the usual condition that the sum of each row is 1). 
+  Assume the uniform distribution \(\pi_i = \frac{1}{N}\) for \(i\in S\).
+  Then, for each \(j\in S\),
+  \[
+  (\vect{\pi} \matr{P})_j = \sum_{i=1}^N \pi_i \cdot p(j \mid i) = \frac{1}{N} \sum_{i=1}^N p(j \mid i) = \frac{1}{N} \cdot 1 = \frac{1}{N} = \pi_j
+  \]
+  Thus, \(\vect{\pi} \matr{P} = \vect{\pi}\), and the uniform distribution is invariant.
+\end{example}
+
+
+\subsection{Absorbing Markov Chains}\label{subsec:absorbing}
+A Markov chain is \emph{absorbing} if it has at least one state \(i\) with \(P_{ii}=1\) (such a state is called \emph{absorbing}), and from every state in the chain, there is some way (positive-probability path) to eventually enter an absorbing state.
+
+One typically reorders the states so that the absorbing states come last, yielding a transition matrix in the form
+\[
+\matr{P}=
+\begin{bmatrix}
+\matr{Q} & \matr{R} \\
+\matr{0} & \matr{I}
+\end{bmatrix}
+\]
+where \(\matr{Q}\) is the transition matrix among the transient states and \(\matr{I}\) is an identity matrix for the absorbing states.
+The \emph{fundamental matrix} \(\matr{N}\) is
+\[
+\matr{N}=(\matr{I}-\matr{Q})^{-1}
+\]
+Its \((i,j)^\text{th}\) entry \(N_{ij}\) is the expected number of visits to state \(j\) starting from state \(i\) before absorption occurs.
+The matrix \(\matr{N} \matr{R}\) gives absorption probabilities into each absorbing state.
+
+
+\subsection{Branching Processes}\label{subsec:branching}
+Branching processes model how populations evolve when each individual reproduces independently of others. The canonical example:
+\begin{definition}[Galton-Watson Process]\label{def:GW}
+Let $Z_0=1$. Each individual in generation $n$ produces a random number of offspring in generation $n+1$ according to a fixed distribution $\left\{P_k\right\}_{k=0}^{\infty}$. Formally,
+$$
+Z_{n+1}=\sum_{i=1}^{Z_n} X_{n, i}
+$$
+where $X_{n, i}$ are i.i.d. with $\Prob(X_{n, i}=k)=P_k$.
+\end{definition}
+One key question is whether the population eventually dies out (i.e., hits $Z_n=0$ for some $n$ ). 
+Define the generating function
+$$
+f(s)=\sum_{k=0}^{\infty} P_k s^k
+$$
+Then the extinction probability $\pi_0$ is a fixed point of $f$, i.e., $\pi_0$ satisfies $\pi_0=f(\pi_0)$.
+
+
+
+\section{Counting Processes}\label{sec:counting}
+Poisson processes are a fundamental concept in stochastic modeling, providing a rigorous mathematical framework for understanding events that occur randomly in time or space. 
+Arrival times and counting processes (such as Poisson processes) find applications in a myriad of contexts, each with its own set of challenges and implications.
+
+\begin{definition}[Counting Process]\label{def:counting}
+  A counting process \(\{N(t)\}\), where \(t \ge 0\), is a stochastic process (Definition \ref{def:stochastic}) that represents the total number of events that have occured up to time \(t\).
+  The function \(N(t)\) satisfies the following properties:
+  \begin{itemize}[before={\parskip = 0em}, nosep]
+    \item \(N(0) = 0\) (initial condition)
+    \item \(N(t)\) is integer-valued for all \(t \ge 0\)
+    \item \(N(t)\) is non-decreasing: \(t_1 < t_2 \implies N(t_1) \leq N(t_2)\)
+    \item \(N(t)\) is right-continuous: \(\lim_{t \to t_0^+} N(t) = N(t_0)\) \qedhere
+  \end{itemize}
+\end{definition}
+\pagebreak[2]
+
+
+\begin{figure}[ht]
+  \newcommand{\leftrightcontcolor}{black}
+  \centering
+  \captionsetup[subfigure]{labelformat=empty}
+  \subfloat[right‐continuous]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$t$},ylabel={$f(t)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$t_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+  \hspace{2em}
+  \subfloat[left‐continuous]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$t$},ylabel={$f(t)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$t_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+\end{figure}
+
+A counting process counts the number of times a certain event has occurred by any given time \(t\). 
+The count starts at zero and can only increase as time moves forward.
+
+\begin{theorem}[Convergence of Binomial to Poisson]\label{thm:binomial_to_poisson}
+  Let \(X\) be the number of events in a time interval \(T\) divided into \(n\) smaller intervals of length \(\Delta t =\frac{T}{n}\).
+  % We are interested in counting the number of occurrences of a particular event within each small time interval $\Delta t$.
+  If each interval has a success probability \(p=\lambda \Delta t\), then as \(n \to \infty\) with \(n \Delta t = T\) fixed,
+  \[
+  \lim_{n \to \infty} \Prob(X=k) = \frac{(\lambda T)^k}{k!} e^{-\lambda T}
+  \]
+  Hence, \(X\) converges to a Poisson distribution with parameter \(\lambda T\).
+\end{theorem}
+\begin{proof}
+Initially, let us model this as a Bernoulli process. 
+In each small time interval $\Delta t$, the event can either occur with probability $p$ or not occur with probability $1-p$:
+$$
+\Prob(\text{Event occurs in } \Delta t)=p, \quad \Prob(\text{Event does not occur in } \Delta t)=1-p
+$$
+For large $n$ and small $\Delta t$, we can relate $p$ to a rate parameter $\lambda$ by
+$$
+p=\lambda \Delta t
+$$
+Let $X$ be the number of events that occur in the entire interval $[0, T]$. 
+The variable $X$ is a sum of $n$ independent Bernoulli random variables, each with success probability $p$. 
+Thus,
+$$
+X \sim \operatorname{Binomial}(n, p)
+$$
+The probability of observing exactly $k$ events in $T$ is
+$$
+\Prob(X=k)=\binom{n}{k} p^k(1-p)^{n-k}
+$$
+Substituting $p=\lambda \Delta t$, we get
+$$
+\Prob(X=k)=\binom{n}{k}(\lambda \Delta t)^k(1-\lambda \Delta t)^{n-k}
+$$
+As $n \rightarrow \infty$ (and hence $\Delta t \rightarrow 0$ while $n \Delta t=T$ remains constant), the binomial distribution converges to a Poisson distribution (see Section \ref{sec:distributions}).
+\end{proof}
+\[
+\begin{aligned}
+\Prob(X = k) &= \binom{n}{k}\,(\lambda\Delta t)^k\,(1-\lambda\Delta t)^{n-k}\\
+            &= \frac{n(n-1)\cdots(n-k+1)}{k!}
+               \left(\frac{\lambda T}{n}\right)^k
+               \left(1-\frac{\lambda T}{n}\right)^{\,n-k}\\[4pt]
+            &= \frac{(\lambda T)^k}{k!}\,
+               \left(1-\frac{\lambda T}{n}\right)^{n}\!
+               \prod_{j=0}^{k-1}\!\left(1-\frac{j}{n}\right).
+\end{aligned}
+\]
+
+As \(n\to\infty\) (so \(\Delta t = T/n \to 0\)),
+\[
+\left(1-\frac{\lambda T}{n}\right)^{n}\;\longrightarrow\;e^{-\lambda T},
+\qquad
+\prod_{j=0}^{k-1}\left(1-\frac{j}{n}\right)\;\longrightarrow\;1,
+\]
+hence
+\[
+\lim_{n\to\infty}\Prob(X=k)\;=\;\frac{(\lambda T)^k}{k!}\,e^{-\lambda T},
+\]
+which is the probability mass function of a \(\operatorname{Poisson}(\lambda T)\) random variable. \qedhere
+  
+
+\subsection{Poisson Process}\label{subsec:poisson}
+models scenarios where events occur randomly in continuous time (or space) at a certain average rate.
+
+\begin{definition}[Homogeneous Poisson Process]\label{def:homogeneous_poisson}
+  A homogeneous Poisson process is a counting process \(N(t)\) with the following properties:
+  \begin{itemize}[before={\parskip = 0em}, nosep]
+    \item \(N(0) = 0\)
+    \item increments are independent
+    \item \(\numof \text{events}\) in an interval of length \(t\) is Poisson with mean \(\lambda t\) \qedhere
+  \end{itemize}
+\end{definition}
+
+A crucial insight is that the waiting times between successive events in a homogeneous Poisson process are exponentially distributed with parameter \(\lambda\).
+This impplies that the Poisson process also has the memoryless property, meaning that the time until the next event occurs does not depend on how much time has already passed since the last event (see Theorem \ref{thm:memoryless}).
+
+\begin{theorem}[Exponential Waiting Times]\label{thm:exp_waiting_times}
+  The waiting time \(T\) until the first event is exponentially distributed:
+  \[
+  \Prob(T \leq t) = 1 - e^{-\lambda t} \qedhere
+  \]
+\end{theorem}
+
+\begin{theorem}[Memoryless Property]\label{thm:memoryless}
+  For an exponentially distributed waiting time \(T\),
+  \[
+  \Prob(T > s + t \mid T > s) = \Prob(T > t)
+  \]
+  and hence the underlying Poisson process is memoryless.
+\end{theorem}
+
+In many real-world settings, the rate of arrival \(\lambda(t)\) varies over time.
+A \emph{non-homogeneous Poisson process} generalizes the basic Poisson framework by allowing \(\lambda(t)\) to be a function of \(t\).
+Then:
+\begin{itemize}[before={\parskip = 0em}, nosep]
+  \item \(\{N(t)\}\) still has independent increments
+  \item \(\numof \text{events}\) in \([s, t]\) is Poisson with mean \(\int_s^t \lambda(u) \dif u\)
+\end{itemize}
+
+
+\subsection{Birth-Death Process}\label{subsec:birth-death}
+classic family of continuous-time Markov chains often used to model population dynamics.
+Let \(N(t)\) be the population at time \(t\). 
+Suppose \(\lambda_n\) is the birth rate when the population is \(n\) and \(\mu_n\) is the death rate when the population is \(n\). 
+Define \(P_n(t) = \Prob(N(t)=n)\).
+The \emph{master equation} (or Kolmogorov forward equation) reads:
+\[
+\frac{\dif P_n(t)}{\dif t} = \lambda_{n-1} P_{n-1}(t) - (\lambda_n + \mu_n) P_n(t) + \mu_{n+1} P_{n+1}(t)
+\]
+Such processes can be simulated (see \ref{subsec:gillespie}) or analyzed theoretically for their steady-state behavior.
+
+\subsection{Gillepsie Algorithm}\label{subsec:gillespie}
+
+The Gillespie algorithm (also known as the \emph{stochastic simulation algorithm}) is widely used for simulating discrete-event systems, particularly chemical reaction networks. 
+It can also be applied to birth-death processes, queueing systems, and any scenario where events occur randomly in continuous time with state-dependent rates.
+
+\begin{algorithm}
+  \caption{Gillespie Stochastic Simulation Algorithm}
+  \begin{algorithmic}[1]
+    \State \textbf{Input:} initial time $t_0$, state $\vect{X}_0$, final time $T$
+    \State $t \gets t_0$ and $\vect{X} \gets \vect{X}_0$
+    \While{$t < T$}
+      \State $a_0\big(\vect{X}\big) \gets \sum_{j=1}^M a_j\big(\vect{X}\big)$
+      % \If{$a_0 = 0$}
+      %   \State \textbf{break}  \Comment{No more reactions possible}
+      % \EndIf
+      \State Draw $r_1, r_2 \sim \mathrm{U}(0,1)$
+      \State $\tau \gets (a_0(\vect{X}))^{-1} \ln\bigl(\frac{1}{r_1}\bigr)$ \Comment{determine next jump}
+      \State $\mu \gets \min \bigl\{n \mid r_2 a_0(\vect{X}) \leq \sum_{i=1}^n a_i(\vect{X})\bigr\}$ \Comment{determine next reaction}
+      \State $\vect{X}\gets \vect{X} + \vect{\nu}_\mu$ and $t \gets t + \tau$
+    \EndWhile
+    \State \Return $\vect{X}$
+  \end{algorithmic}
+  \end{algorithm}
+
+
+\section{Stochastic Diffusion Processes}\label{sec:diffusion}
+
+
+\subsection{Brownian Motion}\label{subsec:brownian}
+
+
+\subsection{Stochastic Differential Equations}\label{subsec:sde}
+
+
+\subsection{Fokker-Planck Equation}\label{subsec:fp}
+
+
+
+
+
+\section{Stochastic Optimization}\label{sec:optimization}
+
+
+\section{Statistical Learning and Stochastic Inference}
+\label{sec:statistical_learning}
+
+\begin{definition}[Program]\label{def:program}
+A program is a triple $\left(M, \theta, P_{\varepsilon}\right)$ where
+$$
+M: I \times \Omega \rightarrow O \quad \text { (deterministic map) }, \quad \theta \in \Theta \quad \text { (parameters) }, \quad \varepsilon \sim P_{\varepsilon} \quad \text { (randomness) }
+$$
+where $I$ is the input space, $O$ is the output space, and $\Omega$ is the parameter space.
+
+So that for input $X=x$,
+$$
+Y=M_\theta(x, \varepsilon), \quad Y \mid X=x \sim p_\theta(\cdot \mid x)
+$$
+\end{definition}
+
+
+\begin{itemize}
+\item Estimation
+\item Prediction
+\end{itemize}
+machine learning mostly focused on prediction (black box)
+
+
+
+\subsection{Maximum Likelihood Estimation}\label{subsec:MLE}
+
+
+
+\subsection{Bootstrapping}\label{subsec:bootstrapping}
+\begin{definition}[Bootstrap]\label{def:bootstrap}
+  Given data \(\vect{X} = (X_1, \ldots, X_n)\) and an estimator \(\hat{\theta} = t (X_1, \ldots, X_n)\)
+  \begin{enumerate}
+  \item For \(b=1,\ldots,B\), draw a bootstrap sample \(X_1^{*(b)}, \ldots, X_n^{*(b)}\) by sampling with replacement from \(\{X_i\}\)
+  \item Compute the bootstrap estimate \(\hat{\theta}^{*(b)} = t(X_1^{*(b)}, \ldots, X_n^{*(b)})\)
+  \end{enumerate}
+The empirical distribution of \(\{\hat{\theta}^{*(b)}\}^B_{b=1}\) approximates the sampling distribution of \(\hat{\theta}\).
+\end{definition}
+
+The bootstrap standard error is estimated as:
+$$
+\widehat{\mathrm{SE}}_{\mathrm{boot}}=\sqrt{\frac{1}{B-1} \sum_{b=1}^B\left(\hat{\theta}^{*(b)}-\overline{\hat{\theta}^*}\right)^2}, \quad \overline{\hat{\theta}^*}=\frac{1}{B} \sum_{b=1}^B \hat{\theta}^{*(b)}
+$$
+
+Several methods exist for constructing bootstrap confidence intervals:
+
+
+
+\section{Important Distributions}
+\label{sec:distributions}
+
+% Column types as before
+\newcolumntype{M}[1]{>{\rule[-15pt]{0pt}{36pt}}m{#1}}
+\newcolumntype{H}[1]{>{\arraybackslash\rule[-1ex]{0pt}{3.5ex}}m{#1}}
+
+
+\begin{table}[ht]
+\begin{tabular}{|M{2.2cm}|M{8.8cm}|M{1.6cm}|M{1.6cm}|}
+\hline
+\multicolumn{1}{|H{2.2cm}|}{\textbf{Notation}} &
+\multicolumn{1}{H{8.8cm}|}{\textbf{PDF/PMF}} &
+\multicolumn{1}{H{1.6cm}|}{\textbf{Exp.}} &
+\multicolumn{1}{H{1.6cm}|}{\textbf{Var.}} \\
+% double line
+\hhline{|=|=|=|=|}
+
+\( \mathrm{Unif}(a, b) \) & \( f(x) = \dfrac{1}{b - a}, \quad a \leq x \leq b \) & \( \dfrac{a + b}{2} \) & \( \dfrac{(b - a)^2}{12} \) \\
+\hline
+
+\( \mathrm{Bern}(p) \) & \( f(k) = p^k (1 - p)^{1 - k}, \quad k = 0, 1 \) & \( p \) & \( p(1 - p) \) \\
+\hline
+
+\( \mathrm{Bin}(n, p) \) & \( f(k)= \dbinom{n}{k} p^k (1 - p)^{n - k}, \quad k = 0, \dots, n \) & \( np \) & \( np(1 - p) \) \\
+\hline
+
+\( \mathrm{Geom}(p) \) & \( f(k) = p (1 - p)^{k - 1}, \quad k = 1, 2, \dots \) & \( \dfrac{1}{p} \) & \( \dfrac{1 - p}{p^2} \) \\
+\hline
+
+\( \mathrm{Pois}(\lambda) \) & \( f(k) = \dfrac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, \dots \) & \( \lambda \) & \( \lambda \) \\
+\hline
+
+\( \mathrm{Exp}(\beta) \) & \( f(x) = \dfrac{1}{\beta} e^{-x/\beta}, \quad x \geq 0 \) & \( \beta \) & \( \beta^2 \) \\
+\hline
+
+\( \mathrm{N}(\mu, \sigma^2) \) & \( f(x) = \dfrac{1}{\sqrt{2\pi \sigma^2}} \exp\left({-\dfrac{1}{2}\dfrac{(x - \mu)^2}{\sigma^2}} \right)\) & \( \mu \) & \( \sigma^2 \) \\
+\hline
+
+\( \mathrm{N}_d(\vect{\mu}, \matr{\Sigma}) \) & \( f(\vect{x}) = \dfrac{1}{\sqrt{(2\pi)^{d} |\matr{\Sigma}|}} \exp\left({-\dfrac{1}{2}(\vect{x} - \vect{\mu})^\top \matr{\Sigma}^{-1} (\vect{x} - \vect{\mu})} \right)\) & \( \vect{\mu} \) & \( \matr{\Sigma} \) \\
+\hline
+
+\end{tabular}
+\end{table}
+
+
+
+\section{Exercises}
+\subsection{Week 2}
+\subsubsection{From Binomial to Poisson}
+Let $X_n \sim \operatorname{Bin}(n, p)$ be a binomial random variable with parameters $n$ and $p$. 
+Define $\lambda=n p$ and consider the limit as $n \rightarrow \infty$ while $p \rightarrow 0$ in such a way that $\lambda$ remains constant. 
+Show that the probability mass function of $X_n$ converges to the Poisson distribution with mean $\lambda$.
+\paragraph{Answer:}
+Let $X_n \sim \operatorname{Bin}(n, p)$ with
+$$
+P\left(X_n=k\right)=\binom{n}{k} p^k(1-p)^{n-k}
+$$
+Define $\textcolor{red}{\lambda=n p}$ and set $p=\lambda / n$. Then,
+$$
+P\left(X_n=k\right)=\binom{n}{k}\left(\frac{\lambda}{n}\right)^k\left(1-\frac{\lambda}{n}\right)^{n-k} .
+$$
+We now take the limit as $n \rightarrow \infty$ with $\lambda$ fixed and $k$ fixed.
+First, express the binomial coefficient as
+$$
+\binom{n}{k}=\frac{n(n-1) \cdots(n-k+1)}{k!} .
+$$
+For fixed $k$, as $n \rightarrow \infty$, each factor $n-i$ (for $i=0,1, \ldots, k-1$ ) behaves like $n$, so
+$$
+\lim _{n \rightarrow \infty}\binom{n}{k}\left(\frac{\lambda}{n}\right)^k=\lim _{n \rightarrow \infty} \frac{n(n-1) \cdots(n-k+1)}{k!} \cdot \frac{\lambda^k}{n^k}=\frac{\lambda^k}{k!} .
+$$
+Next, consider the term $\left(1-\frac{\lambda}{n}\right)^{n-k}$. We can write:
+$$
+\left(1-\frac{\lambda}{n}\right)^{n-k}=\left(1-\frac{\lambda}{n}\right)^n\left(1-\frac{\lambda}{n}\right)^{-k}
+$$
+Taking the limit as $n \rightarrow \infty$ :
+$$
+\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}
+$$
+by the standard limit $\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}$. Also, for fixed $k$,
+$$
+\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{-k}=1
+$$
+Combining these, we have
+$$
+\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{n-k}=e^{-\lambda}
+$$
+Thus, putting the pieces together,
+$$
+\lim _{n \rightarrow \infty} P\left(X_n=k\right)=\frac{\lambda^k}{k!} e^{-\lambda}
+$$
+This is exactly the probability mass function of a Poisson random variable with mean $\lambda$.
+
+\subsubsection{From Poisson to Exponential}
+Consider a Poisson process with rate $\lambda$, where $N(t) \sim \operatorname{Poisson}(\lambda t)$ represents the number of events occurring in time $t$. Let $T$ be the waiting time until the first event, defined as
+$$
+T=\inf \{t>0 \mid N(t) \geq 1\}
+$$
+Show that the probability of no events occurring in $[0, t]$ is given by $P(T>t)=e^{-\lambda t}$, and conclude that $T \sim \operatorname{Exp}(\lambda)$.
+\paragraph{Answer:}
+Consider a Poisson process with rate $\lambda$. The number of events in a time interval of length $t$ is distributed as $N(t) \sim$ Poisson $(\lambda t)$. The waiting time $T$ until the first event is given by
+$$
+P(T>t)=P(\text { no events in }[0, t])=P(N(t)=0)=e^{-\lambda t}
+$$
+Since the survival function of an exponential distribution with rate $\lambda$ is $e^{-\lambda t}$, it follows that
+$$
+T \sim \operatorname{Exp}(\lambda) .
+$$
+
+
+
+\subsection{Quiz 8}
+
+\begin{tikzpicture}[x=2cm,y=1cm]
+  % axes
+  \draw[->] (0,-2) -- (3.5,-2) node[below right] {$t$};
+  \foreach \x in {0,1,2,3} {
+    \draw (\x,-1.95) -- (\x,-2.05) node[below] {\small \x};
+  }
+
+  % heavy line style
+  \tikzset{heavy/.style={line width=2pt}}
+
+  % coordinates of branching points
+  \coordinate (O) at (0,0);
+  \coordinate (A) at (1,0);
+  \coordinate (B) at (2,0.5);
+  \coordinate (C) at (3,0.8);
+  \coordinate (D) at (3,0.3);
+  \coordinate (E) at (3,-1);
+
+  % main trunk and branches
+  \draw[heavy] (O) -- (A);
+  % first split at t=1
+  \draw[heavy] (A) -- (B);
+  \draw[heavy] (A) -- (E);
+  % second split at t=2
+  \draw[heavy] (B) -- (C);
+  \draw[heavy] (B) -- (D);
+\end{tikzpicture}
+
+\(\lambda\): birth rate\\
+\(\mu\): death rate
+ 
+
+first part: 2 processes\\
+\(
+\Delta t = \min\{\Delta t_1, \Delta t_2\} \sim \mathrm{Exp}(\lambda + \mu)
+\)
+
+then between first and second part: probability of having a birth\\
+\(\frac{\lambda}{\lambda + \mu}\)
+
+
+second part: 4 processes
+
+
+
+
+complete likelihood:
+\[
+(\lambda + \mu) \cdot e^{-(\lambda + \mu) \Delta t_1} \cdot \frac{\lambda}{\lambda + \mu} \cdot 2 (\lambda + \mu) \cdot e^{-2(\lambda + \mu) \Delta t_2} \cdot \frac{\lambda}{2 (\lambda + \mu)} \cdot e^{-3(\lambda + \mu) \Delta t_3}
+\]
+\[
+= 
+\]
+
+\[
+L
+= \lambda(1)\,\lambda(2)\;\times\;\mu(2.5)\,\bigl[\mu(3)\bigr]^2
+\;\times\;
+\exp\Biggl\{\;-\Bigl[\,
+\underbrace{\int_{0}^{1}1\,[\lambda+\mu]\,dt}_{\text{one lineage}}
+\;+\;\underbrace{\int{1}^{2}2\,[\lambda+\mu]\,dt}_{\text{two lineages}}
+\;+\;\underbrace{\int{2}^{2.5}3\,[\lambda+\mu]\,dt}_{\text{three lineages}}
+\;+\;\underbrace{\int{2.5}^{3}2\,[\lambda+\mu]\,dt}_{\text{two lineages}}
+\,\Bigr]\Biggr\}.
+\]
+
+
+
+\subsection{Quiz 10}
+
+\begin{align*}
+\mathcal{L}(\tau)
+&=
+\bigl(\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)\bigr)
+e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
+\;\frac{\lambda\bigl(X^{(A)}_{t_1}\bigr)}
+      {\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)}
+\\
+&\times
+\bigl(\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
+     +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)\bigr)
+\\
+&\times
+     e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
++\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
+\\
+&\times
+\frac{\lambda\bigl(X^{(B)}_{t_2}\bigr)}
+      {\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
+       +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)}
+\\
+&\times
+\bigl(\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
+     +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
+     +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)\bigr)
+\\
+&\times
+     e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
++\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
++\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+\\
+&
+\times
+\frac{\mu\bigl(X^{(C)}_{t_3}\bigr)}
+     {\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
+      +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
+      +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)}
+\\
+&\times
+e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
++\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+\end{align*}
+This simplifies to:
+\begin{align*}
+\mathcal{L}(\tau)
+  &=
+e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
+\cdot
+\lambda\bigl(X^{(A)}_{t_1}\bigr)
+\\
+&\times
+     e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
++\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
+\cdot
+\lambda\bigl(X^{(B)}_{t_2}\bigr)
+\\
+&\times
+     e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
++\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
++\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+\cdot
+\mu\bigl(X^{(C)}_{t_3}\bigr)
+\\
+&\times
+e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
++\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}.
+\end{align*}
+
+
+
+
+\end{document}

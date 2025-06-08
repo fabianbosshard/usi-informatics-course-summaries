@@ -1,0 +1,244 @@
+% \documentclass[twocolumn, a3paper, fontsize=9pt, headings=standardclasses, parskip=half]{scrartcl}
+% \documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half,twoside]{scrartcl} % for printing (twosided)
+\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half]{scrartcl}
+
+
+
+% \usepackage[automark]{scrlayer-scrpage}
+% \clearpairofpagestyles
+% \ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+% % \pagestyle{scrheadings}
+
+\usepackage{scrlayer-scrpage}
+\clearpairofpagestyles
+\ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+% \pagestyle{scrheadings}
+
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+% \usepackage[dvipsnames, table]{xcolor} % causes problem with the red \ddots in the cantor's diagonal argument
+\usepackage[dvipsnames]{xcolor}
+
+
+\usepackage[left=43mm, right=43mm, top=20mm, bottom=30mm]{geometry} % for A4
+% \usepackage[left=25mm, right=25mm, top=25mm, bottom=40mm]{geometry} % for A3
+% \usepackage{showframe}
+
+
+% float management ------------------------------------------------
+\usepackage{float}
+\usepackage{placeins} 
+\usepackage{etoolbox}
+
+% \makeatletter
+%   % single-column floats
+%   \def\fps@figure {htb} 
+%   \def\fps@table  {htb}
+
+%   % double-column floats
+%   \def\fps@figure*{htb} 
+%   \def\fps@table* {htb}
+% \makeatother
+
+\preto\subsection{\FloatBarrier}
+\preto\subsubsection{\FloatBarrier} 
+
+\setcounter{topnumber}    {8}
+\setcounter{bottomnumber} {8}
+\setcounter{totalnumber}  {20}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\floatpagefraction}    {1.0}
+\renewcommand{\dblfloatpagefraction} {1.0}
+
+% On a float‐only page, kill the default “centered” glue
+\makeatletter
+  \setlength{\@fptop}{0pt} % no extra space above
+  \setlength{\@fpsep}{\floatsep} % between floats: same as \floatsep
+  \setlength{\@fpbot}{0pt plus 1fil} % infinite stretch below, so floats are pushed up
+\makeatother
+% ----------------------------------------------------------------
+
+
+% \newlength\tindent
+% \setlength{\tindent}{\parindent}
+% \setlength{\parindent}{0pt}
+% \renewcommand{\indent}{\hspace*{\tindent}}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\allowdisplaybreaks[4] 
+
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+
+
+
+\usepackage{pifont}
+\usepackage{marvosym}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{ragged2e} 
+\usepackage{hhline}
+\newcommand{\tightaligned}[1]{%
+  % local group so the change doesn't leak out
+  {\setlength{\jot}{0.0ex}%  ← choose any small value you like
+  \begin{aligned}
+     #1
+   \end{aligned}}%
+}
+
+
+\usepackage{xparse}
+\usepackage{calc}   % for \heightof
+\usepackage{tikz}
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, backgrounds, chains, svg.path, decorations.markings}
+\usepackage{forest}
+\usepackage{tikz-3dplot}
+\usepackage{tikz-cd}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\tikzset{restore nodes from file,} % Load in the saved node information from previous runs.
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+
+\usepackage{thmtools}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ding{45},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition]{definition}
+\declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example]{example}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark]{remark}
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=6pt,spacebelow=6pt,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression]{digression}
+\let\proof\relax
+\let\endproof\relax
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+\declaretheorem[
+  style=proofstyle,
+  name=Proof,
+  numbered=no
+]{proof}
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+\usepackage{algorithm}
+\usepackage[italicComments=false]{algpseudocodex}
+
+
+
+
+% notation makros ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% \newcommand{\contradiction}{\; \: \text{\textcolor{red}{\Lightning}}}
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+\newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\vec{{#1}}\,}
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+\newcommand{\blackheight}{\operatorname{bh}}
+
+% \algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+\newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+
+
+\newcommand{\BC}{\textbf{Base case.}}
+\newcommand{\IH}{\textbf{Induction hypothesis.}}
+\newcommand{\IS}{\textbf{Induction step.}}
+
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{refs.bib}
+
+
+% \usepackage[colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black]{hyperref}
+\usepackage[
+  colorlinks=false,        % don't wrap links in a colour
+  pdfborder={0 0 0}        % no border around links
+]{hyperref}
+\usepackage{cleveref}
+
