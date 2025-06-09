@@ -2582,16 +2582,16 @@ The complexity for different operations is summarized in the following table.
 \centering
 \begin{tabular}{l C @{\hspace{10pt}} C}
 \toprule
-\textbf{Task}                                             & \multicolumn{2}{c}{\textbf{Representation}} \\
-&                             {Adjacency List} &                                                        {Adjacency Matrix}\\
+\textbf{Operation}                                             & \multicolumn{2}{c}{\textbf{Representation}}                                                                           \\
+&                             {Adjacency List} &                                                              {Adjacency Matrix}                                                       \\
 \midrule
-accessing vertex $u$ &        \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal} &                          \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                    \\
+accessing vertex $u$ &        \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal} &                          \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                     \\
 \addlinespace[2pt]
 iteration through $V$ &       \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|)$\\optimal} &                  \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|)$\\optimal}             \\
 \addlinespace[2pt]
 iteration through $E$ &       \cellcolor{Yellow!\mixcolor}\makecell{$\Theta(|V|+|E|)$\\okay (not optimal)} &  \cellcolor{Red!\mixcolor}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
 \addlinespace[2pt]
-checking $(u,v)\in E$ &       \cellcolor{Red!\mixcolor}\makecell{$O(|V|)$\\bad} &                             \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                    \\
+checking $(u,v)\in E$ &       \cellcolor{Orange!\mixcolor}\makecell{$O(|V|)$\\bad} &                             \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}                     \\
 \addlinespace[2pt]
 space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|E|)$\\optimal} &              \cellcolor{Red!\mixcolor}\makecell{$\Theta(|V|^{2})$\\possibly very bad} \\
 \bottomrule
@@ -2600,24 +2600,19 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 
 
 
-For a graph \(G=(V,E)\) with source \(s\) we define the predecessor subgraph of \(G\) as \(G_\pi=(V_\pi,E_\pi)\) where
-\[
-V_\pi = \{v\in V\mid v.\pi \neq \nil \} \cup \{s\}
-\]
-and
-\[
-E_\pi = \{(v.\pi,v)\mid v\in V_\pi \setminus \{s\}\}
-\]
+\subsection{Graph Traversals} \label{sec:graph-traversals}
 
-For depth-first search we define the predecessor subgraph as \(G_\pi=(V,E_\pi)\), where
-\[
-E_\pi = \{(v.\pi,v)\mid v\in V \AND v.\pi \neq \nil\}
-\]
-It is a forest.
 
-\subsubsection{Graph Traversals} \label{sec:graph-traversals}
 
-\begin{algorithm}[H]
+\subsubsection{Breadth-First Search}
+\label{subsubsec:bfs}
+
+\nameref{alg:bfs} is one of the simplest but also a fundamental algorithm, as it is the archetype of many important algorithms.
+% It explores the graph, touching all vertices that are reachable from the source vertex \(s\) at an increasing edge distance from \(s\).
+% It computes the distance of each vertex \(v\) from the source \(s\) and produces a breadth-first tree $G_{\pi}$ rooted at \(s\).
+
+
+\begin{algorithm}[h]
 \caption{Breadth-First Search}\label{alg:bfs}
 \begin{algorithmic}[1]
 \Function{BFS}{$G=(V,E),\,s$} \Comment{\(s\) is the source}
@@ -2626,11 +2621,11 @@ It is a forest.
   \EndFor
   % \State Initialize $\attrib{v}{color}\gets\white$, $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
   \State $\attrib{s}{color},\attrib{s}{distance},\attrib{s}{\pi}\gets \gray,0,\nil$
-  \State $Q\gets\emptyset$ \Comment{queue for vertices to visit}
+  \State $Q\gets\emptyset$ \Comment{initialize empty queue for vertices to visit}
   \State \Call{Enqueue}{$Q,s$}
-  \While{$Q\neq\emptyset$}
+  \While{$Q\neq\emptyset$} \label{alg:bfs:dequeue-while}
     \State $u\gets$ \Call{Dequeue}{$Q$}
-    \ForAll{$v\in\Gamma(u)$}
+    \ForAll{$v\in\Gamma(u)$} \label{alg:bfs:inner-loop}
       \If{$\attrib{v}{color}=\white$}
         \State $\attrib{v}{color}\gets\gray$
         \State $\attrib{v}{distance}\gets\attrib{u}{distance}+1$
@@ -2644,139 +2639,256 @@ It is a forest.
 \end{algorithmic}
 \end{algorithm}
 
-BFS constructs the breadth-first tree $G_{\pi}$ and records
-$\attrib{v}{distance}=\delta(s,v)$.
-Running time: $\Theta(|V|+|E|)$.
+We enqueue a vertex only if is $\white$, and we immediately color it $\gray$; thus, we enqueue every vertex at most once.
+So the (dequeue) while loop at Line \ref{alg:bfs:dequeue-while} executes \(O(|V|)\) times.
+For each vertex \(u\), the inner loop at Line \ref{alg:bfs:inner-loop} executes \(\Theta(|\Gamma(u)|)\) times, for a total of \(O(|E|)\) steps.
+Thus, the total running time is \(O(|V| + |E|)\).
+
+% \begin{definition}[Shortest-Path Distance]\label{def:shortest-path-distance}
+The minimum number of edges in any path from \(s\) to \(v\) is called the shortest-path distance from \(s\) to \(v\) and is denoted by \(\delta(s,v)\).
+If there is no path from \(s\) to \(v\), then \(\delta(s,v) = \infty\).
+% \end{definition}
+We define the predecessor subgraph as \(G_\pi=(V_\pi,E_\pi)\) where
+\[
+V_\pi = \{v\in V\mid v.\pi \neq \nil \} \cup \{s\}
+\]
+and
+\[
+E_\pi = \{(v.\pi,v)\mid v\in V_\pi \setminus \{s\}\}
+\]
+The predecessor subgraph \(G_\pi\) is a \emph{breadth-first tree} if \(V_\pi\) consists of all vertices reachable from \(s\) and, for all \(v\in V_\pi\), the subgraph \(G_\pi\) contains a unique simple path from \(s\) to \(v\) that is also a shortest path from \(s\) to \(v\) in \(G\).
+
+\nameref{alg:bfs} constructs \(\pi\) so that the predecessor subgraph \(G_\pi = (V_\pi,E_\pi)\) is a breadth-first tree rooted at \(s\).
+Upon termination, \(\attrib{v}{distance} = \delta(s,v)\) for all \(v\in V\).
+For any vertex \(v\) reachable from \(s\), the simple path in the breadth-first tree \(G_\pi\) from \(s\) to \(v\) corresponds to a shortest path (that is, a path containing the smallest number of edges) from \(s\) to \(v\) in the original graph \(G\).
+
+Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we can print the shortest path from \(s\) to \(v\) using (the recursive) Algorithm~\ref{alg:print_shortest_path}.
+\begin{algorithm}[h]
+\caption{Print Shortest Path}\label{alg:print_shortest_path}
+\begin{algorithmic}[1]
+\Function{PrintPath}{$G=(V,E),s,v$}
+  \If{$v=s$}
+    \State \Call{Print}{$s$}
+  \ElsIf{$\attrib{v}{\pi}=\nil$}
+    \State \Call{Print}{``No path exists''}
+  \Else
+    \State \Call{PrintPath}{$G,s,\attrib{v}{\pi}$}
+    \State \Call{Print}{$v$}
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 
-\begin{algorithm}[H]
+\subsubsection{Depth-First Search}
+\label{subsubsec:dfs}
+
+As its name implies, \nameref{alg:dfs} searches ``deeper'' in the graph whenever possible.
+\nameref{alg:dfs} explores edges out of the most recently discovered vertex \(v\) that still has unexplored edges leaving it.
+Once all of \(v\)'s edges have been explored, the search \emph{backtracks} to explore edges leaving the vertex from which \(v\) was discovered.
+This process continues until all vertices that are reachable from the original source vertex have been discovered.
+If any undiscovered vertices remain, then \nameref{alg:dfs} selects one of them as a new source, repeating the search from that source.
+This process is repeated until every vertex has been discovered.%
+\footnote{Although \nameref{alg:bfs} could proceed from multiple sources and \nameref{alg:dfs} could be limited to one source source, the approach here reflects how they are typically used. 
+\nameref{alg:bfs} usually serves to find shortest-path distances and the associated predecessor subgraph fro a given source, while \nameref{alg:dfs} is often a subroutine in another algorithm.}
+
+\begin{algorithm}[h]
 \caption{Depth-First Search}\label{alg:dfs}
 \begin{algorithmic}[1]
 \Function{DFS}{$G=(V,E)$}
-  \State Initialize $\attrib{v}{color}\gets\white$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-  \State $T\gets 0$
-  \ForAll{$v\in V$}
-    \If{$\attrib{v}{color}=\white$} \Call{DFS-Visit}{$v$} \EndIf
+  \ForAll{$u\in V$}
+    \State $\attrib{u}{color},\attrib{u}{\pi}\gets \white,\nil$
+  \EndFor
+  \State $T\gets 0$ \Comment{global time variable, for timestamps}
+  \ForAll{$u\in V$} \label{alg:dfs:for_all_vertices}
+    \If{$\attrib{v}{color}=\white$}
+      \State \Call{DFS-Visit}{$u$} \Comment{new tree in forest} \label{alg:dfs:new_tree}
+    \EndIf
   \EndFor
 \EndFunction
 
 \Function{DFS-Visit}{$u$}
-  \State $\attrib{u}{color}\gets\gray$
+  \State $\attrib{u}{color}\gets\gray$ \Comment{\(u\) has just been discovered} \label{alg:dfs:discover}
   \State $T\gets T+1$
-  \State $\attrib{u}{disc}\gets T$
-  \ForAll{$v\in\Gamma(u)$}
+  \State $\attribnormal{u}{d}\gets T$ \label{alg:dfs:discover_time}
+  \ForAll{$v\in\Gamma(u)$} \Comment{explore each edge leaving \(u\)} \label{alg:dfs:explore_edges}
     \If{$\attrib{v}{color}=\white$}
       \State $\attrib{v}{\pi}\gets u$
-      \State \Call{DFS-Visit}{$v$}
+      \State \Call{DFS-Visit}{$v$} \Comment{recursively visit \(v\) if it undiscovered} \label{alg:dfs:recursive_call}
     \EndIf
   \EndFor
-  \State $\attrib{u}{color}\gets\black$
+  \State $\attrib{u}{color}\gets\black$ \Comment{blacken \(u\); it is finished} \label{alg:dfs:finish}
   \State $T\gets T+1$
-  \State $\attrib{u}{finish}\gets T$
+  \State $\attribnormal{u}{f}\gets T$ \label{alg:dfs:finish_time}
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-DFS runs in $\Theta(|V|+|E|)$.
+Since \nameref{alg:dfs} always explores all vertices, we define the predecessor subgraph as \(G_\pi=(V,E_\pi)\), where
+\[
+E_\pi = \{(v.\pi,v)\mid v\in V \AND v.\pi \neq \nil\}
+\]
+It is a \emph{depth-first forest}, comprising several \emph{depth-first trees}.
 
-\subsubsection{Minimum Spanning Trees}
+Each vertex is initially white, is grayed when it is discovered in the search (Line~\ref{alg:dfs:discover}), and is blackened when it is finished, that is, when its neighborhood has been examined completely (Line~\ref{alg:dfs:finish}).
 
-For a connected, undirected, weighted graph \(G=(V,E,w)\) an MST is a subset
-of edges that connects all vertices with minimum total weight.
+Each vertex \(u\) has two timestamps: the first, \(\attribnormal{u}{d}\), records when \(u\) is first discovered (and grayed), and the second, \(\attribnormal{u}{f}\), records when the search finished examining \(u\)'s neighborhood (and blackens \(u\)).
+For each vertex \(u \in V\), we have
+\[
+\attribnormal{u}{d}, \attribnormal{u}{f} \in \{1, \ldots, 2|V|\} \quad \text{and} \quad \attribnormal{u}{d} < \attribnormal{u}{f} 
+\]
+since there is one discovery and one finishing event for each of the \(|V|\) vertices.
+\(u\) is \(\white\) before \(\attribnormal{u}{d}\), \(\gray\) between \(\attribnormal{u}{d}\) and \(\attribnormal{u}{f}\), and \(\black\) after \(\attribnormal{u}{f}\).
 
-\subsubsection{Kruskal}
+Upon every call of \Call{DFS-Visit}{$u$} in Line~\ref{alg:dfs:new_tree}, a new depth-first tree is created, rooted at \(u\).
+In each call \Call{DFS-Visit}{$u$}, \(u\) is initially \(\white\).
+Lines \ref{alg:dfs:explore_edges}--\ref{alg:dfs:recursive_call} examine each vertex \(v\) adjacent to \(u\) and recursively visit \(v\) if it is \(\white\).
 
-\begin{algorithm}[H]
-\caption{Kruskal}\label{alg:kruskal}
-\begin{algorithmic}[1]
-\Function{Kruskal}{$G=(V,E,w)$}
-  \State $T\gets\emptyset$
-  \State MakeSet$(v)$ for each $v\in V$
-  \ForAll{$(u,v)\in E$ in non-decreasing $w$-order}
-    \If{\Call{Find}{$u$}\,$\neq$\,\Call{Find}{$v$}}
-      \State $T\gets T\cup\{(u,v)\}$
-      \State \Call{Union}{$u,v$}
-    \EndIf
-  \EndFor
-  \State \Return $T$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
+The result depends on the order in which Line~\ref{alg:dfs:for_all_vertices} examines the vertices and upon the order in which Line~\ref{alg:dfs:explore_edges} visits the neighbors of \(u\).
+Usually, these different visiation orders tend not to cause problems, because many applications can use any of those.
 
-\subsubsection{Prim}
+We call \Call{DFS-Visit}{$u$} exactly once (either in Line~\ref{alg:dfs:new_tree} or recursively in Line~\ref{alg:dfs:recursive_call}) for each vertex \(u\), because we call it only if \(\attrib{u}{color}=\white\), but then we immediately set \(\attrib{u}{color}=\gray\) in Line~\ref{alg:dfs:discover}.
+The loop in Lines~\ref{alg:dfs:explore_edges}--\ref{alg:dfs:recursive_call} executes \(\Theta(|\Gamma(u)|)\) times.
+So, the total running time is $\Theta(|V|+|E|)$.
 
-\begin{algorithm}[H]
-\caption{Prim (binary heap)}\label{alg:prim}
-\begin{algorithmic}[1]
-\Function{Prim}{$G=(V,E,w),\,r$}
-  \State Initialize $\attrib{v}{key}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-  \State $\attrib{r}{key}\gets 0$
-  \State $Q\gets V$  \Comment{min-priority queue by \attrib{·}{key}}
-  \While{$Q\neq\emptyset$}
-    \State $u\gets$ \Call{ExtractMin}{$Q$}
-    \ForAll{$v\in\Gamma(u)$}
-      \If{$v\in Q$ and $w(u,v)<\attrib{v}{key}$}
-        \State $\attrib{v}{\pi}\gets u$
-        \State $\attrib{v}{key}\gets w(u,v)$
-        \State \Call{DecreaseKey}{$Q,v,\attrib{v}{key}$}
-      \EndIf
-    \EndFor
-  \EndWhile
-  \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
+\underline{Properties of the Depth-First Forest \(G_\pi\):}
+\begin{itemize}
+  \item \(v\) is a descendant of \(u\) \(\Longleftrightarrow\) \(v\) is discovered during the time in which \(u\) is gray
+  \item discovery and finish times have \emph{parenthesis structure}: if in \textsc{DFS-Visit} we printed `(u' when we discovered \(u\) and `u)' when we finished \(u\), then the printed expression would be well formed in the sense that the parentheses are properly nested
+  \item for any two vertices \(u_1\) and \(u_2\), exactly one of the following conditions holds
+    \begin{itemize}
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \cap [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}] = \emptyset\) \(\Longleftrightarrow\) neither is a descendant of the other
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \subset [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}]\) \(\Longleftrightarrow\) \(u_1\) is a descendant of \(u_2\)
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \supset [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}]\) \(\Longleftrightarrow\) \(u_2\) is a descendant of \(u_1\)
+    \end{itemize}
+  \item \(v\) is a descendant of \(u\) \(\Longleftrightarrow\) at the time \attribnormal{u}{d} that the search discovers \(u\), there is a path from \(u\) to \(v\) consisting entirely of white vertices
+\end{itemize}
 
-Both Kruskal and Prim run in $\Theta(|E|\log|V|)$ with binary heaps.
+\underline{Classification of Edges in \(E\):}
+% Each edge \((u,v) \in E\) is classified as one of the following:
+\begin{itemize}
+  \item \emph{tree edges} are edges \((u,v) \in E_\pi\) in the depth-first forest \(G_\pi\). \((u,v)\) is a tree edge if \(v\) was first discovered by exploring the edge \((u,v)\) in Line~\ref{alg:dfs:explore_edges}.
+  \item \emph{back edges} are edges \((u,v) \notin E_\pi\) connecting \(u\) to an ancestor \(v\) in the depth-first forest \(G_\pi\).
+  \item \emph{forward edges} are edges \((u,v) \notin E_\pi\) connecting \(u\) to a descendant \(v\) in the depth-first forest \(G_\pi\).
+  \item \emph{cross edges} are edges \((u,v) \notin E_\pi\) are all other edges.
+\end{itemize}
 
-\subsection{Single-Source Shortest Paths}
+A directed graph is acyclic if and only if a \nameref{alg:dfs} yields no back edges. 
+In a undirected graph, a \nameref{alg:dfs} yields only tree edges and back edges.
 
-\subsubsection{Dijkstra (non-negative weights)}
-
-\begin{algorithm}[H]
-\caption{Dijkstra}\label{alg:dijkstra}
-\begin{algorithmic}[1]
-\Function{Dijkstra}{$G=(V,E,w),\,s$}
-  \State Initialize $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-  \State $\attrib{s}{distance}\gets 0$
-  \State $Q\gets V$  \Comment{min-queue keyed by \attrib{·}{distance}}
-  \While{$Q\neq\emptyset$}
-    \State $u\gets$ \Call{ExtractMin}{$Q$}
-    \ForAll{$(u,v)\in E$}
-      \If{$\attrib{v}{distance}>\attrib{u}{distance}+w(u,v)$}
-        \State $\attrib{v}{distance}\gets\attrib{u}{distance}+w(u,v)$
-        \State $\attrib{v}{\pi}\gets u$
-        \State \Call{DecreaseKey}{$Q,v,\attrib{v}{distance}$}
-      \EndIf
-    \EndFor
-  \EndWhile
-  \State \Return $\bigl(\attrib{v}{distance}\bigr)_{v\in V}$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-Binary heap: $\Theta(|E|\log|V|)$; Fibonacci heap: $\Theta(|E|+|V|\log|V|)$.
-
-\subsection{Complexity Overview}
-
-\begin{center}\setlength{\tabcolsep}{8pt}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Algorithm} & \textbf{Adjacency list} & \textbf{Conditions} \\\midrule
-BFS, DFS           & $\Theta(|V|+|E|)$          & – \\
-Kruskal            & $\Theta(|E|\log|V|)$       & sort + DSU \\
-Prim (bin.\ heap)  & $\Theta(|E|\log|V|)$       & – \\
-Dijkstra (bin.)    & $\Theta(|E|\log|V|)$       & $w\ge 0$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-\FloatBarrier
-
-
-
-
+When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge:
+\begin{itemize}[before={\parskip=0pt},nosep]
+  \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
+  \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
+  \item if \(v\) is \(\black\), then \((u,v)\) is a
+\begin{itemize}[before={\parskip=0pt},nosep]
+    \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
+    \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
+\end{itemize}
+\end{itemize}
+Observe that the gray vertices always form a linear chain of descendants corresponding to the staack of active \textsc{DFS-Visit} invocations
 
 
 \clearpage
+
+% \subsubsection{Minimum Spanning Trees}
+
+% For a connected, undirected, weighted graph \(G=(V,E,w)\) an MST is a subset
+% of edges that connects all vertices with minimum total weight.
+
+% \subsubsection{Kruskal}
+
+% \begin{algorithm}[H]
+% \caption{Kruskal}\label{alg:kruskal}
+% \begin{algorithmic}[1]
+% \Function{Kruskal}{$G=(V,E,w)$}
+%   \State $T\gets\emptyset$
+%   \State MakeSet$(v)$ for each $v\in V$
+%   \ForAll{$(u,v)\in E$ in non-decreasing $w$-order}
+%     \If{\Call{Find}{$u$}\,$\neq$\,\Call{Find}{$v$}}
+%       \State $T\gets T\cup\{(u,v)\}$
+%       \State \Call{Union}{$u,v$}
+%     \EndIf
+%   \EndFor
+%   \State \Return $T$
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
+% \subsubsection{Prim}
+
+% \begin{algorithm}[H]
+% \caption{Prim (binary heap)}\label{alg:prim}
+% \begin{algorithmic}[1]
+% \Function{Prim}{$G=(V,E,w),\,r$}
+%   \State Initialize $\attrib{v}{key}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+%   \State $\attrib{r}{key}\gets 0$
+%   \State $Q\gets V$  \Comment{min-priority queue by \attrib{·}{key}}
+%   \While{$Q\neq\emptyset$}
+%     \State $u\gets$ \Call{ExtractMin}{$Q$}
+%     \ForAll{$v\in\Gamma(u)$}
+%       \If{$v\in Q$ and $w(u,v)<\attrib{v}{key}$}
+%         \State $\attrib{v}{\pi}\gets u$
+%         \State $\attrib{v}{key}\gets w(u,v)$
+%         \State \Call{DecreaseKey}{$Q,v,\attrib{v}{key}$}
+%       \EndIf
+%     \EndFor
+%   \EndWhile
+%   \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
+% Both Kruskal and Prim run in $\Theta(|E|\log|V|)$ with binary heaps.
+
+% \subsection{Single-Source Shortest Paths}
+
+% \subsubsection{Dijkstra (non-negative weights)}
+
+% \begin{algorithm}[H]
+% \caption{Dijkstra}\label{alg:dijkstra}
+% \begin{algorithmic}[1]
+% \Function{Dijkstra}{$G=(V,E,w),\,s$}
+%   \State Initialize $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+%   \State $\attrib{s}{distance}\gets 0$
+%   \State $Q\gets V$  \Comment{min-queue keyed by \attrib{·}{distance}}
+%   \While{$Q\neq\emptyset$}
+%     \State $u\gets$ \Call{ExtractMin}{$Q$}
+%     \ForAll{$(u,v)\in E$}
+%       \If{$\attrib{v}{distance}>\attrib{u}{distance}+w(u,v)$}
+%         \State $\attrib{v}{distance}\gets\attrib{u}{distance}+w(u,v)$
+%         \State $\attrib{v}{\pi}\gets u$
+%         \State \Call{DecreaseKey}{$Q,v,\attrib{v}{distance}$}
+%       \EndIf
+%     \EndFor
+%   \EndWhile
+%   \State \Return $\bigl(\attrib{v}{distance}\bigr)_{v\in V}$
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
+% Binary heap: $\Theta(|E|\log|V|)$; Fibonacci heap: $\Theta(|E|+|V|\log|V|)$.
+
+% \subsection{Complexity Overview}
+
+% \begin{center}\setlength{\tabcolsep}{8pt}
+% \begin{tabular}{lcc}
+% \toprule
+% \textbf{Algorithm} & \textbf{Adjacency list} & \textbf{Conditions} \\\midrule
+% BFS, DFS           & $\Theta(|V|+|E|)$          & – \\
+% Kruskal            & $\Theta(|E|\log|V|)$       & sort + DSU \\
+% Prim (bin.\ heap)  & $\Theta(|E|\log|V|)$       & – \\
+% Dijkstra (bin.)    & $\Theta(|E|\log|V|)$       & $w\ge 0$ \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+% \FloatBarrier
+
+
+
+
+
+
+% \clearpage
 
 \end{document}
