@@ -2530,7 +2530,7 @@ The adjacency-matrix representation might be preferred when the graph is \emph{d
 The space required for the adjacency-list representation is \(\Theta(|V| + |E|)\), and finding each edge in the graph also takes \(\Theta(|V| + |E|)\) time, since each of the \(|V|\) adjacency lists must be examined.
 
 The space required for the adjacency-matrix representation is \(\Theta(|V|^2)\), and finding each edge in the graph takes \(\Theta(|V|^2)\) time, since the entire adjacency matrix must be examined.
-For an undirected graph, the adjacency matrix is symmetric, i.e. $\matr{A} = \matr{A}^T$.
+For an undirected graph, the adjacency matrix is symmetric.%, i.e. $\matr{A} = \matr{A}^T$.
 
 The complexity for different operations is summarized in the following table.
 
@@ -2600,11 +2600,10 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 
 
 
-\subsection{Graph Traversals} \label{sec:graph-traversals}
 
 
 
-\subsubsection{Breadth-First Search}
+\subsection{Breadth-First Search}
 \label{subsubsec:bfs}
 
 \nameref{alg:bfs} is one of the simplest but also a fundamental algorithm, as it is the archetype of many important algorithms.
@@ -2617,10 +2616,10 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 \begin{algorithmic}[1]
 \Function{BFS}{$G=(V,E),\,s$} \Comment{\(s\) is the source}
   \ForAll{$u\in V \setminus \{s\}$}
-    \State $\attrib{u}{color},\attrib{u}{distance},\attrib{u}{\pi}\gets \white,\infty,\nil$
+    \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$
   \EndFor
-  % \State Initialize $\attrib{v}{color}\gets\white$, $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-  \State $\attrib{s}{color},\attrib{s}{distance},\attrib{s}{\pi}\gets \gray,0,\nil$
+  % \State Initialize $\attrib{v}{color}\gets\white$, $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attrib{s}{color},\attribnormal{s}{\delta},\attrib{s}{\pi}\gets \gray,0,\nil$
   \State $Q\gets\emptyset$ \Comment{initialize empty queue for vertices to visit}
   \State \Call{Enqueue}{$Q,s$}
   \While{$Q\neq\emptyset$} \label{alg:bfs:dequeue-while}
@@ -2628,7 +2627,7 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
     \ForAll{$v\in\Gamma(u)$} \label{alg:bfs:inner-loop}
       \If{$\attrib{v}{color}=\white$}
         \State $\attrib{v}{color}\gets\gray$
-        \State $\attrib{v}{distance}\gets\attrib{u}{distance}+1$
+        \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+1$
         \State $\attrib{v}{\pi}\gets u$
         \State \Call{Enqueue}{$Q,v$}
       \EndIf
@@ -2659,7 +2658,7 @@ E_\pi = \{(v.\pi,v)\mid v\in V_\pi \setminus \{s\}\}
 The predecessor subgraph \(G_\pi\) is a \emph{breadth-first tree} if \(V_\pi\) consists of all vertices reachable from \(s\) and, for all \(v\in V_\pi\), the subgraph \(G_\pi\) contains a unique simple path from \(s\) to \(v\) that is also a shortest path from \(s\) to \(v\) in \(G\).
 
 \nameref{alg:bfs} constructs \(\pi\) so that the predecessor subgraph \(G_\pi = (V_\pi,E_\pi)\) is a breadth-first tree rooted at \(s\).
-Upon termination, \(\attrib{v}{distance} = \delta(s,v)\) for all \(v\in V\).
+Upon termination, \(\attribnormal{v}{\delta} = \delta(s,v)\) for all \(v\in V\).
 For any vertex \(v\) reachable from \(s\), the simple path in the breadth-first tree \(G_\pi\) from \(s\) to \(v\) corresponds to a shortest path (that is, a path containing the smallest number of edges) from \(s\) to \(v\) in the original graph \(G\).
 
 Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we can print the shortest path from \(s\) to \(v\) using (the recursive) Algorithm~\ref{alg:print_shortest_path}.
@@ -2680,7 +2679,7 @@ Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we 
 \end{algorithm}
 
 
-\subsubsection{Depth-First Search}
+\subsection{Depth-First Search}
 \label{subsubsec:dfs}
 
 As its name implies, \nameref{alg:dfs} searches ``deeper'' in the graph whenever possible.
@@ -2692,7 +2691,7 @@ This process is repeated until every vertex has been discovered.%
 \footnote{Although \nameref{alg:bfs} could proceed from multiple sources and \nameref{alg:dfs} could be limited to one source source, the approach here reflects how they are typically used. 
 \nameref{alg:bfs} usually serves to find shortest-path distances and the associated predecessor subgraph fro a given source, while \nameref{alg:dfs} is often a subroutine in another algorithm.}
 
-\begin{algorithm}[h]
+\begin{algorithm}
 \caption{Depth-First Search}\label{alg:dfs}
 \begin{algorithmic}[1]
 \Function{DFS}{$G=(V,E)$}
@@ -2773,20 +2772,109 @@ So, the total running time is $\Theta(|V|+|E|)$.
   \item \emph{cross edges} are edges \((u,v) \notin E_\pi\) are all other edges.
 \end{itemize}
 
-A directed graph is acyclic if and only if a \nameref{alg:dfs} yields no back edges. 
+\begin{lemma}\label{lem:dag-no_back_edges}
+A directed graph is acyclic if and only if a \nameref{alg:dfs} yields no back edges.
+\end{lemma}
+\begin{theorem}\label{thm:unirected_graph-only_tree_and_back_edges}
 In a undirected graph, a \nameref{alg:dfs} yields only tree edges and back edges.
+\end{theorem}
+
 
 When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
   \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
   \item if \(v\) is \(\black\), then \((u,v)\) is a
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
     \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
     \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
 \end{itemize}
 \end{itemize}
-Observe that the gray vertices always form a linear chain of descendants corresponding to the staack of active \textsc{DFS-Visit} invocations
+Observe that the gray vertices always form a linear chain of descendants corresponding to the stack of active \textsc{DFS-Visit} invocations.
+
+\subsubsection{Topological Sort}\label{sec:topological_sort}
+A \emph{topological sort} of a directed acyclic graph (``dag'') \(G=(V,E)\) is a linear ordering of the vertices such that if \(G\) contains an edge \((u,v)\), then \(u\) appears before \(v\) in the ordering.
+\begin{algorithm}[h]
+\caption{Topological Sort}\label{alg:topological_sort}
+\begin{algorithmic}[1]
+\Function{TopologicalSort}{$G=(V,E)$}
+  \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\)
+  \State as each vertex \(v\) is finished, insert it onto the front of a linked list \(L\)
+  \State \Return \(L\)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Strongly Connected Components}\label{sec:strongly_connected_components}
+\begin{definition}[Strongly Connected Component]\label{def:strongly_connected_component}
+A \emph{strongly connected component} of a directed graph \(G=(V,E)\) is a maximal set of vertices \(C\subseteq V\) such that for every pair of vertices \(u,v\in C\), both \(u \leadsto v\) and \(v \leadsto u\), that is, \(u\) and \(v\) are reachable from each other.
+\end{definition}
+
+Algorithm \ref{alg:strongly_connected_components} uses the transpose of $G$, $G^{\mathrm{T}}=(V, E^{\mathrm{T}})$, where $E^{\mathrm{T}}=\{(u, v):(v, u) \in E\}$. 
+That is, $E^{\mathrm{T}}$ consists of the edges of $G$ with their directions reversed. 
+Given an adjacency-list representation of $G$, the time to create $G^{\mathrm{T}}$ is $\Theta(V+E)$. 
+The graphs $G$ and $G^{\mathrm{T}}$ have exactly the same strongly connected components: $u$ and $v$ are reachable from each other in $G$ if and only if they are reachable from each other in $G^{\mathrm{T}}$. 
+
+The linear-time (i.e., $\Theta(V+E)$-time) Algorithm \ref{alg:strongly_connected_components} computes the strongly connected components of a directed graph $G=(V, E)$ using two depth-first searches, one on $G$ and one on $G^{\mathrm{T}}$.
+
+\begin{definition}[Component Graph]\label{def:component_graph}
+Suppose that $G$ has strongly connected components $C_1, \ldots, C_k$. 
+The vertex set $V^{\mathrm{SCC}}$ is $\{v_1, \ldots, v_k\}$, and it contains one vertex $v_i$ for each strongly connected component $C_i$ of $G$. 
+There is an edge $(v_i, v_j) \in E^{\mathrm{SCC}}$ if $G$ contains a directed edge $(x, y)$ for some $x \in C_i$ and some $y \in C_j$. 
+
+Looked at another way, if we contract all edges whose incident vertices are within the same strongly connected component of $G$ so that only a single vertex remains, the resulting raph is $G^{\mathrm{SCC}}$.
+\end{definition}
+
+\begin{algorithm}[h]
+\caption{Strongly Connected Components}\label{alg:strongly_connected_components}
+\begin{algorithmic}[1]
+  \Function{StronglyConnectedComponents}{$G=(V,E)$}
+  \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\) \label{alg:strongly_connected_components:first_dfs}
+  \State create the transpose graph \(G^{\mathrm{T}}\)
+  \State call \Call{DFS}{$G^{\mathrm{T}}$}, but in Line~\ref{alg:dfs:for_all_vertices}, consider the vertices in order of decreasing \(\attribnormal{u}{f}\) \label{alg:strongly_connected_components:second_dfs}
+  \State \Return the depth-first trees of \(G_\pi\) formed in Line~\ref{alg:strongly_connected_components:second_dfs}
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+% The idea behind Algorithm \ref{alg:strongly_connected_components} comes from the key property that t
+
+The \nameref{def:strongly_connected_component}s, defined in Definition~\ref{def:strongly_connected_component} and the \nameref{def:component_graph} $G^{\mathrm{SCC}}=(V^{\mathrm{SCC}}, E^{\mathrm{SCC}})$, defined in Definition~\ref{def:component_graph} have the following properties:
+
+If $C_i$ and $C_j$ are two distinct \nameref{def:strongly_connected_component}s in a directed graph \(G=(V,E)\),...
+\begin{enumerate}
+  \item ...and \(u_i, v_j \in C_i\) and \(u_j, v_j \in C_j\), and \(G\) contains a path \(u_i \leadsto u_j\), then \(G\) cannot also contain a path \(v_j \leadsto v_i\), i.e. the \nameref{def:component_graph} $G^{\mathrm{SCC}}$ is acyclic. \label{properties_component_graph:acyclic}
+  \item ...and there is an edge \((u, v) \in E\) with \(u \in C_j\) and \(v \in C_i\), then \(\attribnormal{C_j}{f} > \attribnormal{C_i}{f}\). \label{properties_component_graph:finish_time}
+  \item ...and suppose that \(\attribnormal{C_i}{f} > \attribnormal{C_j}{f}\), then \(E^{\mathrm{T}}\) contains no edge \((v, u)\) such that \(u \in C_j\) and \(v \in C_i\). \label{properties_component_graph:transposed_edges}
+\end{enumerate}
+
+Property \ref{properties_component_graph:acyclic} implies that the \nameref{def:component_graph} $G^{\mathrm{SCC}}$ can be topologically sorted (see Section~\ref{sec:topological_sort}).
+And in fact, Algorithm~\ref{alg:strongly_connected_components} visits the vertices of the \nameref{def:component_graph} in topologically sorted order, by considering vertices in the second depthfirst search (Line \ref{alg:strongly_connected_components:second_dfs}) in decreasing order of the finish times that were computed in the first depth-first search (Line~\ref{alg:strongly_connected_components:first_dfs}).
+
+% Property \ref{properties_component_graph:transposed_edges} follows from Property~\ref{properties_component_graph:finish_time}.
+In Properties \ref{properties_component_graph:finish_time} and \ref{properties_component_graph:transposed_edges}, the finish time of a \nameref{def:strongly_connected_component}, \(\attribnormal{C}{f}\), refers to the maximal finish time of any vertex in \(C\) as computed by Line~\ref{alg:strongly_connected_components:first_dfs} of Algorithm~\ref{alg:strongly_connected_components}, i.e., 
+\[
+\attribnormal{C}{f} := \max_{v\in C} \left(\attribnormal{v}{f}\right)
+\]
+
+Property~\ref{properties_component_graph:transposed_edges} provides the key idea behind Algorithm~\ref{alg:strongly_connected_components}:
+When the \nameref{alg:dfs} of \(G^{\mathrm{T}}\) in Line~\ref{alg:strongly_connected_components:second_dfs} of Algorithm~\ref{alg:strongly_connected_components} visits any \nameref{def:strongly_connected_component}, any edges out of that component must be to components that the search has already visited.
+Each depth-first tree produced by Line~\ref{alg:strongly_connected_components:second_dfs}, therefore, corresponds to exactly one \nameref{def:strongly_connected_component} of \(G\).
+
+Another way to see this is to consider the component graph $(G^{\mathrm{T}})^{\mathrm{SCC}}$ of $G^{\mathrm{T}}$. 
+If we map each strongly connected component visited in the second depth-first search to a vertex of $(G^{\mathrm{T}})^{\mathrm{SCC}}$, the second depth-first search visits vertices of $(G^{\mathrm{T}})^{\mathrm{SCC}}$ in the reverse of a topologically sorted order. 
+% If we reverse the edges of $(G^{\mathrm{T}})^{\mathrm {SCC }}$, we get the graph $((G^{\mathrm{T}})^{\mathrm{SCC}})^{\mathrm{T}}$. 
+% Because $((G^{\mathrm{T}})^{\mathrm{SCC}})^{\mathrm{T}}=G^{\mathrm{SCC}}$, the second depth-first search visits the vertices of $G^{\mathrm{SCC}}$ in topologically sorted order.
+
+
+
+
+
+
+
+
+
 
 
 \clearpage
@@ -2849,20 +2937,20 @@ Observe that the gray vertices always form a linear chain of descendants corresp
 % \caption{Dijkstra}\label{alg:dijkstra}
 % \begin{algorithmic}[1]
 % \Function{Dijkstra}{$G=(V,E,w),\,s$}
-%   \State Initialize $\attrib{v}{distance}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-%   \State $\attrib{s}{distance}\gets 0$
-%   \State $Q\gets V$  \Comment{min-queue keyed by \attrib{·}{distance}}
+%   \State Initialize $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+%   \State $\attribnormal{s}{\delta}\gets 0$
+%   \State $Q\gets V$  \Comment{min-queue keyed by \attribnormal{·}{\delta}}
 %   \While{$Q\neq\emptyset$}
 %     \State $u\gets$ \Call{ExtractMin}{$Q$}
 %     \ForAll{$(u,v)\in E$}
-%       \If{$\attrib{v}{distance}>\attrib{u}{distance}+w(u,v)$}
-%         \State $\attrib{v}{distance}\gets\attrib{u}{distance}+w(u,v)$
+%       \If{$\attribnormal{v}{\delta}>\attribnormal{u}{\delta}+w(u,v)$}
+%         \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+w(u,v)$
 %         \State $\attrib{v}{\pi}\gets u$
-%         \State \Call{DecreaseKey}{$Q,v,\attrib{v}{distance}$}
+%         \State \Call{DecreaseKey}{$Q,v,\attribnormal{v}{\delta}$}
 %       \EndIf
 %     \EndFor
 %   \EndWhile
-%   \State \Return $\bigl(\attrib{v}{distance}\bigr)_{v\in V}$
+%   \State \Return $\bigl(\attribnormal{v}{\delta}\bigr)_{v\in V}$
 % \EndFunction
 % \end{algorithmic}
 % \end{algorithm}
