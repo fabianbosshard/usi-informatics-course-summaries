@@ -2604,7 +2604,7 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 
 
 \subsection{Breadth-First Search}
-\label{subsubsec:bfs}
+\label{sec:bfs}
 
 \nameref{alg:bfs} is one of the simplest but also a fundamental algorithm, as it is the archetype of many important algorithms.
 % It explores the graph, touching all vertices that are reachable from the source vertex \(s\) at an increasing edge distance from \(s\).
@@ -2614,7 +2614,7 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 \begin{algorithm}[h]
 \caption{Breadth-First Search}\label{alg:bfs}
 \begin{algorithmic}[1]
-\Function{BFS}{$G=(V,E),\,s$} \Comment{\(s\) is the source}
+\Function{BFS}{$G,\,s$} \Comment{\(s\) is the source}
   \ForAll{$u\in V \setminus \{s\}$}
     \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$
   \EndFor
@@ -2665,7 +2665,7 @@ Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we 
 \begin{algorithm}[h]
 \caption{Print Shortest Path}\label{alg:print_shortest_path}
 \begin{algorithmic}[1]
-\Function{PrintPath}{$G=(V,E),s,v$}
+\Function{PrintPath}{$G,s,v$}
   \If{$v=s$}
     \State \Call{Print}{$s$}
   \ElsIf{$\attrib{v}{\pi}=\nil$}
@@ -2680,7 +2680,7 @@ Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we 
 
 
 \subsection{Depth-First Search}
-\label{subsubsec:dfs}
+\label{sec:dfs}
 
 As its name implies, \nameref{alg:dfs} searches ``deeper'' in the graph whenever possible.
 \nameref{alg:dfs} explores edges out of the most recently discovered vertex \(v\) that still has unexplored edges leaving it.
@@ -2694,13 +2694,13 @@ This process is repeated until every vertex has been discovered.%
 \begin{algorithm}
 \caption{Depth-First Search}\label{alg:dfs}
 \begin{algorithmic}[1]
-\Function{DFS}{$G=(V,E)$}
+\Function{DFS}{$G$}
   \ForAll{$u\in V$}
     \State $\attrib{u}{color},\attrib{u}{\pi}\gets \white,\nil$
   \EndFor
   \State $T\gets 0$ \Comment{global time variable, for timestamps}
   \ForAll{$u\in V$} \label{alg:dfs:for_all_vertices}
-    \If{$\attrib{v}{color}=\white$}
+    \If{$\attrib{u}{color}=\white$}
       \State \Call{DFS-Visit}{$u$} \Comment{new tree in forest} \label{alg:dfs:new_tree}
     \EndIf
   \EndFor
@@ -2797,7 +2797,7 @@ A \emph{topological sort} of a directed acyclic graph (``dag'') \(G=(V,E)\) is a
 \begin{algorithm}[h]
 \caption{Topological Sort}\label{alg:topological_sort}
 \begin{algorithmic}[1]
-\Function{TopologicalSort}{$G=(V,E)$}
+\Function{TopologicalSort}{$G$}
   \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\)
   \State as each vertex \(v\) is finished, insert it onto the front of a linked list \(L\)
   \State \Return \(L\)
@@ -2828,7 +2828,7 @@ Looked at another way, if we contract all edges whose incident vertices are with
 \begin{algorithm}[h]
 \caption{Strongly Connected Components}\label{alg:strongly_connected_components}
 \begin{algorithmic}[1]
-  \Function{StronglyConnectedComponents}{$G=(V,E)$}
+  \Function{StronglyConnectedComponents}{$G$}
   \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\) \label{alg:strongly_connected_components:first_dfs}
   \State create the transpose graph \(G^{\mathrm{T}}\)
   \State call \Call{DFS}{$G^{\mathrm{T}}$}, but in Line~\ref{alg:dfs:for_all_vertices}, consider the vertices in order of decreasing \(\attribnormal{u}{f}\) \label{alg:strongly_connected_components:second_dfs}
@@ -2868,50 +2868,120 @@ If we map each strongly connected component visited in the second depth-first se
 % Because $((G^{\mathrm{T}})^{\mathrm{SCC}})^{\mathrm{T}}=G^{\mathrm{SCC}}$, the second depth-first search visits the vertices of $G^{\mathrm{SCC}}$ in topologically sorted order.
 
 
+\subsection{Minimum Spanning Tree}\label{sec:minimum_spanning_tree}
+
+Given a graph \(G=(V,E)\) with weight function \(w:E\to\R\) we want to find an acyclic subset \(T\subseteq E\) such that \(T\) touches all vertices in \(V\) and 
+\[
+w(T) = \sum_{e\in T} w(e)
+\]
+that is, the total weight of the tree \(T\) is minimal.
+This \(T\) is called a \emph{minimum spanning tree} (MST) of \(G\).
+
+Conceptually, \nameref{alg:kruskal}'s algorithm (1956) is similar to the \nameref{alg:strongly_connected_components} algorithm, while \nameref{alg:prim}'s algorithm (1957) resembles \nameref{alg:dijkstra}'s shortest-paths algorithm.
+Both
+% Algorithm \ref{alg:kruskal} and \ref{alg:prim} 
+run in \(O(|E|\log|V|)\) time.
+% \nameref{alg:prim} achieves this bound by using a binary heap as a priority queue.
+% By using Fibonacci heaps instead, \nameref{alg:prim} can be made to run in \(O(|E|+|V|\log|V|)\) time.
+% This is an improvement if \(|E|\)  grows asymptotically faster than \(|V|\).
+
+The general idea is to build \(T\) by adding one edge \(e\in E\) at a time, such that \(e\) is the lightest edge that does not create a cycle.
+Both \nameref{alg:kruskal} and \nameref{alg:prim} are greedy algorithms (see \ref{sec:greedy_algorithms}), that is, in each step they make the choice that seems best at the moment.
+Even though such a strategy does not generally yield an optimal solution, for the MST problem one can prove that certain greedy strategies yield an optimal solution.
+
+
+\begin{algorithm}[h]
+\caption{Generic Minimum Spanning Tree}\label{alg:generic_mst}
+\begin{algorithmic}[1]
+\Function{Generic-MST}{$G,w$}
+  \State $A\gets\emptyset$ \Comment{invariant: \(A\) is part of a minimum spanning tree}
+  \While{$A$ is not a spanning tree} \label{alg:generic_mst:while_start}
+    \State find a safe edge \(e=(u,v)\) \Comment{a safe edge maintains the invariant} \label{alg:generic_mst:safe_edge}
+    \State $A\gets A\cup\{e\}$
+  \EndWhile \label{alg:generic_mst:while_end}
+  % \State \Return $A$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+The strategy is given in Algorithm~\ref{alg:generic_mst}. 
+The invariant used is that \(A\) is a subset of a minimum spanning tree and a \emph{safe edge} is an edge that maintains this invariant.
+
+% \begin{definition}[Cut, Crossing, Respecting]\label{def:cut_crossing_respecting}
+A \emph{cut} of a graph \(G=(V,E)\) is a partition of \(V\) into two disjoint sets \(S\) and \(V\setminus S\).
+An edge \(e\in E\) \emph{crosses} the cut if one of its endpoints is in \(S\) and the other is in \(V\setminus S\).
+A cut \emph{respects} a set of edges \(A\) if no edges in \(A\) cross the cut. 
+% An edge is a light edge crossing a cut if its weight is minimal among all edges crossing the cut.
+% \end{definition}
+\begin{theorem}\label{safe_edge_cut}
+Let \(A \subseteq E\) be included in a minimum spanning tree and 
+\((S, V\setminus S)\) be a cut that respects \(A\).
+Then a minimum-weight edge \(e\) crossing the cut \((S, V\setminus S)\) is a safe edge for \(A\).
+\end{theorem}
+% \begin{proof}
+% Let \(T\) be a minimum spanning tree with \(A\subseteq T\).  
+% If the minimum-weight edge \(e\) crossing \((S,V\setminus S)\) already lies in \(T\), we are done.  
+% Otherwise adding \(e\) to \(T\) creates a cycle, and since the cut respects \(A\), that cycle contains an edge \(f\notin A\) crossing the cut.  
+% Because \(e\) minimizes \(w(\cdot)\) over all crossing edges, \(w(e)\le w(f)\).  
+% Replacing \(f\) by \(e\) yields a spanning tree \(T'\) with \(w(T')\le w(T)\), so \(T'\) is also an MST containing \(A\cup\{e\}\).  
+% Hence \(e\) is safe.
+% \end{proof}
+
+Theorem~\ref{safe_edge_cut} provides a rule for recognizing safe edges and is the key to why Algorithm~\ref{alg:generic_mst} works.
+At any point in the execution, the graph \(G_A=(V,A)\) is a forest and each of the connected components of \(G_A\) is a tree.
+Any safe edge \(e\) for \(A\) connects two distinct components of \(G_A\), since \(A \cup \{e\}\) must be acyclic.
+
+The loop in Lines \ref{alg:generic_mst:while_start}--\ref{alg:generic_mst:while_end} of Algorithm~\ref{alg:generic_mst} executes \(|V|-1\) times, because it finds one of the \(|V|-1\) edges of a a minimum spanning tree in each iteration.
+Initially, when \(A=\emptyset\), there are \(|V|\) trees in \(G_A\) and each iteration reduces that number by one, until the forest contains only a single tree, upon which the method terminates.
+
+\nameref{alg:kruskal} and \nameref{alg:prim} both use the following corollary of Theorem~\ref{safe_edge_cut}.
+\begin{corollary}\label{cor:safe_edge_connected_component}
+Let \(A \subseteq E\) be included in a minimum spanning tree and 
+let \(C = (V_C, E_C)\) be a connected component (tree) of \(G_A = (V,A)\).
+Then a minimum-weight edge \(e\) connecting \(C\) to some other component in \(G_A\) is a safe edge for \(A\).
+\end{corollary}
+
+\nameref{alg:kruskal} and \nameref{alg:prim} use a different, specific rule to determine a safe edge in Line~\ref{alg:generic_mst:safe_edge} of Algorithm~\ref{alg:generic_mst}.
+In \nameref{alg:kruskal}'s algorithm, \(A\) is a forest whose vertices are all those of the given graph and the safe edge added is always a lowest-weight edge that connects two distinct components.
+In \nameref{alg:prim}'s algorithm, \(A\) is a single tree and the safe edge added is always a lowest-weight edge connecting the tree to a vertex not in the tree.
+
+For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
+\begin{itemize}
+  \item \Call{MakeSet}{$x$} creates a set containing only the element \(x\)
+  \item \Call{Find}{$x$} returns the representative of the set containing \(x\)
+  \item \Call{Union}{$x,y$} joins the sets containing \(x\) and \(y\) into a single set
+\end{itemize}
+
+\begin{algorithm}[h]
+\caption{Kruskal}\label{alg:kruskal}
+\begin{algorithmic}[1]
+\Function{Kruskal}{$G,w:E\to\R$}
+  \State $A\gets\emptyset$
+  \ForAll{$v\in V$}
+  \State \Call{MakeSet}{$v$}
+  \EndFor
+  \State sort $E$ in non-decreasing order by $w$
+  \ForAll{$(u,v)\in E$ in non-decreasing $w$-order}
+    \If{$\text{\Call{Find}{$u$}} \neq \text{\Call{Find}{$v$}}$}
+      \State $A\gets A\cup\{(u,v)\}$
+      \State \Call{Union}{$u,v$}
+    \EndIf
+  \EndFor
+  % \State \Return $A$ \Comment{edges of the minimum spanning tree}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 
 
 
 
-
-
-
-
-\clearpage
-
-% \subsubsection{Minimum Spanning Trees}
-
-% For a connected, undirected, weighted graph \(G=(V,E,w)\) an MST is a subset
-% of edges that connects all vertices with minimum total weight.
-
-% \subsubsection{Kruskal}
-
-% \begin{algorithm}[H]
-% \caption{Kruskal}\label{alg:kruskal}
+% \begin{algorithm}[h]
+% \caption{Prim}\label{alg:prim}
 % \begin{algorithmic}[1]
-% \Function{Kruskal}{$G=(V,E,w)$}
-%   \State $T\gets\emptyset$
-%   \State MakeSet$(v)$ for each $v\in V$
-%   \ForAll{$(u,v)\in E$ in non-decreasing $w$-order}
-%     \If{\Call{Find}{$u$}\,$\neq$\,\Call{Find}{$v$}}
-%       \State $T\gets T\cup\{(u,v)\}$
-%       \State \Call{Union}{$u,v$}
-%     \EndIf
-%   \EndFor
-%   \State \Return $T$
-% \EndFunction
-% \end{algorithmic}
-% \end{algorithm}
-
-% \subsubsection{Prim}
-
-% \begin{algorithm}[H]
-% \caption{Prim (binary heap)}\label{alg:prim}
-% \begin{algorithmic}[1]
-% \Function{Prim}{$G=(V,E,w),\,r$}
+% \Function{Prim}{$G,u,w$} 
 %   \State Initialize $\attrib{v}{key}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
 %   \State $\attrib{r}{key}\gets 0$
-%   \State $Q\gets V$  \Comment{min-priority queue by \attrib{·}{key}}
+%   \State $Q\gets V$ \Comment{min-priority queue by \attribute{key}}
 %   \While{$Q\neq\emptyset$}
 %     \State $u\gets$ \Call{ExtractMin}{$Q$}
 %     \ForAll{$v\in\Gamma(u)$}
@@ -2927,11 +2997,54 @@ If we map each strongly connected component visited in the second depth-first se
 % \end{algorithmic}
 % \end{algorithm}
 
-% Both Kruskal and Prim run in $\Theta(|E|\log|V|)$ with binary heaps.
+% \algobox{%
+%   \begin{codebox}
+%     \Procname{$\proc{MST-Prim}(G, u, w)$}
+%     \li $T\gets(\emptyset,\emptyset)$
+%     \li \For each vertex $v\in V(G)$
+%     \li \Do $W[v]\gets\infty$
+%     \li     $P[v]\gets \const{nil}$
+%         \End
+%     \li $W[u]\gets 0$
+%     \li \While $V(T)\ne V(G)$
+%     \li \Do find $u\not\in V(T)$ such that $W[u]$ is minimal
+%     \li     $T\gets T\cup \{u\}$ \Comment add $u$ to $T$
+%     \li     \For all $v\in \id{Adj}(u)\setminus V(T)$
+%     \li     \Do \If $w(u,v) < W[v]$
+%     \li         \Then $W[v]\gets w(u,v)$
+%     \li               $P[v]\gets u$
+%                 \End
+%             \End
+%         \End
+%   \end{codebox}}
 
-% \subsection{Single-Source Shortest Paths}
+\begin{algorithm}[h]
+\caption{Prim}\label{alg:prim}
+\begin{algorithmic}[1]
+\Function{Prim}{$G, w:E\to\R, r$} 
+  \State $T\gets(\emptyset,\emptyset)$ \Comment{minimal spanning tree}
+  \ForAll{$v\in V(G)$}
+    \State $\attrib{v}{weight}\gets\infty$ \Comment{best known cost of connecting \(v\) to \(T\)}
+    \State $\attrib{v}{\pi}\gets\nil$ \Comment{\(u \in T\) such that \((u,v)\) is the least-cost edge connecting \(v\) to \(T\)}
+  \EndFor
+  \State $\attrib{r}{weight}\gets 0$ \Comment{\(r\) is the root of the spanning tree}
+  \While{$V(T)\neq V(G)$} \Comment{while \(T\) does not span all vertices}
+    \State find \(u \notin V(T)\) such that \(\attrib{u}{weight}\) is minimal
+    \State $T\gets T\cup\{u\}$ \Comment{add \(u\) to the spanning tree \(T\)}
+    \ForAll{$v\in\Gamma(u) \setminus V(T)$}
+      \If{$w(u,v)<\attrib{v}{weight}$}
+        \State $\attrib{v}{weight} \gets w(u,v)$
+        \State $\attrib{v}{\pi} \gets u$
+      \EndIf
+    \EndFor
+  \EndWhile
+  % \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$ \Comment{edges of the minimum spanning tree}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
-% \subsubsection{Dijkstra (non-negative weights)}
+
+\subsection{Single-Source Shortest Paths}\label{sec:single_source_shortest_paths}
 
 % \begin{algorithm}[H]
 % \caption{Dijkstra}\label{alg:dijkstra}
@@ -2955,25 +3068,40 @@ If we map each strongly connected component visited in the second depth-first se
 % \end{algorithmic}
 % \end{algorithm}
 
-% Binary heap: $\Theta(|E|\log|V|)$; Fibonacci heap: $\Theta(|E|+|V|\log|V|)$.
 
-% \subsection{Complexity Overview}
+\begin{algorithm}[h]
+\caption{Dijkstra}\label{alg:dijkstra}
+\begin{algorithmic}[1]
+\Function{Dijkstra}{$G, w:E\to\R, s$} 
+  \State $N \gets \emptyset$ \Comment{nodes of \(G\) whose least-cost path from \(s\) is definitely known}
+  \ForAll{$v\in V(G)$}
+    \State $\attrib{v}{\delta}\gets\infty$ \Comment{best known cost from \(s\) to \(v\)}
+    \State $\attrib{v}{\pi}\gets\nil$ \Comment{node preceding \(v\) on the least-cost path from \(s\)}
+  \EndFor
+  \State $\attrib{s}{\delta}\gets 0$ \Comment{\(s\) is the source}
+  \While{$N \neq V(G)$} \Comment{while we do not know the least-cost path to all nodes}
+    \State find \(u \notin N\) such that \(\attrib{u}{\delta}\) is minimal
+    \State $N\gets N\cup\{u\}$ \Comment{add \(u\) to the nodes \(N\)}
+    \ForAll{$v\in\Gamma(u) \setminus N$}
+      \If{$\attrib{u}{\delta} + w(u,v)<\attrib{v}{\delta}$}
+        \State $\attrib{v}{\delta} \gets \attrib{u}{\delta} + w(u,v)$
+        \State $\attrib{v}{\pi} \gets u$
+      \EndIf
+    \EndFor
+  \EndWhile
+  % \State \Return $(\attrib{v}{\delta})_{v\in V(G)}$ \Comment{least-cost path from \(s\) to each \(v\)}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
-% \begin{center}\setlength{\tabcolsep}{8pt}
-% \begin{tabular}{lcc}
-% \toprule
-% \textbf{Algorithm} & \textbf{Adjacency list} & \textbf{Conditions} \\\midrule
-% BFS, DFS           & $\Theta(|V|+|E|)$          & – \\
-% Kruskal            & $\Theta(|E|\log|V|)$       & sort + DSU \\
-% Prim (bin.\ heap)  & $\Theta(|E|\log|V|)$       & – \\
-% Dijkstra (bin.)    & $\Theta(|E|\log|V|)$       & $w\ge 0$ \\
-% \bottomrule
-% \end{tabular}
-% \end{center}
-% \FloatBarrier
+
+\section{Design Techniques}\label{sec:design_techniques}
+\subsection{Greedy Algorithms}\label{sec:greedy_algorithms}
+\subsection{Dynamic Programming}\label{sec:dynamic_programming}
 
 
 
+\section{Complexity Theory}
 
 
 
