@@ -367,51 +367,51 @@ Otherwise (the \textbf{recursive case}), you perform three characteristic steps:
 \end{enumerate}
 
 
-\begin{center}
-    \begin{tikzpicture}[
-        every node/.style={draw, rounded corners=2pt, align=center, minimum width=2.4cm, minimum height=1.0cm},
-        arrow/.style={->, thick}
-    ]
+% \begin{center}
+%     \begin{tikzpicture}[
+%         every node/.style={draw, rounded corners=2pt, align=center, minimum width=2.4cm, minimum height=1.0cm},
+%         arrow/.style={->, thick}
+%     ]
     
-    %--- NODES ---
-    % Top: Main Problem
-    \node (main) {\footnotesize Main Problem};
+%     %--- NODES ---
+%     % Top: Main Problem
+%     \node (main) {\footnotesize Main Problem};
     
-    % Bottom: Final solution
-    \node (final) [below =3.2cm of main] {\footnotesize Solution of\\\footnotesize Main Problem};
+%     % Bottom: Final solution
+%     \node (final) [below =3.2cm of main] {\footnotesize Solution of\\\footnotesize Main Problem};
     
-    \def\distance{3.4cm}
-    % Compute relative positions for subproblems dynamically
-    \node (sub1) at ($(main)!0.3!(final) + (-\distance,0)$) {\footnotesize Sub-Problem};
-    \node (sub2) at ($(main)!0.3!(final) + (\distance,0)$) {\footnotesize Sub-Problem};
+%     \def\distance{3.4cm}
+%     % Compute relative positions for subproblems dynamically
+%     \node (sub1) at ($(main)!0.3!(final) + (-\distance,0)$) {\footnotesize Sub-Problem};
+%     \node (sub2) at ($(main)!0.3!(final) + (\distance,0)$) {\footnotesize Sub-Problem};
 
-    % Compute relative positions for solutions of subproblems dynamically
-    \node (sol1) at ($(main)!0.7!(final) + (-\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
-    \node (sol2) at ($(main)!0.7!(final) + (\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
+%     % Compute relative positions for solutions of subproblems dynamically
+%     \node (sol1) at ($(main)!0.7!(final) + (-\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
+%     \node (sol2) at ($(main)!0.7!(final) + (\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
     
-    %--- ARROWS ---
-    % From main problem to sub-problems
-    \draw[arrow] (main) -- (sub1);
-    \draw[arrow] (main) -- (sub2);
+%     %--- ARROWS ---
+%     % From main problem to sub-problems
+%     \draw[arrow] (main) -- (sub1);
+%     \draw[arrow] (main) -- (sub2);
     
-    % From sub-problems to their solutions
-    \draw[arrow] (sub1) -- node[midway, left, xshift=0.34cm, draw=none]
-       {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol1);
-    \draw[arrow] (sub2) -- node[midway, right, xshift=-0.34cm, draw=none]
-       {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol2);
+%     % From sub-problems to their solutions
+%     \draw[arrow] (sub1) -- node[midway, left, xshift=0.34cm, draw=none]
+%        {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol1);
+%     \draw[arrow] (sub2) -- node[midway, right, xshift=-0.34cm, draw=none]
+%        {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol2);
     
-    % From solutions to final solution
-    \draw[arrow] (sol1) -- (final);
-    \draw[arrow] (sol2) -- (final);
+%     % From solutions to final solution
+%     \draw[arrow] (sol1) -- (final);
+%     \draw[arrow] (sol2) -- (final);
     
-    %--- BOLD TEXT IN THE MIDDLE ---
-    % We place three labels along the vertical between 'main' and 'final'.
-    \node[font=\bfseries, draw=none] at ($(main)!0.20!(final)$) {Divide};
-    \node[font=\bfseries, draw=none] at ($(main)!0.50!(final)$) {Conquer};
-    \node[font=\bfseries, draw=none] at ($(main)!0.80!(final)$) {Combine};
+%     %--- BOLD TEXT IN THE MIDDLE ---
+%     % We place three labels along the vertical between 'main' and 'final'.
+%     \node[font=\bfseries, draw=none] at ($(main)!0.20!(final)$) {Divide};
+%     \node[font=\bfseries, draw=none] at ($(main)!0.50!(final)$) {Conquer};
+%     \node[font=\bfseries, draw=none] at ($(main)!0.80!(final)$) {Combine};
     
-    \end{tikzpicture}
-\end{center}
+%     \end{tikzpicture}
+% \end{center}
 
 
 When an algorithm contains a recursive call, we can often describe its running time with a \textbf{recurrence relation}, which expresses the overall running time of a problem of size $n$ in terms of the running time of the same algorithm on smaller inputs.
@@ -419,33 +419,33 @@ When an algorithm contains a recursive call, we can often describe its running t
 
 % \begin{digression}[Master Theorem]
 % \label{digression:master_theorem}
-% Let $T(n)$ be the worst case running time on an input of size $n$.
-% If the problem is small enough, say $n \leq n_0$, for some constant $n_0$, the straightforward solution takes constant time $\Theta(1)$.
-% Suppose that the division of the problem yields $a$ subproblems, each of size $n/b$. 
-% For \hyperref[sec:merge_sort]{merge sort} (Algorithm \ref{alg:merge_sort}), $a = b = 2$, but there are other divide-and-conquer algorithms in which $a \neq b$.
-% If it takes $D(n)$ time to divide the problem into subproblems and $C(n)$ time to combine the solutions to the subproblems into the solution to the original problem, we get the recurrence
-% \begin{align}
-% \label{eq:recurrence_relation}
-% T(n) &=
-% \begin{cases}
-%     \Theta(1) & \text{if } n \leq n_0 \\
-%     D(n) + aT(n/b) + C(n) & \text{if } n > n_0
-% \end{cases}
-% \end{align}
+Let $T(n)$ be the worst case running time on an input of size $n$.
+If the problem is small enough, say $n \leq n_0$, for some constant $n_0$, the straightforward solution takes constant time $\Theta(1)$.
+Suppose that the division of the problem yields $a$ subproblems, each of size $n/b$.%
+\footnote{For \hyperref[sec:merge_sort]{merge sort} (Algorithm \ref{alg:merge_sort}), $a = b = 2$, but there are other divide-and-conquer algorithms in which $a \neq b$.}
+If it takes $D(n)$ time to divide the problem into subproblems and $C(n)$ time to combine the solutions to the subproblems into the solution to the original problem, we get the recurrence
+\begin{align}
+\label{eq:recurrence_relation}
+T(n) &=
+\begin{cases}
+    \Theta(1) & \text{if } n \leq n_0 \\
+    D(n) + aT(n/b) + C(n) & \text{if } n > n_0
+\end{cases}
+\end{align}
 
-% \begin{theorem}[Master Theorem]
-% \label{thm:master_theorem}
-% Let $a>0$ and $b>1$ be constants, and let $f(n)$ be a driving function that is defined and nonnegative on all sufficiently large reals. Define the recurrence $T(n)$ on $n \in \mathbb{N}$ by
-% \[
-% T(n)=a T(n / b)+f(n)
-% \]
-% where $a T(n / b)$ actually means $a^{\prime} T(\lfloor n / b\rfloor)+a^{\prime \prime} T(\lceil n / b\rceil)$ for some constants $a^{\prime} \geq 0$ and $a^{\prime \prime} \geq 0$ satisfying $a=a^{\prime}+a^{\prime \prime}$. Then the asymptotic behavior of $T(n)$ can be characterized as follows:
-% \begin{enumerate}
-%     \item If there exists a constant $\epsilon>0$ such that $f(n)=O\left(n^{\log _b a-\epsilon}\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a}\right)$.
-%     \item If there exists a constant $k \geq 0$ such that $f(n)=\Theta\left(n^{\log _b a} \lg ^k n\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a} \lg ^{k+1} n\right)$.
-%     \item If there exists a constant $\epsilon>0$ such that $f(n)=\Omega\left(n^{\log _b a+\epsilon}\right)$, and if $f(n)$ additionally satisfies the regularity condition $a f(n / b) \leq c f(n)$ for some constant $c<1$ and all sufficiently large $n$, then $T(n)=\Theta(f(n))$. \qedhere
-% \end{enumerate}
-% \end{theorem}
+\begin{theorem}[Master Theorem]
+\label{thm:master_theorem}
+Let $a>0$ and $b>1$ be constants, and let $f(n)$ be a driving function that is defined and nonnegative on all sufficiently large reals. Define the recurrence $T(n)$ on $n \in \mathbb{N}$ by
+\[
+T(n)=a T(n / b)+f(n)
+\]
+where $a T(n / b)$ actually means $a^{\prime} T(\lfloor n / b\rfloor)+a^{\prime \prime} T(\lceil n / b\rceil)$ for some constants $a^{\prime} \geq 0$ and $a^{\prime \prime} \geq 0$ satisfying $a=a^{\prime}+a^{\prime \prime}$. Then the asymptotic behavior of $T(n)$ can be characterized as follows:
+\begin{enumerate}
+    \item If there exists a constant $\epsilon>0$ such that $f(n)=O\left(n^{\log _b a-\epsilon}\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a}\right)$.
+    \item If there exists a constant $k \geq 0$ such that $f(n)=\Theta\left(n^{\log _b a} \lg ^k n\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a} \lg ^{k+1} n\right)$.
+    \item If there exists a constant $\epsilon>0$ such that $f(n)=\Omega\left(n^{\log _b a+\epsilon}\right)$, and if $f(n)$ additionally satisfies the regularity condition $a f(n / b) \leq c f(n)$ for some constant $c<1$ and all sufficiently large $n$, then $T(n)=\Theta(f(n))$. \qedhere
+\end{enumerate}
+\end{theorem}
 % \end{digression}
 
 \subsection{Binary Search}
@@ -3102,6 +3102,106 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 
 
 \section{Complexity Theory}
+
+
+
+\clearpage
+
+\section{Exam Exercises}\label{sec:exam_exercises}
+
+\subsection*{294}
+% \begin{algorithm}[h]
+%   \caption{minimal number of edges to make a unditected graph connected}\label{alg:min_edges_connected}
+%   \begin{algorithmic}[1]
+%     \Function{MinimalAdditionalEdges}{$G$}
+%       \State \Return \Call{CountComponents}{$G$} - 1
+%     \EndFunction
+%     \Function{CountComponents}{$G$}
+%       \State $n_C \gets 0$ \Comment{number of components}
+%       \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
+%       \For{$i \gets 1 \ldots |V(G)|$}
+%         \If{$X[i] = \fals$}
+%           \State $n_C \gets n_C + 1$
+%           \State initialize an empty queue $Q$
+%           \State \Call{Enqueue}{$Q, i$}
+%           \While{$Q \neq \emptyset$}
+%             \State $u \gets$ \Call{Dequeue}{$Q$}
+%             \State $X[u] \gets \tru$
+%             \ForAll{$v \in \Gamma(u)$}
+%               \If{$X[v] = \fals$}
+%                 \State \Call{Enqueue}{$Q, v$}
+%               \EndIf
+%             \EndFor
+%           \EndWhile
+%         \EndIf
+%       \EndFor
+%       \State \Return $n_C$
+%     \EndFunction
+%   \end{algorithmic}
+% \end{algorithm}
+\begin{algorithm}[h]
+  \caption{minimal number of edges to make an undirected graph connected}%
+  \label{alg:min_edges_connected}
+  \begin{algorithmic}[1]
+    \Function{MinimalAdditionalEdges}{$G$}
+    \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
+      \State $n_C \gets 0$ \Comment{number of connected components}
+      
+      \For{$i \gets 1 \ldots |V(G)|$}
+        \If{$X[i] = \fals$}
+          \State $n_C \gets n_C + 1$
+          \State initialize an empty queue $Q$
+          \State \Call{Enqueue}{$Q, i$}
+          \State $X[i] \gets \tru$          \Comment{mark source vertex as visited}
+          
+          \While{$Q \neq \emptyset$}
+            \State $u \gets$ \Call{Dequeue}{$Q$}
+            \ForAll{$v \in \Gamma(u)$}
+              \If{$X[v] = \fals$} 
+                \State \Call{Enqueue}{$Q, v$} \Comment{mark on enqueue to avoid duplicates}
+                \State $X[v] \gets \tru$
+              \EndIf
+            \EndFor
+          \EndWhile
+        \EndIf
+      \EndFor
+      
+      \State \Return $n_C - 1$ 
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection*{298}
+\begin{algorithm}[h]
+  \caption{Checking for 3 distinct values in an array}\label{alg:distinct_values}
+  \begin{algorithmic}[1]
+    \Function{DistinctValues}{$A$}
+      \State $a_1, a_2, a_3 \gets \nil$ \Comment{the three distinct values}
+      \ForAll{$a\in A$}
+        \If{$a = a_1 \lor a_1 = \nil$}
+          \If{$a_1 = \nil$}
+            \State $a_1 \gets a$
+          \EndIf
+          \State \textbf{continue}
+        \EndIf
+        \If{$a = a_2 \lor a_2 = \nil$}
+          \If{$a_2 = \nil$}
+            \State $a_2 \gets a$
+          \EndIf
+          \State \textbf{continue}
+        \EndIf
+        \If{$a = a_3 \lor a_3 = \nil$}
+          \If{$a_3 = \nil$}
+            \State $a_3 \gets a$
+          \EndIf
+          \State \textbf{continue}
+        \EndIf
+        \State \Return \texttt{False} 
+      \EndFor
+      \State \Return \texttt{True} 
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 
 
