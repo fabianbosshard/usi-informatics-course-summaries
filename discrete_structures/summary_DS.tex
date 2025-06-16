@@ -598,6 +598,8 @@ Let us look at that in some more depth.
 Complexity theory is about classifying computational problems by their computational difficulty. The set P contains all problems that can be solved in polynomial time, i.e., the number of computational steps being at most a polynomial function of the input size. P is a subset of NP, containing all problems for which one can verify a given solution in polynomial time, whereas the solution may not be found in polynomial time.
 
 A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. That means that any problem in NP can be reduced to any problem in NPC in polynomial time. Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. This means that NPC problems can be used as indicators of simplicity for all NP problems: If you can solve one NPC problem in polynomial time, then you can solve all of them. (In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
+
+
 \begin{example}[Elements of P] 
 P contains
 \begin{itemize}

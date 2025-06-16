@@ -877,7 +877,7 @@ Furthermore, an $n$-element heap has height $h=\lfloor\log_2 n\rfloor$ and at mo
 % \draw[draw=none] (\linestart, -3.75) node[right, draw=none, outer sep=5ex, xshift=\labelshift] {\(\tilde{h} = 1\)} -- (-5.25, -3.75);
 % \draw[draw=none] (\linestart, -4.5) node[right, draw=none, outer sep=5ex, xshift=\labelshift] {\(\tilde{h} = 0\)} -- (-6, -4.5);
 
-%--- \tilde{h} on left side via east‐anchor + x‐shift trick ---
+%--- \tilde{h} on left side via east-anchor + x-shift trick ---
 \newcommand{\linestart}{-6.8}
 \node[draw=none,anchor=west,inner sep=0] (lbl0) at (\linestart,1) {$h = \lfloor \log_2 n \rfloor$};
 \draw[dashed,thin,gray] ($(lbl0.east)+(0.8em,0)$) -- (-0.5,1);
@@ -1349,7 +1349,7 @@ supports constant-time insertion and deletion at one end.
 \end{figure}
 
 Interface (Algorithm \ref{alg:stack_ops}):
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item \textsc{StackEmpty}\((S)\): returns \tru{} iff the stack \(S\) contains no elements.
   \item \textsc{Push}\((S,x)\): places element \(x\) on the top of the stack \(S\).
   \item \textsc{Pop}\((S)\): removes and returns the top element of the stack \(S\).
@@ -1393,7 +1393,7 @@ A \emph{queue} is a FIFO container with constant-time insertion at the tail and 
 
 
 Interface (Algorithms~\ref{alg:enqueue} and \ref{alg:dequeue}):
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item \textsc{Enqueue}\((Q,x)\): insert \(x\) at the tail of \(Q\).
   \item \textsc{Dequeue}\((Q)\): remove and return the head element of \(Q\).
 \end{itemize}
@@ -1592,7 +1592,7 @@ with \(n\) the current length of \(L\).
 \label{def:dictionary}
 A \emph{dictionary} is an abstract data structure that represents a set of elements (or keys). 
 It is a \emph{dynamic set} that supports the following operations:
-\begin{itemize}[before={\parskip=0pt}, nosep]
+\begin{itemize}%[before={\parskip=0pt}, nosep]
 \item \textsc{Insert}: insert element into the set
 \item \textsc{Delete}: delete element from the set
 \item \textsc{Search}: test memebership of an element in the set \qedhere
@@ -1936,7 +1936,7 @@ z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}
 \end{definition}
 
 % Interface:
-% \begin{itemize}[before={\parskip=0pt},nosep]
+% \begin{itemize}%[before={\parskip=0pt},nosep]
 %   \item \textsc{TreeInsert}\((T,k)\), \textsc{TreeDelete}\((T,k)\), \textsc{TreeSearch}\((T,k)\)
 %   \item Traversals: \textsc{InOrder}-, \textsc{Preorder}-, \textsc{Postorder}-, \textsc{ReverseOrderTreeWalk}
 %   \item Extremal queries: \textsc{TreeMinimum}, \textsc{TreeMaximum}
@@ -2103,18 +2103,18 @@ To find the predecessor, replace all occurences of \attribute{right} with \attri
 
 
 Deletion distinguishes three cases:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item \(z\) is a leaf node, i.e. it has no children:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item simply remove the node \(z\)
     \end{itemize}
   \item \(z\) has one child:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item remove \(z\)
       \item connect its child to its parent
     \end{itemize}
   \item \(z\) has two children:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item find the successor \(y\) of \(z\) (since \(z\) has two children, \(y\) is guaranteed to be the minimum of the right subtree of \(z\) and thus have at most one child)
       \item copy the key of \(y\) into \(z\)
       \item delete \(y\), which is a leaf or has one right child, i.e. connect the child of \(y\) to the parent of \(y\)
@@ -2189,11 +2189,11 @@ Deletion distinguishes three cases:
   % \end{algorithmic}
 \end{algorithm}
 
-\FloatBarrier
 
 Insertion, search and deletion operations have complexity \(\Theta(h)\) where \(h\) is the height of the tree.
 In the average case, the height is \(O(\log n)\) (i.e. with a random insertion order).
 In some particular cases, the height can be \(O(n)\) (i.e. with ordered sequence).
+
 The problem is that the `worst case' is not that uncommon.
 One way to avoid this is to instead of inserting \(A = [a_1, a_2, a_3, \ldots, a_n]\) in order, insert a random permutation of \(A\).
 The problem is that \(A\) is usually not known in advance.
@@ -2385,7 +2385,7 @@ For example, we can use it to perform
 
 
 General strategies to deal with complexity in the worst case:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item \emph{Randomization}: can make the scenario $h = n$ highly unlikely
   \item \emph{Amortized Maintenance}: relatively expensive but `amortized' operations
   \item \emph{Self-Balancing}: e.g. Red-Black trees (see \ref{subsec:rb_tree})
@@ -2401,7 +2401,7 @@ By constraining the node colors on any simple path from the root to a leaf, red-
 \begin{definition}[Red-Black Tree]
   \label{def:rb_tree_properties}
   A red-black tree is a binary search tree that satisfies the following \emph{red-black properties}:
-  \begin{enumerate}[before={\parskip=0pt},nosep]
+  \begin{enumerate}%[before={\parskip=0pt},nosep]
     \item Every node is either red or black. \label{def:rb_tree_properties:color}
     \item The root is black. \label{def:rb_tree_properties:root_isblack}
     \item Every leaf ($\nil$) is black. \label{def:rb_tree_properties:leafs_areblack}
@@ -2972,52 +2972,6 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 \end{algorithm}
 
 
-
-
-
-% \begin{algorithm}[h]
-% \caption{Prim}\label{alg:prim}
-% \begin{algorithmic}[1]
-% \Function{Prim}{$G,u,w$} 
-%   \State Initialize $\attrib{v}{key}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-%   \State $\attrib{r}{key}\gets 0$
-%   \State $Q\gets V$ \Comment{min-priority queue by \attribute{key}}
-%   \While{$Q\neq\emptyset$}
-%     \State $u\gets$ \Call{ExtractMin}{$Q$}
-%     \ForAll{$v\in\Gamma(u)$}
-%       \If{$v\in Q$ and $w(u,v)<\attrib{v}{key}$}
-%         \State $\attrib{v}{\pi}\gets u$
-%         \State $\attrib{v}{key}\gets w(u,v)$
-%         \State \Call{DecreaseKey}{$Q,v,\attrib{v}{key}$}
-%       \EndIf
-%     \EndFor
-%   \EndWhile
-%   \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$
-% \EndFunction
-% \end{algorithmic}
-% \end{algorithm}
-
-% \algobox{%
-%   \begin{codebox}
-%     \Procname{$\proc{MST-Prim}(G, u, w)$}
-%     \li $T\gets(\emptyset,\emptyset)$
-%     \li \For each vertex $v\in V(G)$
-%     \li \Do $W[v]\gets\infty$
-%     \li     $P[v]\gets \const{nil}$
-%         \End
-%     \li $W[u]\gets 0$
-%     \li \While $V(T)\ne V(G)$
-%     \li \Do find $u\not\in V(T)$ such that $W[u]$ is minimal
-%     \li     $T\gets T\cup \{u\}$ \Comment add $u$ to $T$
-%     \li     \For all $v\in \id{Adj}(u)\setminus V(T)$
-%     \li     \Do \If $w(u,v) < W[v]$
-%     \li         \Then $W[v]\gets w(u,v)$
-%     \li               $P[v]\gets u$
-%                 \End
-%             \End
-%         \End
-%   \end{codebox}}
-
 \begin{algorithm}[h]
 \caption{Prim}\label{alg:prim}
 \begin{algorithmic}[1]
@@ -3046,33 +3000,14 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 
 \subsection{Single-Source Shortest Paths}\label{sec:single_source_shortest_paths}
 
-% \begin{algorithm}[H]
-% \caption{Dijkstra}\label{alg:dijkstra}
-% \begin{algorithmic}[1]
-% \Function{Dijkstra}{$G=(V,E,w),\,s$}
-%   \State Initialize $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
-%   \State $\attribnormal{s}{\delta}\gets 0$
-%   \State $Q\gets V$  \Comment{min-queue keyed by \attribnormal{·}{\delta}}
-%   \While{$Q\neq\emptyset$}
-%     \State $u\gets$ \Call{ExtractMin}{$Q$}
-%     \ForAll{$(u,v)\in E$}
-%       \If{$\attribnormal{v}{\delta}>\attribnormal{u}{\delta}+w(u,v)$}
-%         \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+w(u,v)$
-%         \State $\attrib{v}{\pi}\gets u$
-%         \State \Call{DecreaseKey}{$Q,v,\attribnormal{v}{\delta}$}
-%       \EndIf
-%     \EndFor
-%   \EndWhile
-%   \State \Return $\bigl(\attribnormal{v}{\delta}\bigr)_{v\in V}$
-% \EndFunction
-% \end{algorithmic}
-% \end{algorithm}
 
+\nameref{alg:dijkstra}'s algorithm is a greedy, label-setting method for nonnegative edge weights.  
+At each step it finalizes the closest unreached vertex and relaxes its outgoing edges, yielding a time complexity of \(O((|V|+|E|)\log |V|)\) with a binary-heap implementation.
 
 \begin{algorithm}[h]
 \caption{Dijkstra}\label{alg:dijkstra}
 \begin{algorithmic}[1]
-\Function{Dijkstra}{$G, w:E\to\R, s$} 
+\Function{Dijkstra}{$G, w:E\to\R_{\ge0}, s$} 
   \State $N \gets \emptyset$ \Comment{nodes of \(G\) whose least-cost path from \(s\) is definitely known}
   \ForAll{$v\in V(G)$}
     \State $\attrib{v}{\delta}\gets\infty$ \Comment{best known cost from \(s\) to \(v\)}
@@ -3095,19 +3030,280 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 \end{algorithm}
 
 
+
+
+
+
+\nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that supports arbitrary (i.e. including negative) weights and detects negative-weight cycles.  
+It relaxes all edges in up to \(|V|-1\) passes for \(O(|V|\times|E|)\) time and uses one extra pass to check for cycles.
+
+The Bellman-Ford equation:
+\begin{equation}\label{eq:bellmanford}
+\delta(s, v) = \min_{(u,v)\in E} \left(\delta(s, u) + w(u, v)\right)
+\end{equation}
+
+\begin{algorithm}[h]
+\caption{Bellman-Ford}\label{alg:bellmanford}
+\begin{algorithmic}[1]
+\Function{BellmanFord}{$G, w:E\to\R, s$}
+  \ForAll{$v\in V(G)$}
+    \State $\attrib{v}{\delta}\gets\infty$
+    \State $\attrib{v}{\pi}\gets\nil$
+  \EndFor
+  \State $\attrib{s}{\delta}\gets 0$
+  \For{$i=1$ to $|V(G)|-1$} 
+    \ForAll{$(u,v)\in E(G)$}
+      \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$} 
+        \State $\attrib{v}{\delta}\gets \attrib{u}{\delta}+w(u,v)$ \Comment{applying Equation~\eqref{eq:bellmanford}}
+        \State $\attrib{v}{\pi}\gets u$
+      \EndIf
+    \EndFor
+  \EndFor
+  \ForAll{$(u,v)\in E(G)$}
+    \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$}
+      \State \Return \fals \Comment{negative-weight cycle detected}
+    \EndIf
+  \EndFor
+  \State \Return \tru
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+
 \section{Design Techniques}\label{sec:design_techniques}
+
 \subsection{Greedy Algorithms}\label{sec:greedy_algorithms}
+
+Greedy algorithms construct a solution by always choosing the option that looks best at the moment.
+That is, they make a locally optimal choice in the hope that this choice leads to a globally optimal solution.
+
+At every step, we consider only what is best best in the current problem, not considering the results of the subproblems.
+
+
+% \begin{definition}\label{def:greedy_properties}
+The key ingredients of a problem for a greedy strategy to work:
+\begin{enumerate}
+  \item \emph{Greedy-Choice}: \label{greedy_choice_property}
+  One can always arrive at a globally optimal solution by making a locally optimal choice.
+  \item \emph{Optimal Substructure}:  \label{optimal_substructure}
+  An optimal solution to the problem contains within it optinmal solutions to subproblems.
+\end{enumerate}
+It is natural to prove property \ref{optimal_substructure} by induction: 
+if the solution to the subproblem is optimal, then combining the greedy choice with that solution yields an optimal solution.
+% \end{definition}
+
+
+The proof pattern when designing a greedy algorithm is:
+\begin{enumerate}[partopsep=0em, topsep=0em, label=(\roman*)]
+  \item \emph{Cast} the problem as one where we make a \emph{greedy choice} and are left with a \emph{subproblem}. \label{greedy_design_step:cast}
+  \item \emph{Prove} that (at least) one optimal solution (not necessarily always the same one) contains the greedy choice (Property \ref{greedy_choice_property}).
+  \item \emph{Prove} that the remaining subproblem is such that combining the greedy choice with the optimal solution of the subproblem gives an optimal solution to the original problem.% (Property \ref{optimal_substructure}). not sure if it is accurate to say that this is the same as the optimal substructure property
+\end{enumerate}
+
+\begin{remark}[Design hints]
+\leavevmode
+\begin{itemize}
+  \item Inventing a greedy algorithm is easy (easy to come up with greedy choices)
+  \item Proving it optimal may be hard (requires deep understanding of the structure of the problem)
+  % \item When correctness proofs become convoluted, the problem likely lacks the greedy-choice property—reconsider dynamic programming.
+  \qedhere
+\end{itemize}
+\end{remark}
+
+% \begin{example}[Activity Selection]
+% For the unweighted version (all activities worth 1), selecting the compatible activity that \emph{finishes earliest} at every step is safe: by exchanging the first activity of any optimal schedule with the earliest-finish activity (slides~9--12), we obtain another optimal schedule of the same size, establishing the greedy-choice property. The sub-problem on the activities that start after the chosen one inherits the structure, satisfying optimal substructure. The resulting algorithm runs in $\Theta(n \log n)$ time after sorting by finish time.
+% \[
+%   \operatorname{OPT}(j) = \max\{v_j + \operatorname{OPT}(p(j)),\operatorname{OPT}(j-1)\} \qedhere
+% \]
+% \end{example}
+
+% \begin{example}[Fractional Knapsack]
+% Allowing fractional items, taking at each step the remaining item with highest value-to-weight ratio is optimal: 
+% any deviation can be improved by swapping weight from a lower-ratio item to a higher-ratio one, contradicting optimality.
+% \end{example}
+
+
+% \begin{example}[0/1 Knapsack]
+% With indivisible items the same rule fails, the greedy-choice property is violated.
+% \end{example}
+
+
+% \paragraph{Design hints.}
+% \begin{itemize}
+%   \item Inventing a tempting rule is usually easy; proving it correct is the hard part.
+%   \item When correctness proofs become convoluted, the problem likely lacks the greedy-choice property—reconsider dynamic programming.
+% \end{itemize}
+
+\begin{remark}[Greedy versus Dynamic Programming]\label{rem:greedy_vs_dp}
+Greedy algorithms have many similarities to dynamic programming. 
+In particular, problems for which dynamic programming works also need to have optimal substructure (Property \ref{optimal_substructure}).
+
+One major difference is that instead of first finding optimal solutions to subproblems and then making an informed choice, greedy algorithms first make a greedy choice the choice that looks best at the time and then solve a resulting subproblem, without bothering to solve all possible related smaller subproblems.
+\end{remark}
+
+
 \subsection{Dynamic Programming}\label{sec:dynamic_programming}
+
+% Dynamic programming systematically solves \emph{overlapping sub-problems} and stores their optimal values so that each is computed only once. 
+% The term “programming” historically meant “tabular planning”.
+
+% \begin{definition}[Principle of Optimality]\label{def:bellman_principle}
+% An optimization problem satisfies the principle of optimality if an optimal solution \emph{contains} optimal solutions to its constituent sub-problems.
+% \end{definition}
+
+% DP applies when the principle of optimality holds but the greedy-choice property need not. Two implementation styles exist:
+% \begin{itemize}
+%   \item \textbf{Memoisation} (top-down): recurse as in a naïve exponential algorithm but cache every computed sub-problem.
+%   \item \textbf{Tabulation} (bottom-up): explicitly fill a table in an order that guarantees dependencies are already solved.
+% \end{itemize}
+
+% \paragraph{Recipe.}
+% \begin{enumerate}[label=\arabic*., leftmargin=*]
+%   \item \emph{Characterise} an optimal solution by a function of one or more indices (the \emph{state}).
+%   \item \emph{Derive} a recursion (\emph{transition}) on strictly smaller indices.
+%   \item \emph{Compute} the states bottom-up (or memoise), remembering the choice that realised the optimum for reconstruction.
+% \end{enumerate}
+
+% \subsubsection*{Typical Sub-problem Structures}
+% \begin{itemize}
+%   \item \textbf{Prefix/suffix}: first $i$ elements (O(n) states), e.g.\ 0/1 Knapsack, Edit Distance.
+%   \item \textbf{Sub-sequence/interval}: elements $i\ldots j$ (O(n²) states), e.g.\ Matrix-chain multiplication, Optimal BST.
+% \end{itemize}
+
+% \begin{example}[Weighted Activity Selection]
+% Let the activities be indexed by increasing finish time $f_1<\dots<f_n$ and values $v_i$. For $j\in\{1,\dots,n\}$ define
+% \[
+%   \operatorname{OPT}(j)
+%     = \max\{v_j + \operatorname{OPT}(p(j)),\operatorname{OPT}(j-1)\},
+% \]
+% where $p(j)=\max\{\,i<j\mid f_i\le s_j\}$ is the rightmost activity compatible with $j$. 
+% Table filling takes $O(n\log n)$ time if the $p(j)$ values are pre-computed by binary search.
+% \end{example}
+% \begin{example}[Edit Distance (Levenshtein)]
+% For strings $x[1..m]$ and $y[1..n]$ let $E(i,j)$ be the minimal edits turning $x[1..i]$ into $y[1..j]$. The recurrence is
+% \[
+%   E(i,j)
+%     = \min
+%       \begin{cases}
+%         1 + E(i-1,j), & \text{delete},\\
+%         1 + E(i,j-1), & \text{insert},\\
+%         \mathbf{1}_{x_i\neq y_j} + E(i-1,j-1), & \text{match/replace}.
+%       \end{cases}
+% \]
+% The $O(mn)$ table yields the classic $\Theta(mn)$ algorithm.
+% \end{example}
+% \begin{example}[Longest Increasing Sub-sequence (LIS)]
+% For index $j$, let 
+% \[
+%   L(j)
+%     = 1 + \max\{\,L(i)\mid i<j\wedge a_i<a_j\},
+% \]
+% with base $L(1)=1$. The straightforward DP is $O(n^2)$; with a balanced-search-tree trick it can be improved to $O(n\log n)$.
+% \end{example}
+% \begin{remark}\small
+% While recursion \emph{suggests} itself from the mathematical recurrence, naïvely recursing without caching (e.g.\ Fibonacci) re-computes the same state exponentially many times—memoisation or tabulation are therefore indispensable.
+% \end{remark}
+
+
+
+
 
 
 
 \section{Complexity Theory}
+\[
+\begin{tikzpicture}[scale=0.8]
+  % Draw the two circles
+  % \filldraw[color=blue!60, fill=blue!20, very thick]
+  \filldraw[color=black, fill=green!20, very thick]
+    (0,0) circle (2.5)  coordinate (C);  % big NP circle
+  \filldraw[color=black, fill=green!20, very thick]
+    (0,1) circle (1.0);                  % small P circle
+
+  % Labels
+  \node at (0,1)   {P};
+  \node at (0,-0.5){NP};
+  \node at (0,-1.7){NPC};
+
+  % Dashed NPC boundary
+  \draw[dashed, thick]
+    (-1.65,-1.7) .. controls (-0.5,-1) and (0.5,-1) .. (1.65,-1.7);
+
+  % Define the line path and the circle path
+  \path[name path=ray] (1.5,1.5) -- (3,2.5);
+  \path[name path=circle] (0,0) circle (2.5);
+
+  % Compute their intersection
+  \path[name intersections={of=ray and circle, by=I}];
+
+  % Draw only up to the intersection point
+  \draw[] (3,2.5) -- (I);
+
+  % Place label at that intersection
+  \node[above] at (3,2.5) {all computational problems};
+\end{tikzpicture}
+\]
+Complexity theory is about classifying computational problems by their computational difficulty. 
+The set P contains all problems that can be solved in polynomial time, i.e., the number of computational steps being at most a polynomial function of the input size. 
+P is a subset of NP, containing all problems for which one can verify a given solution in polynomial time, whereas the solution may not be found in polynomial time.
+
+A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. 
+That means that any problem in NP can be reduced to any problem in NPC in polynomial time. 
+Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. 
+This means that NPC problems can be used as indicators of simplicity for all NP problems: 
+If you can solve one NPC problem in polynomial time, then you can solve all of them. 
+(In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; 
+most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
+
+
+
+
+% I will ask if it is a problem is in a class p or np. 
+% Answer is ALWAYS YES, and proof your answer. 
+% (Otherwise you wouldn’t be able to prove it)
+
+% Example: is the problem in p?, prove it. 
+% Answer: yes.  
+% So we have to show that there is an algorithm that solves the problem in polynomial time. 
+% ALWAYS the proof is to write and Algorithm.
+
+% If it is an np, means: poly-time verifiable. 
+% We need problem instance + Solution “witness” for a yes answer $\to$ then, check it. 
+% So, you dont need to show how so solve it!
+
+% Example: exist a subset in A that sums s? 
+% \Call{SubsetSum}{$A, s$}, $A= [3, 7, -1, 5, 2, 8]$, $s =12$. ? Prove it.
+
+% Answer: Yes. So, WRITE An algorithm that verifies a solution, it can have another parameter as the \texttt{solution} 
+% \Call{SubsetSumVerify}{$A, s, \texttt{solution}$}. we have to proof that that \texttt{solution} is a solution for the problem. 
+
+% In this case:
+% \begin{algorithm}[h]
+% \caption{Subset-Sum Verification}\label{alg:subset_sum_verify}
+% \begin{algorithmic}[1]
+% \Function{SubsetSumVerify}{$A, s, \texttt{solution}$}
+%   \If{$\sum(\texttt{solution})\neq s$}
+%     \State \Return \fals
+%   \EndIf
+%   \If{not ($\texttt{solution}$ is a subset of $A$)}  
+%     \State \Return \fals  \Comment{can be done in polynomial time}
+%   \EndIf
+%   \State \Return \tru
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
 
 
 
 \clearpage
 
-\section{Exam Exercises}\label{sec:exam_exercises}
+\section*{Exam Exercises}
 
 \subsection*{294}
 % \begin{algorithm}[h]
@@ -3140,7 +3336,7 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 %   \end{algorithmic}
 % \end{algorithm}
 \begin{algorithm}[h]
-  \caption{minimal number of edges to make an undirected graph connected}%
+  \caption*{minimal number of edges to make an undirected graph connected}%
   \label{alg:min_edges_connected}
   \begin{algorithmic}[1]
     \Function{MinimalAdditionalEdges}{$G$}
@@ -3173,7 +3369,7 @@ For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
 
 \subsection*{298}
 \begin{algorithm}[h]
-  \caption{Checking for 3 distinct values in an array}\label{alg:distinct_values}
+  \caption*{Checking for 3 distinct values in an array}\label{alg:distinct_values}
   \begin{algorithmic}[1]
     \Function{DistinctValues}{$A$}
       \State $a_1, a_2, a_3 \gets \nil$ \Comment{the three distinct values}
