@@ -3091,7 +3091,7 @@ The key ingredients of a problem for a greedy strategy to work:
   \item \emph{Greedy-Choice}: \label{greedy_choice_property}
   One can always arrive at a globally optimal solution by making a locally optimal choice.
   \item \emph{Optimal Substructure}:  \label{optimal_substructure}
-  An optimal solution to the problem contains within it optinmal solutions to subproblems.
+  An optimal solution to the problem contains within it optimal solutions to subproblems.
 \end{enumerate}
 It is natural to prove property \ref{optimal_substructure} by induction: 
 if the solution to the subproblem is optimal, then combining the greedy choice with that solution yields an optimal solution.
@@ -3105,7 +3105,7 @@ The proof pattern when designing a greedy algorithm is:
   \item \emph{Prove} that the remaining subproblem is such that combining the greedy choice with the optimal solution of the subproblem gives an optimal solution to the original problem.% (Property \ref{optimal_substructure}). not sure if it is accurate to say that this is the same as the optimal substructure property
 \end{enumerate}
 
-\begin{remark}[Design hints]
+\begin{remark}[Designing Greedy Algorithms]\label{rem:designing_greedy_algorithms}
 \leavevmode
 \begin{itemize}
   \item Inventing a greedy algorithm is easy (easy to come up with greedy choices)
@@ -3115,31 +3115,8 @@ The proof pattern when designing a greedy algorithm is:
 \end{itemize}
 \end{remark}
 
-% \begin{example}[Activity Selection]
-% For the unweighted version (all activities worth 1), selecting the compatible activity that \emph{finishes earliest} at every step is safe: by exchanging the first activity of any optimal schedule with the earliest-finish activity (slides~9--12), we obtain another optimal schedule of the same size, establishing the greedy-choice property. The sub-problem on the activities that start after the chosen one inherits the structure, satisfying optimal substructure. The resulting algorithm runs in $\Theta(n \log n)$ time after sorting by finish time.
-% \[
-%   \operatorname{OPT}(j) = \max\{v_j + \operatorname{OPT}(p(j)),\operatorname{OPT}(j-1)\} \qedhere
-% \]
-% \end{example}
 
-% \begin{example}[Fractional Knapsack]
-% Allowing fractional items, taking at each step the remaining item with highest value-to-weight ratio is optimal: 
-% any deviation can be improved by swapping weight from a lower-ratio item to a higher-ratio one, contradicting optimality.
-% \end{example}
-
-
-% \begin{example}[0/1 Knapsack]
-% With indivisible items the same rule fails, the greedy-choice property is violated.
-% \end{example}
-
-
-% \paragraph{Design hints.}
-% \begin{itemize}
-%   \item Inventing a tempting rule is usually easy; proving it correct is the hard part.
-%   \item When correctness proofs become convoluted, the problem likely lacks the greedy-choice property—reconsider dynamic programming.
-% \end{itemize}
-
-\begin{remark}[Greedy versus Dynamic Programming]\label{rem:greedy_vs_dp}
+\begin{remark}[Greedy vs. Dynamic Programming]\label{rem:greedy_vs_dp}
 Greedy algorithms have many similarities to dynamic programming. 
 In particular, problems for which dynamic programming works also need to have optimal substructure (Property \ref{optimal_substructure}).
 
@@ -3149,65 +3126,41 @@ One major difference is that instead of first finding optimal solutions to subpr
 
 \subsection{Dynamic Programming}\label{sec:dynamic_programming}
 
-% Dynamic programming systematically solves \emph{overlapping sub-problems} and stores their optimal values so that each is computed only once. 
-% The term “programming” historically meant “tabular planning”.
+Dynamic programming is a method for solving (typically optimization) problems by decomposing them into (slightly smaller) subproblems that share subsubproblems.
+To make such a recursive approach efficient, the optimal solutions to those subproblems are stored in an array/table of appropriate size and dimension, so that each susubbproblem is solved just once.
+% Naïve recursion yields exponential complexity!
+Instead of solving the problem top-down (recursively, with memoization) it is also possible (and often slightly more efficient due to the overhead of recursion) to solve the problem bottom-up (iteratively filling the table, starting with the base cases).
 
-% \begin{definition}[Principle of Optimality]\label{def:bellman_principle}
-% An optimization problem satisfies the principle of optimality if an optimal solution \emph{contains} optimal solutions to its constituent sub-problems.
-% \end{definition}
 
-% DP applies when the principle of optimality holds but the greedy-choice property need not. Two implementation styles exist:
-% \begin{itemize}
-%   \item \textbf{Memoisation} (top-down): recurse as in a naïve exponential algorithm but cache every computed sub-problem.
-%   \item \textbf{Tabulation} (bottom-up): explicitly fill a table in an order that guarantees dependencies are already solved.
-% \end{itemize}
+The key ingredients of a problem for a dynamic programming method to work:
+\begin{enumerate}
+  \item \emph{Optimal Substructure}:  \label{optimal_substructure_dp}
+  An optimal solution to the problem contains within it optimal solutions to subproblems.
+  \item \emph{Overlapping Subproblems}: \label{overlapping_subproblems}
+  The subproblems share subsubproblems.
+  A recursive solution therefore revisits the same subsubproblem repeatedly.
+\end{enumerate}
 
-% \paragraph{Recipe.}
-% \begin{enumerate}[label=\arabic*., leftmargin=*]
-%   \item \emph{Characterise} an optimal solution by a function of one or more indices (the \emph{state}).
-%   \item \emph{Derive} a recursion (\emph{transition}) on strictly smaller indices.
-%   \item \emph{Compute} the states bottom-up (or memoise), remembering the choice that realised the optimum for reconstruction.
+% Steps to discover the optimal substructure (Property \ref{optimal_substructure_dp}):
+% \begin{enumerate}[partopsep=0em, topsep=0em, label=(\roman*)]
+% 	\item Show that a solution to the problem consists of making a choice.
+%         Making this choice leaves one or more subproblems to be solved.
+% 	\item Suppose that for a given problem there exists a choice which leads to an optimal substructure. 
+%         Do not concern yourself with how to determine this choice, but assume it has been given to you.
+% 	\item Given this choice, determine which subproblems ensue and how to best characterize the resulting space of subproblems.
+% 	\item Using a ``cut-and-paste'' technique, show that the solutions to the subproblems used within an optimal solution to the problem must themselves be optimal.
+%         You can do so by supposing that each subproblem is not optimal and then deriving a contradiction.
 % \end{enumerate}
+To characterize the space of subproblems, a good rule of thumb is to try to keep it as simple as possible.
 
-% \subsubsection*{Typical Sub-problem Structures}
-% \begin{itemize}
-%   \item \textbf{Prefix/suffix}: first $i$ elements (O(n) states), e.g.\ 0/1 Knapsack, Edit Distance.
-%   \item \textbf{Sub-sequence/interval}: elements $i\ldots j$ (O(n²) states), e.g.\ Matrix-chain multiplication, Optimal BST.
-% \end{itemize}
+\begin{remark}[Dynamic Programming vs. Divide and Conquer]\label{rem:dp_vs_divide_and_conquer} 
+Both decompose a problem into subproblems.
+But in divide-and-conquer the subproblems are disjoint, that is, they do not share subsubproblems.
+The subproblems in divide-and-conquer are also typically much smaller than the original problem, while in dynamic programming the subproblems are typically only slightly smaller than the original problem (e.g. reducing \(L(j)\) to \(L(j-1)\))
+\end{remark}
 
-% \begin{example}[Weighted Activity Selection]
-% Let the activities be indexed by increasing finish time $f_1<\dots<f_n$ and values $v_i$. For $j\in\{1,\dots,n\}$ define
-% \[
-%   \operatorname{OPT}(j)
-%     = \max\{v_j + \operatorname{OPT}(p(j)),\operatorname{OPT}(j-1)\},
-% \]
-% where $p(j)=\max\{\,i<j\mid f_i\le s_j\}$ is the rightmost activity compatible with $j$. 
-% Table filling takes $O(n\log n)$ time if the $p(j)$ values are pre-computed by binary search.
-% \end{example}
-% \begin{example}[Edit Distance (Levenshtein)]
-% For strings $x[1..m]$ and $y[1..n]$ let $E(i,j)$ be the minimal edits turning $x[1..i]$ into $y[1..j]$. The recurrence is
-% \[
-%   E(i,j)
-%     = \min
-%       \begin{cases}
-%         1 + E(i-1,j), & \text{delete},\\
-%         1 + E(i,j-1), & \text{insert},\\
-%         \mathbf{1}_{x_i\neq y_j} + E(i-1,j-1), & \text{match/replace}.
-%       \end{cases}
-% \]
-% The $O(mn)$ table yields the classic $\Theta(mn)$ algorithm.
-% \end{example}
-% \begin{example}[Longest Increasing Sub-sequence (LIS)]
-% For index $j$, let 
-% \[
-%   L(j)
-%     = 1 + \max\{\,L(i)\mid i<j\wedge a_i<a_j\},
-% \]
-% with base $L(1)=1$. The straightforward DP is $O(n^2)$; with a balanced-search-tree trick it can be improved to $O(n\log n)$.
-% \end{example}
-% \begin{remark}\small
-% While recursion \emph{suggests} itself from the mathematical recurrence, naïvely recursing without caching (e.g.\ Fibonacci) re-computes the same state exponentially many times—memoisation or tabulation are therefore indispensable.
-% \end{remark}
+
+
 
 
 
@@ -3216,6 +3169,7 @@ One major difference is that instead of first finding optimal solutions to subpr
 
 
 \section{Complexity Theory}
+Complexity theory is about classifying computational problems by their computational difficulty. 
 \[
 \begin{tikzpicture}[scale=0.8]
   % Draw the two circles
@@ -3241,24 +3195,24 @@ One major difference is that instead of first finding optimal solutions to subpr
   % Compute their intersection
   \path[name intersections={of=ray and circle, by=I}];
 
-  % Draw only up to the intersection point
-  \draw[] (3,2.5) -- (I);
+  % % Draw only up to the intersection point
+  % \draw[] (3,2.5) -- (I);
 
-  % Place label at that intersection
-  \node[above] at (3,2.5) {all computational problems};
+  % % Place label at that intersection
+  % \node[above] at (3,2.5) {all computational problems};
 \end{tikzpicture}
 \]
-Complexity theory is about classifying computational problems by their computational difficulty. 
-The set P contains all problems that can be solved in polynomial time, i.e., the number of computational steps being at most a polynomial function of the input size. 
-P is a subset of NP, containing all problems for which one can verify a given solution in polynomial time, whereas the solution may not be found in polynomial time.
+P contains all problems that can be \emph{solved} in polynomial time.
 
-A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. 
-That means that any problem in NP can be reduced to any problem in NPC in polynomial time. 
-Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. 
-This means that NPC problems can be used as indicators of simplicity for all NP problems: 
-If you can solve one NPC problem in polynomial time, then you can solve all of them. 
-(In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; 
-most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
+NP contains all problems for which one can \emph{verify} a given solution in polynomial time, whereas the solution may not be found in polynomial time.
+
+% A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. 
+% That means that any problem in NP can be reduced to any problem in NPC in polynomial time. 
+% Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. 
+% This means that NPC problems can be used as indicators of simplicity for all NP problems: 
+% If you can solve one NPC problem in polynomial time, then you can solve all of them. 
+% (In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; 
+% most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
 
 
 
@@ -3303,101 +3257,72 @@ most people believe that the three classes P, NP, and NPC are all different from
 
 \clearpage
 
-\section*{Exam Exercises}
+% \section*{Exam Exercises}
 
-\subsection*{294}
+% \subsection*{294}
 % \begin{algorithm}[h]
-%   \caption{minimal number of edges to make a unditected graph connected}\label{alg:min_edges_connected}
+%   \caption*{minimal number of edges to make an undirected graph connected}%
+%   \label{alg:min_edges_connected}
 %   \begin{algorithmic}[1]
 %     \Function{MinimalAdditionalEdges}{$G$}
-%       \State \Return \Call{CountComponents}{$G$} - 1
-%     \EndFunction
-%     \Function{CountComponents}{$G$}
-%       \State $n_C \gets 0$ \Comment{number of components}
-%       \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
+%     \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
+%       \State $n_C \gets 0$ \Comment{number of connected components}
+      
 %       \For{$i \gets 1 \ldots |V(G)|$}
 %         \If{$X[i] = \fals$}
 %           \State $n_C \gets n_C + 1$
 %           \State initialize an empty queue $Q$
 %           \State \Call{Enqueue}{$Q, i$}
+%           \State $X[i] \gets \tru$          \Comment{mark source vertex as visited}
+          
 %           \While{$Q \neq \emptyset$}
 %             \State $u \gets$ \Call{Dequeue}{$Q$}
-%             \State $X[u] \gets \tru$
 %             \ForAll{$v \in \Gamma(u)$}
-%               \If{$X[v] = \fals$}
-%                 \State \Call{Enqueue}{$Q, v$}
+%               \If{$X[v] = \fals$} 
+%                 \State \Call{Enqueue}{$Q, v$} \Comment{mark on enqueue to avoid duplicates}
+%                 \State $X[v] \gets \tru$
 %               \EndIf
 %             \EndFor
 %           \EndWhile
 %         \EndIf
 %       \EndFor
-%       \State \Return $n_C$
+      
+%       \State \Return $n_C - 1$ 
 %     \EndFunction
 %   \end{algorithmic}
 % \end{algorithm}
-\begin{algorithm}[h]
-  \caption*{minimal number of edges to make an undirected graph connected}%
-  \label{alg:min_edges_connected}
-  \begin{algorithmic}[1]
-    \Function{MinimalAdditionalEdges}{$G$}
-    \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
-      \State $n_C \gets 0$ \Comment{number of connected components}
-      
-      \For{$i \gets 1 \ldots |V(G)|$}
-        \If{$X[i] = \fals$}
-          \State $n_C \gets n_C + 1$
-          \State initialize an empty queue $Q$
-          \State \Call{Enqueue}{$Q, i$}
-          \State $X[i] \gets \tru$          \Comment{mark source vertex as visited}
-          
-          \While{$Q \neq \emptyset$}
-            \State $u \gets$ \Call{Dequeue}{$Q$}
-            \ForAll{$v \in \Gamma(u)$}
-              \If{$X[v] = \fals$} 
-                \State \Call{Enqueue}{$Q, v$} \Comment{mark on enqueue to avoid duplicates}
-                \State $X[v] \gets \tru$
-              \EndIf
-            \EndFor
-          \EndWhile
-        \EndIf
-      \EndFor
-      
-      \State \Return $n_C - 1$ 
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
 
-\subsection*{298}
-\begin{algorithm}[h]
-  \caption*{Checking for 3 distinct values in an array}\label{alg:distinct_values}
-  \begin{algorithmic}[1]
-    \Function{DistinctValues}{$A$}
-      \State $a_1, a_2, a_3 \gets \nil$ \Comment{the three distinct values}
-      \ForAll{$a\in A$}
-        \If{$a = a_1 \lor a_1 = \nil$}
-          \If{$a_1 = \nil$}
-            \State $a_1 \gets a$
-          \EndIf
-          \State \textbf{continue}
-        \EndIf
-        \If{$a = a_2 \lor a_2 = \nil$}
-          \If{$a_2 = \nil$}
-            \State $a_2 \gets a$
-          \EndIf
-          \State \textbf{continue}
-        \EndIf
-        \If{$a = a_3 \lor a_3 = \nil$}
-          \If{$a_3 = \nil$}
-            \State $a_3 \gets a$
-          \EndIf
-          \State \textbf{continue}
-        \EndIf
-        \State \Return \texttt{False} 
-      \EndFor
-      \State \Return \texttt{True} 
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
+% \subsection*{298}
+% \begin{algorithm}[h]
+%   \caption*{Checking for 3 distinct values in an array}\label{alg:distinct_values}
+%   \begin{algorithmic}[1]
+%     \Function{DistinctValues}{$A$}
+%       \State $a_1, a_2, a_3 \gets \nil$ \Comment{the three distinct values}
+%       \ForAll{$a\in A$}
+%         \If{$a = a_1 \lor a_1 = \nil$}
+%           \If{$a_1 = \nil$}
+%             \State $a_1 \gets a$
+%           \EndIf
+%           \State \textbf{continue}
+%         \EndIf
+%         \If{$a = a_2 \lor a_2 = \nil$}
+%           \If{$a_2 = \nil$}
+%             \State $a_2 \gets a$
+%           \EndIf
+%           \State \textbf{continue}
+%         \EndIf
+%         \If{$a = a_3 \lor a_3 = \nil$}
+%           \If{$a_3 = \nil$}
+%             \State $a_3 \gets a$
+%           \EndIf
+%           \State \textbf{continue}
+%         \EndIf
+%         \State \Return \texttt{False} 
+%       \EndFor
+%       \State \Return \texttt{True} 
+%     \EndFunction
+%   \end{algorithmic}
+% \end{algorithm}
 
 
 
