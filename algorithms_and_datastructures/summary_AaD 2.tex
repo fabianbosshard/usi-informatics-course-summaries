@@ -38,6 +38,8 @@ Idea: the number of $1,2$-beats over $n$ beats is the sum of the number of $1,2$
         \TAA\hspace{1em}\TAA\TA \\
       \end{tabular}
 \end{center}
+
+
 \begin{algorithm}[htb] % wihtout [H], it is not possible to place the algorithm in the minipage
     \caption{Pingala}
     \begin{algorithmic}[1]
@@ -64,9 +66,8 @@ T(1) = 1, \quad T(2) = 1, \quad T(n) = T(n-1) + T(n-2) + 2
 \]
 \[
 T(n) \geq 2T(n-2) \geq 2(2T(n-4)) = 2^2T(n-4) \geq \ldots \geq 2^{n/2}T(0) = \sqrt{2}^n T(0)  
+\qedhere
 \]
-This naïve recursive implementation has exponential running time, $T(n) = \Omega(\sqrt{2}^n)$.
-For this problem, we can do better if we avoid repeating the same computations over and over again (using Dynamic Programming, see \ref{sec:dynamic_programming}).
 \end{example}
 
 
@@ -366,51 +367,51 @@ Otherwise (the \textbf{recursive case}), you perform three characteristic steps:
 \end{enumerate}
 
 
-% \begin{center}
-%     \begin{tikzpicture}[
-%         every node/.style={draw, rounded corners=2pt, align=center, minimum width=2.4cm, minimum height=1.0cm},
-%         arrow/.style={->, thick}
-%     ]
+\begin{center}
+    \begin{tikzpicture}[
+        every node/.style={draw, rounded corners=2pt, align=center, minimum width=2.4cm, minimum height=1.0cm},
+        arrow/.style={->, thick}
+    ]
     
-%     %--- NODES ---
-%     % Top: Main Problem
-%     \node (main) {\footnotesize Main Problem};
+    %--- NODES ---
+    % Top: Main Problem
+    \node (main) {\footnotesize Main Problem};
     
-%     % Bottom: Final solution
-%     \node (final) [below =3.2cm of main] {\footnotesize Solution of\\\footnotesize Main Problem};
+    % Bottom: Final solution
+    \node (final) [below =3.2cm of main] {\footnotesize Solution of\\\footnotesize Main Problem};
     
-%     \def\distance{3.4cm}
-%     % Compute relative positions for subproblems dynamically
-%     \node (sub1) at ($(main)!0.3!(final) + (-\distance,0)$) {\footnotesize Sub-Problem};
-%     \node (sub2) at ($(main)!0.3!(final) + (\distance,0)$) {\footnotesize Sub-Problem};
+    \def\distance{3.4cm}
+    % Compute relative positions for subproblems dynamically
+    \node (sub1) at ($(main)!0.3!(final) + (-\distance,0)$) {\footnotesize Sub-Problem};
+    \node (sub2) at ($(main)!0.3!(final) + (\distance,0)$) {\footnotesize Sub-Problem};
 
-%     % Compute relative positions for solutions of subproblems dynamically
-%     \node (sol1) at ($(main)!0.7!(final) + (-\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
-%     \node (sol2) at ($(main)!0.7!(final) + (\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
+    % Compute relative positions for solutions of subproblems dynamically
+    \node (sol1) at ($(main)!0.7!(final) + (-\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
+    \node (sol2) at ($(main)!0.7!(final) + (\distance,0)$) {\footnotesize Solution of\\\footnotesize Sub-Problem};
     
-%     %--- ARROWS ---
-%     % From main problem to sub-problems
-%     \draw[arrow] (main) -- (sub1);
-%     \draw[arrow] (main) -- (sub2);
+    %--- ARROWS ---
+    % From main problem to sub-problems
+    \draw[arrow] (main) -- (sub1);
+    \draw[arrow] (main) -- (sub2);
     
-%     % From sub-problems to their solutions
-%     \draw[arrow] (sub1) -- node[midway, left, xshift=0.34cm, draw=none]
-%        {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol1);
-%     \draw[arrow] (sub2) -- node[midway, right, xshift=-0.34cm, draw=none]
-%        {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol2);
+    % From sub-problems to their solutions
+    \draw[arrow] (sub1) -- node[midway, left, xshift=0.34cm, draw=none]
+       {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol1);
+    \draw[arrow] (sub2) -- node[midway, right, xshift=-0.34cm, draw=none]
+       {\tiny Solve\\[-5pt] \tiny Sub-Problem} (sol2);
     
-%     % From solutions to final solution
-%     \draw[arrow] (sol1) -- (final);
-%     \draw[arrow] (sol2) -- (final);
+    % From solutions to final solution
+    \draw[arrow] (sol1) -- (final);
+    \draw[arrow] (sol2) -- (final);
     
-%     %--- BOLD TEXT IN THE MIDDLE ---
-%     % We place three labels along the vertical between 'main' and 'final'.
-%     \node[font=\bfseries, draw=none] at ($(main)!0.20!(final)$) {Divide};
-%     \node[font=\bfseries, draw=none] at ($(main)!0.50!(final)$) {Conquer};
-%     \node[font=\bfseries, draw=none] at ($(main)!0.80!(final)$) {Combine};
+    %--- BOLD TEXT IN THE MIDDLE ---
+    % We place three labels along the vertical between 'main' and 'final'.
+    \node[font=\bfseries, draw=none] at ($(main)!0.20!(final)$) {Divide};
+    \node[font=\bfseries, draw=none] at ($(main)!0.50!(final)$) {Conquer};
+    \node[font=\bfseries, draw=none] at ($(main)!0.80!(final)$) {Combine};
     
-%     \end{tikzpicture}
-% \end{center}
+    \end{tikzpicture}
+\end{center}
 
 
 When an algorithm contains a recursive call, we can often describe its running time with a \textbf{recurrence relation}, which expresses the overall running time of a problem of size $n$ in terms of the running time of the same algorithm on smaller inputs.
@@ -418,33 +419,33 @@ When an algorithm contains a recursive call, we can often describe its running t
 
 % \begin{digression}[Master Theorem]
 % \label{digression:master_theorem}
-Let $T(n)$ be the worst case running time on an input of size $n$.
-If the problem is small enough, say $n \leq n_0$, for some constant $n_0$, the straightforward solution takes constant time $\Theta(1)$.
-Suppose that the division of the problem yields $a$ subproblems, each of size $n/b$.%
-\footnote{For \hyperref[sec:merge_sort]{merge sort} (Algorithm \ref{alg:merge_sort}), $a = b = 2$, but there are other divide-and-conquer algorithms in which $a \neq b$.}
-If it takes $D(n)$ time to divide the problem into subproblems and $C(n)$ time to combine the solutions to the subproblems into the solution to the original problem, we get the recurrence
-\begin{align}
-\label{eq:recurrence_relation}
-T(n) &=
-\begin{cases}
-    \Theta(1) & \text{if } n \leq n_0 \\
-    D(n) + aT(n/b) + C(n) & \text{if } n > n_0
-\end{cases}
-\end{align}
+% Let $T(n)$ be the worst case running time on an input of size $n$.
+% If the problem is small enough, say $n \leq n_0$, for some constant $n_0$, the straightforward solution takes constant time $\Theta(1)$.
+% Suppose that the division of the problem yields $a$ subproblems, each of size $n/b$. 
+% For \hyperref[sec:merge_sort]{merge sort} (Algorithm \ref{alg:merge_sort}), $a = b = 2$, but there are other divide-and-conquer algorithms in which $a \neq b$.
+% If it takes $D(n)$ time to divide the problem into subproblems and $C(n)$ time to combine the solutions to the subproblems into the solution to the original problem, we get the recurrence
+% \begin{align}
+% \label{eq:recurrence_relation}
+% T(n) &=
+% \begin{cases}
+%     \Theta(1) & \text{if } n \leq n_0 \\
+%     D(n) + aT(n/b) + C(n) & \text{if } n > n_0
+% \end{cases}
+% \end{align}
 
-\begin{theorem}[Master Theorem]
-\label{thm:master_theorem}
-Let $a>0$ and $b>1$ be constants, and let $f(n)$ be a driving function that is defined and nonnegative on all sufficiently large reals. Define the recurrence $T(n)$ on $n \in \mathbb{N}$ by
-\[
-T(n)=a T(n / b)+f(n)
-\]
-where $a T(n / b)$ actually means $a^{\prime} T(\lfloor n / b\rfloor)+a^{\prime \prime} T(\lceil n / b\rceil)$ for some constants $a^{\prime} \geq 0$ and $a^{\prime \prime} \geq 0$ satisfying $a=a^{\prime}+a^{\prime \prime}$. Then the asymptotic behavior of $T(n)$ can be characterized as follows:
-\begin{enumerate}
-    \item If there exists a constant $\epsilon>0$ such that $f(n)=O\left(n^{\log _b a-\epsilon}\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a}\right)$.
-    \item If there exists a constant $k \geq 0$ such that $f(n)=\Theta\left(n^{\log _b a} \lg ^k n\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a} \lg ^{k+1} n\right)$.
-    \item If there exists a constant $\epsilon>0$ such that $f(n)=\Omega\left(n^{\log _b a+\epsilon}\right)$, and if $f(n)$ additionally satisfies the regularity condition $a f(n / b) \leq c f(n)$ for some constant $c<1$ and all sufficiently large $n$, then $T(n)=\Theta(f(n))$. \qedhere
-\end{enumerate}
-\end{theorem}
+% \begin{theorem}[Master Theorem]
+% \label{thm:master_theorem}
+% Let $a>0$ and $b>1$ be constants, and let $f(n)$ be a driving function that is defined and nonnegative on all sufficiently large reals. Define the recurrence $T(n)$ on $n \in \mathbb{N}$ by
+% \[
+% T(n)=a T(n / b)+f(n)
+% \]
+% where $a T(n / b)$ actually means $a^{\prime} T(\lfloor n / b\rfloor)+a^{\prime \prime} T(\lceil n / b\rceil)$ for some constants $a^{\prime} \geq 0$ and $a^{\prime \prime} \geq 0$ satisfying $a=a^{\prime}+a^{\prime \prime}$. Then the asymptotic behavior of $T(n)$ can be characterized as follows:
+% \begin{enumerate}
+%     \item If there exists a constant $\epsilon>0$ such that $f(n)=O\left(n^{\log _b a-\epsilon}\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a}\right)$.
+%     \item If there exists a constant $k \geq 0$ such that $f(n)=\Theta\left(n^{\log _b a} \lg ^k n\right)$, then $T(n)=$ $\Theta\left(n^{\log _b a} \lg ^{k+1} n\right)$.
+%     \item If there exists a constant $\epsilon>0$ such that $f(n)=\Omega\left(n^{\log _b a+\epsilon}\right)$, and if $f(n)$ additionally satisfies the regularity condition $a f(n / b) \leq c f(n)$ for some constant $c<1$ and all sufficiently large $n$, then $T(n)=\Theta(f(n))$. \qedhere
+% \end{enumerate}
+% \end{theorem}
 % \end{digression}
 
 \subsection{Binary Search}
@@ -876,7 +877,7 @@ Furthermore, an $n$-element heap has height $h=\lfloor\log_2 n\rfloor$ and at mo
 % \draw[draw=none] (\linestart, -3.75) node[right, draw=none, outer sep=5ex, xshift=\labelshift] {\(\tilde{h} = 1\)} -- (-5.25, -3.75);
 % \draw[draw=none] (\linestart, -4.5) node[right, draw=none, outer sep=5ex, xshift=\labelshift] {\(\tilde{h} = 0\)} -- (-6, -4.5);
 
-%--- \tilde{h} on left side via east-anchor + x-shift trick ---
+%--- \tilde{h} on left side via east‐anchor + x‐shift trick ---
 \newcommand{\linestart}{-6.8}
 \node[draw=none,anchor=west,inner sep=0] (lbl0) at (\linestart,1) {$h = \lfloor \log_2 n \rfloor$};
 \draw[dashed,thin,gray] ($(lbl0.east)+(0.8em,0)$) -- (-0.5,1);
@@ -1281,10 +1282,10 @@ method (sometimes also called \emph{two-pointer} or \emph{sliding-window} method
 Algorithm \ref{alg:caterpillar} maintains two indices \(l\) and \(r\), both starting at the left end of \(A\) (Line \ref{line:init-indices}).
 At each step, it compares \(A[r]\) and \(A[l]\) and checks if the difference \(A[r] - A[l]\) is less than, greater than, or equal to \(q\):
 
-\begin{itemize}%[before={\parskip = 0em}, nosep]
+\begin{itemize}[before={\parskip = 0em}, nosep]
   \item If \(A[r] - A[l] < q\), move \(r\) one step to the right (to increase the difference).
   \item If \(A[r] - A[l] > q\), move \(l\) one step to the right (to decrease the difference).
-  \item If \(A[r] - A[l] = q\), we found a valid pair and stop. %\qedhere
+  \item If \(A[r] - A[l] = q\), we found a valid pair and stop. \qedhere
 \end{itemize}
 \end{example}
 
@@ -1295,17 +1296,17 @@ At each step, it compares \(A[r]\) and \(A[l]\) and checks if the difference \(A
 Operations on a dynamic set can be grouped into two categories, \textit{queries}, which return information about the set, and \textit{modifying operations}, which change the set:
 \begin{description}[style=nextline, font={$\; \bullet$~\normalfont}]
 \item[\textsc{Search$(S, k)$}]
-\emph{query} that, given a set $S$ and a key value $k$, returns a pointer $x$ to an element in $S$ such that $x.\text{key} = k$, or \textsc{nil} if no such element belongs to $S$
+\textcolor{orange}{query} that, given a set $S$ and a key value $k$, returns a pointer $x$ to an element in $S$ such that $x.\text{key} = k$, or \textsc{nil} if no such element belongs to $S$
 \item[\textsc{Insert$(S, x)$}]
-\emph{modifying operation} that adds the element pointed to by $x$ to the set $S$ (we usually assume that any attributes in element $x$ needed by the set implementation have already been initialized)
+\textcolor{orange}{modifying operation} that adds the element pointed to by $x$ to the set $S$ (we usually assume that any attributes in element $x$ needed by the set implementation have already been initialized)
 \item[\textsc{Delete$(S, x)$}]
-\emph{modifying operation} that, given a pointer $x$ to an element in the set $S$, removes $x$ from $S$ (note that this operation takes a pointer to an element $x$, \underline{not} a key value\textcolor{red}{!})
+\textcolor{orange}{modifying operation} that, given a pointer $x$ to an element in the set $S$, removes $x$ from $S$ (note that this operation takes a pointer to an element $x$, \underline{not} a key value\textcolor{red}{!})
 \item[\textsc{Minimum$(S)$} and \textsc{Maximum$(S)$}]
-\emph{queries} on a totally ordered set $S$ that return a pointer to the element of $S$ with the smallest (for \textsc{Minimum}) or largest (for \textsc{Maximum}) key
+\textcolor{orange}{queries} on a totally ordered set $S$ that return a pointer to the element of $S$ with the smallest (for \textsc{Minimum}) or largest (for \textsc{Maximum}) key
 \item[\textsc{Successor$(S, x)$}]
-\emph{query} that, given an element $x$ whose key is from a totally ordered set $S$, returns a pointer to the next larger element in $S$, or \textsc{nil} if $x$ is the maximum element
+\textcolor{orange}{query} that, given an element $x$ whose key is from a totally ordered set $S$, returns a pointer to the next larger element in $S$, or \textsc{nil} if $x$ is the maximum element
 \item[\textsc{Predecessor$(S, x)$}]
-\emph{query} that, given an element $x$ whose key is from a totally ordered set $S$, returns a pointer to the next smaller element in $S$, or \textsc{nil} if $x$ is the minimum element
+\textcolor{orange}{query} that, given an element $x$ whose key is from a totally ordered set $S$, returns a pointer to the next smaller element in $S$, or \textsc{nil} if $x$ is the minimum element
 \end{description}
 
 % stack and queue are dynamic sets in which the element removed is prespecified:
@@ -1348,7 +1349,7 @@ supports constant-time insertion and deletion at one end.
 \end{figure}
 
 Interface (Algorithm \ref{alg:stack_ops}):
-\begin{itemize}%[before={\parskip=0pt},nosep]
+\begin{itemize}[before={\parskip=0pt},nosep]
   \item \textsc{StackEmpty}\((S)\): returns \tru{} iff the stack \(S\) contains no elements.
   \item \textsc{Push}\((S,x)\): places element \(x\) on the top of the stack \(S\).
   \item \textsc{Pop}\((S)\): removes and returns the top element of the stack \(S\).
@@ -1392,7 +1393,7 @@ A \emph{queue} is a FIFO container with constant-time insertion at the tail and 
 
 
 Interface (Algorithms~\ref{alg:enqueue} and \ref{alg:dequeue}):
-\begin{itemize}%[before={\parskip=0pt},nosep]
+\begin{itemize}[before={\parskip=0pt},nosep]
   \item \textsc{Enqueue}\((Q,x)\): insert \(x\) at the tail of \(Q\).
   \item \textsc{Dequeue}\((Q)\): remove and return the head element of \(Q\).
 \end{itemize}
@@ -1487,27 +1488,27 @@ The classic fixed-length \emph{circular-array} implementation keeps two indices 
     }
   
     % sentinel
-    \cell{}{0}{1}{nil_next}{white!25}
-    \cell{\textsc{nil}}{0}{0}{nil_key}{white!25}
-    \cell{}{0}{-1}{nil_prev}{white!25}
+    \cell{}{0}{1}{nil_next}{cyan!25}
+    \cell{\textsc{nil}}{0}{0}{nil_key}{cyan!25}
+    \cell{}{0}{-1}{nil_prev}{cyan!25}
     
     % first element
-    \cell{}{3}{1}{x1_next}{white!25}
+    \cell{}{3}{1}{x1_next}{arraycolor}
     \cell{$k_1$}{3}{0}{x1_key}{arraycolor}
-    \cell{}{3}{-1}{x1_prev}{white!25}
+    \cell{}{3}{-1}{x1_prev}{arraycolor}
   
     % second element
-    \cell{}{6}{1}{x2_next}{white!25}
+    \cell{}{6}{1}{x2_next}{arraycolor}
     \cell{$k_2$}{6}{0}{x2_key}{arraycolor}
-    \cell{}{6}{-1}{x2_prev}{white!25}
+    \cell{}{6}{-1}{x2_prev}{arraycolor}
     
     % elements in between
     \node[] at (9*\cw,0) (n2) {$\hdots$};
     
     % last element
-    \cell{}{12}{1}{xn_next}{white!25}
+    \cell{}{12}{1}{xn_next}{arraycolor}
     \cell{$k_n$}{12}{0}{xn_key}{arraycolor}
-    \cell{}{12}{-1}{xn_prev}{white!25}
+    \cell{}{12}{-1}{xn_prev}{arraycolor}
   
     % pointer to sentinel
     \coordinate (nil_label_coord) at ($(nil_prev) + (-1*\cw,0*\cw)$);
@@ -1591,7 +1592,7 @@ with \(n\) the current length of \(L\).
 \label{def:dictionary}
 A \emph{dictionary} is an abstract data structure that represents a set of elements (or keys). 
 It is a \emph{dynamic set} that supports the following operations:
-\begin{itemize}%[before={\parskip=0pt}, nosep]
+\begin{itemize}[before={\parskip=0pt}, nosep]
 \item \textsc{Insert}: insert element into the set
 \item \textsc{Delete}: delete element from the set
 \item \textsc{Search}: test memebership of an element in the set \qedhere
@@ -1633,157 +1634,117 @@ For a table of size \(|T|\) that currently stores \(n\) keys, the
 \subsubsection{Chaining}
 Each slot \(T[i]\) stores a linked list of keys that hash to \(i\).
 
-
-
-
-% \begin{figure}[htb]
-% \centering
-% % stolen from https://tex.stackexchange.com/questions/636419/draw-hash-table, who stole it from CLRS
-% \begin{tikzpicture}[scale=0.8,
-% node distance = 7mm and 4mm,
-%   start chain = going right, 
-%     arr/.style = {semithick, ->},
-%     dot/.style = {circle, fill, inner sep=1.2pt,label={[fill=none]left:#1}},
-% every label/.append style = {font=\footnotesize, fill=white, align=center,
-%                               fill opacity=0.5, text opacity=1, 
-%                               inner sep=1pt},
-%       E/.style = {ellipse, draw, fill=#1},
-%   mpnh/.style = {rectangle split, rectangle split horizontal, 
-%                   rectangle split parts=3, draw, fill=arraycolor,
-%                   inner sep=2pt,
-%                   on chain},
-%   mpnv/.style = {rectangle split, rectangle split parts=10,
-%       rectangle split part fill={myblue!30,myorange!30,myblue!30,myblue!30,myblue!30,
-%                                 myorange!30,myblue!30,myorange!30,myorange!30,myblue!30},
-%       draw, minimum height=2ex},
-%     sym/.style = {yshift=-1mm},
-%     syp/.style = {yshift=+1mm},
-%                         ]
-% \node[mpnv, label=$T$] (H) 
-%     {\nodepart{one}     $\diagup$
-%       \nodepart{two}     \vphantom{$\diagup$} 
-%       \nodepart{three}   $\diagup$
-%       \nodepart{four}    $\diagup$
-%       \nodepart{five}    $\diagup$
-%       \nodepart{six}     \vphantom{$\diagup$} 
-%       \nodepart{seven}   $\diagup$
-%       \nodepart{eight}   \vphantom{$\diagup$} 
-%       \nodepart{nine}    \vphantom{$\diagup$} 
-%       \nodepart{ten}     $\diagup$
-%     };
-% %
-% \node[mpnh, right=of H.two east] (A1) 
-%     {\nodepart{one}  $\diagup$
-%     \nodepart{two}  $k_1$
-%     \nodepart{three}    \hphantom{$\diagup$}  
-%     };
-% \node[mpnh] (A2)
-%     {\nodepart{one}      \hphantom{$\diagup$}
-%     \nodepart{two}      $k_4$
-%     \nodepart{three}    $\diagup$
-%     };
-% %
-% \node[mpnh, right=of H.six east] (B1)
-%     {\nodepart{one}      $\diagup$
-%     \nodepart{two}      $k_5$
-%     \nodepart{three}    \hphantom{$\diagup$}
-%     };
-% \node[mpnh] (B2)
-%     {\nodepart{one}      \hphantom{$\diagup$}
-%     \nodepart{two}      $k_2$
-%     \nodepart{three}    \hphantom{$\diagup$}
-%     };
-% \node[mpnh] (B3)
-%     {\nodepart{one}      \hphantom{$\diagup$}
-%     \nodepart{two}      $k_7$
-%     \nodepart{three}    $\diagup$ 
-%     };
-% %
-% \node[mpnh, right=of H.eight east] (C1)
-%     {\nodepart{one}      $\diagup$
-%     \nodepart{two}      $k_3$
-%     \nodepart{three}    $\diagup$
-%     };
-% %
-% \node[mpnh, right=of H.nine east] (D1)
-%     {\nodepart{one}  $\diagup$
-%     \nodepart{two}  $k_8$
-%     \nodepart{three}    \hphantom{$\diagup$}
-%     };
-% \node[mpnh] (D2)
-%     {\nodepart{one}      \hphantom{$\diagup$}
-%     \nodepart{two}      $k_6$
-%     \nodepart{three}    $\diagup$
-%     };
-% %% arrows (right)
-% \draw[arr]  (H |- H.two east)   edge (A1)
-%             (H |- H.six east)   edge (B1)
-%             (H |- H.eight east) edge (C1)
-%             (H |- H.nine east)   to (D1)
-%             ;
-% \draw[arr, transform canvas={yshift=1mm}]  
-%             (A1.three north |- A1.east)  edge (A2)
-%             (B1.three north |- B1.east)  edge (B2)
-%             (B2.three north |- B2.east)  edge (B3)
-%             (D1.three north |- D2)   to   (D2)
-%             ;
-% \draw[arr, transform canvas={yshift=-1mm}]
-%             (A2.one north |- A2)  edge  (A1)
-%             (B2.one north |- B2)  edge  (B1)
-%             (B3.one north |- B3)  edge  (B2)
-%             (D2.one north |- D2)   to   (D1)
-%             ;
-% %% dots, ellipses
-% \pgfmathsetseed{3}
-% Explicitly sets the seed for
-% \foreach \i in {1,2,...,8}
-%     \node (k\i) [
-%       dot=$k_{\i}$,
-%       label={[fill=none]left:$k_\i$} 
-%       ] at (-33mm +40*rand,0.9*rand) {};
-
-
-% \scoped[on background layer]
-% {
-% \draw[fill=myblue!30]  (-4,0.4) ellipse (3 and 2.4);
-% \path (-4,1.6)
-%   node[label={
-%      [fill=none,                % no white box
-%       text opacity=1,
-%       align=center,
-%       inner sep=1pt]
-%      above:{$U$\\(universe of keys)}  % position: text
-%   }]
-%   {};
-
-% \draw[fill=myorange!30]   (-4,0) ellipse (2.4 and 1.6);
-% \path   (-6.2,0) node[label={[fill=none]right:$K$\\ (actual\\ keys)}] {};
-
-% \draw[arr]  (k1)    edge ([syp] H.two west)
-%             (k4)    edge ([sym] H.two west)
-
-%             (k2)    edge ([syp] H.six west)
-%             (k5)    edge (H.six west)
-%             (k7)    edge ([sym] H.six west)
-            
-%             (k3)    edge (H.eight west)
-            
-%             (k8)    edge ([syp] H.nine west)
-%             (k6)    edge ([sym] H.nine west)
-%             ;
-% }
-% \end{tikzpicture}
-% \end{figure}
-
-
-
 \begin{figure}[htb]
 \centering
-\begin{tikzpicture}[scale=0.8, 
-  every node/.style={font=\footnotesize}]
+% stolen from https://tex.stackexchange.com/questions/636419/draw-hash-table, who stole it from CLRS
+\begin{tikzpicture}[scale=0.8,
+node distance = 7mm and 4mm,
+  start chain = going right, 
+    arr/.style = {semithick, ->},
+    dot/.style = {circle, fill, inner sep=1.2pt,label={[fill=none]left:#1}},
+every label/.append style = {font=\footnotesize, fill=white, align=center,
+                              fill opacity=0.5, text opacity=1, 
+                              inner sep=1pt},
+      E/.style = {ellipse, draw, fill=#1},
+  mpnh/.style = {rectangle split, rectangle split horizontal, 
+                  rectangle split parts=3, draw, fill=arraycolor,
+                  inner sep=2pt,
+                  on chain},
+  mpnv/.style = {rectangle split, rectangle split parts=10,
+      rectangle split part fill={myblue!30,myorange!30,myblue!30,myblue!30,myblue!30,
+                                myorange!30,myblue!30,myorange!30,myorange!30,myblue!30},
+      draw, minimum height=2ex},
+    sym/.style = {yshift=-1mm},
+    syp/.style = {yshift=+1mm},
+                        ]
+\node[mpnv, label=$T$] (H) 
+    {\nodepart{one}     $\diagup$
+      \nodepart{two}     \vphantom{$\diagup$} 
+      \nodepart{three}   $\diagup$
+      \nodepart{four}    $\diagup$
+      \nodepart{five}    $\diagup$
+      \nodepart{six}     \vphantom{$\diagup$} 
+      \nodepart{seven}   $\diagup$
+      \nodepart{eight}   \vphantom{$\diagup$} 
+      \nodepart{nine}    \vphantom{$\diagup$} 
+      \nodepart{ten}     $\diagup$
+    };
+%
+\node[mpnh, right=of H.two east] (A1) 
+    {\nodepart{one}  $\diagup$
+    \nodepart{two}  $k_1$
+    \nodepart{three}    \hphantom{$\diagup$}  
+    };
+\node[mpnh] (A2)
+    {\nodepart{one}      \hphantom{$\diagup$}
+    \nodepart{two}      $k_4$
+    \nodepart{three}    $\diagup$
+    };
+%
+\node[mpnh, right=of H.six east] (B1)
+    {\nodepart{one}      $\diagup$
+    \nodepart{two}      $k_5$
+    \nodepart{three}    \hphantom{$\diagup$}
+    };
+\node[mpnh] (B2)
+    {\nodepart{one}      \hphantom{$\diagup$}
+    \nodepart{two}      $k_2$
+    \nodepart{three}    \hphantom{$\diagup$}
+    };
+\node[mpnh] (B3)
+    {\nodepart{one}      \hphantom{$\diagup$}
+    \nodepart{two}      $k_7$
+    \nodepart{three}    $\diagup$ 
+    };
+%
+\node[mpnh, right=of H.eight east] (C1)
+    {\nodepart{one}      $\diagup$
+    \nodepart{two}      $k_3$
+    \nodepart{three}    $\diagup$
+    };
+%
+\node[mpnh, right=of H.nine east] (D1)
+    {\nodepart{one}  $\diagup$
+    \nodepart{two}  $k_8$
+    \nodepart{three}    \hphantom{$\diagup$}
+    };
+\node[mpnh] (D2)
+    {\nodepart{one}      \hphantom{$\diagup$}
+    \nodepart{two}      $k_6$
+    \nodepart{three}    $\diagup$
+    };
+%% arrows (right)
+\draw[arr]  (H |- H.two east)   edge (A1)
+            (H |- H.six east)   edge (B1)
+            (H |- H.eight east) edge (C1)
+            (H |- H.nine east)   to (D1)
+            ;
+\draw[arr, transform canvas={yshift=1mm}]  
+            (A1.three north |- A1.east)  edge (A2)
+            (B1.three north |- B1.east)  edge (B2)
+            (B2.three north |- B2.east)  edge (B3)
+            (D1.three north |- D2)   to   (D2)
+            ;
+\draw[arr, transform canvas={yshift=-1mm}]
+            (A2.one north |- A2)  edge  (A1)
+            (B2.one north |- B2)  edge  (B1)
+            (B3.one north |- B3)  edge  (B2)
+            (D2.one north |- D2)   to   (D1)
+            ;
+%% dots, ellipses
+\pgfmathsetseed{3}
+Explicitly sets the seed for
+\foreach \i in {1,2,...,8}
+    \node (k\i) [
+      dot=$k_{\i}$,
+      label={[fill=none]left:$k_\i$} 
+      ] at (-33mm +40*rand,0.9*rand) {};
 
-\draw[fill=white!30]  (-4,0.4) ellipse (2.6 and 2.0);
-\path (-4,1.0)
+
+\scoped[on background layer]
+{
+\draw[fill=myblue!30]  (-4,0.4) ellipse (3 and 2.4);
+\path (-4,1.6)
   node[label={
      [fill=none,                % no white box
       text opacity=1,
@@ -1793,77 +1754,24 @@ Each slot \(T[i]\) stores a linked list of keys that hash to \(i\).
   }]
   {};
 
-\draw[fill=arraycolor]   (-4,-0.2) ellipse (2.0 and 1.2);
-\path (-4,-0.2)
-  node[label={
-     [fill=none,                % no white box
-      text opacity=1,
-      align=center,
-      inner sep=1pt]:{$K$\\(actual keys)}  % position: text
-  }]
-  {};
+\draw[fill=myorange!30]   (-4,0) ellipse (2.4 and 1.6);
+\path   (-6.2,0) node[label={[fill=none]right:$K$\\ (actual\\ keys)}] {};
 
-  % arrow between actual keys and array
-\draw[->] (-1.8,0.4) -- (0.8,0.4) node[pos=0.5, above] {$h$};
+\draw[arr]  (k1)    edge ([syp] H.two west)
+            (k4)    edge ([sym] H.two west)
 
-% array $T$
-\draw[] (2,-2) rectangle (2.8,2.8);
-\node[above] at (2.4,2.8) (T) {$T$};
-
-
-
-% put this somewhere in your preamble, after \usepackage{tikz}
-\newcommand{\linkedlist}[2]{%
-  \begin{scope}[shift={(#1,#2)}]
-
-    %--- nodes ----------------------------------------------------
-    \draw (0.8,-0.2) rectangle (1.6, 0.2);
-    \draw[fill=arraycolor] (1.0,-0.2) rectangle (1.4, 0.2);
-
-    \draw (2.0,-0.2) rectangle (2.8, 0.2);
-    \draw[fill=arraycolor] (2.2,-0.2) rectangle (2.6, 0.2);
-
-    \draw (4.0,-0.2) rectangle (4.8, 0.2);
-    \draw[fill=arraycolor] (4.2,-0.2) rectangle (4.6, 0.2);
-
-    %--- arrows & bullet ------------------------------------------
-    \node[circle, fill, inner sep=.7pt] at (0,0) {};
-    \draw[->] (0,0) -- (0.8,0);
-
-    \draw[-{>[scale=0.6]}]   (1.5, 0.1) -- (2.0, 0.1);
-    \draw[{<[scale=0.6]}-]   (1.6,-0.1) -- (2.1,-0.1);
-
-    \draw[-]                 (2.7, 0.1) -- (3.0, 0.1);
-    \draw[densely dotted]    (3.0, 0.1) -- (3.2, 0.1);
-    \draw[densely dotted]    (3.0,-0.1) -- (3.2,-0.1);
-    \draw[{<[scale=0.6]}-]   (2.8,-0.1) -- (3.0,-0.1);
-
-    \draw[densely dotted]    (3.6, 0.1) -- (3.8, 0.1);
-    \draw[densely dotted]    (3.6,-0.1) -- (3.8,-0.1);
-    \draw[-{>[scale=0.6]}]   (3.8, 0.1) -- (4.0, 0.1);
-    \draw[-]                 (3.8,-0.1) -- (4.1,-0.1);
-
-  \end{scope}%
+            (k2)    edge ([syp] H.six west)
+            (k5)    edge (H.six west)
+            (k7)    edge ([sym] H.six west)
+            
+            (k3)    edge (H.eight west)
+            
+            (k8)    edge ([syp] H.nine west)
+            (k6)    edge ([sym] H.nine west)
+            ;
 }
-
-\node[left] at (2,-1.6) (T) {$i=1$};
-\linkedlist{2.4}{-1.6}
-\draw[-] (2.0, -1.2) -- (2.8, -1.2);
-\node[left] at (2,-0.8) (T) {$i=2$};
-\linkedlist{2.4}{-0.8}
-\draw[-] (2.0, -0.4) -- (2.8, -0.4);
-\node[left] at (2,-0.0) (T) {$i=3$};
-\linkedlist{2.4}{0.0}
-\draw[-] (2.0, 0.4) -- (2.8, 0.4);
-\node at (2.4, 1.3) {$\vdots$};
-\draw[-] (2.0, 2.0) -- (2.8, 2.0);
-\node[left] at (2,2.4) (T) {$i=|T|$};
-\linkedlist{2.4}{2.4}
-
 \end{tikzpicture}
 \end{figure}
-
-
 
 \begin{algorithm}[htb]
   \caption{Chained Hash Operations}
@@ -1890,6 +1798,7 @@ So, given \(n\) distinct keys, the expected length \(n_i\) of the linked list at
 \[
 \Exp[n_i] = \frac{n}{|T|} = \alpha
 \]
+
 If we further assume \(h(k)\) can be computed in \(O(1)\), the expected running time of \textsc{ChainedHashSearch} is
 \[\boxed{
 \Theta(1+\alpha)
@@ -2022,12 +1931,12 @@ A \emph{binary search tree} implements a dynamic set. It stores keys from a tota
 \[
 y\in\text{left-subtree}(x) \Leftrightarrow  \attrib{y}{key}\le\attrib{x}{key}
 ,\quad
-z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}\qedhere
+z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}
 \]
 \end{definition}
 
 % Interface:
-% \begin{itemize}%[before={\parskip=0pt},nosep]
+% \begin{itemize}[before={\parskip=0pt},nosep]
 %   \item \textsc{TreeInsert}\((T,k)\), \textsc{TreeDelete}\((T,k)\), \textsc{TreeSearch}\((T,k)\)
 %   \item Traversals: \textsc{InOrder}-, \textsc{Preorder}-, \textsc{Postorder}-, \textsc{ReverseOrderTreeWalk}
 %   \item Extremal queries: \textsc{TreeMinimum}, \textsc{TreeMaximum}
@@ -2207,7 +2116,7 @@ Deletion distinguishes three cases:
   \item \(z\) has two children:
     \begin{itemize}[before={\parskip=0pt},nosep]
       \item find the successor \(y\) of \(z\) (since \(z\) has two children, \(y\) is guaranteed to be the minimum of the right subtree of \(z\) and thus have at most one child)
-      \item copy the key of \(y\) into \(z\)\nopagebreak
+      \item copy the key of \(y\) into \(z\)
       \item delete \(y\), which is a leaf or has one right child, i.e. connect the child of \(y\) to the parent of \(y\)
     \end{itemize}
 \end{itemize}
@@ -2280,11 +2189,11 @@ Deletion distinguishes three cases:
   % \end{algorithmic}
 \end{algorithm}
 
+\FloatBarrier
 
 Insertion, search and deletion operations have complexity \(\Theta(h)\) where \(h\) is the height of the tree.
 In the average case, the height is \(O(\log n)\) (i.e. with a random insertion order).
 In some particular cases, the height can be \(O(n)\) (i.e. with ordered sequence).
-
 The problem is that the `worst case' is not that uncommon.
 One way to avoid this is to instead of inserting \(A = [a_1, a_2, a_3, \ldots, a_n]\) in order, insert a random permutation of \(A\).
 The problem is that \(A\) is usually not known in advance.
@@ -2391,9 +2300,9 @@ isosceles triangle apex angle=47,
 
 \draw[thick] (a2) -- (alpha2) (a2) -- (beta2) (b2) -- (gamma2);
 
-\trianglenode{alpha2}{\alpha}{k\le a}{gray!75!white}{alpha2}
-\trianglenode{beta2}{\beta}{a\le k\le b}{gray!75!white}{beta2}
-\trianglenode{gamma2}{\gamma}{k\ge b}{gray!75!white}{gamma2}
+\trianglenode{alpha2}{\alpha}{k\le a}{cyan}{alpha2}
+\trianglenode{beta2}{\beta}{a\le k\le b}{yellow}{beta2}
+\trianglenode{gamma2}{\gamma}{k\ge b}{purple}{gamma2}
 
 \end{scope}
 
@@ -2419,9 +2328,9 @@ isosceles triangle apex angle=47,
 
 \draw[thick] (a1) -- (alpha1) (b1) -- (beta1) (b1) -- (gamma1);
 
-\trianglenode{alpha1}{\alpha}{k\le a}{gray!75!white}{alpha1}
-\trianglenode{beta1}{\beta}{a\le k\le b}{gray!75!white}{beta1}
-\trianglenode{gamma1}{\gamma}{k\ge b}{gray!75!white}{gamma1}
+\trianglenode{alpha1}{\alpha}{k\le a}{cyan}{alpha1}
+\trianglenode{beta1}{\beta}{a\le k\le b}{yellow}{beta1}
+\trianglenode{gamma1}{\gamma}{k\ge b}{purple}{gamma1}
 \end{scope}
 
 % arrows between the two trees
@@ -2476,7 +2385,7 @@ For example, we can use it to perform
 
 
 General strategies to deal with complexity in the worst case:
-\begin{itemize}%[before={\parskip=0pt},nosep]
+\begin{itemize}[before={\parskip=0pt},nosep]
   \item \emph{Randomization}: can make the scenario $h = n$ highly unlikely
   \item \emph{Amortized Maintenance}: relatively expensive but `amortized' operations
   \item \emph{Self-Balancing}: e.g. Red-Black trees (see \ref{subsec:rb_tree})
@@ -2492,7 +2401,7 @@ By constraining the node colors on any simple path from the root to a leaf, red-
 \begin{definition}[Red-Black Tree]
   \label{def:rb_tree_properties}
   A red-black tree is a binary search tree that satisfies the following \emph{red-black properties}:
-  \begin{enumerate}%[before={\parskip=0pt},nosep]
+  \begin{enumerate}[before={\parskip=0pt},nosep]
     \item Every node is either red or black. \label{def:rb_tree_properties:color}
     \item The root is black. \label{def:rb_tree_properties:root_isblack}
     \item Every leaf ($\nil$) is black. \label{def:rb_tree_properties:leafs_areblack}
@@ -2705,7 +2614,7 @@ space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(|V|+|
 \begin{algorithm}[h]
 \caption{Breadth-First Search}\label{alg:bfs}
 \begin{algorithmic}[1]
-\Function{BFS}{$G,\,s$} \Comment{\(s\) is the source}
+\Function{BFS}{$G=(V,E),\,s$} \Comment{\(s\) is the source}
   \ForAll{$u\in V \setminus \{s\}$}
     \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$
   \EndFor
@@ -2756,7 +2665,7 @@ Assuming that \nameref{alg:bfs} has computed a breadth-first tree \(G_\pi\), we 
 \begin{algorithm}[h]
 \caption{Print Shortest Path}\label{alg:print_shortest_path}
 \begin{algorithmic}[1]
-\Function{PrintPath}{$G,s,v$}
+\Function{PrintPath}{$G=(V,E),s,v$}
   \If{$v=s$}
     \State \Call{Print}{$s$}
   \ElsIf{$\attrib{v}{\pi}=\nil$}
@@ -2785,13 +2694,13 @@ This process is repeated until every vertex has been discovered.%
 \begin{algorithm}
 \caption{Depth-First Search}\label{alg:dfs}
 \begin{algorithmic}[1]
-\Function{DFS}{$G$}
+\Function{DFS}{$G=(V,E)$}
   \ForAll{$u\in V$}
     \State $\attrib{u}{color},\attrib{u}{\pi}\gets \white,\nil$
   \EndFor
   \State $T\gets 0$ \Comment{global time variable, for timestamps}
   \ForAll{$u\in V$} \label{alg:dfs:for_all_vertices}
-    \If{$\attrib{u}{color}=\white$}
+    \If{$\attrib{v}{color}=\white$}
       \State \Call{DFS-Visit}{$u$} \Comment{new tree in forest} \label{alg:dfs:new_tree}
     \EndIf
   \EndFor
@@ -2854,10 +2763,8 @@ So, the total running time is $\Theta(|V|+|E|)$.
   \item \(v\) is a descendant of \(u\) \(\Longleftrightarrow\) at the time \attribnormal{u}{d} that the search discovers \(u\), there is a path from \(u\) to \(v\) consisting entirely of white vertices
 \end{itemize}
 
-\pagebreak[2]
 \underline{Classification of Edges in \(E\):}
 % Each edge \((u,v) \in E\) is classified as one of the following:
-\nopagebreak
 \begin{itemize}
   \item \emph{tree edges} are edges \((u,v) \in E_\pi\) in the depth-first forest \(G_\pi\). \((u,v)\) is a tree edge if \(v\) was first discovered by exploring the edge \((u,v)\) in Line~\ref{alg:dfs:explore_edges}.
   \item \emph{back edges} are edges \((u,v) \notin E_\pi\) connecting \(u\) to an ancestor \(v\) in the depth-first forest \(G_\pi\).
@@ -2874,11 +2781,11 @@ In a undirected graph, a \nameref{alg:dfs} yields only tree edges and back edges
 
 
 When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
   \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
   \item if \(v\) is \(\black\), then \((u,v)\) is a
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
     \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
     \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
 \end{itemize}
@@ -2890,7 +2797,7 @@ A \emph{topological sort} of a directed acyclic graph (``dag'') \(G=(V,E)\) is a
 \begin{algorithm}[h]
 \caption{Topological Sort}\label{alg:topological_sort}
 \begin{algorithmic}[1]
-\Function{TopologicalSort}{$G$}
+\Function{TopologicalSort}{$G=(V,E)$}
   \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\)
   \State as each vertex \(v\) is finished, insert it onto the front of a linked list \(L\)
   \State \Return \(L\)
@@ -2921,7 +2828,7 @@ Looked at another way, if we contract all edges whose incident vertices are with
 \begin{algorithm}[h]
 \caption{Strongly Connected Components}\label{alg:strongly_connected_components}
 \begin{algorithmic}[1]
-  \Function{StronglyConnectedComponents}{$G$}
+  \Function{StronglyConnectedComponents}{$G=(V,E)$}
   \State call \Call{DFS}{$G$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\) \label{alg:strongly_connected_components:first_dfs}
   \State create the transpose graph \(G^{\mathrm{T}}\)
   \State call \Call{DFS}{$G^{\mathrm{T}}$}, but in Line~\ref{alg:dfs:for_all_vertices}, consider the vertices in order of decreasing \(\attribnormal{u}{f}\) \label{alg:strongly_connected_components:second_dfs}
@@ -2970,935 +2877,125 @@ w(T) = \sum_{e\in T} w(e)
 that is, the total weight of the tree \(T\) is minimal.
 This \(T\) is called a \emph{minimum spanning tree} (MST) of \(G\).
 
-Conceptually, \nameref{alg:kruskal}'s algorithm (1956) is similar to the \nameref{alg:strongly_connected_components} algorithm, while \nameref{alg:prim}'s algorithm (1957) resembles \nameref{alg:dijkstra}'s shortest-paths algorithm.
-Both
-% Algorithm \ref{alg:kruskal} and \ref{alg:prim} 
-run in \(O(|E|\log|V|)\) time.
-% \nameref{alg:prim} achieves this bound by using a binary heap as a priority queue.
-% By using Fibonacci heaps instead, \nameref{alg:prim} can be made to run in \(O(|E|+|V|\log|V|)\) time.
-% This is an improvement if \(|E|\)  grows asymptotically faster than \(|V|\).
+Both Algorithm \ref{alg:kruskal} and \ref{alg:prim} both run in \(O(|E|\log|V|)\) time.
+\nameref{alg:prim} achieves this bound by using a binary heap as a priority queue.
+By using Fibonacci heaps instead, \nameref{alg:prim} can be made to run in \(O(|E|+|V|\log|V|)\) time.
+This is an improvement if \(|E|\)  grows asymptotically faster than \(|V|\).
 
 The general idea is to build \(T\) by adding one edge \(e\in E\) at a time, such that \(e\) is the lightest edge that does not create a cycle.
 Both \nameref{alg:kruskal} and \nameref{alg:prim} are greedy algorithms (see \ref{sec:greedy_algorithms}), that is, in each step they make the choice that seems best at the moment.
 Even though such a strategy does not generally yield an optimal solution, for the MST problem one can prove that certain greedy strategies yield an optimal solution.
 
+Conceptually, \nameref{alg:kruskal}'s algorithm is similar to the \nameref{alg:strongly_connected_components} algorithm, while \nameref{alg:prim}'s algorithm resembles \nameref{alg:dijkstra}'s shortest-paths algorithm.
 
-\begin{algorithm}[h]
+\begin{algorithm}[H]
 \caption{Generic Minimum Spanning Tree}\label{alg:generic_mst}
 \begin{algorithmic}[1]
-\Function{Generic-MST}{$G,w$}
-  \State $A\gets\emptyset$ \Comment{invariant: \(A\) is part of a minimum spanning tree}
-  \While{$A$ is not a spanning tree} \label{alg:generic_mst:while_start}
-    \State find a safe edge \(e=(u,v)\) \Comment{a safe edge maintains the invariant} \label{alg:generic_mst:safe_edge}
-    \State $A\gets A\cup\{e\}$
-  \EndWhile \label{alg:generic_mst:while_end}
-  % \State \Return $A$
+\Function{Generic-
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
-The strategy is given in Algorithm~\ref{alg:generic_mst}. 
-The invariant used is that \(A\) is a subset of a minimum spanning tree and a \emph{safe edge} is an edge that maintains this invariant.
 
-% \begin{definition}[Cut, Crossing, Respecting]\label{def:cut_crossing_respecting}
-A \emph{cut} of a graph \(G=(V,E)\) is a partition of \(V\) into two disjoint sets \(S\) and \(V\setminus S\).
-An edge \(e\in E\) \emph{crosses} the cut if one of its endpoints is in \(S\) and the other is in \(V\setminus S\).
-A cut \emph{respects} a set of edges \(A\) if no edges in \(A\) cross the cut. 
-% An edge is a light edge crossing a cut if its weight is minimal among all edges crossing the cut.
-% \end{definition}
-\begin{theorem}\label{safe_edge_cut}
-Let \(A \subseteq E\) be included in a minimum spanning tree and 
-\((S, V\setminus S)\) be a cut that respects \(A\).
-Then a minimum-weight edge \(e\) crossing the cut \((S, V\setminus S)\) is a safe edge for \(A\).
-\end{theorem}
-% \begin{proof}
-% Let \(T\) be a minimum spanning tree with \(A\subseteq T\).  
-% If the minimum-weight edge \(e\) crossing \((S,V\setminus S)\) already lies in \(T\), we are done.  
-% Otherwise adding \(e\) to \(T\) creates a cycle, and since the cut respects \(A\), that cycle contains an edge \(f\notin A\) crossing the cut.  
-% Because \(e\) minimizes \(w(\cdot)\) over all crossing edges, \(w(e)\le w(f)\).  
-% Replacing \(f\) by \(e\) yields a spanning tree \(T'\) with \(w(T')\le w(T)\), so \(T'\) is also an MST containing \(A\cup\{e\}\).  
-% Hence \(e\) is safe.
-% \end{proof}
 
-Theorem~\ref{safe_edge_cut} provides a rule for recognizing safe edges and is the key to why Algorithm~\ref{alg:generic_mst} works.
-At any point in the execution, the graph \(G_A=(V,A)\) is a forest and each of the connected components of \(G_A\) is a tree.
-Any safe edge \(e\) for \(A\) connects two distinct components of \(G_A\), since \(A \cup \{e\}\) must be acyclic.
+\subsubsection{Kruskal}
 
-The loop in Lines \ref{alg:generic_mst:while_start}--\ref{alg:generic_mst:while_end} of Algorithm~\ref{alg:generic_mst} executes \(|V|-1\) times, because it finds one of the \(|V|-1\) edges of a a minimum spanning tree in each iteration.
-Initially, when \(A=\emptyset\), there are \(|V|\) trees in \(G_A\) and each iteration reduces that number by one, until the forest contains only a single tree, upon which the method terminates.
-
-\nameref{alg:kruskal} and \nameref{alg:prim} both use the following corollary of Theorem~\ref{safe_edge_cut}.
-\begin{corollary}\label{cor:safe_edge_connected_component}
-Let \(A \subseteq E\) be included in a minimum spanning tree and 
-let \(C = (V_C, E_C)\) be a connected component (tree) of \(G_A = (V,A)\).
-Then a minimum-weight edge \(e\) connecting \(C\) to some other component in \(G_A\) is a safe edge for \(A\).
-\end{corollary}
-
-\nameref{alg:kruskal} and \nameref{alg:prim} use a different, specific rule to determine a safe edge in Line~\ref{alg:generic_mst:safe_edge} of Algorithm~\ref{alg:generic_mst}.
-In \nameref{alg:kruskal}'s algorithm, \(A\) is a forest whose vertices are all those of the given graph and the safe edge added is always a lowest-weight edge that connects two distinct components.
-In \nameref{alg:prim}'s algorithm, \(A\) is a single tree and the safe edge added is always a lowest-weight edge connecting the tree to a vertex not in the tree.
-
-For \nameref{alg:kruskal}, we need the \emph{disjoint-set data structure}:
-\begin{itemize}
-  \item \Call{MakeSet}{$x$} creates a set containing only the element \(x\)
-  \item \Call{Find}{$x$} returns the representative of the set containing \(x\)
-  \item \Call{Union}{$x,y$} joins the sets containing \(x\) and \(y\) into a single set
-\end{itemize}
-
-\begin{algorithm}[h]
+\begin{algorithm}[H]
 \caption{Kruskal}\label{alg:kruskal}
 \begin{algorithmic}[1]
-\Function{Kruskal}{$G,w:E\to\R$}
-  \State $A\gets\emptyset$
-  \ForAll{$v\in V$}
-  \State \Call{MakeSet}{$v$}
-  \EndFor
-  \State sort $E$ in non-decreasing order by $w$
+\Function{Kruskal}{$G=(V,E,w)$}
+  \State $T\gets\emptyset$
+  \State MakeSet$(v)$ for each $v\in V$
   \ForAll{$(u,v)\in E$ in non-decreasing $w$-order}
-    \If{$\text{\Call{Find}{$u$}} \neq \text{\Call{Find}{$v$}}$}
-      \State $A\gets A\cup\{(u,v)\}$
+    \If{\Call{Find}{$u$}\,$\neq$\,\Call{Find}{$v$}}
+      \State $T\gets T\cup\{(u,v)\}$
       \State \Call{Union}{$u,v$}
     \EndIf
   \EndFor
-  % \State \Return $A$ \Comment{edges of the minimum spanning tree}
+  \State \Return $T$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
+\subsubsection{Prim}
 
-\begin{algorithm}[h]
+\begin{algorithm}[H]
 \caption{Prim}\label{alg:prim}
 \begin{algorithmic}[1]
-\Function{Prim}{$G, w:E\to\R, r$} 
-  \State $T\gets(\emptyset,\emptyset)$ \Comment{minimal spanning tree}
-  \ForAll{$v\in V(G)$}
-    \State $\attrib{v}{weight}\gets\infty$ \Comment{best known cost of connecting \(v\) to \(T\)}
-    \State $\attrib{v}{\pi}\gets\nil$ \Comment{\(u \in T\) such that \((u,v)\) is the least-cost edge connecting \(v\) to \(T\)}
-  \EndFor
-  \State $\attrib{r}{weight}\gets 0$ \Comment{\(r\) is the root of the spanning tree}
-  \While{$V(T)\neq V(G)$} \Comment{while \(T\) does not span all vertices}
-    \State find \(u \notin V(T)\) such that \(\attrib{u}{weight}\) is minimal
-    \State $T\gets T\cup\{u\}$ \Comment{add \(u\) to the spanning tree \(T\)}
-    \ForAll{$v\in\Gamma(u) \setminus V(T)$}
-      \If{$w(u,v)<\attrib{v}{weight}$}
-        \State $\attrib{v}{weight} \gets w(u,v)$
-        \State $\attrib{v}{\pi} \gets u$
+\Function{Prim}{$G=(V,E,w),\,r$}
+  \State Initialize $\attrib{v}{key}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attrib{r}{key}\gets 0$
+  \State $Q\gets V$  \Comment{min-priority queue by \attrib{·}{key}}
+  \While{$Q\neq\emptyset$}
+    \State $u\gets$ \Call{ExtractMin}{$Q$}
+    \ForAll{$v\in\Gamma(u)$}
+      \If{$v\in Q$ and $w(u,v)<\attrib{v}{key}$}
+        \State $\attrib{v}{\pi}\gets u$
+        \State $\attrib{v}{key}\gets w(u,v)$
+        \State \Call{DecreaseKey}{$Q,v,\attrib{v}{key}$}
       \EndIf
     \EndFor
   \EndWhile
-  % \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$ \Comment{edges of the minimum spanning tree}
+  \State \Return $\{(\attrib{v}{\pi},v)\mid v\in V\setminus\{r\}\}$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
+Both Kruskal and Prim run in $\Theta(|E|\log|V|)$ with binary heaps.
 
-\subsection{Single-Source Shortest Paths}\label{sec:single_source_shortest_paths}
+\subsection{Single-Source Shortest Paths}
 
+\subsubsection{Dijkstra (non-negative weights)}
 
-\nameref{alg:dijkstra}'s algorithm is a greedy, label-setting method for nonnegative edge weights.  
-At each step it finalizes the closest unreached vertex and relaxes its outgoing edges, yielding a time complexity of \(O((|V|+|E|)\log |V|)\) with a binary-heap implementation.
-
-\begin{algorithm}[h]
+\begin{algorithm}[H]
 \caption{Dijkstra}\label{alg:dijkstra}
 \begin{algorithmic}[1]
-\Function{Dijkstra}{$G, w:E\to\R_{\ge0}, s$} 
-  \State $N \gets \emptyset$ \Comment{nodes of \(G\) whose least-cost path from \(s\) is definitely known}
-  \ForAll{$v\in V(G)$}
-    \State $\attrib{v}{\delta}\gets\infty$ \Comment{best known cost from \(s\) to \(v\)}
-    \State $\attrib{v}{\pi}\gets\nil$ \Comment{node preceding \(v\) on the least-cost path from \(s\)}
-  \EndFor
-  \State $\attrib{s}{\delta}\gets 0$ \Comment{\(s\) is the source}
-  \While{$N \neq V(G)$} \Comment{while we do not know the least-cost path to all nodes}
-    \State find \(u \notin N\) such that \(\attrib{u}{\delta}\) is minimal
-    \State $N\gets N\cup\{u\}$ \Comment{add \(u\) to the nodes \(N\)}
-    \ForAll{$v\in\Gamma(u) \setminus N$}
-      \If{$\attrib{u}{\delta} + w(u,v)<\attrib{v}{\delta}$}
-        \State $\attrib{v}{\delta} \gets \attrib{u}{\delta} + w(u,v)$
-        \State $\attrib{v}{\pi} \gets u$
+\Function{Dijkstra}{$G=(V,E,w),\,s$}
+  \State Initialize $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attribnormal{s}{\delta}\gets 0$
+  \State $Q\gets V$  \Comment{min-queue keyed by \attribnormal{·}{\delta}}
+  \While{$Q\neq\emptyset$}
+    \State $u\gets$ \Call{ExtractMin}{$Q$}
+    \ForAll{$(u,v)\in E$}
+      \If{$\attribnormal{v}{\delta}>\attribnormal{u}{\delta}+w(u,v)$}
+        \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+w(u,v)$
+        \State $\attrib{v}{\pi}\gets u$
+        \State \Call{DecreaseKey}{$Q,v,\attribnormal{v}{\delta}$}
       \EndIf
     \EndFor
   \EndWhile
-  % \State \Return $(\attrib{v}{\delta})_{v\in V(G)}$ \Comment{least-cost path from \(s\) to each \(v\)}
+  \State \Return $\bigl(\attribnormal{v}{\delta}\bigr)_{v\in V}$
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
+Binary heap: $\Theta(|E|\log|V|)$; Fibonacci heap: $\Theta(|E|+|V|\log|V|)$.
 
+\subsection{Complexity Overview}
 
-
-
-
-\nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that supports arbitrary (i.e. including negative) weights and detects negative-weight cycles.  
-It relaxes all edges in up to \(|V|-1\) passes for \(O(|V|\times|E|)\) time and uses one extra pass to check for cycles.
-
-The Bellman-Ford equation:
-\begin{equation}\label{eq:bellmanford}
-\delta(s, v) = \min_{(u,v)\in E} \left(\delta(s, u) + w(u, v)\right)
-\end{equation}
-
-\begin{algorithm}[h]
-\caption{Bellman-Ford}\label{alg:bellmanford}
-\begin{algorithmic}[1]
-\Function{BellmanFord}{$G, w:E\to\R, s$}
-  \ForAll{$v\in V(G)$}
-    \State $\attrib{v}{\delta}\gets\infty$
-    \State $\attrib{v}{\pi}\gets\nil$
-  \EndFor
-  \State $\attrib{s}{\delta}\gets 0$
-  \For{$i=1$ to $|V(G)|-1$} 
-    \ForAll{$(u,v)\in E(G)$}
-      \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$} 
-        \State $\attrib{v}{\delta}\gets \attrib{u}{\delta}+w(u,v)$ \Comment{applying Equation~\eqref{eq:bellmanford}}
-        \State $\attrib{v}{\pi}\gets u$
-      \EndIf
-    \EndFor
-  \EndFor
-  \ForAll{$(u,v)\in E(G)$}
-    \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$}
-      \State \Return \fals \Comment{negative-weight cycle detected}
-    \EndIf
-  \EndFor
-  \State \Return \tru
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-
+\begin{center}\setlength{\tabcolsep}{8pt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Algorithm} & \textbf{Adjacency list} & \textbf{Conditions} \\\midrule
+BFS, DFS           & $\Theta(|V|+|E|)$          & – \\
+Kruskal            & $\Theta(|E|\log|V|)$       & sort + DSU \\
+Prim (bin.\ heap)  & $\Theta(|E|\log|V|)$       & – \\
+Dijkstra (bin.)    & $\Theta(|E|\log|V|)$       & $w\ge 0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\FloatBarrier
 
 
 
 
 
 \section{Design Techniques}\label{sec:design_techniques}
-
 \subsection{Greedy Algorithms}\label{sec:greedy_algorithms}
-
-Greedy algorithms construct a solution by always choosing the option that looks best at the moment.
-That is, they make a locally optimal choice in the hope that this choice leads to a globally optimal solution.
-
-At every step, we consider only what is best best in the current problem, not considering the results of the subproblems.
-
-
-% \begin{definition}\label{def:greedy_properties}
-The key ingredients of a problem for a greedy strategy to work:
-\begin{enumerate}
-  \item \emph{Greedy-Choice}: \label{greedy_choice_property}
-  One can always arrive at a globally optimal solution by making a locally optimal choice.
-  \item \emph{Optimal Substructure}:  \label{optimal_substructure}
-  An optimal solution to the problem contains within it optimal solutions to subproblems.
-\end{enumerate}
-It is natural to prove property \ref{optimal_substructure} by induction: 
-if the solution to the subproblem is optimal, then combining the greedy choice with that solution yields an optimal solution.
-% \end{definition}
-
-
-The proof pattern when designing a greedy algorithm is:
-\begin{enumerate}[partopsep=0em, topsep=0em, label=(\roman*)]
-  \item \emph{Cast} the problem as one where we make a \emph{greedy choice} and are left with a \emph{subproblem}. \label{greedy_design_step:cast}
-  \item \emph{Prove} that (at least) one optimal solution (not necessarily always the same one) contains the greedy choice (Property \ref{greedy_choice_property}).
-  \item \emph{Prove} that the remaining subproblem is such that combining the greedy choice with the optimal solution of the subproblem gives an optimal solution to the original problem.% (Property \ref{optimal_substructure}). not sure if it is accurate to say that this is the same as the optimal substructure property
-\end{enumerate}
-
-\begin{remark}[Designing Greedy Algorithms]\label{rem:designing_greedy_algorithms}
-\leavevmode
-\begin{itemize}
-  \item Inventing a greedy algorithm is easy (easy to come up with greedy choices)
-  \item Proving it optimal may be hard (requires deep understanding of the structure of the problem)
-  % \item When correctness proofs become convoluted, the problem likely lacks the greedy-choice property—reconsider dynamic programming.
-  \qedhere
-\end{itemize}
-\end{remark}
-
-
-\begin{remark}[Greedy vs. Dynamic Programming]\label{rem:greedy_vs_dp}
-Greedy algorithms have many similarities to dynamic programming. 
-In particular, problems for which dynamic programming works also need to have optimal substructure (Property \ref{optimal_substructure}).
-
-One major difference is that instead of first finding optimal solutions to subproblems and then making an informed choice, greedy algorithms first make a greedy choice (the choice that looks best at the time) and then solve \emph{one} resulting subproblem, without bothering to solve all possible related smaller subproblems.
-
-Dynamic programming is more general since it does not need the greedy-choice property (Property \ref{greedy_choice_property}).
-It usually looks at several subproblems and ``dynamically'' chooses one of them to optain a global solution.
-\end{remark}
-
-
 \subsection{Dynamic Programming}\label{sec:dynamic_programming}
-
-Dynamic programming is a method for solving (typically optimization or counting, sometimes also probability) problems by decomposing them into (slightly smaller) subproblems that share subsubproblems.
-To make such a recursive approach efficient, the optimal solutions to those subproblems are stored in an array/table of appropriate size and dimension, so that each susubbproblem is solved just once.
-% Naïve recursion yields exponential complexity!
-Instead of solving the problem top-down (recursively, with memoization) it is also possible (and often slightly more efficient due to the overhead of recursion) to solve the problem bottom-up (iteratively filling the table, starting with the base cases).
-
-
-
-
-Not all problems can be solved with dynamic programming. 
-They need to have certain properties.
-The key ingredients of a problem for a dynamic programming method to work are:
-\begin{enumerate}
-  \item \emph{Optimal Substructure}:  \label{optimal_substructure_dp}
-  An optimal solution to the problem contains within it optimal solutions to subproblems.
-  \item \emph{Overlapping Subproblems}: \label{overlapping_subproblems}
-  The subproblems share subsubproblems.
-  A recursive solution therefore revisits the same subsubproblem repeatedly.
-\end{enumerate}
-
-% Steps to discover the optimal substructure (Property \ref{optimal_substructure_dp}):
-% \begin{enumerate}[partopsep=0em, topsep=0em, label=(\roman*)]
-% 	\item Show that a solution to the problem consists of making a choice.
-%         Making this choice leaves one or more subproblems to be solved.
-% 	\item Suppose that for a given problem there exists a choice which leads to an optimal substructure. 
-%         Do not concern yourself with how to determine this choice, but assume it has been given to you.
-% 	\item Given this choice, determine which subproblems ensue and how to best characterize the resulting space of subproblems.
-% 	\item Using a ``cut-and-paste'' technique, show that the solutions to the subproblems used within an optimal solution to the problem must themselves be optimal.
-%         You can do so by supposing that each subproblem is not optimal and then deriving a contradiction.
-% \end{enumerate}
-
-
-\begin{example}[Unweighted shortest/longest path]\label{ex:unweighted_shortest_longest_path}
-Given $G=(V,E)$,
-\begin{itemize}
-  \item find the length of the shortest path from $u$ to $v$
-    \begin{itemize}
-    \item decompose $u\leadsto v$ into $u\leadsto w\leadsto v$
-    \item easy to prove that, if $u\leadsto w\leadsto v$ is minimal, then $w\leadsto v$ is also minimal
-    \item this is the \emph{optimal substructure property}!
-    \end{itemize}
-  \item find the length of the longest simple (i.e., no cycles) path from $u$ to $v$
-    \begin{itemize}
-    \item we can also decompose $u\leadsto v$ into $u\leadsto w\leadsto v$
-    \item however, it is not the case that, if $u\leadsto w\leadsto v$ is maximal, then $w\leadsto v$ is also maximal, as can be shown by a counterexample \qedhere
-    \end{itemize}
-  \end{itemize}
-\end{example}
-
-Typical steps to solve a problem with dynamic programming:
-\begin{enumerate}
-  \item Identify a problem as a dynamic programming problem: It should satisfy the above properties.
-  \item State expression\footnote{Dynamic Programming problems are all about the state and its transition. This is the most basic step which must be done very carefully because the state transition depends on the choice of state definition you make.
-        A state can be defined as the set of parameters that can uniquely identify a certain position or standing in the given problem. This set of parameters should be as small as possible to reduce state space.}: Choose a set of state variables so that each valid combination represents a distinct subproblem. A good rule of thumb is to try to keep it as simple as possible.
-  \item Formulate state and transition relationship: Derive a recurrence (transition) relation that expresses the cost/value of a state in terms of smaller states, i.e., derive the solution to the main problem from (one of) the solutions to the $O(1), O(n), O(n^2), \ldots$ subproblems.
-  \item Identify the base case(s): Subproblem(s) that can't be divided into any smaller subproblems and don't depend on any other subproblems for a solution.
-  \item Apply tabulation (bottom-up) or memoization (top-down).
-\end{enumerate}
-
-\begin{remark}[Dynamic Programming vs. Divide and Conquer]\label{rem:dp_vs_divide_and_conquer} 
-Both decompose a problem into subproblems.
-But in divide-and-conquer the subproblems are disjoint, that is, they do not share subsubproblems.
-The subproblems in divide-and-conquer are also typically much smaller than the original problem, while in dynamic programming the subproblems are typically only slightly smaller than the original problem (e.g. reducing \(L(j)\) to \(L(j-1)\))
-\end{remark}
-
-
-
-\begin{example}[Pingala]\label{ex:pingala_dp}
-Using memoization, we can make the recursive algorithm from Example~\ref{ex:pingala} much more efficient.
-
-
-\begin{algorithm}[htb] 
-    \caption{Pingala, top-down with memoization}
-    \label{alg:pingala_dp_topdown}
-  \begin{algorithmic}[1]
-    \State $\mathtt{memo} \gets [\nil] \times n$ \Comment{memoization array of size $n$}
-    \Function{Pingala}{$n$} \Comment{Number of $1,2$-beats in $n$ beats}
-      \If{$n \le 2$}
-        \State \Return $n$
-      \EndIf
-      \If{$\mathtt{memo}[n] = \nil$} 
-        \State $\mathtt{memo}[n] \gets \Call{Pingala}{n-1} + \Call{Pingala}{n-2}$
-      \EndIf
-      \State \Return $\mathtt{memo}[n]$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-% And with a couple extra varaibles, we can also build the solution bottom-up, without recursion:
-% \begin{algorithm}[htb] 
-%     \caption{Pingala, bottom-up}
-%     \label{alg:pingala_dp_bottomup}
-%   \begin{algorithmic}[1]
-%     \State $\mathtt{memo} \gets [\nil] \times n$ \Comment{memoization array of size $n$}
-%     \Function{Pingala}{$n$} \Comment{Number of $1,2$-beats in $n$ beats}
-%       \If{$n \le 2$}
-%         \State \Return $n$
-%       \EndIf
-%       \If{$\mathtt{memo}[n] = \nil$} 
-%         \State $\mathtt{memo}[n] \gets \Call{Pingala}{n-1} + \Call{Pingala}{n-2}$
-%       \EndIf
-%       \State \Return $\mathtt{memo}[n]$
-%     \EndFunction
-%   \end{algorithmic}
-% \end{algorithm}
-
-Algorithm~\ref{alg:pingala_dp_topdown} runs in $O(n)$ time.
-\end{example}
-
-
-
-
-
-
-
 
 
 
 \section{Complexity Theory}
-% Complexity theory is about classifying computational problems by their computational difficulty. 
-% \[
-% \begin{tikzpicture}[scale=0.8]
-%   % Draw the two circles
-%   % \filldraw[color=blue!60, fill=blue!20, very thick]
-%   \filldraw[color=black, fill=white!20, very thick]
-%     (0,0) circle (2.5)  coordinate (C);  % big NP circle
-%   \filldraw[color=black, fill=white!20, very thick]
-%     (0,1) circle (1.0);                  % small P circle
-
-%   % Labels
-%   \node at (0,1)   {P};
-%   \node at (0,-0.5){NP};
-%   \node at (0,-1.7){NPC};
-
-%   % Dashed NPC boundary
-%   \draw[dashed, thick]
-%     (-1.65,-1.7) .. controls (-0.5,-1) and (0.5,-1) .. (1.65,-1.7);
-
-%   % Define the line path and the circle path
-%   \path[name path=ray] (1.5,1.5) -- (3,2.5);
-%   \path[name path=circle] (0,0) circle (2.5);
-
-%   % Compute their intersection
-%   \path[name intersections={of=ray and circle, by=I}];
-
-%   % % Draw only up to the intersection point
-%   % \draw[] (3,2.5) -- (I);
-
-%   % % Place label at that intersection
-%   % \node[above] at (3,2.5) {all computational problems};
-% \end{tikzpicture}
-% \]
-% P contains all problems that can be \emph{solved} in polynomial time.
-
-% NP contains all problems for which one can \emph{verify} a given solution in polynomial time, whereas the solution may not be found in polynomial time.
-
-
-
-\begin{definition}[Polynomial-Time Algorithm]
-A \emph{polynomial-time algorithm} is one whose worst-case running time $T(n)$, on an input of size $n$ bits, is $O(n^{k})$ for some constant $k$.
-\end{definition}
-
-
-you have $n$ objects:\\[2pt]
-\begin{tabular}{p{0.025\linewidth} p{0.3\linewidth} p{0.25\linewidth} p{0.15\linewidth}}
-& all pairs                        & polynomial:        & $\Theta(n^2)$\\ 
-& all triples                      & polynomial:        & $\Theta(n^3)$\\ 
-& all $k$-tuples for a fixed $k$   & polynomial:        & $\Theta(n^k)$\\ 
-& all subsets                      & super-polynomial: & $\Theta(2^n)$\\ 
-& all permutations                 & super-polynomial: & $\Theta(n!)$\\ 
-\end{tabular}
-
-you have a graph over $n$ vertexes:\\[2pt]
-\begin{tabular}{p{0.025\linewidth} p{0.3\linewidth} p{0.25\linewidth} p{0.15\linewidth}}
-& all edges                        & polynomial:        & $\Theta(n^2)$\\ 
-& all trees                        & super-polynomial:  & $\Theta(n^{n-2})$\\ 
-& all complete tours               & super-polynomial:  & $\Theta(n!)$\\ 
-& all cuts                         & super-polynomial:  & $\Theta(2^n)$ \\ 
-\end{tabular}
-
-
-
-
-\subsection{Decision Problems}\label{sec:decision_problems}
-\begin{definition}[Problem]
-A \emph{problem} $Q$ is a binary relation between a set $I$ of \emph{instances} and a set $S$ of \emph{solutions}.
-\end{definition}
-
-\begin{definition}[Concrete Problem]
-A \emph{concrete problem} $Q$ is a problem where $I$ and $S$ are the set of binary strings $\{0,1\}^{\ast}$.
-\end{definition}
-For all practical purposes, instances and solutions can be encoded as binary strings (i.e. mapped into $\{0,1\}^{\ast}$).
-
-\begin{definition}[Decision Problem]
-A \emph{decision problem} $Q$ is a problem where the set of solutions is $S=\{0,1\}$.
-\end{definition}
-% We write $Q(x)=\tru$ when the correct answer is ``yes'' and $Q(x)=\fals$ otherwise.
-\begin{example}[Primality Testing]
-Input: the binary representation of an integer $n$.
-Output: $\tru$ if $n$ is prime, else $\fals$.
-\end{example}
-
-% \subsection{Decision vs. Optimization Problems}\label{sec:decision_vs_optimization}
-
-We focus on decision problems only.
-\begin{itemize}
-\item An optimization problem is \emph{at least as hard} as its corresponding decision problem
-\begin{itemize}
-\item having a solution to the optimization gives an immediate solution to the decision problem
-\end{itemize}
-\item An optimization problem is \emph{not much harder} than the corresponding decision problem
-\begin{itemize}
-\item having a solution to the decision problem does not give an immediate solution to the optimization problem
-\item but we can typically use the decision problem as a subroutine in some kind of (binary) search to solve the corresponding optimization problem
-\end{itemize}
-\end{itemize}
-
-
-
-\begin{example}[Shortest Path]\label{ex:shortest_path_decision}
-% --- helper macros --------------------------------
-% marks a coordinate inside math/paragraph text
-\newcommand{\mymark}[1]{\tikz[remember picture,baseline]\coordinate (#1);}
-% draws the blue “U-bracket” with the yellow label
-\newcommand{\bluebracket}[3]{%
-  \begin{tikzpicture}[remember picture,overlay]
-    \coordinate (mid) at ($(#1)!0.5!(#2)$);
-    \draw[blue] 
-      (#1) -- ++(0,-0.25) -- ($(#2)+(0,-0.25)$) -- (#2);
-    \node[fill=yellow!20,draw=yellow!40!gray,
-          inner sep=2pt] at ($(mid)+(0,-0.55)$) {#3};
-  \end{tikzpicture}%
-}
-% ---------------------------------------------------
-\leavevmode
-\begin{itemize}
-  % -------------------------------------------------
-  \item as an optimization problem:
-  \[
-    \mymark{Il}G=(V,E),v_{\text{source}},v_{\text{destination}}\mymark{Ir}
-    \longrightarrow
-    \mymark{Sl}(v_{\text{source}}, \ldots, v_{\text{destination}})\mymark{Sr}
-  \]
-  \bluebracket{Il}{Ir}{instance}
-  \bluebracket{Sl}{Sr}{solution}
-  \begin{itemize}[nosep]
-    \item Input: a graph $G$, a source vertex, and a destination vertex
-    \item Output: a sequence of vertexes
-  \end{itemize}
-  % -------------------------------------------------
-  \item as a decision problem:
-  \[
-    \mymark{IDl}G=(V,E),v_{\text{start}},v_{\text{end}},\delta\mymark{IDr}
-    \longrightarrow
-    \mymark{SDl}1/0\mymark{SDr}
-  \]
-  \bluebracket{IDl}{IDr}{instance}
-  \bluebracket{SDl}{SDr}{solution}
-  \begin{itemize}[nosep]
-    \item Input: a graph $G$, a start vertex, an end vertex, and a path length ($\delta$)
-    \item Output: $1$ if there is a path of (at most) the given length, else $0$ \qedhere
-  \end{itemize}
-\end{itemize}
-\end{example}
-
-
-%––––––––––––––––––––––––––––––––––
-\subsection{Complexity Classes}
-\begin{definition}[Class P]
-A concrete decision problem $Q$ is \emph{polynomial-time solvable} if there is a polynomial-time algorithm $A$ that solves it.
-The complexity class P is the set of all concrete decision problems that are polynomial-time solvable:
-\[
-Q\in\text{P} \iff \exists \text{$A$ that solves $Q$ in polynomial time (worst case)} \qedhere
-\]
-\end{definition}
-\begin{example}
-Primality Testing (2002, by Agrawal and Bachelor students Kayal and Saxena), Context-free Language Parsing, Shortest-Path (decision variant).
-\end{example}
-
-\begin{definition}[Class NP]
-A concrete decision problem $Q$ is \emph{polynomial-time verifiable} if there is a polynomial-time algorithm $A$ such that for every instance $x \in I$ that has a $\tru$ solution ($Q(x)=1$), there is a certificate $y$ of polynomial size $|y| = O(|x|^c)$ for some constant $c$ such that $A(x,y)=1$.
-$A(x,y)$ verifies in  polynomial time that $y$ proves that $Q(x)=1$.
-The  complexity class NP is the set of all concrete decision problems that are polynomial-time verifiable:
-\[
-Q\in\text{NP} \iff \exists \text{$A$ that verifies $Q$ in polynomial time (worst case)} \qedhere
-\]
-\end{definition}
-\begin{example}
-Longest-Path (decision variant), Vertex Cover, Satisfiability, Knapsack (decision variant).
-\end{example}
-
-
-\begin{theorem}\label{thm:PsubsetNP}
-$\text{P}\subseteq\text{NP}$
-\end{theorem}
-\begin{proof}
-Given a polynomial-time solver for a problem, construct a verifier that ignores the certificate and simply runs the solver.
-\end{proof}
-
-$\text{polynomial-time solvable} \implies \text{polynomial-time verifiable}$
-
-$\text{polynomial-time verifiable} \overset{\text{?}}{\implies} \text{polynomial-time solvable}$
-
-\begin{conjecture}[P vs. NP]\label{conj:PvNP}
-$\text{P}=\text{NP}$? The prevailing opinion is $\text{P}\neq\text{NP}$.
-\end{conjecture}
-
-
-%––––––––––––––––––––––––––––––––––
-\subsection{Polynomial-Time Reductions}
-\begin{definition}[Polynomial-Time Reduction]
-A problem $Q$ is \emph{polynomial-time reducible} to another problem $Q'$ if there is a polynomial-time reduction from $Q$ to $Q'$.
-That means there is a polynomial-time algorithm that transforms every instance $q$ of $Q$ into an instance $q'$ of $Q'$ such that the solution to $q$ is $\tru$ if and only if the solution to $q'$ is $\tru$.
-\end{definition}
-\[
-\begin{tikzpicture}[>=Stealth, thick]
-    % top row ---------------------------------------------------------
-    \node (qinst) at (-4,0) {{instance of $Q$}};
-    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (qbox) at (0,0) {\Huge ?};
-    \node (qsol) at (4,0) {{solution}};
-    \draw[->, blue] (qinst) -- (qbox);
-    \draw[->, blue, dotted] (qbox) -- (qsol);
-    % bottom row ------------------------------------------------------
-    \node (qpin)  at (-4,-3) {{instance of $Q'$}};
-    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (qpbox) at (0,-3) {$A$};
-    \node (qpsol) at (4,-3) {{solution}};
-    \draw[->, blue] (qpin) -- (qpbox);
-    \draw[->, blue] (qpbox) -- (qpsol);
-    % reduction algorithm --------------------------------------------
-    \node[draw, rectangle, align=center, minimum width=3cm, minimum height=1cm] (alg) at (-4,-1.5) {polynomial-time\\algorithm};
-    \draw[->, blue] (qinst.south) -- (alg.north);
-    \draw[->, blue] (alg.south) -- (qpin.north);
-    % equivalence of solutions ---------------------------------------
-    \draw[<->, blue] (qsol.south) -- (qpsol.north) node[midway,right, black] {$=$};
-  \end{tikzpicture}
-\]
-\begin{example}[2-CNF-SAT]
-When every clause of $\varphi$ has at most two literals, satisfiability can be tested via an implication graph and two runs of \nameref{alg:dfs}.  
-A formula is no satisfiable if and only if $x_i \leadsto \neg x_i \leadsto x_i$ for some $i$.
-Therefore $\text{2-CNF-SAT} \in \text{P}$.
-\end{example}
-\[
-  \begin{tikzpicture}[>=Stealth, thick,scale=0.8]
-    % bounding box  ---------------------------------------------------
-    \draw[black, line width=1.5pt] (-4.5,-4) rectangle (2,0);
-    \node at (1,-1.6) {$A_Q$};
-    % instance, algorithms, solution ---------------------------------
-    \node (qin)  at (-2,1)  {{instance of $Q$}};
-    \node[draw, rectangle, align=center, minimum width=3cm, minimum height=1cm] (redalg) at (-2,-1.3) {polynomial-time\\algorithm};
-    \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (abox)   at (0,-3) {$A$};
-    \node (sol)  at (3.5,-3) {{solution}};
-    % arrows ----------------------------------------------------------
-    \draw[->, blue] (qin) -- (redalg.north);
-    \draw[->, blue] (redalg.south) |- (abox.west);
-    \draw[->, blue] (abox.east) -- (sol);
-  \end{tikzpicture}
-\]
-
-%––––––––––––––––––––––––––––––––––
-\subsection{NP-Hardness and NP-Completeness}
-\begin{definition}[NP-Hard]
-A problem $Q'$ is NP-hard if all problems $Q \in \text{NP}$ are polynomial-time reducible to $Q'$.
-\end{definition}
-
-\begin{definition}[NP-Complete]
-A problem $Q'$ is NP-complete if $Q' \in \text{NP}$ and $Q'$ is NP-hard.
-\end{definition}
-\begin{example}[Circuit Satisfiability (SAT)]
-was the first problem proven to be NP-hard and, since $\text{SAT} \in \text{NP}$, it is also NP-complete.
-Many problems were then proved to be NP-complete through polynomial reductions from SAT, for example Vertex Cover.
-\end{example}
-
-\begin{theorem}
-If $Q'$ is NP-hard and polynomial-time reducible to $Q''$, then $Q''$ is NP-hard.
-\end{theorem}
-\begin{theorem}
-If $Q'$ is NP-hard and polynomial-time solvable, then $\text{P}=\text{NP}$.
-Most people believe there is no such $Q'$.
-\end{theorem}
-
-
-
-
-
-% A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. 
-% That means that any problem in NP can be reduced to any problem in NPC in polynomial time. 
-% Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. 
-% This means that NPC problems can be used as indicators of simplicity for all NP problems: 
-% If you can solve one NPC problem in polynomial time, then you can solve all of them. 
-% (In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; 
-% most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
-
-
-% I will ask if it is a problem is in a class p or np. 
-% Answer is ALWAYS YES, and proof your answer. 
-% (Otherwise you wouldn’t be able to prove it)
-
-% Example: is the problem in p?, prove it. 
-% Answer: yes.  
-% So we have to show that there is an algorithm that solves the problem in polynomial time. 
-% ALWAYS the proof is to write and Algorithm.
-
-% If it is an np, means: poly-time verifiable. 
-% We need problem instance + Solution “witness” for a yes answer $\to$ then, check it. 
-% So, you dont need to show how so solve it!
-
-% Example: exist a subset in A that sums s? 
-% \Call{SubsetSum}{$A, s$}, $A= [3, 7, -1, 5, 2, 8]$, $s =12$. ? Prove it.
-
-% Answer: Yes. So, WRITE An algorithm that verifies a solution, it can have another parameter as the \texttt{solution} 
-% \Call{SubsetSumVerify}{$A, s, \texttt{solution}$}. we have to proof that that \texttt{solution} is a solution for the problem. 
-
-% In this case:
-% \begin{algorithm}[h]
-% \caption{Subset-Sum Verification}\label{alg:subset_sum_verify}
-% \begin{algorithmic}[1]
-% \Function{SubsetSumVerify}{$A, s, \texttt{solution}$}
-%   \If{$\sum(\texttt{solution})\neq s$}
-%     \State \Return \fals
-%   \EndIf
-%   \If{not ($\texttt{solution}$ is a subset of $A$)}  
-%     \State \Return \fals  \Comment{can be done in polynomial time}
-%   \EndIf
-%   \State \Return \tru
-% \EndFunction
-% \end{algorithmic}
-% \end{algorithm}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% \section{Reduction}
-% In complexity theory we often show that a problem $Q'$ is \emph{just as hard} as another problem~$Q$ by providing a \emph{polynomial--time reduction} from $Q$ to~$Q'$.
-
-% \begin{figure}[ht]
-%   \centering
-%   \begin{tikzpicture}[>=Stealth, thick]
-%     % top row ---------------------------------------------------------
-%     \node (qinst) at (-4,0) {\emph{instance of $Q$}};
-%     \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (qbox) at (0,0) {\Huge ?};
-%     \node (qsol) at (4,0) {\emph{solution}};
-%     \draw[->, blue] (qinst) -- (qbox);
-%     \draw[->, blue, dotted] (qbox) -- (qsol);
-%     % bottom row ------------------------------------------------------
-%     \node (qpin)  at (-4,-3) {\emph{instance of $Q'$}};
-%     \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (qpbox) at (0,-3) {$A$};
-%     \node (qpsol) at (4,-3) {\emph{solution}};
-%     \draw[->, blue] (qpin) -- (qpbox);
-%     \draw[->, blue] (qpbox) -- (qpsol);
-%     % reduction algorithm --------------------------------------------
-%     \node[draw, rectangle, align=center, minimum width=3cm, minimum height=1cm] (alg) at (-2,-1.5) {polynomial--time\\algorithm};
-%     \draw[->, blue] (qbox.west |- alg.north) -- (alg.north);
-%     \draw[->, blue] (alg.south) -- (qpin.east |- alg.south);
-%     % equivalence of solutions ---------------------------------------
-%     \draw[<->, blue] (qsol.south) -- (qpsol.north) node[midway,right] {$=$};
-%   \end{tikzpicture}
-%   \caption{Polynomial--time reduction from $Q$ to $Q'$}
-%   \label{fig:reduction-basic}
-% \end{figure}
-
-% An instance $q$ of $Q$ is mapped to an instance $q'$ of $Q'$ by a polynomial--time algorithm, and $q$ is accepted \emph{iff} $q'$ is accepted.
-
-% \section{Reduction by Solving a Simpler Problem}
-% Suppose we already have a polynomial--time algorithm $A$ for~$Q'$.  Chaining the reduction with~$A$ yields a direct algorithm $A_Q$ for~$Q$.
-
-% \begin{figure}[ht]
-%   \centering
-%   \begin{tikzpicture}[>=Stealth, thick]
-%     % bounding box  ---------------------------------------------------
-%     \draw[blue!70!black, line width=2pt] (-4,-4) rectangle (3,0.5);
-%     \node at (1,-1.6) {$A_Q$};
-%     % instance, algorithms, solution ---------------------------------
-%     \node (qin)  at (-3.5,0)  {\emph{instance of $Q$}};
-%     \node[draw, rectangle, align=center, minimum width=3cm, minimum height=1cm] (redalg) at (-2,-1.3) {polynomial--time\\algorithm};
-%     \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (abox)   at (0,-3) {$A$};
-%     \node (sol)  at (3.2,-3) {\emph{solution}};
-%     % arrows ----------------------------------------------------------
-%     \draw[->, blue] (qin) -- ($(qin)+(1.2,0)$) |- (redalg.north);
-%     \draw[->, blue] (redalg.south) |- (abox.west);
-%     \draw[->, blue] (abox.east) -- (sol);
-%   \end{tikzpicture}
-%   \caption{Composing a reduction with a known algorithm~$A$}
-%   \label{fig:reduction-compose}
-% \end{figure}
-
-% If $A$ runs in polynomial time, so does $A_Q$.  Hence, whenever $Q'\in\textsf P$ we also have $Q\in\textsf P$.
-
-% \section{The 2--CNF--SAT Problem}
-% \subsection*{Definition}
-% \begin{itemize}
-%   \item \textbf{Input:} a Boolean formula $f$ on variables $x_1,\dots,x_n$ in \emph{conjunctive normal form}
-%         $f=C_1 \land C_2 \land \dots \land C_k$, where each clause $C_i$ has exactly two literals.
-%   \item \textbf{Output:} $1$ \,(\emph{yes}) iff $f$ is satisfiable.
-% \end{itemize}
-% The formula
-% \[
-%   (x_1\lor\lnot x_3)\land(\lnot x_2\lor x_3)\land(\lnot x_1\lor\lnot x_3)\land(x_1\lor x_2)
-% \]
-% is an illustrative example.
-
-% \section{From 2--CNF to Implicative Form}
-% Every clause $(a\lor b)$ is equivalent to $(\lnot a\Rightarrow b)$ and $(\lnot b\Rightarrow a)$.  Rewriting each clause yields an \emph{implicative normal form}.
-
-% \begin{align*}
-%   & (x_1\lor\lnot x_3)\land(\lnot x_2\lor x_3)
-%   \\
-%   \equiv{} & (\lnot x_1\Rightarrow\lnot x_3)\land(x_3\Rightarrow x_1)\land(x_2\Rightarrow x_3)\land(\lnot x_3\Rightarrow\lnot x_2).
-% \end{align*}
-
-% \section{From Implications to Graph Reachability}
-% Build a directed graph whose vertices are the literals $x_i$ and $\lnot x_i$.  For every implication $u\Rightarrow v$ add an arc $u\to v$.
-
-% \begin{figure}[ht]
-%   \centering
-%   \begin{tikzpicture}[>=Stealth, node distance=2cm, thick]
-%     % nodes -----------------------------------------------------------
-%     \node[circle, draw] (x1)  {$x_1$};
-%     \node[circle, draw, above right=of x1] (x2)  {$x_2$};
-%     \node[circle, draw, right=3cm of x1]   (x3)  {$x_3$};
-%     \node[circle, draw, below=3cm of x1] (nx1) {$\lnot x_1$};
-%     \node[circle, draw, below right=of nx1] (nx2) {$\lnot x_2$};
-%     \node[circle, draw, right=3cm of nx1] (nx3) {$\lnot x_3$};
-%     % edges -----------------------------------------------------------
-%     \foreach \u/\v in {nx1/nx3,x3/x1,x2/x3,nx3/nx2,x1/nx3,x3/nx1,nx1/x2,nx2/x1}
-%       \draw[->] (\u) -- (\v);
-%     % callout with condition -----------------------------------------
-%     \node[rectangle callout, callout relative pointer={(1,0)}, draw, align=left, right=3.2cm of x3] (cond)
-%       {Formula is \emph{unsatisfiable}\\iff\\$x_i\leadsto\lnot x_i\leadsto x_i$ for some~$i$};
-%     \node[rectangle, draw, align=center, below=0.8cm of cond] (dfs) {depth--first search};
-%     \draw[->, blue] (cond.south) -- (dfs.north);
-%   \end{tikzpicture}
-%   \caption{Implication graph for the running example}
-%   \label{fig:implication-graph}
-% \end{figure}
-
-% Testing each variable for reachability to its negation (and back) can be done with a single DFS, so \textsc{2--CNF--Sat} is in~$\textsf P$.
-
-% \section{Putting It Together: a Reduction to Reachability}
-% \begin{figure}[ht]
-%   \centering
-%   \begin{tikzpicture}[>=Stealth, thick]
-%     % top row ---------------------------------------------------------
-%     \node (inst) at (-4,0)  {instance of 2--CNF--SAT};
-%     \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (unknown) at (0,0) {\Huge ?};
-%     \node (sol)  at (4,0)  {\emph{solution}};
-%     \draw[->, blue] (inst) -- (unknown);
-%     \draw[->, blue, dotted] (unknown) -- (sol);
-%     % reduction algo --------------------------------------------------
-%     \node[draw, rectangle, align=center, minimum width=3cm, minimum height=1cm] (reducer) at (-2,-1.5) {polynomial--time\\algorithm};
-%     \draw[->, blue] (unknown.west |- reducer.north) -- (reducer.north);
-%     % bottom row ------------------------------------------------------
-%     \node (ginst) at (-4,-3) {instance of reachability};
-%     \node[draw, rectangle, minimum width=2.6cm, minimum height=1cm] (dfs) at (0,-3) {DFS};
-%     \node (gsol) at (4,-3) {\emph{solution}};
-%     \draw[->, blue] (reducer.south) -- (ginst);
-%     \draw[->, blue] (ginst) -- (dfs);
-%     \draw[->, blue] (dfs) -- (gsol);
-%     % equal solutions -------------------------------------------------
-%     \draw[<->, blue] (sol.south) -- (gsol.north) node[midway,right] {$=$};
-%   \end{tikzpicture}
-%   \caption{Reduction of \textsc{2--CNF--Sat} to graph reachability}
-%   \label{fig:2cnf-reduction}
-% \end{figure}
-
-% Consequently $\textsc{2--CNF--Sat}\in\textsf P$.
-
-% \section{NP--Completeness}
-% A problem $Q$ is \emph{polynomial--time reducible} to $Q'$ if a polynomial--time algorithm transforms every instance $q$ of~$Q$ into an instance $q'$ of~$Q'$, preserving the answer.
-
-% A problem $Q'$ is \emph{NP--hard} if every $Q\in\textsf{NP}$ reduces to~$Q'$.  If additionally $Q'\in\textsf{NP}$, then $Q'$ is \emph{NP--complete}.
-
-% If some NP--hard problem were found to be in~$\textsf P$, we would have $\textsf P=\textsf{NP}$, which most researchers doubt.
-
-% \section{The First NP--Complete Problem}
-% \begin{figure}[ht]
-%   \centering
-%   \begin{tikzpicture}[>=Stealth, thick]
-%     \node (Q)   at (-3,0) {\emph{any problem $Q\in\textsf{NP}$}};
-%     \node[draw, rectangle, align=center] (red) at (0,0) {polynomial--time\\reduction};
-%     \node (SAT) at (3,0) {\textsc{Sat}};
-%     \draw[->, blue] (Q) -- (red);
-%     \draw[->, blue] (red) -- (SAT);
-%   \end{tikzpicture}
-%   \caption{Cook's reduction showing that \textsc{Sat} is NP--hard}
-%   \label{fig:Cook}
-% \end{figure}
-
-% Stephen Cook proved in 1971 that \textsc{Circuit Sat} (and soon after, \textsc{Sat}) is NP--complete.  Since then, countless other problems have been shown NP--complete by reductions, e.g.~from \textsc{Sat} to \textsc{Vertex Cover}.
-
-% If you encounter an NP--hard problem, it is widely accepted that no efficient exact algorithm exists unless $\textsf P=\textsf{NP}$.  In practice one resorts to heuristics, approximation algorithms, or fixed--parameter tractability.
-
-
-
-
-
-
-\clearpage
-
-% \section*{Exam Exercises}
-
-% \subsection*{294}
-% \begin{algorithm}[h]
-%   \caption*{minimal number of edges to make an undirected graph connected}%
-%   \label{alg:min_edges_connected}
-%   \begin{algorithmic}[1]
-%     \Function{MinimalAdditionalEdges}{$G$}
-%     \State $X \gets [\fals] * |V(G)|$ \Comment{visited vertices}
-%       \State $n_C \gets 0$ \Comment{number of connected components}
-      
-%       \For{$i \gets 1 \ldots |V(G)|$}
-%         \If{$X[i] = \fals$}
-%           \State $n_C \gets n_C + 1$
-%           \State initialize an empty queue $Q$
-%           \State \Call{Enqueue}{$Q, i$}
-%           \State $X[i] \gets \tru$          \Comment{mark source vertex as visited}
-          
-%           \While{$Q \neq \emptyset$}
-%             \State $u \gets$ \Call{Dequeue}{$Q$}
-%             \ForAll{$v \in \Gamma(u)$}
-%               \If{$X[v] = \fals$} 
-%                 \State \Call{Enqueue}{$Q, v$} \Comment{mark on enqueue to avoid duplicates}
-%                 \State $X[v] \gets \tru$
-%               \EndIf
-%             \EndFor
-%           \EndWhile
-%         \EndIf
-%       \EndFor
-      
-%       \State \Return $n_C - 1$ 
-%     \EndFunction
-%   \end{algorithmic}
-% \end{algorithm}
-
-% \subsection*{298}
-% \begin{algorithm}[h]
-%   \caption*{Checking for 3 distinct values in an array}\label{alg:distinct_values}
-%   \begin{algorithmic}[1]
-%     \Function{DistinctValues}{$A$}
-%       \State $a_1, a_2, a_3 \gets \nil$ \Comment{the three distinct values}
-%       \ForAll{$a\in A$}
-%         \If{$a = a_1 \lor a_1 = \nil$}
-%           \If{$a_1 = \nil$}
-%             \State $a_1 \gets a$
-%           \EndIf
-%           \State \textbf{continue}
-%         \EndIf
-%         \If{$a = a_2 \lor a_2 = \nil$}
-%           \If{$a_2 = \nil$}
-%             \State $a_2 \gets a$
-%           \EndIf
-%           \State \textbf{continue}
-%         \EndIf
-%         \If{$a = a_3 \lor a_3 = \nil$}
-%           \If{$a_3 = \nil$}
-%             \State $a_3 \gets a$
-%           \EndIf
-%           \State \textbf{continue}
-%         \EndIf
-%         \State \Return \texttt{False} 
-%       \EndFor
-%       \State \Return \texttt{True} 
-%     \EndFunction
-%   \end{algorithmic}
-% \end{algorithm}
 
 
 
