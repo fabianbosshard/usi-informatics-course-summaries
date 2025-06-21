@@ -73,7 +73,7 @@ For this problem, we can do better if we avoid repeating the same computations o
 \section{Basics}
 \begin{definition}
 We define the following families of functions:
-\begin{itemize}[leftmargin=*]
+\begin{itemize}%[leftmargin=*]
     \item $O(g(n)) := \{ f(n) \mid \exists c > 0, n_0 \in \mathbb{N} \mid0 \leq f(n) \leq cg(n) \text{ for all } n \geq n_0 \}$
     \item $\Omega(g(n)) := \{ f(n) \mid \exists c > 0, n_0 \in \mathbb{N} \mid 0 \leq cg(n) \leq f(n) \text{ for all } n \geq n_0 \}$
     \item $\Theta(g(n)) := \{ f(n) \mid \exists c_1, c_2 > 0, n_0 \in \mathbb{N} \mid 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) \; \forall n \geq n_0 \}$
@@ -490,7 +490,7 @@ This yields a worst-case running time of \(O(\log n)\), a dramatic improvement o
     \end{algorithmic}
 \end{algorithm}
 
-
+\clearpage
 \section{Sorting}
 
 \subsection{Insertion Sort}
@@ -674,8 +674,7 @@ where $c_1 > 0$ represents the time to solve the base case ($n = 1$) and $c_2 > 
 \newcommand{\myblue}{\color{myblue}}
 \newcommand{\myorange}{\color{myorange}}
 
-\begin{figure}[htb]
-    \centering
+\[
     \begin{tikzpicture}[scale = 1.2]
       \draw[fill=myorange!30] (0,0) rectangle (2, 0.5);
       \draw[fill=myblue!30] (2,0) rectangle (5, 0.5);
@@ -707,10 +706,8 @@ where $c_1 > 0$ represents the time to solve the base case ($n = 1$) and $c_2 > 
     \end{tikzpicture}
     % \vspace*{-2.5em}
     % \caption{Lomuto invariant: $A[1..\texttt{i} - 1]$ consists of elements smaller than $p$, 
-    % $A[\texttt{i}..\texttt{j}-1]$ consists of elements at least as large as $p$; $A[\texttt{j}..\textit{n}-1]$ has not been looked at, which is depicted by filling this part of the array with both colors.} 
-    \label{fig:lomuto:invariant}
-\end{figure}
-
+    % $A[\texttt{i}..\texttt{j}-1]$ consists of elements at least as large as $p$; $A[\texttt{j}..\textit{n}-1]$ has not been looked at, which is depicted by filling this part of the array with both colors.}
+    \]
 Lomuto partitioning (Algorithm \ref{alg:lomuto_partition}) divides an array $A$ into two subarrays $A[l:q-1]$ and $A[q+1:r]$ such that all elements in $A[l:q-1]$ are less than or equal to $A[q]$ and all elements in $A[q+1:r]$ are greater than $A[q]$.
 
 \begin{algorithm}[h!]
@@ -1289,6 +1286,7 @@ At each step, it compares \(A[r]\) and \(A[l]\) and checks if the difference \(A
 \end{example}
 
 
+\clearpage
 \section{Data Structures}
 \label{sec:data_structures}
 
@@ -1776,9 +1774,7 @@ Each slot \(T[i]\) stores a linked list of keys that hash to \(i\).
 % \end{figure}
 
 
-
-\begin{figure}[htb]
-\centering
+\[
 \begin{tikzpicture}[scale=0.8, 
   every node/.style={font=\footnotesize}]
 
@@ -1861,7 +1857,7 @@ Each slot \(T[i]\) stores a linked list of keys that hash to \(i\).
 \linkedlist{2.4}{2.4}
 
 \end{tikzpicture}
-\end{figure}
+\]
 
 
 
@@ -2022,7 +2018,7 @@ A \emph{binary search tree} implements a dynamic set. It stores keys from a tota
 \[
 y\in\text{left-subtree}(x) \Leftrightarrow  \attrib{y}{key}\le\attrib{x}{key}
 ,\quad
-z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}\qedhere
+z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}%\qedhere
 \]
 \end{definition}
 
@@ -2067,6 +2063,7 @@ z\in\text{right-subtree}(x)\Leftrightarrow  \attrib{z}{key}\ge\attrib{x}{key}\qe
       \EndFunction
     \end{algorithmic}
   \end{algorithm}
+  \FloatBarrier
   The complexity is $O(h)$, where $h$ is the height of the tree. 
   \end{example}
   
@@ -2194,18 +2191,18 @@ To find the predecessor, replace all occurences of \attribute{right} with \attri
 
 
 Deletion distinguishes three cases:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item \(z\) is a leaf node, i.e. it has no children:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item simply remove the node \(z\)
     \end{itemize}
   \item \(z\) has one child:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item remove \(z\)
       \item connect its child to its parent
     \end{itemize}
   \item \(z\) has two children:
-    \begin{itemize}[before={\parskip=0pt},nosep]
+    \begin{itemize}%[before={\parskip=0pt},nosep]
       \item find the successor \(y\) of \(z\) (since \(z\) has two children, \(y\) is guaranteed to be the minimum of the right subtree of \(z\) and thus have at most one child)
       \item copy the key of \(y\) into \(z\)\nopagebreak
       \item delete \(y\), which is a leaf or has one right child, i.e. connect the child of \(y\) to the parent of \(y\)
@@ -2610,7 +2607,7 @@ which can be rearranged to
 
 
 
-
+\clearpage
 
 \section{Graphs}\label{sec:graphs}
 \subsection{Representations of Graphs}
@@ -3167,7 +3164,7 @@ The Bellman-Ford equation:
 
 
 
-
+\clearpage
 \section{Design Techniques}\label{sec:design_techniques}
 
 \subsection{Greedy Algorithms}\label{sec:greedy_algorithms}
@@ -3335,7 +3332,7 @@ Algorithm~\ref{alg:pingala_dp_topdown} runs in $O(n)$ time.
 
 
 
-
+\clearpage
 
 
 
@@ -3831,7 +3828,7 @@ Most people believe there is no such $Q'$.
 
 
 
-\clearpage
+
 
 % \section*{Exam Exercises}
 
@@ -3902,6 +3899,6 @@ Most people believe there is no such $Q'$.
 
 
 
-% \clearpage
+% 
 
 \end{document}
