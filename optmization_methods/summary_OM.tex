@@ -13,7 +13,9 @@
 \usepackage{soul}
 
 % \usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
-\usepackage[left=43mm, right=43mm, top=20mm, bottom=30mm]{geometry} % for A4
+% \usepackage[left=25mm, right=25mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=43mm, right=43mm, top=20mm, bottom=30mm]{geometry}
 
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
@@ -205,6 +207,11 @@
 ]{smallremark}
 
 
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
@@ -273,8 +280,14 @@
 
 
 
-\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green]{hyperref}
+% \usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green]{hyperref}
 % \usepackage{hyperref} % for printing use this version (without colorlinks)
+\usepackage[
+  colorlinks=false,        % don't wrap links in a colour
+  pdfborder={0 0 0}        % no border around links
+]{hyperref}
+\usepackage{cleveref}
+
 
 
 
@@ -2534,10 +2547,9 @@ That is why we need the concept of \emph{feasible directions}, which tells us in
 
 \begin{definition}[Set of linearized feasible directions]\label{def:linearized_feasible_directions}
   Given a feasible point \(\vect{x}\in\Omega\), the \emph{set of linearized feasible directions} is
-  \[
-    \mathcal{F}(\vect{x}) := \{ \vect{d}\in\R^{n} \mid \nabla c_{i}(\vect{x})^{\top}\vect{d}=0 \; \forall i\in\mathcal{E} \land \nabla c_{i}(\vect{x})^{\top}\vect{d}\ge 0 \; \forall i\in\mathcal{I}\cap\mathcal{A}(\vect{x}) \}
-    \qedhere
-  \]
+  \begin{equation}\label{eq:linearized_feasible_directions}
+    \mathcal{F}(\vect{x}) := \left\{ \vect{d}\in\R^{n} \mid \nabla c_{i}(\vect{x})^{\top}\vect{d}=0 \; \forall i\in\mathcal{E} \land \nabla c_{i}(\vect{x})^{\top}\vect{d}\ge 0 \; \forall i\in\mathcal{I}\cap\mathcal{A}(\vect{x}) \right\}
+  \end{equation}
 \end{definition}
 Note that the inactive constraints are not relevant for finding the feasible directions.
 
@@ -2565,7 +2577,7 @@ In \nameref{sec:unconstrained_optimization}, a necessary condition is that if $\
 \[
 \nabla f\left(\vect{x}^*\right)^T \vect{d} \geq 0
 \]
-\textcolor{red}{for all directions \(\vect{d} \in \mathbb{R}^n\)}, which implies the \nameref{thm:nec_first_order_optimality_multivariate} $\nabla f\left(\vect{x}^*\right)=0$.
+for \textcolor{red}{all} directions \(\vect{d} \in \textcolor{red}{\mathbb{R}^n}\), which implies the \nameref{thm:nec_first_order_optimality_multivariate} $\nabla f\left(\vect{x}^*\right)=0$.
 In constrained problems, a similar necessary condition holds:
 
 \begin{lemma}[Fundamental Necessary Condition]\label{lem:fundamental_condition}
@@ -2573,34 +2585,45 @@ In constrained problems, a similar necessary condition holds:
   \[
     \nabla f(\vect{x}^{\ast})^{\top} \vect{d} \ge 0
   \]
-  \textcolor{red}{for all feasible directions \(\vect{d}\in\mathcal{F}(\vect{x}^{\ast})\)}.
+  for \textcolor{red}{all feasible} directions \(\vect{d}\in\textcolor{red}{\mathcal{F}(\vect{x}^{\ast})}\).
   Since we would need to examine every \(\vect{d}\in\mathcal{F}(\vect{x}^{\ast})\), this condition is not very practical.
 \end{lemma}
 
-\begin{theorem}[\gls{kkt} conditions]\label{thm:KKT}
+\begin{theorem}[\gls{kkt}]\label{thm:KKT}
 Suppose \(\vect{x}^{\ast}\) is a local minimizer of \eqref{eq:form_optimization_problem} where \(f\) and the \(c_i\)'s are continuously differentiable and the \nameref{def:constraint_qualification_condition} holds at \(\vect{x}^{\ast}\). 
 Then there exists a unique \(\vect{\lambda}^{\ast}\in\R^{|\mathcal{E}|+|\mathcal{I}|}\) such that
 \begin{subequations}\label{eq:KKT}
   \begin{align}
-    \nabla f(\vect{x}^{\ast}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}^{\ast} \nabla c_{i}(\vect{x}^{\ast}) &= \vect{0}   &&\text{(stationarity)} \label{eq:KKT_stationarity} \\ % stationarity
-    c_{i}(\vect{x}^{\ast}) &= 0,                      \quad \forall i\in\mathcal{E}                             &&\text{(primal feasibility)}                \label{eq:KKT_equal_feas} \\
-    c_{i}(\vect{x}^{\ast}) &\ge 0,                    \quad \forall i\in\mathcal{I}                             &&\text{(primal feasibility)}                \label{eq:KKT_inequal_feas} \\
-    \lambda_{i}^{\ast} &\ge 0,                        \quad \forall i\in\mathcal{I}                             &&\text{(dual feasibility)}                  \label{eq:KKT_dual_feas} \\
-    \lambda_{i}^{\ast} c_{i}(\vect{x}^{\ast}) &= 0,   \quad \forall i\in\mathcal{E}\cup\mathcal{I}              &&\text{(complementary slackness)}           \label{eq:KKT_comp_slack} % complementarity slackness
+    &\qquad\qquad\qquad&\nabla f(\vect{x}^{\ast}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}^{\ast} \nabla c_{i}(\vect{x}^{\ast}) &= \vect{0}   &&\text{(stationarity)} \label{eq:KKT_stationarity} \\ % stationarity
+    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &= 0,                      \quad \forall i\in\mathcal{E}                             &&\text{(primal feasibility)}                \label{eq:KKT_equal_feas} \\
+    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &\ge 0,                    \quad \forall i\in\mathcal{I}                             &&\text{(primal feasibility)}                \label{eq:KKT_inequal_feas} \\
+    &\qquad\qquad\qquad&\lambda_{i}^{\ast} &\ge 0,                        \quad \forall i\in\mathcal{I}                             &&\text{(dual feasibility)}                  \label{eq:KKT_dual_feas} \\
+    &\qquad\qquad\qquad&\lambda_{i}^{\ast} c_{i}(\vect{x}^{\ast}) &= 0,   \quad \forall i\in\mathcal{E}\cup\mathcal{I}              &&\text{(complementary slackness)}           \label{eq:KKT_comp_slack} % complementarity slackness
   \end{align}
 \end{subequations}
 where \(\vect{\lambda}^{\ast}\) are called the \emph{Lagrange multipliers} at \(\vect{x}^{\ast}\) and the pair \((\vect{x}^{\ast},\vect{\lambda}^{\ast})\) is called a \gls{kkt} point.
-Defining the \emph{Lagrangian function} as
-\[
-  \mathcal{L}(\vect{x},\vect{\lambda}) := f(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} c_{i}(\vect{x}), \quad (\vect{x},\vect{\lambda})\in\R^{n}\times\R^{|\mathcal{E}|+|\mathcal{I}|}
-\]
-the first condition \eqref{eq:KKT_stationarity} can be expressed concisely as
-\[
-\nabla_{\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) = \vect{0} 
-\]
-The last condition \eqref{eq:KKT_comp_slack} implies that if \(c_{i}\) is inactive at \(\vect{x}^{\ast}\), i.e. \(c_{i}(\vect{x}^{\ast}) > 0\), then \(\lambda_{i}^{\ast} = 0\).
-% Equations~\eqref{eq:KKT_stationarity}--\eqref{eq:KKT_comp_slack} are called the \emph{stationarity}, \emph{primal feasibility}, \emph{dual feasibility}, and \emph{complementarity slackness} conditions, respectively.
 \end{theorem}
+Defining the \emph{Lagrangian function} as
+\begin{equation}
+  \mathcal{L}(\vect{x},\vect{\lambda}) := f(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} c_{i}(\vect{x}), \quad (\vect{x},\vect{\lambda})\in\R^{n}\times\R^{|\mathcal{E}|+|\mathcal{I}|}
+\end{equation}
+the first condition \eqref{eq:KKT_stationarity} can be expressed concisely as
+\begin{equation}
+\nabla_{\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) = \vect{0} \qedhere
+\end{equation}
+% Equations~\eqref{eq:KKT_stationarity}--\eqref{eq:KKT_comp_slack} are called the \emph{stationarity}, \emph{primal feasibility}, \emph{dual feasibility}, and \emph{complementarity slackness} conditions, respectively.
+
+The last condition \eqref{eq:KKT_comp_slack} implies that if \(c_{i}\) is inactive at \(\vect{x}^{\ast}\), i.e. \(c_{i}(\vect{x}^{\ast}) > 0\), then \(\lambda_{i}^{\ast} = 0\).
+Thus, condition \eqref{eq:KKT_stationarity} can be rewritten as
+\begin{equation}\label{eq:KKT_stationarity_active}
+  \nabla f(\vect{x}^{\ast}) - \sum_{i\in\mathcal{A}(\vect{x}^{\ast})} \lambda_{i}^{\ast} \nabla c_{i}(\vect{x}^{\ast}) = \vect{0}
+\end{equation}
+Observe that \eqref{eq:KKT_comp_slack} also implies that 
+\begin{equation}
+  \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) = f(\vect{x}^{\ast})
+\end{equation}
+
+
 
 % Satisfaction of the strict complementarity property usually makes it easier for algorithms to determine the active set A(x ∗ ) and converge rapidly to the solution x ∗ .
 
@@ -2608,10 +2631,14 @@ A special case of \eqref{eq:KKT_comp_slack} is \emph{strict complementarity}, wh
 In other words, \(\lambda_{i}^{\ast} > 0\) for each \(i\in\mathcal{I} \cap \mathcal{A}(\vect{x}^{\ast})\) and \(\lambda_{i}^{\ast} = 0\) for each \(i\in\mathcal{I} \setminus \mathcal{A}(\vect{x}^{\ast})\).
 Satisfaction of the strict complementarity property usually makes it easier for algorithms to determine the active set \(\mathcal{A}(\vect{x}^{\ast})\) and converge rapidly to the solution \(\vect{x}^{\ast}\).
 
+\begin{definition}[Cone]\label{def:cone}
+  \(S\subseteq\R^{n}\) is a \emph{cone} if for all \(\vect{x}\in S\) and all \(\alpha \in \R_{\ge 0}\), we have \(\alpha \vect{x} \in S\).
+\end{definition}
+
 \begin{lemma}[Farkas]\label{lem:Farkas}
   Let \( \matr{B}\in\R^{n\times m}, \matr{C}\in\R^{n\times p} \) and \( \vect{g}\in\R^{n} \) and let \(K\) be the cone defined by
   \begin{equation}\label{eq:cone_K}
-  K : = \{ \matr{B} \vect{y} + \matr{C} \vect{w} \mid \vect{y} \in \R^m_{\ge 0}, \vect{w}\in\R^{p} \} 
+  K : = \left\{ \matr{B} \vect{y} + \matr{C} \vect{w} \mid \vect{y} \in \R^m_{\ge 0}, \vect{w}\in\R^{p} \right\} 
 \end{equation}
   where \(\R^m_{\ge 0}\) is the non-negative orthant%
   \footnote{An orthant is the higher-dimensional analogue of a quadrant in the plane or an octant in three dimensions. The non-negative orthant is the generalization of the first quadrant in \(\R^2\).}
@@ -2619,27 +2646,86 @@ Satisfaction of the strict complementarity property usually makes it easier for 
   Then for any \(\vect{g} \in \R^n\), exactly one of the following conditions holds:
   \begin{enumerate}[label=(\alph*)]
     \item \( \vect{g} \in K \) \label{item:Farkas_in_K}
-    \item \( \exists \vect{d}\in\R^{n} \mid \vect{g}^{\top} \vect{d} < 0, \matr{B}^{\top} \vect{d} \ge \vect{0}, \matr{C}^{\top} \vect{d} = \vect{0} \) \label{item:Farkas_hyperplane}
+    \item \( \exists \vect{d}\in\R^{n} \mid \vect{g}^{\top} \vect{d} < 0, \matr{B}^{\top} \vect{d} \ge \vect{0}, \matr{C}^{\top} \vect{d} = \vect{0} \) \qedhere\label{item:Farkas_hyperplane}
   \end{enumerate}
-  Geometrically \ref{item:Farkas_hyperplane} says that if \(\vect{g} \notin K\), we can find a hyperplane with normal vector \(\vect{d}\) separating \(\vect{g}\) from the cone \(K\) such that \(\vect{g}\) lies on the opposite side of \(\vect{d}\).
 \end{lemma}
+  Geometrically Lemma~\ref{lem:Farkas} says that if \(\vect{g} \notin K\), we can find a hyperplane with normal vector \(\vect{d}\) separating \(\vect{g}\) from the cone \(K\) such that \(\vect{g}\) lies on the opposite side of \(\vect{d}\):
+\[
+\tikzexternaldisable
+\begin{tikzpicture}[>=Stealth, scale=0.6, every node/.style={font=\footnotesize}]
+
+  %%% lengths %%%
+  \def\bLen{3cm} % length of the b‐arrows
+  \def\gLen{2.5cm} % length of the g‐arrows
+  \def\dLen{2.5cm} % length of the d‐arrow
+  \def\dashedLen{1.1*\bLen} % length of the dashed line
+  \def\coneLen{1.2*\bLen}
+
+  %%% Left panel %%%
+  \begin{scope}
+    \node at (-0.5cm, 1.5cm) {\ref{item:Farkas_in_K}:};
+    % shaded cone
+    \fill[red!20] 
+      (50:\coneLen) -- 
+      (35:0) -- 
+      (10:\coneLen) -- 
+    cycle;
+    \node at (40:\bLen) {\(K\)};
+    \draw[->, draw=red]   (0,0) -- (50:\bLen);
+    \draw[->, draw=red]   (0,0) -- (10:\bLen);
+    % b‐vectors
+    % \draw[->, draw=red]   (0,0) -- (50:\bLen) node[above]       {$b_1$};
+    % \draw[->, draw=red]   (0,0) -- (35:\bLen) node[above right] {$b_2$};
+    % \draw[->, draw=red]   (0,0) -- (10:\bLen) node[below right] {$b_3$};
+    % g inside the cone at 22°
+    \draw[->, draw=black]  (0,0) -- (22:\gLen) node[right] {$\vect{g}$};
+  \end{scope}
+
+  %%% Right panel %%%
+  \begin{scope}[xshift=9cm]
+    \node at (-2cm, 1.5cm) {\ref{item:Farkas_hyperplane}:};
+    % same shaded cone
+    \fill[red!20] 
+      (50:\coneLen) -- 
+      (35:0) -- 
+      (10:\coneLen) -- 
+    cycle;
+    \node at (40:\bLen) {\(K\)};
+    \draw[->, draw=red]   (0,0) -- (50:\bLen);
+    \draw[->, draw=red]   (0,0) -- (10:\bLen);
+    % dashed hyperplane at 80°
+    \draw[dashed]    (80:-0.5cm) -- (80:\dashedLen);
+    % g‐vector at 100°
+    \draw[->, draw=black]  (0,0) -- (100:\gLen) node[above] {$\vect{g}$};
+    % b‐vectors again
+    % \draw[->, draw=red]   (0,0) -- (50:\bLen) node[above]       {$b_1$};
+    % \draw[->, draw=red]   (0,0) -- (35:\bLen) node[above right] {$b_2$};
+    % \draw[->, draw=red]   (0,0) -- (10:\bLen) node[below right] {$b_3$};
+    % d‐vector at –10°
+    \draw[->, black] (0,0) -- (-10:\dLen) node[right] {$\vect{d}$};
+  \end{scope}
+
+\end{tikzpicture}
+\tikzexternalenable
+\]
+
 
 \begin{proof}[Theorem~\ref{thm:KKT}]
   Let \(\vect{x}^{\ast}\) be a local minimizer of \eqref{eq:form_optimization_problem} and assume that the \nameref{def:constraint_qualification_condition} holds at \(\vect{x}^{\ast}\).
-  Define
-  \[
+  If we define as
+  \begin{equation}\label{eq:cone_N}
     N := \left\{ \sum_{i\in\mathcal{A}(\vect{x}^{\ast})} \lambda_{i} \nabla c_{i}(\vect{x}^{\ast}) \;\mid\; \vect{\lambda} \in \R^{|\mathcal{A}(\vect{x}^{\ast})|}, \lambda_{i} \ge 0, i\in \mathcal{A}(\vect{x}^{\ast}) \cap \mathcal{I} \right\}
-  \]
-  and ovserve that \(N\) is of the form \eqref{eq:cone_K} with \(\matr{B} = \left[ \nabla c_{i}(\vect{x}^{\ast}) \right]_{i\in{\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})}}\) and \(\matr{C} = \left[ \nabla c_{i}(\vect{x}^{\ast}) \right]_{i\in{\mathcal{E}}}\).
+  \end{equation}
+  it is of the form \eqref{eq:cone_K} with \(\matr{B} = \left[ \nabla c_{i}(\vect{x}^{\ast}) \right]_{i\in{\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})}}\) and \(\matr{C} = \left[ \nabla c_{i}(\vect{x}^{\ast}) \right]_{i\in{\mathcal{E}}}\).
   
   By \nameref{lem:Farkas}, either \(\nabla f(\vect{x}^{\ast}) \in N\) or there exists \(\vect{d}\in\R^{n}\) such that \(\nabla f(\vect{x}^{\ast})^{\top} \vect{d} < 0\), \(\nabla c_{i}(\vect{x}^{\ast})^{\top} \vect{d} \ge 0\) for all \(i\in\mathcal{A(\vect{x}^{\ast})} \cap \mathcal{I}\), \(\nabla c_{i}(\vect{x}^{\ast})^{\top} \vect{d} = 0\) for all \(i\in\mathcal{E}\).
   In the second case, \(\vect{d}\) would be both a descent direction and a feasible direction. 
   By Lemma~\ref{lem:fundamental_condition}, if \(\vect{x}^{\ast}\) is a local minimizer, then there are no feasible descent directions at \(\vect{x}^{\ast}\) and therefore \ref{item:Farkas_hyperplane} cannot hold, implying that \(\nabla f(\vect{x}^{\ast}) \in N\).
 
   This means there exists \(\vect{\lambda} \in \R^{|\mathcal{A(\vect{x}^{\ast})|}}\) such that \(\lambda_{i} \ge 0\) for \(i\in\mathcal{A(\vect{x}^{\ast})} \cap \mathcal{I} \) and
-  \[
-    \nabla f(\vect{x}^{\ast}) = \sum_{i\in\mathcal{A}(\vect{x}^{\ast})} \lambda_{i} \nabla c_{i}(\vect{x}^{\ast}) \text{.}
-  \]
+  \begin{equation}\label{eq:grad_linear_combination}
+    \nabla f(\vect{x}^{\ast}) = \sum_{i\in\mathcal{A}(\vect{x}^{\ast})} \lambda_{i} \nabla c_{i}(\vect{x}^{\ast})% \text{.}
+  \end{equation}
   Definining the vector \(\vect{\lambda}^{\ast} \in \R^{|\mathcal{E}|+|\mathcal{I}|}\) as 
   \(
     \lambda_{i}^{\ast} = \begin{cases}
@@ -2648,9 +2734,9 @@ Satisfaction of the strict complementarity property usually makes it easier for 
     \end{cases}
   \),
   we obtain
-  \[
+  \begin{equation}\label{eq:KKT_stationarity_proof}
     \nabla f(\vect{x}^{\ast}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}^{\ast} \nabla c_{i}(\vect{x}^{\ast}) = \vect{0}
-  \]
+  \end{equation}
   proving \eqref{eq:KKT_stationarity}.
   
   \eqref{eq:KKT_equal_feas} and \eqref{eq:KKT_inequal_feas} follow from the fact that \(\vect{x}^{\ast}\) is feasible, since it is a local minimizer of the constrained problem.
@@ -2659,21 +2745,105 @@ Satisfaction of the strict complementarity property usually makes it easier for 
 
   \eqref{eq:KKT_comp_slack} follows from the definition of \(\vect{\lambda}^{\ast}\) since \(\lambda_{i}^{\ast} = 0\) whenever \(c_{i}(\vect{x}^{\ast}) > 0\), i.e. \(i \notin \mathcal{A}(\vect{x}^{\ast})\) and \(c_{i}(\vect{x}^{\ast}) = 0\) when \(i \in \mathcal{A}(\vect{x}^{\ast})\).
 \end{proof}
+
+
+When the \gls{kkt} conditions are satisfied at a point \(\vect{x}^{\ast}\), a (infinitesimal) move along any vector \(\vect{w} \in \mathcal{F}(\vect{x}^{\ast})\) remains feasible and either increases the first-order approximation of \(f\), if \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) > 0\) (``decided'') or else keeps it constant, if \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) = 0\) (``undecided'').
+% A decrease is not possible, because from \eqref{eq:KKT_stationarity_active} we have
+% \begin{equation}\label{eq:KKT_objective_gradient}
+% \nabla f(\vect{x}^{\ast})
+%   =
+%   \sum_{i\in\mathcal{A}(\vect{x}^{\ast})}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
+%   % =
+%   % \sum_{i\in\mathcal{E}}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
+%   % +
+%   % \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} \lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
+% \end{equation}
+% with \(\lambda_i^{\ast}\ge 0\) for \(i\in\mathcal{I}\) and if we now dot \eqref{eq:KKT_objective_gradient} with any \(\vect{w}\in\mathcal{F}(\vect{x}^{\ast})\) we obtain
+% \[
+% \vect{w}^{\top}\nabla f(\vect{x}^{\ast})
+% % =
+% % \vect{w}^{\top}\sum_{i\in\mathcal{A}(\vect{x}^{\ast})}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
+% =\underbrace{
+%    \sum_{i\in\mathcal{E}}
+%      \lambda_i^{\ast}\,
+%      \vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})
+%  }_{=0\;\text{because }\vect{w}^{\top}\nabla c_i=0}
+%  +\;
+%  \underbrace{
+%    \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})}
+%      \lambda_i^{\ast}\,
+%      \vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})
+%  }_{\ge 0\;\text{since }\lambda_i^{\ast}\ge 0,\
+%                          \vect{w}^{\top}\nabla c_i\ge 0}
+% \ge 0
+% \]
+A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\) as a linear combination of the active constraint gradients:
+\begin{equation}\label{eq:KKT_objective_gradient}
+\vect{w}^{\top}\nabla f(\vect{x}^{\ast})
+=
+% \underbrace{
+\sum_{i\in\mathcal{E}}
+\lambda_i^{\ast}
+\underbrace{\vect{w}^{\top} \nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{=} 0}
+% }_{= 0}
++
+% \underbrace{
+\sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} 
+\underbrace{\lambda_i^{\ast}}_{\overset{\eqref{eq:KKT_dual_feas}}{\ge} 0}
+\underbrace{\vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{\ge} 0}
+% }_{\ge 0}
+\ge 0
+\end{equation}
+% A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\) as a linear combination of the active constraint gradients
+% \begin{equation}\label{eq:KKT_objective_gradient}
+% \vect{w}^{\top}\nabla f(\vect{x}^{\ast})
+% =
+% \sum_{i\in\mathcal{E}}
+% \lambda_i^{\ast}
+% \underbrace{\vect{w}^{\top} \nabla c_i(\vect{x}^{\ast})}_{= 0}
+% +
+% \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} 
+% \lambda_i^{\ast}
+% \underbrace{\vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\ge 0}
+% \ge 0
+% \end{equation}
+% and recall condition \eqref{eq:KKT_dual_feas}.
+
+
+
+
+
 % ---------------------------------------------------------
 % Second-order theory
 % ---------------------------------------------------------
 
-\begin{definition}[Critical cone]\label{def:critical_cone}
-  For a KKT point \( (\vect{x},\vect{\lambda}) \), the \emph{critical cone} is
-  \[
-    \mathcal{C}(\vect{x},\vect{\lambda}) := \{ \vect{d}\in\mathcal{F}(\vect{x}) \mid \nabla c_{i}(\vect{x})^{\top} \vect{d} = 0\; (i\in\mathcal{I}\cap\mathcal{A}(\vect{x}), \lambda_{i}>0) \}.
-  \]
+\subsubsection{Second-Order Conditions}
+
+% Using the first-order Taylor expansion of \(f\) at a point \(\vect{x}\), we know that for feasible directions \(\vect{d}\) with \(\nabla f(\vect{x})^{\top} \vect{d} > 0\), the function \(f\) increases in the direction \(\vect{d}\).
+
+% The \gls{kkt} are first-rder conditions which tell us how the first derivatives of \(f\) and the active constraints \(c_i\) are related to each other at a solution.
+
+
+For undecided directions \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) = 0\), we canNOT determine from first derivative information wether a move along this direction will increase or decrease \(f\).
+Second-order conditions examine the second derivative terms in the Taylor expansions of \(f\) and \(c_i\), to see wether this extra information resolves the question.
+They
+\begin{definition}[Critical Cone]\label{def:critical_cone}
+  For a \gls{kkt} point \( (\vect{x},\vect{\lambda}) \), the \emph{critical cone} at \((\vect{x},\vect{\lambda})\) is defined as
+  \begin{equation}\label{eq:critical_cone}
+  % \begin{verticalhack}
+    \mathcal{C}(\vect{x},\vect{\lambda}) := \left\{ \vect{d}\in\mathcal{F}(\vect{x}) \mid \nabla c_{i}(\vect{x})^{\top} \vect{d} = 0 \text{ for all } i\in\mathcal{I}\cap\mathcal{A}(\vect{x}) \text{ with } \lambda_{i}>0\right\}  \subseteq \mathcal{F}(\vect{x}) 
+  % \end{verticalhack}
+  \qedhere
+  \end{equation}
 \end{definition}
+
+
+
 
 \begin{definition}[Lagrangian Hessian]\label{def:Lagrangian_Hessian}
   \[
-    \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x},\vect{\lambda}) := \nabla^{2} f(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} \nabla^{2} c_{i}(\vect{x}).
-  \]
+    \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x},\vect{\lambda}) := \matr{H}_{f}(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} \matr{H}_{c_{i}}(\vect{x}).
+   \]
 \end{definition}
 
 \begin{theorem}[Second-order necessary condition]\label{thm:SONC}
@@ -2684,7 +2854,7 @@ Satisfaction of the strict complementarity property usually makes it easier for 
 \end{theorem}
 
 \begin{theorem}[Second-order sufficient condition]\label{thm:SOSC}
-  Suppose that \( (\vect{x}^{\ast},\vect{\lambda}^{\ast}) \) satisfies the KKT conditions. If
+  Suppose that \( (\vect{x}^{\ast},\vect{\lambda}^{\ast}) \) satisfies the \gls{kkt} conditions. If
   \[
     \vect{d}^{\top} \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \vect{d} > 0 \quad \forall \vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \setminus \{ \vect{0} \},
   \]
