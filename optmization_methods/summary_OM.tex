@@ -18,6 +18,7 @@
 % \usepackage[left=43mm, right=43mm, top=20mm, bottom=30mm]{geometry}
 
 \usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
 \usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -362,6 +363,8 @@
 
 \begin{document}
 
+\thispagestyle{empty}
+
 \maketitle
 \tableofcontents
 
@@ -380,14 +383,15 @@
 
 
 \clearpage
+\pagenumbering{arabic}  
 \section{General formulation of an optimization problem}
 
 main components:
 \begin{itemize}
-	\item \textbf{objective function} $f(\vect{x})$: function to be minimized or maximized.
-	\item \textbf{variables} $\vect{x} = (x_1, \ldots, x_n) \in \mathbb{R}^n$: quantities of the problem that can be adjusted and need to be chosen \emph{optimally}.
-	\item \textbf{constraint functions} $c_i(\vect{x})$: conditions that limit the possbile values of $\vect{x}$. they can be \emph{equality} or \emph{inequality} constraints.
-	\item \textbf{feasible region}: set of all variables $\vect{x}$ satisfying all constraints.
+	\item \textbf{objective function} $f(\vect{x})$: function to be minimized or maximized
+	\item \textbf{variables} $\vect{x} = (x_1, \ldots, x_n) \in \mathbb{R}^n$: quantities of the problem that can be adjusted and need to be chosen \emph{optimally}
+	\item \textbf{constraint functions} $c_i(\vect{x})$: conditions that limit the possbile values of $\vect{x}$. they can be \emph{equality} or \emph{inequality} constraints
+	\item \textbf{feasible region}: set of all variables $\vect{x}$ satisfying all constraints
 \end{itemize}
 
 general form of an optimization problem:
@@ -395,15 +399,15 @@ general form of an optimization problem:
 {
 \label{eq:form_optimization_problem}
 \boxed{
- \min_{\vect{x} \in \mathbb{R}^{n}} f(\vect{x}) \quad \text{subject to} \quad \begin{cases}c_{i}(\vect{x})=0, & i \in \mathcal{E}, \\ c_{i}(\vect{x}) \geq 0, & i \in \mathcal{I},\end{cases}
+ \min_{\vect{x} \in \mathbb{R}^{n}} f(\vect{x}) \quad \text{subject to} \quad \begin{cases}c_{i}(\vect{x})=0, & i \in \mathcal{E} \\ c_{i}(\vect{x}) \geq 0, & i \in \mathcal{I}\end{cases}
  }
 }
 \end{equation}
 with
 \begin{itemize}
-  \item \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}\) the objective function;
-  \item \(\mathcal{E}\) the index set of equality constraints;
-  \item \(\mathcal{I}\) the index set of inequality constraints.
+  \item \(f: \mathbb{R}^{n} \rightarrow \mathbb{R}\) the objective function
+  \item \(\mathcal{E}\) the index set of equality constraints
+  \item \(\mathcal{I}\) the index set of inequality constraints
 \end{itemize}
 
 
@@ -412,22 +416,22 @@ with
     \item We do not loose generality by restricting our analysis to minimization problems, since maximizing \(f\) is \emph{equivalent to} minimizing \(-f\).
     \item We do not loose generality by considering constraints of the form in \eqref{eq:form_optimization_problem} since:
     \begin{itemize}
-      \item a constraint of the form \(c_{i}(\vect{x})=b\) can be transformed into \(\bar{c}_{i}(\vect{x})=0\) with \(\bar{c}_{i}(\vect{x})=c_{i}(\vect{x})-b ;\)
+      \item a constraint of the form \(c_{i}(\vect{x})=b\) can be transformed into \(\bar{c}_{i}(\vect{x})=0\) with \(\bar{c}_{i}(\vect{x})=c_{i}(\vect{x})-b\).
       \item a constraint of the form \(c_{i}(\vect{x}) \leq 0\) can be transformed into \(\bar{c}_{i}(\vect{x}) \geq 0\) with \(\bar{c}_{i}(\vect{x})=-c_{i}(\vect{x})\).
     \end{itemize}
-    \item If \(n=1\), the function \(f\) is \emph{univariate} and we also say that the optimization problem is univariate. If \(n=2\), it is a \emph{bivariate} problem, and if \(n \geq 2\), it is a \emph{multivariate} problem. 
+    \item If \(n=1\), the function \(f\) is \emph{univariate} and we also say that the optimization problem is univariate. If \(n=2\), it is a \emph{bivariate} problem, and if \(n \geq 2\), it is a \emph{multivariate} problem. \qedhere
   \end{itemize}
 \end{remark}
 
 A point \(\vect{x}\in\mathbb{R}^{n}\) satisfying all the constraints is called a \emph{feasible point} and the set of all feasible points is called the \emph{feasible set} (or, feasible region) of the optimization problem. It is formally defined as
 \begin{equation}
   \label{eq:feasible_set}
-\Omega = \left\{ \vect{x}\in\mathbb{R}^{n} : c_{i}(\vect{x})=0,\; i\in\mathcal{E},\; c_{i}(\vect{x})\geq 0,\; i\in\mathcal{I} \right\}.
+\Omega = \left\{ \vect{x}\in\mathbb{R}^{n} : c_{i}(\vect{x})=0,\; i\in\mathcal{E},\; c_{i}(\vect{x})\geq 0,\; i\in\mathcal{I} \right\}
 \end{equation}
 
 This also implies that the problem \eqref{eq:form_optimization_problem} can be re-written as
 \[
-\min_{\vect{x}\in\Omega} f(\vect{x}).
+\min_{\vect{x}\in\Omega} f(\vect{x})
 \]
 
 The general formulation of optimization problems includes a large variety of problems and each category of problem requires a specific methodology. There is no universal optimization algorithm that is applicable to all problems. Thus, one needs to understand the specificity of each problem and algorithm to identify the most suitable methodology.
@@ -435,7 +439,7 @@ The general formulation of optimization problems includes a large variety of pro
 
 
 
-
+\clearpage
 \section{Useful definitions and properties}
 
 \tikzexternaldisable
@@ -443,24 +447,24 @@ The general formulation of optimization problems includes a large variety of pro
   The \emph{Cauchy--Schwarz inequality} states that for any vectors \(\vect{x}\), \(\vect{y}\) of an inner product space,
   \(
   |\langle \vect{x}, \vect{y} \rangle|^{2} \leq \langle \vect{x}, \vect{x} \rangle \langle \vect{y}, \vect{y} \rangle
-  \text{,}
+  %\text{,}
   \)
   where \(\langle \cdot, \cdot \rangle\) is the inner product. Or written in terms of the induced norm \(\|\cdot\|:=\sqrt{\langle \cdot, \cdot \rangle}\),
   \(
   |\langle \vect{x}, \vect{y} \rangle| \leq \|\vect{x}\| \|\vect{y}\|
-  \text{.}
+  %\text{.}
   \)
   For \(\mathbb{R}^{n}\) and the dot product, this means
   \[
   \begin{aligned}
   |\vect{x} \cdot \vect{y}| &\leq \|\vect{x}\| \|\vect{y}\| \\
-  \left|\sum_{i=1}^{n} x_{i}y_{i}\right| &\leq \sqrt{\sum_{i=1}^{n} x_{i}^{2}} \sqrt{\sum_{i=1}^{n} y_{i}^{2}} \text{.} 
+  \left|\sum_{i=1}^{n} x_{i}y_{i}\right| &\leq \sqrt{\sum_{i=1}^{n} x_{i}^{2}} \sqrt{\sum_{i=1}^{n} y_{i}^{2}} %\text{.} 
   \end{aligned}
   \]
 \end{theorem}
 The dot product can be expressed in terms of the angle \(\theta\) between the two vectors:
 \[
-\vect{x} \cdot \vect{y} = \vect{x}^{T}\vect{y} = \|\vect{x}\| \|\vect{y}\| \cos(\theta) \text{.}
+\vect{x} \cdot \vect{y} = \vect{x}^{T}\vect{y} = \|\vect{x}\| \|\vect{y}\| \cos(\theta) %\text{.}
 \]
 
 % spectral norm of a matrix
@@ -468,14 +472,14 @@ The dot product can be expressed in terms of the angle \(\theta\) between the tw
 The \emph{spectral norm} of a matrix \(\matr{A}\in\mathbb{R}^{m\times n}\) is defined as
 \[
 \|\matr{A}\|_{2} := \max_{\vect{x} \neq \vect{0}} \frac{\|\matr{A}\vect{x}\|_{2}}{\|\vect{x}\|_{2}} = \max_{\|\vect{x}\|_{2}=1} \|\matr{A}\vect{x}\|_{2} = \sqrt{\lambda_{\max}(\matr{A}^{T}\matr{A})}\tikzmark{spectral_norm_general}
-\text{,}
+%\text{,}
 \]
 where \(\lambda_{\max}(\matr{A}^{T}\matr{A})\) is the largest eigenvalue of \(\matr{A}^{T}\matr{A} \in \mathbb{R}^{n\times n}\). 
 If \(\matr{A}\) is symmetric, then the spectral norm is equal to the largest eigenvalue (in absolute value) of \(\matr{A}\),
 \[
 \|\matr{A}\|_{2} = \max_{i \in \{1,\ldots,n\}} |\lambda_{i}(\matr{A})|
 \tikzmark{spectral_norm_symmetric}
-\text{,}
+%\text{,}
 \]
 where \(\lambda_{i}(\matr{A})\) is the \(i\)-th eigenvalue of \(\matr{A}\).
 % \begin{tikzpicture}[remember picture, overlay]
@@ -503,13 +507,13 @@ where \(\lambda_{i}(\matr{A})\) is the \(i\)-th eigenvalue of \(\matr{A}\).
   \[
   \kappa(\matr{A}) := \|\matr{A}\|_{2} \cdot \|\matr{A}^{-1}\|_{2} \geq 1
   \tikzmark{condition_number_general}
-  \text{.}
+  %\text{.}
   \]
   If \(\matr{A}\) is symmetric positive definite, 
   \[
   \kappa(\matr{A}) = \frac{\lambda_{\max}(\matr{A})}{\lambda_{\min}(\matr{A})}
   \tikzmark{condition_number_spd}
-  \text{.}
+  %\text{.}
   \]
   \begin{tikzpicture}[remember picture, overlay]
     \coordinate (A_condition_number_general) at (pic cs:condition_number_general);
@@ -533,7 +537,7 @@ where \(\lambda_{i}(\matr{A})\) is the \(i\)-th eigenvalue of \(\matr{A}\).
 
 
 
-%\clearpage
+\clearpage
 \section{Classification of Problems}
 
 Note that ``programming'' is used synonymously with ``optimization''.
@@ -550,7 +554,7 @@ A function \(f:\mathbb{R}^{n}\rightarrow\mathbb{R}\) is \emph{linear} if:
 \end{itemize}
 Equivalently, \(f\) is linear if it can be written as
 \[
-f(\vect{x})=\vect{c}^{T}\vect{x}=\sum_{i=1}^{n} c_{i}x_{i},
+f(\vect{x})=\vect{c}^{T}\vect{x}=\sum_{i=1}^{n} c_{i}x_{i}
 \]
 with \(\vect{c}\in\mathbb{R}^{n}\).
 \end{definition}
@@ -558,18 +562,18 @@ with \(\vect{c}\in\mathbb{R}^{n}\).
 \begin{definition}[Affine Function]\label{def:affine_function}
 A function \(f:\mathbb{R}^{n}\rightarrow\mathbb{R}\) is \emph{affine} if
 \[
-f(\alpha\vect{x}+(1-\alpha)\vect{y})=\alpha f(\vect{x})+(1-\alpha)f(\vect{y}),\quad \forall\, \vect{x},\vect{y}\in\mathbb{R}^{n},\; \forall\, \alpha\in[0,1],
+f(\alpha\vect{x}+(1-\alpha)\vect{y})=\alpha f(\vect{x})+(1-\alpha)f(\vect{y}),\quad \forall\, \vect{x},\vect{y}\in\mathbb{R}^{n},\; \forall\, \alpha\in[0,1]
 \]
 or equivalently, if there exist \(\vect{c}\in\mathbb{R}^{n}\) and \(b\in\mathbb{R}\) such that
 \[
-f(\vect{x})=\vect{c}^{T}\vect{x}+b.
+f(\vect{x})=\vect{c}^{T}\vect{x}+b\qedhere
 \]
 \end{definition}
 
 \begin{example}
 The following minimization problem is linear:
 \[
-\min_{\vect{x}\in\mathbb{R}^{n}} \sum_{i=1}^{n} c_{i}x_{i} \quad \text{subject to} \quad \sum_{i=1}^{n} x_{i}=1,
+\min_{\vect{x}\in\mathbb{R}^{n}} \sum_{i=1}^{n} c_{i}x_{i} \quad \text{subject to} \quad \sum_{i=1}^{n} x_{i}=1
 \]
 with \(c_{1}, \ldots, c_{n}\in\mathbb{R}\).
 \end{example}
@@ -582,7 +586,7 @@ If the components of \(\vect{x}\) are real numbers and in an uncountable set, it
 of a continuous as well as a discrete problem:
 \begin{itemize}
 	\item If \(x_{1},\ldots, x_{n}\) can take any value in \(\mathbb{R}\) or in \([a,b]\) with \(a<b\), then the problem is continuous.
-	\item If \(x_{1},\ldots, x_{n}\) can take values in \(\mathbb{N}\) or \(\mathbb{Z}\), then the problem is discrete.
+	\item If \(x_{1},\ldots, x_{n}\) can take values in \(\mathbb{N}\) or \(\mathbb{Z}\), then the problem is discrete.\qedhere
 \end{itemize}
 \end{example}
 
@@ -616,7 +620,7 @@ of a continuous as well as a discrete problem:
     \end{tikzpicture}
     \caption*{Non-convex set}
 \end{subfigure}
-\caption*{Graphical interpretation of convex sets.}
+% \caption*{Graphical interpretation of convex sets.}
 \label{fig:convexSet}
 \end{figure}
 
@@ -626,21 +630,22 @@ An optimization problem is said to be \emph{convex} if the objective function \(
 \begin{definition}[Convex Set]\label{def:convex_set}
 A set \(S\subset\mathbb{R}^{n}\) is \emph{convex} if \(\forall\,\vect{x},\vect{y}\in S,\; \forall\, t\in[0,1]\),
 \[
-t\vect{x}+(1-t)\vect{y}\in S.
+t\vect{x}+(1-t)\vect{y}\in S
+\qedhere
 \]
 \end{definition}
 
 \begin{example}
 A ball defined as
 \[
-\mathcal{B}_{r}(\vect{x}_{0})=\left\{ \vect{x}\in\mathbb{R}^{n} : \|\vect{x}-\vect{x}_{0}\|\leq r \right\},
+\mathcal{B}_{r}(\vect{x}_{0})=\left\{ \vect{x}\in\mathbb{R}^{n} : \|\vect{x}-\vect{x}_{0}\|\leq r \right\}
 \]
 with center \(\vect{x}_{0}\in\mathbb{R}^{n}\) and radius \(r\), is convex.
 \end{example}
 
 Unless specified otherwise, the norm \(\|\cdot\|\) is the Euclidean norm:
 \[
-\|\vect{x}\|=\|\vect{x}\|_{2}=\sqrt{\sum_{i=1}^{n} x_{i}^{2}} .
+\|\vect{x}\|=\|\vect{x}\|_{2}=\sqrt{\sum_{i=1}^{n} x_{i}^{2}} 
 \]
 
 
@@ -648,7 +653,8 @@ Unless specified otherwise, the norm \(\|\cdot\|\) is the Euclidean norm:
 \begin{definition}[Convex Function]\label{def:convex_function}
 A function \(f:S\rightarrow\mathbb{R}\) is \emph{convex} if its domain $S$ is convex and \(\forall\, \vect{x}, \vect{y} \in S\; \forall\, t\in[0,1]\),
 \[
-f\left(t\vect{x}+(1-t)\vect{y}\right)\leq t f(\vect{x})+(1-t)f(\vect{y}).
+f\left(t\vect{x}+(1-t)\vect{y}\right)\leq t f(\vect{x})+(1-t)f(\vect{y})
+\qedhere
 \]
 \end{definition}
 
@@ -657,7 +663,8 @@ Concavity is the opposite of convexity: \(f\) is \emph{concave} if \(-f\) is con
 \begin{definition}[Strictly Convex Function]\label{def:strictly_convex_function}
 A function \(f:S\rightarrow\mathbb{R}\) is \emph{strictly convex} if its domain $S$ is convex and \(\forall\, \vect{x}, \vect{y} \in S\; \forall\, t\in[0,1]\),
 \[
-f\left(t\vect{x}+(1-t)\vect{y}\right) < t\,f(\vect{x})+(1-t)\,f(\vect{y}).
+f\left(t\vect{x}+(1-t)\vect{y}\right) < t\,f(\vect{x})+(1-t)\,f(\vect{y})
+\qedhere
 \]
 \end{definition}
 
@@ -689,7 +696,8 @@ f\left(t\vect{x}+(1-t)\vect{y}\right) < t\,f(\vect{x})+(1-t)\,f(\vect{y}).
 \begin{definition}[\(\mu\)-Strongly Convex Function]\label{def:mu_strongly_convex_function}
 A function \(f:S\rightarrow\mathbb{R}\) is \(\mu\)-\emph{strongly convex} (with \(\mu>0\)) if its domain $S$ is convex and \(\forall\, \vect{x}, \vect{y} \in S\; \forall\, t\in[0,1]\),
 \[
-f\left(t\vect{x}+(1-t)\vect{y}\right) \leq t\,f(\vect{x})+(1-t)\,f(\vect{y}) -\frac{\mu}{2}\,t(1-t)\|\vect{x}-\vect{y}\|^{2}.
+f\left(t\vect{x}+(1-t)\vect{y}\right) \leq t\,f(\vect{x})+(1-t)\,f(\vect{y}) -\frac{\mu}{2}\,t(1-t)\|\vect{x}-\vect{y}\|^{2}
+\qedhere
 \]
 \end{definition}
 
@@ -703,12 +711,12 @@ The following examples and properties of convex functions are important:
 \item Affine functions are both convex and concave.
 \item Absolute value and norms, e.g., $\ell_p$-norms are convex:
 \begin{itemize}
-  \item $\| \vect{x}\|_{p} = \left(\sum_{i=1}^{n}|x_{i}|^{p}\right)^{1/p}$,
+  \item $\| \vect{x}\|_{p} = \left(\sum_{i=1}^{n}|x_{i}|^{p}\right)^{1/p}$
   \item $\| \vect{x}\|_{\infty}=\max\{|x_{1}|,\dots,|x_{n}|\}$
 \end{itemize}
 \item Positive part (Rectified Linear Unit) $\max\{x, 0\}$ is convex, negative part $\min\{0,x\}$ is concave.
 \item Positive linear combinations of convex functions are convex.
-\item If \(h\) is convex and \(g\) is convex and non-decreasing, then \(g\left(h(\vect{x})\right)\) is convex.
+\item If \(h\) is convex and \(g\) is convex and non-decreasing, then \(g\left(h(\vect{x})\right)\) is convex.\qedhere
 \end{itemize}
 \end{example}
 
@@ -723,14 +731,16 @@ An optimization problem is said to be \emph{smooth} if the objective function \(
 \begin{definition}[Continuity]
 A function \(f:\mathbb{R}\rightarrow\mathbb{R}\) is \emph{continuous} on $\mathbb{R}$ if for all \(x_{0}\in\mathbb{R}\),
 \[
-\lim_{x\to x_{0}}f(x)=f(x_{0}).
+\lim_{x\to x_{0}}f(x)=f(x_{0})
+\qedhere
 \]
 \end{definition}
 
 \begin{definition}[Lipschitz Continuity]
 A function \(f:\mathbb{R}\rightarrow\mathbb{R}\) is \(L\)-\emph{Lipschitz continuous} with \(L>0\) if for all \(x,y\in\mathbb{R}\),
 \[
-|f(x)-f(y)|\leq L|x-y|.
+|f(x)-f(y)|\leq L|x-y|
+\qedhere
 \]
 \end{definition}
 
@@ -739,7 +749,8 @@ Observe that ``Lipschitz continuity'' $\Longrightarrow$ ``continuity''.
 \begin{definition}[Derivative]
 The derivative of \(f:S\rightarrow\mathbb{R}\) at \(x\in S\subset\mathbb{R}\) is defined as
 \[
-f'(x)=\lim_{t\to 0}\frac{f(x+t)-f(x)}{t}=\frac{df}{dx}(x).
+f'(x)=\lim_{t\to 0}\frac{f(x+t)-f(x)}{t}=\frac{df}{dx}(x)
+\qedhere
 \]
 \end{definition}
 
@@ -780,7 +791,8 @@ A univariate function \(f:S\rightarrow\mathbb{R}\) with domain \(S\subseteq\math
 \begin{definition}[Open Set]
 An open set \(U\subseteq\mathbb{R}^{n}\) is a set that contains an open ball around each point, i.e.,
 \[
-\forall\, \vect{x}\in U, \quad \exists\, \delta>0, \quad \mathcal{B}_{\delta}(\vect{x})=\{ \vect{y}\in\mathbb{R}^{n} : \|\vect{y}-\vect{x}\|<\delta \} \subseteq U.
+\forall\, \vect{x}\in U, \quad \exists\, \delta>0, \quad \mathcal{B}_{\delta}(\vect{x})=\{ \vect{y}\in\mathbb{R}^{n} : \|\vect{y}-\vect{x}\|<\delta \} \subseteq U
+\qedhere
 \]
 \end{definition}
 
@@ -799,7 +811,7 @@ f(\vect{x}^{*})\leq f(\vect{x}),\quad \forall\, \vect{x}\in\Omega \qedhere
 \begin{definition}[Local Minimizer]\label{def:local_minimizer}
 A vector \(\vect{x}^{*}\in\Omega\) is a \emph{local minimizer} of \(f\) if
 \[
-f(\vect{x}^{*})\leq f(\vect{x}),
+f(\vect{x}^{*})\leq f(\vect{x})
 \]
 for any \(\vect{x}\) in a neighborhood of \(\vect{x}^{*}\).
 \end{definition}
@@ -807,7 +819,7 @@ for any \(\vect{x}\) in a neighborhood of \(\vect{x}^{*}\).
 \begin{definition}[Strict Local Minimizer]\label{def:strict_local_minimizer}
 A vector \(\vect{x}^{*}\in\Omega\) is a \emph{strict local minimizer} of \(f\) if
 \[
-f(\vect{x}^{*})<f(\vect{x}),
+f(\vect{x}^{*})<f(\vect{x})
 \]
 for any \(\vect{x}\) in a neighborhood of \(\vect{x}^{*}\).
 \end{definition}
@@ -820,7 +832,7 @@ A vector \(\vect{x}^{*}\in\Omega\) is an \emph{isolated local minimizer} of \(f\
 \begin{remark}
   An example for a neighborhood \(\mathcal{N}(\vect{x}^{*})\) is the open ball
 \[
-\mathcal{B}_{r}(\vect{x}^{*}) := \left\{ \vect{x}\in\mathbb{R}^{n} : \|\vect{x}-\vect{x}^{*}\|<r \right\},
+\mathcal{B}_{r}(\vect{x}^{*}) := \left\{ \vect{x}\in\mathbb{R}^{n} : \|\vect{x}-\vect{x}^{*}\|<r \right\}
 \]
 with some radius \(r>0\).
 \end{remark}
@@ -828,7 +840,7 @@ with some radius \(r>0\).
 \begin{remark}\leavevmode % or "\" or "\quad"
 \begin{itemize}
   \item An isolated local minimizer is always a strict minimizer but the converse is not true: there are strict minimizers that are not isolated.
-  \item A global minimizer can also be strict (by replacing \(\leq\) with \(<\) in Definition \ref{def:global_minimizer}). It can also be isolated (if there exists a neighborhood with no local minimizer).
+  \item A global minimizer can also be strict (by replacing \(\leq\) with \(<\) in Definition \ref{def:global_minimizer}). It can also be isolated (if there exists a neighborhood with no local minimizer).\qedhere
 \end{itemize}
 \end{remark}
 
@@ -845,13 +857,13 @@ Such algorithm may find different local minimizers even if it is initialised at 
 %%%%%%%% ~ Week 2 ~ %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\clearpage
+\clearpage
 \section{Unconstrained Optimization}\label{sec:unconstrained_optimization}
 
 \subsection{Univariate Objective Functions}
 The general form of a univariate unconstrained optimization problem is
 \[
-\min_{x\in\mathbb{R}} f(x),
+\min_{x\in\mathbb{R}} f(x)
 \]
 with \(f:\mathbb{R}\to\mathbb{R}\) the objective function. Since there are no equality or inequality constraints, \(x\) may take any real value. 
 In this course we restrict ourselves to \hyperref[subsec:smooth_non_smooth]{smooth} functions (see \ref{subsec:smooth_non_smooth}).
@@ -868,38 +880,38 @@ We recall the definitions of the first and second derivatives for a univariate f
 \begin{definition}[First Derivative]
 For a function \(f:\mathbb{R}\to\mathbb{R}\) and a point \(x\in\mathbb{R}\), the first (or first-order) derivative is defined as
 \[
-f'(x)=\lim_{d\to 0}\frac{f(x+d)-f(x)}{d}.
+f'(x)=\lim_{d\to 0}\frac{f(x+d)-f(x)}{d}
 \]
 \end{definition}
 
 \begin{definition}[Second Derivative]
 The second (or second-order) derivative of \(f\) at \(x\) is defined as
 \[
-f''(x)=\lim_{d\to 0}\frac{f'(x+d)-f'(x)}{d}.
+f''(x)=\lim_{d\to 0}\frac{f'(x+d)-f'(x)}{d}
 \]
 \end{definition}
 
 Recall that \(f'(x)\) measures the rate of change (the slope of the tangent line) of \(f\) at \(x\). Thus for small \(d\) one has
 \[
-f(x+d)\approx f(x)+f'(x)\,d.
+f(x+d)\approx f(x)+f'(x)\,d
 \]
 In fact, the tangent line at \(x\) is given by
 \[
-t(y;x)=f(x)+f'(x)(y-x),\quad y\in\mathbb{R},
+t(y;x)=f(x)+f'(x)(y-x),\quad y\in\mathbb{R}
 \]
 or, equivalently, writing \(y=x+d\),
 \[
-t(x+d;x)=f(x)+f'(x)\,d.
+t(x+d;x)=f(x)+f'(x)\,d
 \]
 This linear approximation is known as the \emph{first-order Taylor approximation} of \(f\).
 
 By incorporating the second derivative, one can construct a local quadratic model (the second-order Taylor approximation):
 \begin{equation}
-f(x+d)\approx q(x+d;x)=f(x)+f'(x)\,d+\frac{1}{2}f''(x)\,d^2,\quad d\in\mathbb{R},
+f(x+d)\approx q(x+d;x)=f(x)+f'(x)\,d+\frac{1}{2}f''(x)\,d^2,\quad d\in\mathbb{R}
 \end{equation}
 or equivalently,
 \begin{equation}\label{eq:second_order_taylor_approximation_univariate}
-f(y)\approx q(y;x)=f(x)+f'(x)(y-x)+\frac{1}{2}f''(x)(y-x)^2,\quad y\in\mathbb{R}.
+f(y)\approx q(y;x)=f(x)+f'(x)(y-x)+\frac{1}{2}f''(x)(y-x)^2,\quad y\in\mathbb{R}
 \end{equation}
 Here, \(f''(x)\) is sometimes called the \emph{curvature} of \(f\) at \(x\). Note that these approximations are valid in a neighbourhood of \(x\) (i.e. for small \(d=y-x\)).
 
@@ -909,11 +921,11 @@ Taylor's theorem provides an exact expansion.
 \label{thm:univariate_taylor_expansion}
 If \(f:\mathbb{R}\to\mathbb{R}\) is continuously differentiable, then for any \(x\in\mathbb{R}\) and \(d\in\mathbb{R}\) there exists \(t\in (0,1)\) such that
 \[
-f(x+d)=f(x)+f'\left(x+t\,d\right)d.
+f(x+d)=f(x)+f'\left(x+t\,d\right)d
 \]
 Moreover, if \(f\) is twice continuously differentiable, then for any \(x\in\mathbb{R}\) and \(d\in\mathbb{R}\) there exists \(t\in (0,1)\) such that
 \[
-f(x+d)=f(x)+f'(x)d+\frac{1}{2}f''\left(x+t\,d\right)d^2.
+f(x+d)=f(x)+f'(x)d+\frac{1}{2}f''\left(x+t\,d\right)d^2
 \]
 \end{theorem}
 
@@ -923,11 +935,11 @@ A useful consequence of Taylor's theorem is a bound on the approximation errors 
 \label{cor:approximation_error_univariate_taylor}  
 If \(f\) is twice continuously differentiable then for any \(x\in\mathbb{R}\) there exist constants \(L>0\) and \(\epsilon>0\) such that
 \[
-\left|f(y)-t(y;x)\right|\le L\,(y-x)^2,
+\left|f(y)-t(y;x)\right|\le L\,(y-x)^2
 \]
 for all \(y\in\mathbb{R}\) with \(|y-x|\le\epsilon\). If \(f\) is three times continuously differentiable, there exist \(L>0\) and \(\epsilon>0\) such that
 \[
-\left|f(y)-q(y;x)\right|\le L\,|y-x|^3,
+\left|f(y)-q(y;x)\right|\le L\,|y-x|^3
 \]
 for all \(y\in\mathbb{R}\) with \(|y-x|\le\epsilon\).
 \end{corollary}
@@ -966,7 +978,7 @@ It is important to note that stationary points may correspond to local minimizer
 \begin{theorem}[Necessary Second-Order Optimality Condition]
 If \(f\) is twice continuously differentiable and \(x^*\) is a local minimizer of \(f\), then
 \[
-f''(x^*)\ge 0.
+f''(x^*)\ge 0
 \]
 \end{theorem}
 \begin{proof}
@@ -995,7 +1007,7 @@ If \(f\) is twice continuously differentiable, \(f'(x^*)=0\) and \(f''(x^*)>0\),
 Since \(f''\) is continuous, there exists \(r>0\) such that for all \(d\) with \(|d|<r\) we have \(f''(x^*+d)>0\). 
 Then by the second-order Taylor expansion, for all such \(d\) (with \(d\ne0\)) there exists \(t\in(0,1)\) such that
 \[
-f(x^*+d)=f(x^*)+\frac{1}{2}f''\left(x^*+t d\right)d^2>f(x^*).
+f(x^*+d)=f(x^*)+\frac{1}{2}f''\left(x^*+t d\right)d^2>f(x^*)
 \]
 Thus \(x^*\) is a strict local minimizer.
 \end{proof}
@@ -1009,8 +1021,8 @@ Identifying minimizers is considerably simpler when \(f\) is \hyperref[def:conve
 If \(f\) is twice differentiable, the following characterisations are equivalent:
 \[
 \begin{aligned}
-f\text{ is convex} \quad \Longleftrightarrow & \quad f''(x)\ge0,\quad \forall x\in\mathbb{R},\\[1mm]
-\Longleftrightarrow & \quad f(y)\ge f(x)+f'(x)(y-x),\quad \forall x,y\in\mathbb{R}.
+f\text{ is convex} \quad \Longleftrightarrow & \quad f''(x)\ge0,\quad \forall x\in\mathbb{R}\\[1mm]
+\Longleftrightarrow & \quad f(y)\ge f(x)+f'(x)(y-x),\quad \forall x,y\in\mathbb{R}
 \end{aligned}
 \]
 
@@ -1029,11 +1041,11 @@ If \(f\) is convex and differentiable, then any stationary point is a global min
 
 The general form of a multivariate unconstrained optimization problem is
 \[
-\min_{\vect{x}\in\mathbb{R}^n} f(\vect{x}),
+\min_{\vect{x}\in\mathbb{R}^n} f(\vect{x})
 \]
 with \(f:\mathbb{R}^n\to\mathbb{R}\) the objective function, i.e. its argument is a vector with \(n\) coordniates:
 \[
-f(\vect{x})=f(x_1, \ldots, x_n).
+f(\vect{x})=f(x_1, \ldots, x_n)
 \]
 We will again assume that \(f\) is \hyperref[subsec:smooth_non_smooth]{smooth} (see \ref{subsec:smooth_non_smooth}):
 A function \(f:\mathbb{R}^n\to\mathbb{R}\) is said to be {\color{red}\(L\)-smooth} if it is continuously differentiable and its gradient \(\nabla f\) is Lipschitz continuous with Lipschitz constant \(L>0\):
@@ -1043,7 +1055,7 @@ A function \(f:\mathbb{R}^n\to\mathbb{R}\) is said to be {\color{red}\(L\)-smoot
   \setlength{\fboxrule}{1pt}
   \boxed{ 
   \color{black}
-\|\nabla f(\vect{x})-\nabla f(\vect{y})\|\le L\|\vect{x}-\vect{y}\|,\quad \forall\, \vect{x},\vect{y}\in\mathbb{R}^n \text{.}
+\|\nabla f(\vect{x})-\nabla f(\vect{y})\|\le L\|\vect{x}-\vect{y}\|,\quad \forall\, \vect{x},\vect{y}\in\mathbb{R}^n %\text{.}
   }
   }
 \end{equation}
@@ -1069,7 +1081,7 @@ We denote by \(\{\vect{e}_{i}\}_{i=1,\ldots,n}\) the canonical basis of \(\mathb
 1\\
 \vdots\\
 0
-\end{pmatrix}\quad \text{(with the \(i\)-th coordinate equal to 1)}.
+\end{pmatrix}\quad \text{(with the \(i\)-th coordinate equal to 1)}
 \]
 
 \begin{definition}[Partial Derivative]\label{def:partial_derivative}
@@ -1077,7 +1089,7 @@ Let \(f:\mathbb{R}^{n}\to\mathbb{R}\). The partial derivative of \(f\) with resp
 \[
 \frac{\partial f}{\partial x_{i}}(\vect{x})
 =\lim_{h\to0}\frac{f\bigl(\vect{x}+h\,\vect{e}_{i}\bigr)-f(\vect{x})}{h}
-=\lim_{h\to0}\frac{f(x_{1},\ldots,x_{i}+h,\ldots,x_{n})-f(x_{1},\ldots,x_{i},\ldots,x_{n})}{h}.
+=\lim_{h\to0}\frac{f(x_{1},\ldots,x_{i}+h,\ldots,x_{n})-f(x_{1},\ldots,x_{i},\ldots,x_{n})}{h}
 \]
 \end{definition}
 
@@ -1090,7 +1102,7 @@ Let \(f:\mathbb{R}^{n}\to\mathbb{R}\). The \emph{gradient} of \(f\) at \(\vect{x
 %\frac{\partial f}{\partial x_{2}}(\vect{x})\\[1mm]
 \vdots\\%[1mm]
 \frac{\partial f}{\partial x_{n}}(\vect{x})
-\end{pmatrix}\in\mathbb{R}^{n}.
+\end{pmatrix}\in\mathbb{R}^{n}
 \]
 \end{definition}
 The gradient gives the direction of steepest increase of \(f\) at \(\vect{x}\) and each coordinate quantifies the rate of change of \(f\) in the corresponding direction.
@@ -1100,33 +1112,33 @@ e say that \(f\) is differentiable if \(\nabla f(\vect{x})\) exists for all \(\v
 
 The gradient can sldo be used to compute the change in any direction. If we define the univariate function
 \[
-g(t)=f\left(\vect{x}+t\,\vect{d}\right)\text{,} \quad t\in\mathbb{R}\text{,}
+g(t)=f\left(\vect{x}+t\,\vect{d}\right), \quad t\in\mathbb{R}%\text{,}
 \]
 for a direction \(\vect{d}\in\mathbb{R}^{n}\), then by the chain rule we have
 \[
-g'(t) = \frac{d}{dt}g(t) = \frac{d}{dt}\left(f\left(\vect{x}+t\,\vect{d}\right)\right) = \nabla f\left(\vect{x}+t\,\vect{d}\right)^{T}\vect{d}.
+g'(t) = \frac{d}{dt}g(t) = \frac{d}{dt}\left(f\left(\vect{x}+t\,\vect{d}\right)\right) = \nabla f\left(\vect{x}+t\,\vect{d}\right)^{T}\vect{d}
 \]
 Thus, the \hypertarget{directional_derivative}{\emph{directional derivative}} of \(f\) at \(\vect{x}\) in the direction \(\vect{d}\) is given by
 \[
-g'(0)=\nabla f(\vect{x})^{T}\vect{d}.
+g'(0)=\nabla f(\vect{x})^{T}\vect{d}
 \]
 Among all unit vectors \(\vect{d}\) (i.e. with \(\|\vect{d}\|=1\)), the maximum value of \(g'(0)\) is attained when \(\vect{d}\) is aligned with \(\nabla f(\vect{x})\).
 
 \subsubsection{First Order Taylor's Expansion for Multivariate Functions}
 A first-order Taylor expansion (or linear local approximation) of \(f\) at \(\vect{x}\) is
 \[
-t(\vect{y};\vect{x})=f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{y}-\vect{x}),\quad \vect{y}\in\mathbb{R}^{n}.
+t(\vect{y};\vect{x})=f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{y}-\vect{x}),\quad \vect{y}\in\mathbb{R}^{n}
 \]
 That is,
 \[
-f(\vect{x}+\vect{d})\approx f(\vect{x})+\nabla f(\vect{x})^{T}\vect{d}.
+f(\vect{x}+\vect{d})\approx f(\vect{x})+\nabla f(\vect{x})^{T}\vect{d}
 \]
 
 \begin{theorem}[First Order Taylor's Expansion for Multivariate Functions]
 \label{thm:taylor_multivariate_first_order}
 Let \(f:\mathbb{R}^{n}\to\mathbb{R}\) be continuously differentiable. Then for any \(\vect{x}\in\mathbb{R}^{n}\) and \(\vect{d}\in\mathbb{R}^{n}\) there exists \(t\in(0,1)\) such that
 \[
-f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x}+t\,\vect{d})^{T}\vect{d}.
+f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x}+t\,\vect{d})^{T}\vect{d}
 \]
 % Compare this to the \hyperref[thm:univariate_taylor_expansion]{univariate case}.
 If we set \(n=1\) we recover the univariate case (Theorem~\ref{thm:univariate_taylor_expansion}).
@@ -1136,11 +1148,11 @@ If we set \(n=1\) we recover the univariate case (Theorem~\ref{thm:univariate_ta
 \label{cor:taylor_error_multivariate_first_order}
 If \(f:\mathbb{R}^{n}\to\mathbb{R}\) is twice continuously differentiable, then for any \(\vect{x}\in\mathbb{R}^{n}\) there exist constants \(L>0\) and \(\epsilon>0\) such that for all \(\vect{y}\) in
 \[
-\mathcal{B}_{\epsilon}\left(\vect{x}\right)=\left\{\bar{\vect{x}}\in\mathbb{R}^{n}:\left\|\bar{\vect{x}}-\vect{x}\right\|\le\epsilon\right\},
+\mathcal{B}_{\epsilon}\left(\vect{x}\right)=\left\{\bar{\vect{x}}\in\mathbb{R}^{n}:\left\|\bar{\vect{x}}-\vect{x}\right\|\le\epsilon\right\}
 \]
 the error in the linear approximation satisfies
 \[
-\bigl|f(\vect{y})-t(\vect{y};\vect{x})\bigr|\le L\|\vect{y}-\vect{x}\|^{2}.
+\bigl|f(\vect{y})-t(\vect{y};\vect{x})\bigr|\le L\|\vect{y}-\vect{x}\|^{2}
 \]
 If we set \(n=1\) we recover the univariate case (Corollary~\ref{cor:approximation_error_univariate_taylor}).
 \end{corollary}
@@ -1157,19 +1169,19 @@ If \(f\) is continuously differentiable and \(\vect{x}^{*}\) is a local minimize
 (Contradiction)
 Assume that \(\nabla f(\vect{x}^{*})\neq \vect{0}\). Define the direction
 \(
-\vect{d}=-\nabla f(\vect{x}^{*}).
+\vect{d}=-\nabla f(\vect{x}^{*})
 \)
 Consider the univariate function
 \[
-g(t)=f(\vect{x}^{*}+t\,\vect{d}),\quad t\in\mathbb{R}.
+g(t)=f(\vect{x}^{*}+t\,\vect{d}),\quad t\in\mathbb{R}
 \]
 Then,
 \(
-g'(0)=\nabla f(\vect{x}^{*})^{T}\vect{d}=-\|\nabla f(\vect{x}^{*})\|^{2}<0.
+g'(0)=\nabla f(\vect{x}^{*})^{T}\vect{d}=-\|\nabla f(\vect{x}^{*})\|^{2}<0
 \)
 Thus, for sufficiently small \(t>0\) we have \(g(t)<g(0)\), meaning
 \[
-f(\vect{x}^{*}+t\,\vect{d})<f(\vect{x}^{*}).
+f(\vect{x}^{*}+t\,\vect{d})<f(\vect{x}^{*})
 \]
 This contradicts the local minimality of \(\vect{x}^{*}\). Hence, it must be that \(\nabla f(\vect{x}^{*})=\vect{0}\).
 \end{proof}
@@ -1179,7 +1191,7 @@ This contradicts the local minimality of \(\vect{x}^{*}\). Hence, it must be tha
 \label{subsec:gradient_descent}
 % from https://tex.stackexchange.com/questions/544796/plot-gradient-descent
 \begin{center}
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.9]
   \begin{axis}[
     hide axis,
     clip bounding box=upper bound,
@@ -1235,13 +1247,13 @@ where \(\theta\) is the angle between \(\vect{d}\) and \(\nabla f(\vect{x})\).
 Among all unit directions (i.e. \(\|\vect{d}\|=1\)), the decrease is maximized when \(\cos(\theta)=-1\), i.e. when \(\vect{d}\) is collinear with \(-\nabla f(\vect{x})\), but points in the opposite direction. 
 Since it is of unit norm, we have
 \[
-\vect{d}=-\frac{\nabla f(\vect{x})}{\|\nabla f(\vect{x})\|},
+\vect{d}=-\frac{\nabla f(\vect{x})}{\|\nabla f(\vect{x})\|}
 \] 
 which is called the \emph{direction of steepest descent}.
 
 A gradient descent algorithm then generates a sequence \(\{\vect{x}^{(k)}\}\) via
 \[
-\vect{x}^{(k+1)}=\vect{x}^{(k)}-\alpha\,\nabla f\bigl(\vect{x}^{(k)}\bigr),
+\vect{x}^{(k+1)}=\vect{x}^{(k)}-\alpha\,\nabla f\bigl(\vect{x}^{(k)}\bigr)
 \]
 where \(\alpha>0\) is the step size. 
 A common stopping rule is to terminate when \(\|\nabla f(\vect{x}^{(k)})\|\) falls below a prescribed tolerance level \(\epsilon\) or after a maximum number of iterations \(k_{\max}\).
@@ -1270,7 +1282,7 @@ Let \(f\) be twice continuously differentiable and \(L\)-smooth (i.e. its gradie
 Then for any starting point \(\vect{x}^{(0)}\), the iterates \(\{\vect{x}^{(k)}\}\) produced by Algorithm~\ref{alg:gd} satisfy
 \begin{equation}
 \label{eq:gd_conv}
-\lim_{k\to\infty}\nabla f\bigl(\vect{x}^{(k)}\bigr)=\vect{0}.
+\lim_{k\to\infty}\nabla f\bigl(\vect{x}^{(k)}\bigr)=\vect{0}
 \end{equation}
 \end{theorem}
 
@@ -1278,7 +1290,7 @@ Then for any starting point \(\vect{x}^{(0)}\), the iterates \(\{\vect{x}^{(k)}\
 Since \(f\) is \(L\)-smooth, for any \(\vect{x},\vect{x}'\in\mathbb{R}^{n}\) one has
 \begin{equation}
 \label{eq:L_smooth_gradient}
-f(\vect{x}')\le f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{x}'-\vect{x})+\frac{L}{2}\|\vect{x}'-\vect{x}\|^{2}.
+f(\vect{x}')\le f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{x}'-\vect{x})+\frac{L}{2}\|\vect{x}'-\vect{x}\|^{2}
 \end{equation}
 Apply this inequality with \(\vect{x}=\vect{x}^{(k)}\) and \(\vect{x}'=\vect{x}^{(k+1)}=\vect{x}^{(k)}-\alpha\,\nabla f\bigl(\vect{x}^{(k)}\bigr)\). Then
 \begin{align}
@@ -1286,16 +1298,16 @@ f\bigl(\vect{x}^{(k+1)}\bigr)
 &\le f\bigl(\vect{x}^{(k)}\bigr)
 -\alpha\,\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}
 +\frac{\alpha^{2}L}{2}\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2} \nonumber \\
-&= f\bigl(\vect{x}^{(k)}\bigr)-\underbrace{\left(\alpha-\frac{\alpha^{2}L}{2}\right)}_{=: \beta}\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}. \label{eq:gd_Lsmooth}
+&= f\bigl(\vect{x}^{(k)}\bigr)-\underbrace{\left(\alpha-\frac{\alpha^{2}L}{2}\right)}_{=: \beta}\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2} \label{eq:gd_Lsmooth}
 \end{align}
 Since \(\alpha < \frac{2}{L}\), we have \(\beta = \alpha - \frac{\alpha^{2}L}{2} = \alpha\left(1-\frac{\alpha L}{2}\right) > 0\). Then,
 \begin{equation}
 \label{eq:gd_progress}
-f\bigl(\vect{x}^{(k+1)}\bigr)\le f\bigl(\vect{x}^{(k)}\bigr)-\beta\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}.
+f\bigl(\vect{x}^{(k+1)}\bigr)\le f\bigl(\vect{x}^{(k)}\bigr)-\beta\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}
 \end{equation}
 We can sum these inequalities until iteration \(k\) (\emph{accumulation of progress}):
 \[
-f\left(\vect{x}^{(k)}\right) \le f\left(\vect{x}^{(0)}\right) - \beta\sum_{i=0}^{k-1}\left\|\nabla f\left(\vect{x}^{(i)}\right)\right\|^{2}.
+f\left(\vect{x}^{(k)}\right) \le f\left(\vect{x}^{(0)}\right) - \beta\sum_{i=0}^{k-1}\left\|\nabla f\left(\vect{x}^{(i)}\right)\right\|^{2}
 \]
 Since \(f\) is bounded, 
 \(
@@ -1318,7 +1330,7 @@ But this implies that
 \beta(\alpha)=\alpha-\frac{\alpha^{2}L}{2}
 \)
 \[
-\beta'(\alpha) = 1 - \alpha L \overset{!}{=} 0 \Rightarrow \alpha^{*} = \frac{1}{L}.
+\beta'(\alpha) = 1 - \alpha L \overset{!}{=} 0 \Rightarrow \alpha^{*} = \frac{1}{L}
 \]
 \item It is a \emph{global} convergence result, since it is valid for any starting point \(\vect{x}^{(0)}\).
 \item It does NOT necessarily imply that the iterates \(\{\vect{x}^{(k)}\}\) converge.
@@ -1330,14 +1342,14 @@ But this implies that
 \begin{definition}[Global Convergence]
 An optimization algorithm is globally convergent if, from any starting point \(\vect{x}^{(0)}\), its iterates \(\vect{x}^{(k)}\) satisfy
 \[
-\nabla f\left(\vect{x}^{(k)}\right) \xrightarrow[k \rightarrow \infty]{} \vect{0}.
+\nabla f\left(\vect{x}^{(k)}\right) \xrightarrow[k \rightarrow \infty]{} \vect{0}
 \]
 \end{definition}
 
 \begin{definition}[Convergence of Iterates]
 We say that the sequence of iterates \(\{\vect{x}^{(k)}\}\) converges to \(\vect{x}^{*}\) if
 \[
-\|\vect{x}^{(k)}-\vect{x}^{*}\| \xrightarrow[k \rightarrow \infty]{} 0.
+\|\vect{x}^{(k)}-\vect{x}^{*}\| \xrightarrow[k \rightarrow \infty]{} 0
 \]
 \end{definition}
 
@@ -1405,7 +1417,7 @@ If \(f\) is differentiable, being \hyperref[def:mu_strongly_convex_function]{\(\
 \boxed{ 
 \color{black}
 f(\vect{y})\ge f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{y}-\vect{x})
-+\frac{\mu}{2}\|\vect{y}-\vect{x}\|^{2}\tikzmark{mu_strong_convex},%
++\frac{\mu}{2}\|\vect{y}-\vect{x}\|^{2}\tikzmark{mu_strong_convex}%
 }
 }
 \end{equation}
@@ -1416,7 +1428,7 @@ and we have the inequality
 \setlength{\fboxrule}{1pt}
 \boxed{ 
 \color{black}
-2\mu\Bigl(f(\vect{x})-f(\vect{x}^{*})\Bigr)\le\|\nabla f(\vect{x})\|^{2},\quad\forall\,\vect{x}\in\mathbb{R}^{n},
+2\mu\Bigl(f(\vect{x})-f(\vect{x}^{*})\Bigr)\le\|\nabla f(\vect{x})\|^{2},\quad\forall\,\vect{x}\in\mathbb{R}^{n}
 }
 }
 \end{equation}
@@ -1479,20 +1491,20 @@ Adding \(0 = \|\nabla f(\vect{x})\|^{2} - \|\nabla f(\vect{x})\|^{2}\) to the ri
 Let \(f\) be \(L\)-smooth and \(\mu\)-strongly convex with unique minimizer \(\vect{x}^{*}\). If the step size satisfies \(\alpha\in\left(0,\frac{1}{L}\right]\), then for every iteration \(k\ge 0\) of gradient descent,
 \[
 f\bigl(\vect{x}^{(k+1)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
-\le\left(1-\alpha\mu\right)\left(f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\right).
+\le\left(1-\alpha\mu\right)\left(f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\right)
 \]
 \end{theorem}
 \begin{proof}
 From the smoothness of \(f\) \hyperref[eq:gd_Lsmooth]{we have already derived} (Equation~\ref{eq:gd_Lsmooth}) that
 \[
 f\bigl(\vect{x}^{(k+1)}\bigr)\le f\bigl(\vect{x}^{(k)}\bigr)
--\alpha\left(1-\tfrac{\alpha L}{2}\right)\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}.
+-\alpha\left(1-\tfrac{\alpha L}{2}\right)\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}
 \]
 Since \(\alpha \le \frac{1}{L}\), we have \(\left(1-\frac{\alpha L}{2}\right)\ge\left(1-\frac{1}{2}\right)=\frac{1}{2}\) and therefore
 \[
 f\bigl(\vect{x}^{(k+1)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
 \le f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
--\frac{\alpha}{2}\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}.
+-\frac{\alpha}{2}\|\nabla f\bigl(\vect{x}^{(k)}\bigr)\|^{2}
 \]
 Using Equation \eqref{eq:optimality_error_inequality} from Lemma~\ref{lem:optimality_error_strongly_convex},
 \(
@@ -1503,7 +1515,7 @@ we obtain
 \[
 f\bigl(\vect{x}^{(k+1)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
 \le f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
--\alpha\mu\Bigl(f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\Bigr),
+-\alpha\mu\Bigl(f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\Bigr)
 \]
 which simplifies to the stated result.
 \end{proof}
@@ -1513,7 +1525,7 @@ Theorem~\ref{thm:gd_linear_rate} shows that the error in function value decrease
 \begin{definition}[Linear Convergence]
 Let \(\{z^{(k)}\}\) be a sequence with \(z^{(k)} \to z^*\) and there exists \(C \in [0,1)\) and \(\hat{k}\) such that
 \[
-\|z^{(k+1)}-z^{*}\|\le C\,\|z^{(k)}-z^{*}\|\text{,}
+\|z^{(k+1)}-z^{*}\|\le C\,\|z^{(k)}-z^{*}\|%\text{,}
 \]
 for all \(k\ge \hat{k}\). Then the sequence converges \emph{linearly} to \(z^*\) with rate \(C\).
 \end{definition}
@@ -1534,15 +1546,15 @@ For strongly convex and smooth objective functions, we can also determine how ma
 Since the error decreases 
 \[
 f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)
-\le \Bigl(1-\alpha\mu\Bigr)^{k}\Bigl(f\bigl(\vect{x}^{(0)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\Bigr),
+\le \Bigl(1-\alpha\mu\Bigr)^{k}\Bigl(f\bigl(\vect{x}^{(0)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\Bigr)
 \]
 then to guarantee that
 \[
-f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\le \epsilon,
+f\bigl(\vect{x}^{(k)}\bigr)-f\bigl(\vect{x}^{*}\bigr)\le \epsilon
 \]
 it suffices to have
 \[
-k\ge \frac{1}{-\log(1-\alpha\mu)}\log\left(\frac{f\bigl(\vect{x}^{(0)}\bigr)-f\bigl(\vect{x}^{*}\bigr)}{\epsilon}\right),
+k\ge \frac{1}{-\log(1-\alpha\mu)}\log\left(\frac{f\bigl(\vect{x}^{(0)}\bigr)-f\bigl(\vect{x}^{*}\bigr)}{\epsilon}\right)
 \]
 i.e. the number of iterations is {\color{red}\(O\left(\log \frac{1}{\epsilon} \right)\)}.
 
@@ -1585,7 +1597,7 @@ Since \(f \approx q(y;x^{(k)})\), it makes sense to choose \(x^{(k+1)}\) as the 
 x^{(k+1)}=\argmin_{y} q(y;x^{(k)}) \hyperref[thm:nec_first_order_optimality_univariate]{\Rightarrow} q'(y;x^{(k)}) = f'(x^{(k)})+f''(x^{(k)})(y-x^{(k)}) \overset{!}{=} 0 
 \]
 \begin{equation}\label{eq:newton_step}
-\quad \Longrightarrow \quad x^{(k+1)}=x^{(k)}-\frac{f'(x^{(k)})}{f''(x^{(k)})} %\text{.}
+\quad \Longrightarrow \quad x^{(k+1)}=x^{(k)}-\frac{f'(x^{(k)})}{f''(x^{(k)})} %%\text{.}
 \end{equation}
 and if \(q''(x^{(k+1)};x^{(k)}) = f''(x^{(k)}) > 0\), then \(x^{(k+1)}\) is the global minimizer of \(q(\, \cdot \,; x^{(k)})\), since the latter is convex. 
 The direction
@@ -1636,12 +1648,12 @@ Assume \(f:\mathbb{R}^{n}\to\mathbb{R}\) is twice continuously differentiable. T
 \setlength{\fboxrule}{1pt}
 \boxed{ 
 \color{black}
-f(\vect{y})\approx q(\vect{y};\vect{x})=f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{y}-\vect{x})+\frac{1}{2}(\vect{y}-\vect{x})^{T}\matr{H}_{f}(\vect{x})(\vect{y}-\vect{x}) \text{,}
+f(\vect{y})\approx q(\vect{y};\vect{x})=f(\vect{x})+\nabla f(\vect{x})^{T}(\vect{y}-\vect{x})+\frac{1}{2}(\vect{y}-\vect{x})^{T}\matr{H}_{f}(\vect{x})(\vect{y}-\vect{x}) %\text{,}
 }
 }
 \end{equation}
 where \(\matr{H}_{f}(\vect{x})\) is the Hessian matrix defined as 
-\[
+\begin{equation}\label{eq:hessian}
 \matr{H}_{f}(\vect{x})
 =
 \left(\frac{\partial^{2}f}{\partial x_{i}\partial x_{j}}\right)_{i,j \in \{1,\ldots,n\}}
@@ -1651,8 +1663,8 @@ where \(\matr{H}_{f}(\vect{x})\) is the Hessian matrix defined as
 \vdots & \ddots & \vdots \\
 \frac{\partial^{2}f}{\partial x_{n}\partial x_{1}} & \cdots & \frac{\partial^{2}f}{\partial x_{n}^{2}}
 \end{pmatrix}
-\in \mathbb{R}^{n \times n} \text{.}
-\]
+\in \mathbb{R}^{n \times n} %%\text{.}
+\end{equation}
 Since \(f\) is twice continuously differentiable, the Hessian is symmetric, i.e., \(\matr{H}_{f}(\vect{x})=\matr{H}_{f}(\vect{x})^{T}\).
 
 We have already seen the first order Taylor's expansion for multivariate functions (Theorem~\ref{thm:taylor_multivariate_first_order}, Corollary~\ref{cor:taylor_error_multivariate_first_order}). 
@@ -1661,11 +1673,11 @@ Now let's extend this to the second order:
   \label{thm:multivariate_taylor_expansion_second}
   If \(f:\mathbb{R}^{n}\to\mathbb{R}\) is continuously differentiable, then for any \(\vect{x}\in\mathbb{R}^{n}\) and \(\vect{d}\in\mathbb{R}^{n}\) there exists \(t\in (0,1)\) such that
   \[
-  f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x}+t\,\vect{d})^{T}\vect{d} \text{.}
+  f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x}+t\,\vect{d})^{T}\vect{d} %\text{.}
   \]
   Moreover, if \(f\) is twice continuously differentiable, then for any \(\vect{x}\in\mathbb{R}^{n}\) and \(\vect{d}\in\mathbb{R}^{n}\) there exists \(t\in (0,1)\) such that
   \[
-  f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x})^{T}\vect{d}+\frac{1}{2}\vect{d}^{T}\matr{H}_{f}(\vect{x}+t\,\vect{d})\vect{d} \text{.}
+  f(\vect{x}+\vect{d})=f(\vect{x})+\nabla f(\vect{x})^{T}\vect{d}+\frac{1}{2}\vect{d}^{T}\matr{H}_{f}(\vect{x}+t\,\vect{d})\vect{d} %\text{.}
   \]
   For \(n = 1\), this reduces to the univariate case (Theorem~\ref{thm:univariate_taylor_expansion}).
 \end{theorem}
@@ -1674,7 +1686,7 @@ Now let's extend this to the second order:
 \label{cor:approximation_error_multivariate_taylor_second}
 If \(f\) is three times continuously differentiable, then for any \(\vect{x}\in\mathbb{R}^{n}\) there exists \(L>0\) and \(\epsilon>0\) such that
 \[
-\left|f(\vect{y})-q(\vect{y};\vect{x})\right|\le L\|\vect{y}-\vect{x}\|^3 \text{,}
+\left|f(\vect{y})-q(\vect{y};\vect{x})\right|\le L\|\vect{y}-\vect{x}\|^3 %\text{,}
 \]
 for any \(\vect{y}\in\mathbb{R}^{n}\) such that \(\|\vect{x}-\vect{y}\|\le\epsilon\). For \(n=1\), this reduces to the univariate case (Corollary~\ref{cor:approximation_error_univariate_taylor}).
 \end{corollary}
@@ -1690,12 +1702,12 @@ Assume \(\vect{x}^{*}\) is a local minimizer of \(f\) and \(\matr{H}_{f}(\vect{x
 Then there exists \(\vect{p}\in\mathbb{R}^{n}\) such that \(\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*})\vect{p}<0\). 
 Since \(\matr{H}_{f}(\, \cdot \,)\) is continuous there exists \(t_{0}>0\) such that for all \(t\in(0,t_{0})\), 
 \[
-\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+t\vect{p})\vect{p}<0 \text{.}
+\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+t\vect{p})\vect{p}<0 %\text{.}
 \]
 Let \(t \in (0,t_{0})\). If \(\nabla f(\vect{x}^{*}) \neq 0\) we already know that \(\vect{x}^{*}\) cannot be a local minimizer (Theorem~\ref{thm:nec_first_order_optimality_multivariate}), so we assume \(\nabla f(\vect{x}^{*}) = 0\). 
 Theorem \ref{thm:multivariate_taylor_expansion_second} says there exists \(\overline{t}\in(0,t)\) such that
 \[
-f(\vect{x}^{*}+t\vect{p})=f(\vect{x}^{*})+\frac{1}{2}t^{2}\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+\overline{t}\vect{p})\vect{p} \text{,}
+f(\vect{x}^{*}+t\vect{p})=f(\vect{x}^{*})+\frac{1}{2}t^{2}\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+\overline{t}\vect{p})\vect{p} %\text{,}
 \]
 and since \(0 < \overline{t} < t < t_{0}\), we have \(\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+\overline{t}\vect{p})\vect{p}<0\), which implies \(f(\vect{x}^{*}+t\vect{p})<f(\vect{x}^{*})\), contradicting the assumption that \(\vect{x}^{*}\) is a local minimizer.
 \end{proof}
@@ -1707,7 +1719,7 @@ If \(f\) is twice continuously differentiable and \(\vect{x}^{*}\) is such that 
 Since \(\matr{H}_{f}(\, \cdot \,)\) is continuous, there exists \(r>0\) such that for any \(\vect{p}\) with \(\|\vect{p} - \vect{x}^{*}\| < r\), we have \(\matr{H}_{f}(\vect{x}^{*}+\vect{p}) \succ 0\). 
 If \(\vect{p} \neq \vect{0}\), then \(\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+\vect{p})\vect{p} > 0\), and by Theorem~\ref{thm:multivariate_taylor_expansion_second} there exists \(t \in (0,1)\) such that
 \[
-f(\vect{x}^{*}+\vect{p})=f(\vect{x}^{*})+\frac{1}{2}\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+t\vect{p})\vect{p} > f(\vect{x}^{*}) \text{,}
+f(\vect{x}^{*}+\vect{p})=f(\vect{x}^{*})+\frac{1}{2}\vect{p}^{T}\matr{H}_{f}(\vect{x}^{*}+t\vect{p})\vect{p} > f(\vect{x}^{*}) %\text{,}
 \]
 which shows that \(\vect{x}^{*}\) is a strict local minimizer.
 \end{proof}
@@ -1718,24 +1730,24 @@ For a multivariate function \(f\), at iteration \(k\) of Newton's method (Algori
 Equation~\ref{eq:second_order_taylor_approximation_multivariate} is a multivariate quadratic function of the form
 \begin{align}
 q(\vect{x}) &= b + \vect{g}^{T}\vect{x} + \vect{x}^{T}\matr{Q}\vect{x} \label{eq:multivariate_quadratic_function} \\
-&= b + \sum_{i=1}^{n}g_{i}x_{i} + \sum_{i=1}^{n}\sum_{j=1}^{n}q_{ij}x_{i}x_{j} \text{,} \label{eq:multivariate_quadratic_function_expanded}
+&= b + \sum_{i=1}^{n}g_{i}x_{i} + \sum_{i=1}^{n}\sum_{j=1}^{n}q_{ij}x_{i}x_{j} \label{eq:multivariate_quadratic_function_expanded}
 \end{align}
 where \(\vect{x} = \vect{y} - \vect{x}^{(k)}\), \(b = f(\vect{x}^{(k)})\), \(\vect{g} = \nabla f(\vect{x}^{(k)})\), and \(\matr{Q} = \frac{1}{2}\matr{H}_{f}(\vect{x}^{(k)})\).
 We assume that \(\matr{Q}\) is symmetric, which is not restricive, since any quadratic model with a non-symmetric matrix can be re-written with a symmetric matrix \(\tilde{\matr{Q}} = \frac{1}{2}(\matr{Q}+\matr{Q}^{T})\).
 
 Using Equation \eqref{eq:multivariate_quadratic_function_expanded}, it is easier to compute the derivatives:
 \[
-\frac{\partial}{\partial x_{k}}q(\vect{x}) = \sum_{i=1}^{n}\frac{\partial}{\partial x_{k}}g_{i}x_{i} + \sum_{i=1}^{n}\sum_{j=1}^{n}\frac{\partial}{\partial x_{k}}q_{ij}x_{i}x_{j} = g_{k} + 2\sum_{j=1}^{n}q_{kj}x_{j} \text{,}
+\frac{\partial}{\partial x_{k}}q(\vect{x}) = \sum_{i=1}^{n}\frac{\partial}{\partial x_{k}}g_{i}x_{i} + \sum_{i=1}^{n}\sum_{j=1}^{n}\frac{\partial}{\partial x_{k}}q_{ij}x_{i}x_{j} = g_{k} + 2\sum_{j=1}^{n}q_{kj}x_{j} %\text{,}
 \]
 \[
-\frac{\partial^{2}}{\partial x_{k}\partial x_{l}}q(\vect{x}) = 2q_{kl} \text{,}
+\frac{\partial^{2}}{\partial x_{k}\partial x_{l}}q(\vect{x}) = 2q_{kl} %\text{,}
 \]
 or in vectorized form:
 \[
-\nabla q(\vect{x}) = \vect{g} + 2\matr{Q}\vect{x} \text{,}
+\nabla q(\vect{x}) = \vect{g} + 2\matr{Q}\vect{x} %\text{,}
 \]
 \[
-\matr{H}_{q}(\vect{x}) = 2\matr{Q} \text{.}
+\matr{H}_{q}(\vect{x}) = 2\matr{Q} %\text{.}
 \]
 A stationary point of \(q\) thus satisfies
 \[
@@ -1837,20 +1849,20 @@ Now consider \(\vect{x}^{*}\) a stationary point of \(q(\vect{x}) = b + \vect{g}
 In Line~\ref{alg:line:calculate_newton_direction} of Algorithm~\ref{alg:newton_multivariate}, we need to find the minimizer of the quadratic local model at \(\vect{x}^{(k)}\) given by the \hyperref[eq:second_order_taylor_approximation_multivariate]{second-order Taylor approximation} (Section \ref{subsubsec:second_order_taylor_multivariate}, Equation \ref{eq:second_order_taylor_approximation_multivariate}).
 If we set \(\vect{y} = \vect{x}^{(k)} + \vect{d}\) in \eqref{eq:second_order_taylor_approximation_multivariate}, we obtain
 \[
-q(\vect{d};\vect{x}^{(k)}) = f(\vect{x}^{(k)}) + \nabla f(\vect{x}^{(k)})^{T}\vect{d} + \frac{1}{2}\vect{d}^{T}\matr{H}_{f}(\vect{x}^{(k)})\vect{d} \text{.}
+q(\vect{d};\vect{x}^{(k)}) = f(\vect{x}^{(k)}) + \nabla f(\vect{x}^{(k)})^{T}\vect{d} + \frac{1}{2}\vect{d}^{T}\matr{H}_{f}(\vect{x}^{(k)})\vect{d} %\text{.}
 \]
 Denoting \(b = f(\vect{x}^{(k)})\), \(\vect{g} = \nabla f(\vect{x}^{(k)})\), and \(\matr{Q} = \frac{1}{2}\matr{H}_{f}(\vect{x}^{(k)})\), we have a quadratic function of the same form as in~\eqref{eq:multivariate_quadratic_function}:
 \[
-q(\vect{d};\vect{x}^{(k)}) = b + \vect{g}^{T}\vect{d} + \vect{d}^{T}\matr{Q}\vect{d} \text{.}
+q(\vect{d};\vect{x}^{(k)}) = b + \vect{g}^{T}\vect{d} + \vect{d}^{T}\matr{Q}\vect{d} %\text{.}
 \]
 Thus a stationary point of \(q\) satisfies
 \[
-\vect{d}^{*} = -\frac{1}{2}\matr{Q}^{-1}\vect{g} = -\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1} \nabla f(\vect{x}^{(k)}) \text{.}
+\vect{d}^{*} = -\frac{1}{2}\matr{Q}^{-1}\vect{g} = -\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1} \nabla f(\vect{x}^{(k)}) %\text{.}
 \]
 If \(\matr{Q} \succ 0\), then \(\vect{d}^{*}\) is the global minimizer of \(q(\vect{d};\vect{x}^{(k)})\), and is the \emph{Newton's direction}, denoted \(\vect{d}_{N}\).
 Hence in the original problem with \(\vect{y} = \vect{x}^{(k)} + \vect{d}\), the minimizer \(\vect{x}^{k+1}\) is
 \[
-\vect{x}^{(k+1)} = \vect{x}^{(k)} + \vect{d}_{N} = \vect{x}^{(k)} - \big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1} \nabla f(\vect{x}^{(k)}) \text{.}
+\vect{x}^{(k+1)} = \vect{x}^{(k)} + \vect{d}_{N} = \vect{x}^{(k)} - \big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1} \nabla f(\vect{x}^{(k)}) %\text{.}
 \]
 This update rule is called the \emph{Newton's step}.
 \begin{caution} Two important remarks:
@@ -1862,7 +1874,7 @@ If they are not, an easy solution is to take a gradient step for that iteration.
 \[
 2\matr{Q}\vect{d}_{N} = -\vect{g} \text{, i.e., }\matr{H}_{f}(\vect{x}^{(k)})\vect{d}_{N} = -\nabla f(\vect{x}^{(k)})
 \]
-for \(\vect{d}_{N}\).
+for \(\vect{d}_{N}\).\qedhere
 \end{itemize}
 \end{caution}
 
@@ -1878,7 +1890,7 @@ then there exists \(\epsilon>0\) such that for any \(\vect{x}^{(0)}\) with \(\|\
 at each iteration \(k \geq 0\) of Newton's method (Algorithm~\ref{alg:newton_multivariate}), 
 \begin{equation}
 \label{eq:convergence_newton_method}
-\big\|\vect{x}^{(k+1)}-\vect{x}^{*}\big\| \leq L\left\|\big(\matr{H}_{f}(\vect{x}^{*})\big)^{-1}\right\| \big\|\vect{x}^{(k)}-\vect{x}^{*}\big\|^{2} \text{,}
+\big\|\vect{x}^{(k+1)}-\vect{x}^{*}\big\| \leq L\left\|\big(\matr{H}_{f}(\vect{x}^{*})\big)^{-1}\right\| \big\|\vect{x}^{(k)}-\vect{x}^{*}\big\|^{2} %\text{,}
 \end{equation}
 i.e., the iterates \(\{\vect{x}^{(k)}\}\) converge quadratically to \(\vect{x}^{*}\).
 \end{theorem}
@@ -1906,7 +1918,7 @@ A sequence of vectors \(\{\vect{z}^{(k)}\}\) with \(\vect{z}^{(k)} \to \vect{z}^
   \]
   \item \emph{superlinearly} if there exists \(\{c^{(k)}\} \subset (0,\infty)\) with \(c^{(k)} \to 0\) and \(\hat{k} \geq 0\) such that
   \[
-  \|\vect{z}^{(k+1)}-\vect{z}^{*}\| \leq c^{(k)}\|\vect{z}^{(k)}-\vect{z}^{*}\| \text{ for all } k \geq \hat{k} \text{.}
+  \|\vect{z}^{(k+1)}-\vect{z}^{*}\| \leq c^{(k)}\|\vect{z}^{(k)}-\vect{z}^{*}\| \text{ for all } k \geq \hat{k} \text{.}\qedhere
   \]
 \end{itemize}
 \end{definition}
@@ -1918,15 +1930,15 @@ Observe that: quadratic \(\Longrightarrow\) superlinear \(\Longrightarrow\) line
 
 Theorem~\ref{thm:convergence_newton_method} says that when Algorithm~\ref{alg:newton_multivariate} is initialized sufficiently close to the local minimizer \(x^{*}\), we have \(C = \|(\matr{H}_{f}(\vect{x}^{*}))^{-1}\| > 0\) such that
 \begin{equation}\label{eq:newton_quadratic_convergence_recursion_iterates}
-\|x^{(k+1)}-x^{*}\|\le C\,\|x^{(k)}-x^{*}\|^{2} \text{.}
+\|x^{(k+1)}-x^{*}\|\le C\,\|x^{(k)}-x^{*}\|^{2} %\text{.}
 \end{equation}
 Denoting the error at iteration \(k\) by
 \[
-\texttt{err}_{k}=\|x^{(k)}-x^{*}\| \text{,}
+\texttt{err}_{k}=\|x^{(k)}-x^{*}\| %\text{,}
 \]
 we then can rewrite \eqref{eq:newton_quadratic_convergence_recursion_iterates} as
 \begin{equation}\label{eq:newton_quadratic_convergence_recursion_error}
-\texttt{err}_{k+1}\le C\,(\texttt{err}_{k})^{2} \text{.}
+\texttt{err}_{k+1}\le C\,(\texttt{err}_{k})^{2} %\text{.}
 \end{equation}
 Recursively applying this estimate leads to
 \[
@@ -1948,15 +1960,15 @@ C \texttt{err}_{0}^{2}
 }_{\geq \texttt{err}_{K-1}}
 \Bigg)^{2}
 =
-C^{2^{K}-1}\,(\texttt{err}_{0})^{2^{K}} \text{.}
+C^{2^{K}-1}\,(\texttt{err}_{0})^{2^{K}} %\text{.}
 \]
 For simplicity, assume \(\texttt{err}_{0}=1\). To achieve an error \(\texttt{err}_{K}\le\epsilon\) with \(0<\epsilon\ll 1\), it suffices that
 \[
-C^{2^{K}-1}\le \epsilon.
+C^{2^{K}-1}\le \epsilon
 \]
 Taking logarithms gives
 \[
-\left(2^{K}-1\right)\log C \le \log \epsilon.
+\left(2^{K}-1\right)\log C \le \log \epsilon
 \]
 Since \(\log C<0\) (because \(C<1\) in the quadratic regime), we can rearrange to obtain
 \[
@@ -1964,7 +1976,7 @@ Since \(\log C<0\) (because \(C<1\) in the quadratic regime), we can rearrange t
 \]
 and taking logarithms once more yields
 \[
-K \ge \log\left(1+\frac{\log \epsilon^{-1}}{\log C^{-1}}\right)=O\Bigl(\log \log \epsilon^{-1}\Bigr).
+K \ge \log\left(1+\frac{\log \epsilon^{-1}}{\log C^{-1}}\right)=O\Bigl(\log \log \epsilon^{-1}\Bigr)
 \]
 Thus, to reduce the optimality error to order \(\epsilon\) we need only {\color{red}\(O(\log \log \epsilon^{-1})\)} iterations. 
 This is significantly fewer than the \(O(\log \epsilon^{-1})\) iterations typically required by gradient descent.
@@ -1995,19 +2007,19 @@ To make Newton's algorithm globally convergent from any starting point we need m
 \underbrace{
 \left(-\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1}\nabla f(\vect{x}^{(k)})\right) 
 }_{\vect{d}_{N}}
-\text{,}
+%\text{,}
 \]
 with \(\alpha \in (0,1)\) a step size. This is similar to Gradient Descent where instead of 
 \(
-\vect{d}_{N} \text{,}
+\vect{d}_{N} %\text{,}
 \)
 we have
 \(
-\vect{d}_{S} = -\nabla f(\vect{x}^{(k)}) \text{.}
+\vect{d}_{S} = -\nabla f(\vect{x}^{(k)}) %\text{.}
 \)
 In fact, both Gradient Descent and Newton's algorithms (and their variants) fall in the class of \emph{line search} algorithms where finding a “good” step size is a sub-routine. A line search method has an update rule of the form
 \[
-\vect{x}^{(k+1)} = \vect{x}^{(k)} + \alpha^{(k)}\, \vect{d}^{(k)} \text{,}
+\vect{x}^{(k+1)} = \vect{x}^{(k)} + \alpha^{(k)}\, \vect{d}^{(k)} %\text{,}
 \]
 where:
 \begin{itemize}
@@ -2018,35 +2030,35 @@ where:
 Performing a line search specifically refers to the sub-routine of choosing the best possible (or at least, good enough) \(\alpha^{(k)}\), given \(\vect{d}^{(k)}\). 
 At a minimum we require that we achieve a decrease of \(f\), i.e.,
 \[
-f\bigl(\vect{x}^{(k+1)}\bigr) = f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\,\vect{d}^{(k)}\bigr) < f\bigl(\vect{x}^{(k)}\bigr) \text{.}
+f\bigl(\vect{x}^{(k+1)}\bigr) = f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\,\vect{d}^{(k)}\bigr) < f\bigl(\vect{x}^{(k)}\bigr) %\text{.}
 \]
 This is always satisfied for sufficiently small \(\alpha^{(k)}\) if \(\vect{d}^{(k)}\) is a descent direction. 
 Recall that if we define
 \[
-g(\alpha) = f(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}) \text{,}
+g(\alpha) = f(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}) %\text{,}
 \]
 then its derivative is
 \(
-g'(\alpha) = \nabla f(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)})^T \vect{d}^{(k)} \text{,}
+g'(\alpha) = \nabla f(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)})^T \vect{d}^{(k)} %\text{,}
 \)
 with
 \(
-g'(0) = \nabla f(\vect{x}^{(k)})^T \vect{d}^{(k)} \text{.}
+g'(0) = \nabla f(\vect{x}^{(k)})^T \vect{d}^{(k)} %\text{.}
 \)
 Since
 \[
-g(\alpha) \approx f\bigl(\vect{x}^{(k)}\bigr) + g'(0)\,\alpha \text{,}
+g(\alpha) \approx f\bigl(\vect{x}^{(k)}\bigr) + g'(0)\,\alpha %\text{,}
 \]
 we can guarantee \(g(\alpha) < f\bigl(\vect{x}^{(k)}\bigr)\) for sufficiently small \(\alpha>0\) if
 \[
-g'(0) = \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} < 0 \text{,}
+g'(0) = \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} < 0 %\text{,}
 \]
 i.e., if \(\vect{d}^{(k)}\) is indeed a descent direction. Unfortunately, this minimal requirement is not enough to choose a good step size in practice.
 
 One possibility is to choose the step size that minimizes \(g(\alpha)\), i.e.,
 \begin{equation}
 \label{eq:exact_line_search}
-\min_{\alpha > 0} \; g(\alpha) \quad \text{with} \quad g(\alpha)=f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr) \text{,}
+\min_{\alpha > 0} \; g(\alpha) \quad \text{with} \quad g(\alpha)=f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr) %\text{,}
 \end{equation}
 which is called \emph{exact line search}; however, solving this subproblem can be expensive. Therefore, in practice, \(\alpha^{(k)}\) is chosen to satisfy less strong requirements, for instance the Wolfe conditions.
 
@@ -2126,7 +2138,7 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
 
 The Wolfe conditions are two conditions that guide the choice of a “good enough” step size \(\alpha^{(k)}\) at each iteration of a line search method to achieve global convergence. Consider the affine function
 \[
-\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} \text{,}
+\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} %\text{,}
 \]
 with \(\eta \in (0,1)\) a relaxation parameter (sometimes called the \emph{relaxed tangent}). The first Wolfe condition (also called the \emph{Armijo} or \emph{sufficient decrease condition}) stipulates that \(g(\alpha^{(k)})\) should be no larger than \(\ell(\alpha^{(k)})\).
 Hence the Armijo condition requires that the decrease in \(f\) is at least proportional to both \(\alpha^{(k)}\) and \(\nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}\). In practice one typically chooses \(\eta\) to be rather small (e.g., \(\eta = 10^{-4}\) or \(10^{-2}\)).
@@ -2148,7 +2160,7 @@ f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\,\vect{d}^{(k)}\bigr)
 \le 
 f\bigl(\vect{x}^{(k)}\bigr) + \eta\, \alpha^{(k)}\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} 
 = 
-\ell\bigl(\alpha^{(k)}\bigr) \text{.}
+\ell\bigl(\alpha^{(k)}\bigr) %\text{.}
 }
 }
 \end{equation}
@@ -2170,7 +2182,7 @@ g'\bigl(\alpha^{(k)}\bigr)
 \bar{\eta}\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}
 =
 \bar{\eta}\,g'\bigl(0\bigr)
-\text{.}
+%\text{.}
 }
 }
 \end{equation}
@@ -2222,7 +2234,7 @@ In this algorithm, \(\vect{d}^{(k)} = -\nabla f(\vect{x}^{(k)})\) (Gradient Desc
         % \end{cases}\)}
         \Comment{e.g. using \(-\nabla f(\vect{x}^{(k)})\) or \(-\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1}\nabla f(\vect{x}^{(k)})\)}
         \State Find \(\alpha^{(k)}\) using the backtracking line search (Algorithm~\ref{alg:backtracking-line-search})
-        \State Update: \(\vect{x}^{(k+1)} = \vect{x}^{(k)} + \alpha^{(k)}\,\vect{d}^{(k)} \text{,}\)
+        \State Update: \(\vect{x}^{(k+1)} = \vect{x}^{(k)} + \alpha^{(k)}\,\vect{d}^{(k)} \)
         \State Increment: \(k \leftarrow k+1\)
     \EndWhile
     \State \textbf{Output:} \(\vect{x}^{(k)}\)
@@ -2245,30 +2257,30 @@ Assume that:
 \end{itemize}
 Then
 \[
-\sum_{k \geq 0} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 < \infty \text{,}
+\sum_{k \geq 0} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 < \infty %\text{,}
 \]
 where \(\theta^{(k)}\) is the angle between \(\vect{d}^{(k)}\) and \(-\nabla f(\vect{x}^{(k)})\), i.e.,
 \[
-\cos\theta^{(k)} = \frac{\nabla f(\vect{x}^{(k)})^T \vect{d}^{(k)}}{\|\nabla f(\vect{x}^{(k)})\|\,\|\vect{d}^{(k)}\|} \text{.}
+\cos\theta^{(k)} = \frac{\nabla f(\vect{x}^{(k)})^T \vect{d}^{(k)}}{\|\nabla f(\vect{x}^{(k)})\|\,\|\vect{d}^{(k)}\|} %\text{.}
 \]
 \end{theorem}
 
 \begin{proof}
 Let \(k \ge 0\). Since \(\alpha^{(k)}\) satisfies the curvature condition for some \(0 < \bar{\eta} < 1\), we have
 \[
-\nabla f\bigl(\vect{x}^{(k+1)}\bigr)^T \vect{d}^{(k)} = \nabla f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\, \vect{d}^{(k)}\bigr)^T \vect{d}^{(k)} \ge \bar{\eta}\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} \text{,}
+\nabla f\bigl(\vect{x}^{(k+1)}\bigr)^T \vect{d}^{(k)} = \nabla f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\, \vect{d}^{(k)}\bigr)^T \vect{d}^{(k)} \ge \bar{\eta}\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} %\text{,}
 \]
 which can be rewritten as
 \[
-\Bigl(\nabla f\bigl(\vect{x}^{(k+1)}\bigr)-\nabla f\bigl(\vect{x}^{(k)}\bigr)\Bigr)^T \vect{d}^{(k)} \ge (\bar{\eta} - 1)\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} \text{,}
+\Bigl(\nabla f\bigl(\vect{x}^{(k+1)}\bigr)-\nabla f\bigl(\vect{x}^{(k)}\bigr)\Bigr)^T \vect{d}^{(k)} \ge (\bar{\eta} - 1)\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} %\text{,}
 \]
 and, since \(\nabla f\) is \(L\)-Lipschitz and by the Cauchy-Schwarz inequality, we have
 \[
-\Bigl(\nabla f\bigl(\vect{x}^{(k+1)}\bigr)-\nabla f\bigl(\vect{x}^{(k)}\bigr)\Bigr)^T \vect{d}^{(k)} \le L\, \alpha^{(k)}\, \|\vect{d}^{(k)}\|^2 \text{.}
+\Bigl(\nabla f\bigl(\vect{x}^{(k+1)}\bigr)-\nabla f\bigl(\vect{x}^{(k)}\bigr)\Bigr)^T \vect{d}^{(k)} \le L\, \alpha^{(k)}\, \|\vect{d}^{(k)}\|^2 %\text{.}
 \]
 Combining the two inequalities, we obtain
 \[
-\alpha^{(k)} \ge \frac{(\bar{\eta}-1)\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}}{L\, \|\vect{d}^{(k)}\|^2} \text{.}
+\alpha^{(k)} \ge \frac{(\bar{\eta}-1)\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}}{L\, \|\vect{d}^{(k)}\|^2} %\text{.}
 \]
 Since \(\vect{d}^{(k)}\) is a descent direction and \(\alpha^{(k)}\) satisfies the Armijo condition for some \(\eta \in (0,\bar{\eta})\), it follows that
 \[
@@ -2276,22 +2288,22 @@ Since \(\vect{d}^{(k)}\) is a descent direction and \(\alpha^{(k)}\) satisfies t
 f\bigl(\vect{x}^{(k+1)}\bigr) &= f\bigl(\vect{x}^{(k)} + \alpha^{(k)}\, \vect{d}^{(k)}\bigr) \\
 &\le f\bigl(\vect{x}^{(k)}\bigr) + \eta\, \alpha^{(k)}\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} \\
 &\le f\bigl(\vect{x}^{(k)}\bigr) - \frac{\eta\, (\bar{\eta}-1)}{L}\, \frac{\bigl|\nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}\bigr|^2}{\|\vect{d}^{(k)}\|^2} \\
-&= f\bigl(\vect{x}^{(k)}\bigr) - \frac{\eta\, (\bar{\eta}-1)}{L}\, \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 \text{.}
+&= f\bigl(\vect{x}^{(k)}\bigr) - \frac{\eta\, (\bar{\eta}-1)}{L}\, \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 %\text{.}
 \end{aligned}
 \]
 If we denote \(c = \frac{\eta\, (\bar{\eta}-1)}{L}\) and sum these inequalities over \(k\), we obtain
 \[
-f\bigl(\vect{x}^{(K)}\bigr) \le f\bigl(\vect{x}^{(0)}\bigr) - c \sum_{k=0}^{K} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 \text{.}
+f\bigl(\vect{x}^{(K)}\bigr) \le f\bigl(\vect{x}^{(0)}\bigr) - c \sum_{k=0}^{K} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 %\text{.}
 \]
 Since \(f\) is bounded from below and \(c > 0\), it follows that
 \[
-\sum_{k \geq 0} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 < \infty \text{.}
+\sum_{k \geq 0} \cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 < \infty %\text{.}
 \]
 \end{proof}
 
 An immediate consequence of Theorem~\ref{thm:zoutendijk} is that
 \[
-\cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 \to 0 \text{.}
+\cos^2\theta^{(k)}\, \|\nabla f(\vect{x}^{(k)})\|^2 \to 0 %\text{.}
 \]
 If the cosine terms are bounded away from zero (i.e., there exists \(\delta > 0\) such that \(\cos\theta^{(k)} \ge \delta\) for all \(k\)), then this implies \(\|\nabla f(\vect{x}^{(k)})\| \to 0\); in other words, the iterates are attracted to a stationary point. For example:
 \begin{itemize}
@@ -2302,7 +2314,7 @@ If the cosine terms are bounded away from zero (i.e., there exists \(\delta > 0\
   \]
   one may show that
     \[
-    \cos\theta^{(k)} \ge \frac{\lambda_{\min}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)}{\lambda_{\max}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)} \text{,}
+    \cos\theta^{(k)} \ge \frac{\lambda_{\min}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)}{\lambda_{\max}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)} %\text{,}
     \]
     where \(\lambda_{\min}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)\) and \(\lambda_{\max}\bigl(\matr{H}_{f}(\vect{x}^{(k)})\bigr)\) denote the smallest and largest eigenvalues of \(\matr{H}_{f}(\vect{x}^{(k)})\). Hence if the condition number 
     \[
@@ -2313,7 +2325,7 @@ If the cosine terms are bounded away from zero (i.e., there exists \(\delta > 0\
 
 Thus, under appropriate assumptions, the line search methods (whether steepest descent, Newton's method with line search, or quasi-Newton methods with line search) yield
 \[
-\|\nabla f(\vect{x}^{(k)})\| \to 0 \text{.}
+\|\nabla f(\vect{x}^{(k)})\| \to 0 %\text{.}
 \]
 Note, however, that this global convergence result does not necessarily imply that the iterates converge to a local minimizer without additional assumptions on the Hessian of \(f\).
 
@@ -2342,11 +2354,11 @@ Recall that if
 \)
 is not positive definite, then the Newton direction
 \[
-\vect{d}^{(k)} = -\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1}\nabla f(\vect{x}^{(k)}) \text{,}
+\vect{d}^{(k)} = -\big(\matr{H}_{f}(\vect{x}^{(k)})\big)^{-1}\nabla f(\vect{x}^{(k)}) %\text{,}
 \]
 may not be well defined or may fail to be a descent direction. A common remedy is to \emph{correct} the Hessian by adding a multiple of the identity matrix. That is, one seeks \(\lambda > 0\) such that
 \[
-\matr{H}_{f}(\vect{x}^{(k)}) + \lambda \matr{I} \text{,}
+\matr{H}_{f}(\vect{x}^{(k)}) + \lambda \matr{I} %\text{,}
 \]
 is positive definite.
 
@@ -2354,7 +2366,7 @@ A practical method for checking whether a symmetric matrix is positive definite 
 If the decomposition fails, then the matrix is not positive definite. 
 Recall that the Cholesky decomposition of a positive definite matrix \(\matr{H}\) is a factorization of the form
 \[
-\matr{H} = \matr{L}\,\matr{L}^T \text{,}
+\matr{H} = \matr{L}\,\matr{L}^T %\text{,}
 \]
 where \(\matr{L}\) is a lower triangular matrix (the Cholesky factor). 
 This decomposition is widely used to solve linear systems \(\matr{H}\,\vect{x} = \vect{b}\) (by first solving \(\matr{L}\,\vect{v}=\vect{b}\) via forward substitution and then \(\matr{L}^T\,\vect{x}=\vect{v}\) via backward substitution) and to compute the inverse by solving \(\matr{A}\,\matr{X} = \matr{I}\).
@@ -2410,38 +2422,38 @@ Quasi-Newton methods aim to capture some of the advantages of Newton's method wh
 
 A natural starting point is the first-order Taylor expansion of \(\nabla f\) at \(\vect{x}^{(k)}\):
 \[
-\nabla f\bigl(\vect{x}^{(k+1)}\bigr) \approx \nabla f\bigl(\vect{x}^{(k)}\bigr) + \matr{H}_{f}(\vect{x}^{(k)})\,\Bigl(\vect{x}^{(k+1)} - \vect{x}^{(k)}\Bigr) \text{,}
+\nabla f\bigl(\vect{x}^{(k+1)}\bigr) \approx \nabla f\bigl(\vect{x}^{(k)}\bigr) + \matr{H}_{f}(\vect{x}^{(k)})\,\Bigl(\vect{x}^{(k+1)} - \vect{x}^{(k)}\Bigr) %\text{,}
 \]
 which can be rearranged to yield the \emph{secant equation}
 \[
-\matr{H}_{f}(\vect{x}^{(k)})\, \underbrace{\Bigl(\vect{x}^{(k+1)} - \vect{x}^{(k)}\Bigr)}_{\vect{s}^{(k)}} \approx \nabla f\bigl(\vect{x}^{(k+1)}\bigr) - \nabla f\bigl(\vect{x}^{(k)}\bigr) \triangleq \vect{y}^{(k)} \text{.}
+\matr{H}_{f}(\vect{x}^{(k)})\, \underbrace{\Bigl(\vect{x}^{(k+1)} - \vect{x}^{(k)}\Bigr)}_{\vect{s}^{(k)}} \approx \nabla f\bigl(\vect{x}^{(k+1)}\bigr) - \nabla f\bigl(\vect{x}^{(k)}\bigr) \triangleq \vect{y}^{(k)} %\text{.}
 \]
 That is, we wish to have
 \[
-\tilde{\matr{H}}^{(k+1)}\, \vect{s}^{(k)} = \vect{y}^{(k)} \text{,}
+\tilde{\matr{H}}^{(k+1)}\, \vect{s}^{(k)} = \vect{y}^{(k)} %\text{,}
 \]
 where \(\tilde{\matr{H}}^{(k+1)}\) is a symmetric approximation of the Hessian. Since a symmetric \(n \times n\) matrix has \(\frac{n(n+1)}{2}\) free parameters, the system is underdetermined and there exist infinitely many solutions. One usually chooses the update so that \(\tilde{\matr{H}}^{(k+1)}\) is positive definite (to guarantee that the resulting search direction is a descent direction).
 
 One of the earliest quasi-Newton methods is the DFP (Davidon-Fletcher-Powell) method. Its update is given by
 \[
-\tilde{\matr{H}}^{(k+1)} = \Biggl(\matr{I} - \frac{\vect{y}^{(k)}\, \vect{s}^{(k)T}}{\rho^{(k)}}\Biggr)^T \tilde{\matr{H}}^{(k)} \Biggl(\matr{I} - \frac{\vect{y}^{(k)}\, \vect{s}^{(k)T}}{\rho^{(k)}}\Biggr) + \frac{\vect{y}^{(k)}\,\vect{y}^{(k)T}}{\rho^{(k)}} \text{,}
+\tilde{\matr{H}}^{(k+1)} = \Biggl(\matr{I} - \frac{\vect{y}^{(k)}\, \vect{s}^{(k)T}}{\rho^{(k)}}\Biggr)^T \tilde{\matr{H}}^{(k)} \Biggl(\matr{I} - \frac{\vect{y}^{(k)}\, \vect{s}^{(k)T}}{\rho^{(k)}}\Biggr) + \frac{\vect{y}^{(k)}\,\vect{y}^{(k)T}}{\rho^{(k)}} %\text{,}
 \]
 with
 \(
-\rho^{(k)} = \vect{y}^{(k)T} \vect{s}^{(k)} \text{.}
+\rho^{(k)} = \vect{y}^{(k)T} \vect{s}^{(k)} %\text{.}
 \)
 
 A more popular approach is the BFGS (Broyden-Fletcher-Goldfarb-Shanno) method, which instead updates an approximation \(\matr{B}^{(k)}\) of the inverse Hessian. By considering the first-order Taylor expansion of \(\nabla f\), one may wish to satisfy
 \[
-\matr{B}^{(k+1)}\, \vect{y}^{(k)} = \vect{s}^{(k)} \text{,}
+\matr{B}^{(k+1)}\, \vect{y}^{(k)} = \vect{s}^{(k)} %\text{,}
 \]
 and the BFGS update is given by
 \[
-\matr{B}^{(k+1)} = \matr{B}^{(k)} - \frac{\matr{B}^{(k)}\, \vect{s}^{(k)}\, \vect{s}^{(k)T}\, \matr{B}^{(k)}}{\vect{s}^{(k)T}\matr{B}^{(k)}\vect{s}^{(k)}} + \frac{\vect{y}^{(k)}\, \vect{y}^{(k)T}}{\rho^{(k)}} \text{,}
+\matr{B}^{(k+1)} = \matr{B}^{(k)} - \frac{\matr{B}^{(k)}\, \vect{s}^{(k)}\, \vect{s}^{(k)T}\, \matr{B}^{(k)}}{\vect{s}^{(k)T}\matr{B}^{(k)}\vect{s}^{(k)}} + \frac{\vect{y}^{(k)}\, \vect{y}^{(k)T}}{\rho^{(k)}} %\text{,}
 \]
 with
 \(
-\rho^{(k)} = \vect{y}^{(k)T} \vect{s}^{(k)} \text{.}
+\rho^{(k)} = \vect{y}^{(k)T} \vect{s}^{(k)} %\text{.}
 \)
 
 
@@ -2506,7 +2518,7 @@ Recall Equation~\eqref{eq:form_optimization_problem}, the general formulation of
 \subsubsection{Classes of Constrained Optimization Problems}
 Depending on the type and form of $f$ and $c_i$'s, the type of constrained problem can be radically different and require different classes of optimization algorithms:
 \begin{itemize}
-  \item $f$ and $c_i$'s are \emph{affine} functions: \nameref{sec:linear_programming} problem (Section~\ref{sec:linear_programming})
+  \item $f$ and $c_i$'s are \emph{affine} functions: Linear Programming problem %(Section~\ref{sec:linear_programming})
   \item $f$ is \emph{quadratic} and all $c_i$'s are \emph{affine}: Quadratic Programming problem
   \item $f$ is \emph{nonlinear}: Nonlinear Programming problem
   \item $f$ is \emph{convex}, all inequality constraints $c_{i,i\in\mathcal{I}}$ are \emph{convex}, and all equality constraints $c_{i,i\in\mathcal{E}}$ are \emph{affine}: Convex Problem
@@ -2595,11 +2607,22 @@ Then there exists a unique \(\vect{\lambda}^{\ast}\in\R^{|\mathcal{E}|+|\mathcal
 \begin{subequations}\label{eq:KKT}
   \begin{align}
     &\qquad\qquad\qquad&\nabla f(\vect{x}^{\ast}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}^{\ast} \nabla c_{i}(\vect{x}^{\ast}) &= \vect{0}   &&\text{(stationarity)} \label{eq:KKT_stationarity} \\ % stationarity
-    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &= 0,                      \quad \forall i\in\mathcal{E}                             &&\text{(primal feasibility)}                \label{eq:KKT_equal_feas} \\
-    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &\ge 0,                    \quad \forall i\in\mathcal{I}                             &&\text{(primal feasibility)}                \label{eq:KKT_inequal_feas} \\
-    &\qquad\qquad\qquad&\lambda_{i}^{\ast} &\ge 0,                        \quad \forall i\in\mathcal{I}                             &&\text{(dual feasibility)}                  \label{eq:KKT_dual_feas} \\
-    &\qquad\qquad\qquad&\lambda_{i}^{\ast} c_{i}(\vect{x}^{\ast}) &= 0,   \quad \forall i\in\mathcal{E}\cup\mathcal{I}              &&\text{(complementary slackness)}           \label{eq:KKT_comp_slack} % complementarity slackness
+    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &= 0,                                            \quad \forall i\in\mathcal{E}                             &&\text{(primal feasibility)}                \label{eq:KKT_equal_feas} \\
+    &\qquad\qquad\qquad&c_{i}(\vect{x}^{\ast}) &\ge 0,                                          \quad \forall i\in\mathcal{I}                             &&\text{(primal feasibility)}                \label{eq:KKT_inequal_feas} \\
+    &\qquad\qquad\qquad&\lambda_{i}^{\ast} &\ge 0,                                              \quad \forall i\in\mathcal{I}                             &&\text{(dual feasibility)}                  \label{eq:KKT_dual_feas} \\
+    &\qquad\qquad\qquad&\lambda_{i}^{\ast} \tikzmark{c_sl}c_{i}(\vect{x}^{\ast}) &= 0,   \quad \forall i\in\mathcal{E}\cup\mathcal{I}              &&\text{(complementary slackness)}           \label{eq:KKT_comp_slack} % complementarity slackness
   \end{align}
+\tikzexternaldisable%
+\begin{tikzpicture}[remember picture,overlay]
+\coordinate (c_sl_eq) at (pic cs:c_sl);
+\coordinate (c_sl_border) at ($ (current page text area.west |- c_sl_eq)$);
+% \node[draw, red, thick, circle, inner sep = 0pt, minimum size=1mm] at (c_sl_border) {}; % for debugging
+\node[rectangle,draw,anchor=south west, inner sep=3pt, outer sep=0pt, align=left] at (c_sl_border) {Complementary Slackness \eqref{eq:KKT_comp_slack}:\\
+$\;\bullet\; i \in \mathcal{A}(\vect{x}^{\ast}) \Rightarrow c_i(\vect{x}^{\ast})=0$\\
+$\;\bullet\; i \notin \mathcal{A}(\vect{x}^{\ast}) \Rightarrow \lambda_i^{\ast}=0$
+};
+\end{tikzpicture}%
+\tikzexternalenable%
 \end{subequations}
 where \(\vect{\lambda}^{\ast}\) are called the \emph{Lagrange multipliers} at \(\vect{x}^{\ast}\) and the pair \((\vect{x}^{\ast},\vect{\lambda}^{\ast})\) is called a \gls{kkt} point.
 \end{theorem}
@@ -2747,67 +2770,37 @@ Satisfaction of the strict complementarity property usually makes it easier for 
 \end{proof}
 
 
-When the \gls{kkt} conditions are satisfied at a point \(\vect{x}^{\ast}\), a (infinitesimal) move along any vector \(\vect{w} \in \mathcal{F}(\vect{x}^{\ast})\) remains feasible and either increases the first-order approximation of \(f\), if \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) > 0\) (``decided'') or else keeps it constant, if \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) = 0\) (``undecided'').
-% A decrease is not possible, because from \eqref{eq:KKT_stationarity_active} we have
+When the \gls{kkt} conditions are satisfied at a point \(\vect{x}^{\ast}\), a (infinitesimal) move along any vector \(\vect{d} \in \mathcal{F}(\vect{x}^{\ast})\) remains feasible and either increases the first-order approximation of \(f\), if \(\vect{d}^\top \nabla f(\vect{x}^{\ast}) > 0\) (``decided'') or else keeps it constant, if \(\vect{d}^\top \nabla f(\vect{x}^{\ast}) = 0\) (``undecided'').
+A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\) as a linear combination of the active constraint gradients
 % \begin{equation}\label{eq:KKT_objective_gradient}
-% \nabla f(\vect{x}^{\ast})
-%   =
-%   \sum_{i\in\mathcal{A}(\vect{x}^{\ast})}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
-%   % =
-%   % \sum_{i\in\mathcal{E}}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
-%   % +
-%   % \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} \lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
-% \end{equation}
-% with \(\lambda_i^{\ast}\ge 0\) for \(i\in\mathcal{I}\) and if we now dot \eqref{eq:KKT_objective_gradient} with any \(\vect{w}\in\mathcal{F}(\vect{x}^{\ast})\) we obtain
-% \[
-% \vect{w}^{\top}\nabla f(\vect{x}^{\ast})
-% % =
-% % \vect{w}^{\top}\sum_{i\in\mathcal{A}(\vect{x}^{\ast})}\lambda_i^{\ast}\,\nabla c_i(\vect{x}^{\ast})
-% =\underbrace{
-%    \sum_{i\in\mathcal{E}}
-%      \lambda_i^{\ast}\,
-%      \vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})
-%  }_{=0\;\text{because }\vect{w}^{\top}\nabla c_i=0}
-%  +\;
-%  \underbrace{
-%    \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})}
-%      \lambda_i^{\ast}\,
-%      \vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})
-%  }_{\ge 0\;\text{since }\lambda_i^{\ast}\ge 0,\
-%                          \vect{w}^{\top}\nabla c_i\ge 0}
-% \ge 0
-% \]
-A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\) as a linear combination of the active constraint gradients:
-\begin{equation}\label{eq:KKT_objective_gradient}
-\vect{w}^{\top}\nabla f(\vect{x}^{\ast})
-=
-% \underbrace{
-\sum_{i\in\mathcal{E}}
-\lambda_i^{\ast}
-\underbrace{\vect{w}^{\top} \nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{=} 0}
-% }_{= 0}
-+
-% \underbrace{
-\sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} 
-\underbrace{\lambda_i^{\ast}}_{\overset{\eqref{eq:KKT_dual_feas}}{\ge} 0}
-\underbrace{\vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{\ge} 0}
-% }_{\ge 0}
-\ge 0
-\end{equation}
-% A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\) as a linear combination of the active constraint gradients
-% \begin{equation}\label{eq:KKT_objective_gradient}
-% \vect{w}^{\top}\nabla f(\vect{x}^{\ast})
+% \vect{d}^{\top}\nabla f(\vect{x}^{\ast})
 % =
 % \sum_{i\in\mathcal{E}}
 % \lambda_i^{\ast}
-% \underbrace{\vect{w}^{\top} \nabla c_i(\vect{x}^{\ast})}_{= 0}
+% \underbrace{\vect{d}^{\top} \nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{=} 0}
 % +
 % \sum_{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})} 
-% \lambda_i^{\ast}
-% \underbrace{\vect{w}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\ge 0}
+% \underbrace{\lambda_i^{\ast}}_{\overset{\eqref{eq:KKT_dual_feas}}{\ge} 0}
+% \underbrace{\vect{d}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\overset{\eqref{eq:linearized_feasible_directions}}{\ge} 0}
 % \ge 0
 % \end{equation}
-% and recall condition \eqref{eq:KKT_dual_feas}.
+\newcommand{\linkeq}[1]{\mathrel{\hyperref[#1]{=}}}   % clickable “=”
+\newcommand{\linkge}[1]{\mathrel{\hyperref[#1]{\ge}}} % clickable “≥”
+\begin{equation}\label{eq:KKT_objective_gradient}
+\vect{d}^{\top}\nabla f(\vect{x}^{\ast})
+\;=\;
+\sum_{i\in\mathcal{E}}
+\lambda_i^{\ast}
+\underbrace{\vect{d}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\linkeq{eq:linearized_feasible_directions}0}
+\;+\;
+\sum_{\mathclap{i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\ast})}}
+\overbrace{\lambda_i^{\ast}}^{\linkge{eq:KKT_dual_feas}0}
+\underbrace{\vect{d}^{\top}\nabla c_i(\vect{x}^{\ast})}_{\linkge{eq:linearized_feasible_directions}0}
+\;\ge\;
+0
+\end{equation}
+where we used Definition~\ref{def:linearized_feasible_directions} for the dot products and Condition~\eqref{eq:KKT_dual_feas} for the multipliers.
+
 
 
 
@@ -2824,42 +2817,86 @@ A decrease is not possible, as we see if we express \(\nabla f(\vect{x}^{\ast})\
 % The \gls{kkt} are first-rder conditions which tell us how the first derivatives of \(f\) and the active constraints \(c_i\) are related to each other at a solution.
 
 
-For undecided directions \(\vect{w}^\top \nabla f(\vect{x}^{\ast}) = 0\), we canNOT determine from first derivative information wether a move along this direction will increase or decrease \(f\).
+For undecided directions \(\vect{d}^\top \nabla f(\vect{x}^{\ast}) = 0\), we canNOT determine from first derivative information wether a move along this direction will increase or decrease \(f\).
 Second-order conditions examine the second derivative terms in the Taylor expansions of \(f\) and \(c_i\), to see wether this extra information resolves the question.
-They
+
+
 \begin{definition}[Critical Cone]\label{def:critical_cone}
   For a \gls{kkt} point \( (\vect{x},\vect{\lambda}) \), the \emph{critical cone} at \((\vect{x},\vect{\lambda})\) is defined as
   \begin{equation}\label{eq:critical_cone}
   % \begin{verticalhack}
-    \mathcal{C}(\vect{x},\vect{\lambda}) := \left\{ \vect{d}\in\mathcal{F}(\vect{x}) \mid \nabla c_{i}(\vect{x})^{\top} \vect{d} = 0 \text{ for all } i\in\mathcal{I}\cap\mathcal{A}(\vect{x}) \text{ with } \lambda_{i}>0\right\}  \subseteq \mathcal{F}(\vect{x}) 
+    \mathcal{C}(\vect{x},\vect{\lambda}) := \left\{ \vect{d}\in\mathcal{F}(\vect{x}) \mid \nabla c_{i}(\vect{x})^{\top} \vect{d} = 0 \text{ for all } i\in\mathcal{I}\cap\mathcal{A}(\vect{x}) \text{ with } \lambda_{i}>0\right\} % \subseteq \mathcal{F}(\vect{x}) 
   % \end{verticalhack}
-  \qedhere
+  % \qedhere
   \end{equation}
+  Equivalently, \(\vect{d} \in \mathcal{C}(\vect{x},\vect{\lambda})\) if and only if all of the following hold:
+  \begin{itemize}
+    \item \(\nabla c_{i}(\vect{x})^{\top} \vect{d} = 0\) for all \(i\in\mathcal{E}\)
+    \item  \(\nabla c_{i}(\vect{x})^{\top} \vect{d} = 0\) for all \(i\in\mathcal{I}\cap\mathcal{A}(\vect{x})\) with \(\lambda_{i}>0\)
+    \item \(\nabla c_{i}(\vect{x})^{\top} \vect{d} \ge 0\) for all \(i\in\mathcal{I}\cap \mathcal{A}(\vect{x})\) with \(\lambda_{i}=0\) \qedhere
+  \end{itemize}
 \end{definition}
 
+From Definition~\ref{def:critical_cone}, it follows that \(\mathcal{C}(\vect{x},\vect{\lambda}) \subseteq \mathcal{F}(\vect{x})\) and, since \(\lambda_i = 0\) for inactive components \(i \in \mathcal{I}\setminus\mathcal{A}(\vect{x})\), for any \(\vect{d} \in \mathcal{C}(\vect{x},\vect{\lambda})\) we also have,
+\begin{equation}\label{eq:critical_cone_active}
+  \lambda_i \nabla c_i(\vect{x})^{\top} \vect{d} = 0 \quad \forall i \in \mathcal{E} \cup \mathcal{I} 
+\end{equation}
 
+The critical cone \(\mathcal{C}(\vect{x},\vect{\lambda})\) contains exactly those directions \(\vect{d} \in \mathcal{F}(\vect{x})\) for which it is not clear from first derivative information alone wether \(f\) will increase or decrease (``undecided'' directions):
+\begin{equation}\label{eq:critical_cone_contains_undecided}
+  \vect{d}^\top \nabla f(\vect{x})
+  \overset{\eqref{eq:KKT_stationarity}}{=} 
+  % \vect{d}^\top \sum _{i\in\mathcal{E}\cup\mathcal{I}} \lambda_i \nabla c_i(\vect{x}) 
+  % = 
+  \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_i \vect{d}^\top \nabla c_i(\vect{x}) 
+  \overset{\eqref{eq:critical_cone_active}}{=} 
+  0 \quad \forall \vect{d} \in \mathcal{C}(\vect{x},\vect{\lambda})
+  \end{equation}
 
+To find out the change of \(f\) in directions \(\vect{d} \in \mathcal{C}(\vect{x},\vect{\lambda})\), we consider the second-order derivative \eqref{eq:hessian} of \(\mathcal{L}(\vect{x},\vect{\lambda})\) with respect to \(\vect{x}\):
+\[
+\nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x},\vect{\lambda}) := \matr{H}_{f}(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} \matr{H}_{c_{i}}(\vect{x})
+\]
 
-\begin{definition}[Lagrangian Hessian]\label{def:Lagrangian_Hessian}
-  \[
-    \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x},\vect{\lambda}) := \matr{H}_{f}(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i} \matr{H}_{c_{i}}(\vect{x}).
-   \]
-\end{definition}
-
-\begin{theorem}[Second-order necessary condition]\label{thm:SONC}
-  Let \( \vect{x}^{\ast} \) be a local minimizer satisfying \nameref{def:constraint_qualification_condition} and let \( \vect{\lambda}^{\ast} \) be the unique multiplier vector from Theorem~\ref{thm:KKT}. Then
-  \[
-    \vect{d}^{\top} \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \vect{d} \ge 0 \quad \forall \vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast}).
-  \]
+\begin{theorem}[Second-Order Necessary Optimality Condition]\label{thm:SONC}
+If \( \vect{x}^{\ast} \) is a local minimizer, the \nameref{def:constraint_qualification_condition} holds at \(\vect{x}^{\ast}\) and \( \vect{\lambda}^{\ast} \) is the vector of Lagrange multipliers that satisfies the \gls{kkt}, then:
+\begin{equation}\label{eq:SONC}
+{\color{Red}
+\setlength{\fboxrule}{1pt}
+\boxed{ 
+\color{black}
+\vect{d}^{\top} \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \vect{d} \ge 0 \quad \forall \vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast})
+}
+}\qedhere
+\end{equation}
 \end{theorem}
 
-\begin{theorem}[Second-order sufficient condition]\label{thm:SOSC}
-  Suppose that \( (\vect{x}^{\ast},\vect{\lambda}^{\ast}) \) satisfies the \gls{kkt} conditions. If
-  \[
-    \vect{d}^{\top} \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \vect{d} > 0 \quad \forall \vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \setminus \{ \vect{0} \},
-  \]
-  then \( \vect{x}^{\ast} \) is a strict local minimizer of~\eqref{eq:form_optimization_problem}.
+\begin{theorem}[Second-Order Sufficient Optimality Condition]\label{thm:SOSC}
+Let \( (\vect{x}^{\ast},\vect{\lambda}^{\ast}) \) be a \gls{kkt} point. If
+\begin{equation}\label{eq:SOSC}
+{\color{Red}
+\setlength{\fboxrule}{1pt}
+\boxed{ 
+\color{black}
+\vect{d}^{\top} \nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \vect{d} > 0 \quad \forall \vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \setminus \{ \vect{0} \}
+}
+}
+\end{equation}
+then \( \vect{x}^{\ast} \) is a strict local minimizer.
 \end{theorem}
+If \((\vect{x}^{\ast},\vect{\lambda}^{\ast})\) is a \gls{kkt} point such that \(\nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \succ 0\), then \(\vect{x}^{\ast}\) is automatically a (strict) local minimizer!
+
+
+% Remarks :
+% ▶ Differences with the second-order necessar y condition : strict ine q ualit y and the absence of the constraint q ualification condition.
+% ▶ If ( x ∗ , λ ∗ ) is a KKT p oint s.t. ∇ xx 2 L ( x ∗ , λ ∗ ) ≻ 0 then x ∗ is a ( strict ) local minimiser.
+% ▶ Proof of the second-order conditions in the lecture notes and in the book Cha p ter 12.
+
+Differences between Theorems~\ref{thm:SONC} and~\ref{thm:SOSC}:
+\begin{itemize}
+\item strict inequality in \eqref{eq:SONC}
+\item absence of the \nameref{def:constraint_qualification_condition} in \eqref{eq:SOSC}
+\end{itemize}
 
 
 
@@ -2878,7 +2915,9 @@ They
 
 
 
-\section{Linear Programming}\label{sec:linear_programming}
+
+\clearpage
+% \section{Linear Programming}\label{sec:linear_programming}
 
 
 
@@ -3220,7 +3259,7 @@ They
 
 
 
-\printglossary[type=\acronymtype,title={List of Acronyms}]
+% \printglossary[type=\acronymtype,title={List of Acronyms}]
 
 
 
