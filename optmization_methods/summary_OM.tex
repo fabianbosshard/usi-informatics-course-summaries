@@ -1,5 +1,7 @@
 % \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
 \documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen} 
+
 
 \usepackage[automark]{scrlayer-scrpage}
 \clearpairofpagestyles
@@ -265,7 +267,7 @@
 \algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
 \algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
 
-\newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
+% \newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
 \newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
 \newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
 
@@ -312,6 +314,8 @@
 % 3. define your acronyms
 \newacronym{kkt}{KKT}{Karush--Kuhn--Tucker conditions}
 \newacronym{licq}{LICQ}{Linear Independence Constraint Qualification}
+\newacronym{lp}{LP}{Linear Programming}
+\newacronym{qp}{QP}{Quadratic Programming}
 
 
 
@@ -396,12 +400,10 @@ main components:
 
 general form of an optimization problem:
 \begin{equation}
-{
 \label{eq:form_optimization_problem}
 \boxed{
  \min_{\vect{x} \in \mathbb{R}^{n}} f(\vect{x}) \quad \text{subject to} \quad \begin{cases}c_{i}(\vect{x})=0, & i \in \mathcal{E} \\ c_{i}(\vect{x}) \geq 0, & i \in \mathcal{I}\end{cases}
  }
-}
 \end{equation}
 with
 \begin{itemize}
@@ -703,7 +705,7 @@ f\left(t\vect{x}+(1-t)\vect{y}\right) \leq t\,f(\vect{x})+(1-t)\,f(\vect{y}) -\f
 
 Observe that ``strong convexity'' $\Longrightarrow$ ``strict convexity'' $\Longrightarrow$ ``convexity''.
 
-\begin{example}
+\begin{example}\label{ex:convex_functions}
 The following examples and properties of convex functions are important:
 \begin{itemize}
 \item The exponential function is convex, while the logarithm function is concave. 
@@ -2073,69 +2075,230 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
 
 \subsubsection{Wolfe Conditions}
 
-\begin{center}
-\begin{tikzpicture}[>=stealth]
+
+% \begin{center}
+% \begin{tikzpicture}[>=stealth]
+%   \begin{axis}[
+%     axis lines=middle,
+%     axis line style={
+%     ->,
+%       >=Computer Modern Rightarrow
+%     },
+%     xlabel={\footnotesize$\alpha$},
+%     xlabel style={below},
+%     % ylabel={$y$},
+%     xmin=-0.05, xmax=1.25,
+%     ymin=-0.13, ymax=1.5,
+%     samples=200,
+%     domain=0:1,
+%     % legend style={draw=none, at={(0.97,0.97)}, anchor=north east},
+%     xtick=\empty,
+%     ytick={1.2},
+%     yticklabel={\footnotesize$f\bigl(\vect{x}^{(k)}\bigr)$},
+%     clip=false,
+%     x =6cm,
+%     y = 2cm
+%   ]
+%     %---------------------------------------------------------------------
+%     % 1) The polynomial f(x) = a4*x^4 + a3*x^3 + a2*x^2 + a1*x + a0
+%     %---------------------------------------------------------------------
+%     \tikzmath{
+%       \a4 = 34.3;
+%       \a3 = -68.7;
+%       \a2 = 43.0;
+%       \a1 = -9.1;
+%       \a0 = 1.2;
+%     }
+%     \addplot [ black, thick, domain=0:1]
+%       {(\a4)*x^4 + (\a3)*x^3 + (\a2)*x^2 + (\a1)*x + (\a0)}
+%       node [pos=1.0, anchor=south west, xshift=-1.8mm, yshift=0.8mm] {\footnotesize$g(\alpha) = f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr)$};
+%     % \addlegendentry{\(f(x)\)}
+
+%     %---------------------------------------------------------------------
+%     % 2) Tangent line at x=0:
+%     %    f(0) = a0
+%     %    f'(0) = a1
+%     %    => tangent y = f(0) + f'(0)*(x - 0) = a0 + a1*x
+%     %---------------------------------------------------------------------
+%     \addplot [thick, dashed, black, domain=0:0.1]
+%       {(\a0) + (\a1)*x}
+%       node [pos=1, anchor=north west, xshift=-1.2mm, yshift=0.2mm] {\footnotesize$f\bigl(\vect{x}^{(k)}\bigr) + g'(0)\,\alpha $};
+%     % \addlegendentry{tangent at \(x=0\)}
+
+%     %---------------------------------------------------------------------
+%     % 3) Relaxed line \ell(x) = f(0) + \eta * x * f'(0)
+%     %    for some 0 < eta < 1
+%     %    => \ell(x) = a0 + \eta * a1 * x
+%     %---------------------------------------------------------------------
+%     \addplot [thick, black, dotted, domain=0:1]
+%       {(\a0) + 0.1*(\a1)*x}
+%       node [pos=1.0, anchor=west, xshift=0.2mm] {\footnotesize$\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}$};
+%     % \addlegendentry{\(\ell(x)\) (relaxed, \(\eta=0.5\))}
+
+%   \end{axis}
+% \end{tikzpicture}
+% \end{center}
+\tikzexternaldisable%
+\[
+\begin{tikzpicture}%[scale=0.3] %scale does not work here
+  %---------------------------------------------------------------
+  % LEFT PANEL : level sets of  f(x,y)=x^2+2y^2
+  %---------------------------------------------------------------
   \begin{axis}[
-    axis lines=middle,
-    axis line style={
-    ->,
-      >=Computer Modern Rightarrow
-    },
-    xlabel={\footnotesize$\alpha$},
-    xlabel style={below},
-    % ylabel={$y$},
-    xmin=-0.05, xmax=1.25,
-    ymin=-0.13, ymax=1.5,
-    samples=200,
-    domain=0:1,
-    % legend style={draw=none, at={(0.97,0.97)}, anchor=north east},
-    xtick=\empty,
-    ytick={1.2},
+    scale=0.6,
+      width=9cm, height=6cm,
+      domain=-1.5:1.5,
+      y domain=-1:1,
+      view={0}{90},
+      samples=100,
+      ticks=none,
+    %   xlabel={$x$},
+    %   ylabel={$y$},
+      name=left  % so we can anchor the second axis to it
+    ]
+      % Contours of f
+      \addplot3[
+        contour lua={
+          draw color=black,
+          number=10,
+          labels=false
+        },
+        % thick
+      ] {(1 + x^2 + 2*y^2)};
+
+    %   % Starting point  x0 = (1,0.5)
+    %   \addplot+[only marks, mark=*, mark size=2.2pt]
+    %     coordinates {(1,0.5)};
+
+      \node[circle, fill=black, inner sep=1pt, outer sep=0pt] at (axis cs:1,0.5) {};
+      \node[fill=white,inner sep=0pt,outer sep=2pt, anchor=south west] at (axis cs:1,0.5) {\footnotesize$\vect{x}^{(k)}$};
+
+      % Steepest–descent ray  x0 + α ( -∇f(x0) )
+      \addplot[
+        draw=none,
+        domain=0:0.6, samples=2
+      ] ({1 - 2*x}, {0.5 - 2*x})
+      node[pos=1, fill=white,anchor=north, outer sep = 0pt, inner sep=0pt]
+        {\footnotesize$\vect{x}^{(k)} + \alpha \vect{d}^{(k)}$};
+        \addplot[
+        thick,
+        ->,
+        domain=0:0.6, samples=2
+      ] ({1 - 2*x}, {0.5 - 2*x});
+
+      % In-plot label for f
+      \node[fill=white,inner sep=0pt,outer sep=0pt] at (rel axis cs:0.15,0.85) {\footnotesize$f(\vect{x})$};
+  \end{axis}
+
+  %---------------------------------------------------------------
+  % RIGHT PANEL : g(α) and its two lines
+  %---------------------------------------------------------------
+  \begin{axis}[
+    scale=0.8,
+      at={(left.east)}, anchor=west,   % stick to the right of the first axis
+      xshift=1.5cm,                      % manual separation
+      width=9cm, height=6cm,
+      axis lines=middle,
+      axis line style={->},
+      xlabel={\footnotesize$\alpha$},
+      xmin=0, xmax=0.7,
+      ymin=0, ymax=2.4,
+      xtick=\empty,
+    ytick={2.0},
     yticklabel={\footnotesize$f\bigl(\vect{x}^{(k)}\bigr)$},
+    yticklabel style={inner sep=1pt, outer sep=0pt},
     clip=false,
-    x =6cm,
-    y = 2cm
-  ]
-    %---------------------------------------------------------------------
-    % 1) The polynomial f(x) = a4*x^4 + a3*x^3 + a2*x^2 + a1*x + a0
-    %---------------------------------------------------------------------
-    \tikzmath{
-      \a4 = 34.3;
-      \a3 = -68.7;
-      \a2 = 43.0;
-      \a1 = -9.1;
-      \a0 = 1.2;
-    }
-    \addplot [ black, thick, domain=0:1]
-      {(\a4)*x^4 + (\a3)*x^3 + (\a2)*x^2 + (\a1)*x + (\a0)}
-      node [pos=1.0, anchor=south west, xshift=-1.8mm, yshift=0.8mm] {\footnotesize$g(\alpha) = f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr)$};
-    % \addlegendentry{\(f(x)\)}
+    ]
 
-    %---------------------------------------------------------------------
-    % 2) Tangent line at x=0:
-    %    f(0) = a0
-    %    f'(0) = a1
-    %    => tangent y = f(0) + f'(0)*(x - 0) = a0 + a1*x
-    %---------------------------------------------------------------------
-    \addplot [thick, dashed, black, domain=0:0.1]
-      {(\a0) + (\a1)*x}
-      node [pos=1, anchor=north west, xshift=-1.2mm, yshift=0.2mm] {\footnotesize$f\bigl(\vect{x}^{(k)}\bigr) + g'(0)\,\alpha $};
-    % \addlegendentry{tangent at \(x=0\)}
+    % -------------------- user-set parameters --------------------------------
+    \pgfmathsetmacro{\normalEta}{0.2}            %  Armijo parameter  η  ∈ (0,1)
+    \pgfmathsetmacro{\alphaL}{0.15}         %  α_min  (must satisfy 0 < α_min < 1/3)
+    % ------------------------------------------------------------------------
+    
+    \pgfmathsetmacro{\gprimeZero}{-8}       %  g'(0)
 
-    %---------------------------------------------------------------------
-    % 3) Relaxed line \ell(x) = f(0) + \eta * x * f'(0)
-    %    for some 0 < eta < 1
-    %    => \ell(x) = a0 + \eta * a1 * x
-    %---------------------------------------------------------------------
-    \addplot [thick, black, dotted, domain=0:1]
-      {(\a0) + 0.1*(\a1)*x}
-      node [pos=1.0, anchor=west, xshift=0.2mm] {\footnotesize$\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}$};
-    % \addlegendentry{\(\ell(x)\) (relaxed, \(\eta=0.5\))}
+    % g(α)
+    \addplot[black, thick, domain=0:0.6, samples=200]
+    {2.0 - 8*x + 12*x^2}
+    node[pos=1, anchor= south west, outer sep = 2pt, inner sep=0pt]
+    {\footnotesize$g(\alpha) = f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr)$};
+    % {\footnotesize$g(\alpha)$};
+
+    % Tangent:  f(x0) + g'(0) α  
+    \addplot[black, dashed, domain=0:0.21] {2.0 - 8*x}
+    node[pos=1, anchor= west, outer sep = 2pt, inner sep=0pt] %{\footnotesize$f\bigl(\vect{x}^{(k)}\bigr) + g'(0)\,\alpha $};
+    {\tiny{slope: $g'(0)$}};
+
+    % Relaxed line: ℓ(α) = f(x0) + η α g'(0) 
+    \addplot[black, thick, domain=0:0.6]
+    {2.0 + \normalEta * \gprimeZero * x}
+    node[pos=1, anchor=west, outer sep = 2pt, inner sep=0pt]
+    %  {\footnotesize$\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)}$};
+    {\footnotesize$\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\, g'(0)\,\alpha$};
+    % {\footnotesize$\ell(\alpha)$};
+    % {\footnotesize$f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, g'(0) =: \ell(\alpha)$};
+    \addplot[draw=none, domain=0:0.21, samples=2] {2.0 + \normalEta * \gprimeZero * x}
+    node[pos=1, anchor= west, inner sep=0pt, outer sep=2pt, yshift=1mm]
+    {\tiny{slope: $\eta\,g'(0)$}};
+
+
+
+
+  % derived curvature parameter  \barη  via  α_min = (1- \barη)/3  (for this quadratic)
+  \pgfmathsetmacro{\barEta}{1 - 3*\alphaL}
+
+  % slopes
+  \pgfmathsetmacro{\slopeEta}{\normalEta    * \gprimeZero}   %  η g'(0)
+  \pgfmathsetmacro{\slopeBar}{\barEta * \gprimeZero}   %  \barη g'(0)
+
+  % ordinates
+  \pgfmathsetmacro{\gAlphaL}{2.0 - 8*\alphaL + 12*\alphaL*\alphaL}
+
+  % upper bound α_max from Armijo line–function intersection
+  \pgfmathsetmacro{\alphaU}{(1 - \normalEta)*abs(\gprimeZero)/12}
+  \pgfmathsetmacro{\gAlphaU}{2.0 - 8*\alphaU + 12*\alphaU*\alphaU}
+
+  % dashed \barη–slope reference line
+  \addplot[black, dashed, domain=0:0.21, samples=2] {2.0 + \slopeBar*x}
+    node[pos=1, anchor=west, inner sep=0pt, outer sep=2pt] %{\footnotesize$f(\vect{x}^{(k)}) + \bar{\eta}\,g'(0)\,\alpha$};
+    {\tiny{slope: $\bar{\eta}\,g'(0)$}};
+
+  % ─── lower bound α_min (curvature condition) ─────────────────────────────
+  \node[circle,fill=black,inner sep=1pt] at (axis cs:\alphaL,\gAlphaL) {};
+  \draw[dotted] (axis cs:\alphaL,\gAlphaL) -- (axis cs:\alphaL,0);
+
+  % tangent to g at α_min   (slope = \barη g'(0))
+  \addplot[black, domain={\alphaL-0.05}:{\alphaL+0.05}, samples=2] {\gAlphaL + \slopeBar*(x - \alphaL)};
+    % node[pos=0.55, anchor=south west, inner sep=0pt, outer sep=1pt]
+    %   {\footnotesize$\text{slope} = \bar{\eta}\,g'(0)$};
+
+  % ─── upper bound α_max (Armijo condition) ────────────────────────────────
+  \node[circle,fill=black,inner sep=1pt] at (axis cs:\alphaU,\gAlphaU) {};
+  \draw[dotted] (axis cs:\alphaU,\gAlphaU) -- (axis cs:\alphaU,0);
+
+  % interval bar on α-axis
+%   \draw[very thick] (axis cs:\alphaL,0) -- (axis cs:\alphaU,0);
+  \draw (axis cs:\alphaL,0) -- (axis cs:\alphaL,-0.08);
+  \draw (axis cs:\alphaU,0) -- (axis cs:\alphaU,-0.08);
+
+  % labels for bounds
+%   \node[below] at (axis cs:\alphaL,0) {\footnotesize$\alpha_{\min}$};
+%   \node[below] at (axis cs:\alphaU,0) {\footnotesize$\alpha_{\max}$};
+
+% arrow for 2nd Wolfe (curvature) – points to the right
+\draw[->, thick]
+  (axis cs:\alphaL,0) node[anchor=north west] {\tiny \eqref{eq:second_wolfe_condition} holds}%2. Wolfe}
+  -- (axis cs:{\alphaL + 0.05},0);
+
+% arrow for 1st Wolfe (Armijo) – points to the left
+\draw[->, thick]
+  (axis cs:\alphaU,0) node[anchor=north east] {\tiny \eqref{eq:first_wolfe_condition} holds}%1. Wolfe}
+  -- (axis cs:{\alphaU - 0.05},0);
 
   \end{axis}
 \end{tikzpicture}
-\end{center}
-
+\]
+\tikzexternalenable%
 The Wolfe conditions are two conditions that guide the choice of a “good enough” step size \(\alpha^{(k)}\) at each iteration of a line search method to achieve global convergence. Consider the affine function
 \[
 \ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} %\text{,}
@@ -2518,7 +2681,7 @@ Recall Equation~\eqref{eq:form_optimization_problem}, the general formulation of
 \subsubsection{Classes of Constrained Optimization Problems}
 Depending on the type and form of $f$ and $c_i$'s, the type of constrained problem can be radically different and require different classes of optimization algorithms:
 \begin{itemize}
-  \item $f$ and $c_i$'s are \emph{affine} functions: Linear Programming problem %(Section~\ref{sec:linear_programming})
+  \item $f$ and $c_i$'s are \emph{affine} functions: Linear Programming problem (Section~\ref{sec:linear_programming})
   \item $f$ is \emph{quadratic} and all $c_i$'s are \emph{affine}: Quadratic Programming problem
   \item $f$ is \emph{nonlinear}: Nonlinear Programming problem
   \item $f$ is \emph{convex}, all inequality constraints $c_{i,i\in\mathcal{I}}$ are \emph{convex}, and all equality constraints $c_{i,i\in\mathcal{E}}$ are \emph{affine}: Convex Problem
@@ -2886,12 +3049,6 @@ then \( \vect{x}^{\ast} \) is a strict local minimizer.
 \end{theorem}
 If \((\vect{x}^{\ast},\vect{\lambda}^{\ast})\) is a \gls{kkt} point such that \(\nabla^{2}_{\vect{x}\vect{x}} \mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast}) \succ 0\), then \(\vect{x}^{\ast}\) is automatically a (strict) local minimizer!
 
-
-% Remarks :
-% ▶ Differences with the second-order necessar y condition : strict ine q ualit y and the absence of the constraint q ualification condition.
-% ▶ If ( x ∗ , λ ∗ ) is a KKT p oint s.t. ∇ xx 2 L ( x ∗ , λ ∗ ) ≻ 0 then x ∗ is a ( strict ) local minimiser.
-% ▶ Proof of the second-order conditions in the lecture notes and in the book Cha p ter 12.
-
 Differences between Theorems~\ref{thm:SONC} and~\ref{thm:SOSC}:
 \begin{itemize}
 \item strict inequality in \eqref{eq:SONC}
@@ -2899,25 +3056,222 @@ Differences between Theorems~\ref{thm:SONC} and~\ref{thm:SOSC}:
 \end{itemize}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \clearpage
-% \section{Linear Programming}\label{sec:linear_programming}
+
+
+\section{Linear Programming}\label{sec:linear_programming}
+
+\subsection{``Generic'' Form}\label{sec:genericform_linear_programming}
+
+In a \gls{lp} problem, \(f\) and all \(c_i\) are affine functions.
+Thus \eqref{eq:form_optimization_problem} can be written as
+\begin{equation}\label{eq:form_linear_programming}
+  \boxed{
+%  \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad \begin{cases}c_{i}(\vect{x})=0, & i \in \mathcal{E} \\ c_{i}(\vect{x}) \geq 0, & i \in \mathcal{I}\end{cases}
+  \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
+    \begin{cases}
+      \vect{a}_i^\top \vect{x} + b_i = 0, & i \in \mathcal{E} \\
+      \vect{a}_i^\top \vect{x} + b_i \geq 0, & i \in \mathcal{I}
+    \end{cases}
+     }
+\end{equation}
+with \(\vect{c} \in \R^{n}\), \(\vect{a}_i \in \R^{n}\), \(b_i \in \R\), \(i\in\mathcal{E}\cup\mathcal{I}\).
+This is called the \emph{generic form} of a \gls{lp} problem.
+
+\underline{Remarks:}
+\begin{itemize}
+\item We do not lose generality by not including a constant term in \eqref{eq:form_linear_programming} since the location is unaffected by an additive constant.
+\item Since affine functions are convex (Definition~\ref{def:convex_function}), any local minimmizer of \eqref{eq:form_linear_programming} is a global minimizer.
+\item \(\vect{c}^\top \vect{x}\) is often called the \emph{cost} and the value \(\vect{c}^\top \vect{x}^{\ast}\) at a minimizer \(\vect{x}^{\ast}\) the \emph{optimal cost}.
+\end{itemize}
+
+A \gls{lp} problem is either \emph{infeasible} ($\Omega = \emptyset$), \emph{unbounded} (the cost can be made arbitrarily small) or has \emph{at least one minimizer}.
+
+
+\subsection{General Form}\label{sec:generalform_linear_programming}
+Transformations:
+\begin{itemize}
+  \item \(\vect{a}_i^\top \vect{x} + b_i = 0    \quad \Longleftrightarrow \quad \vect{a}_i^\top \vect{x} + b_i \geq 0 \land -\vect{a}_i^\top \vect{x} - b_i \geq 0\)
+  \item \(\vect{a}_i^\top \vect{x} + b_i \geq 0 \quad \Longleftrightarrow \quad \vect{a}_i^\top \vect{x} \geq -b_i\)
+\end{itemize}
+Applying these transformations to \eqref{eq:form_optimization_problem}, we obtain \(m \geq |\mathcal{E} \cup \mathcal{I}|\) inequality constraints and \eqref{eq:form_linear_programming} can be written as
+\begin{equation}\label{eq:form_general_linear_programming}
+  \boxed{
+    \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
+    \matr{A} \vect{x} \geq \vect{b}
+  }
+\end{equation}
+with \(\matr{A} \in \R^{m\times n}\), \(\vect{b} \in \R^{m}\) and \(\vect{c} \in \R^{n}\).
+This is called the \emph{general form} of a \gls{lp} problem.
+This form is important to understand the geometry of the feasible set.
+
+
+
+\colorlet{achsYellow}{yellow!70!white}
+\colorlet{vecGreen}{green!70!white}
+\definecolor{vecPink}{RGB}{255, 188, 250}
+\colorlet{vecCyan}{cyan!20!white}
+\colorlet{vecBlueTemp}{blue!60!cyan}
+\colorlet{vecBlue}{vecBlueTemp!40!white}
+
+
+% ---------------- USER INPUT ---------------------------------
+% Axis intercepts
+\def\xint{5}
+\def\yint{4}
+\def\zint{0.8}
+% Aufpunkt (x_Q, y_Q)
+\def\qx{1.4}
+\def\qy{3}
+
+%label
+\def\labx{3}
+\def\laby{2.5}
+% Four XY corners of the grey plane patch (clockwise)
+\def\pax{4} \def\pay{6}
+\def\pbx{6} \def\pby{-1}
+\def\pcx{-1} \def\pcy{-1}
+\def\pdx{-1} \def\pdy{6}
+% Spannvektoren u, v
+\def\uxdir{2}  \def\uydir{-4}
+\def\vxdir{4}  \def\vydir{-2}
+% Arrow/scale knobs
+\def\nshort{0.8}   % |n_0|
+\def\nlong{2.4}   % |n|
+\def\vecscale{2.5}% |u|, |v|
+% -------------------------------------------------------------
+
+% --------------- DERIVED QUANTITIES --------------------------
+% Plane coefficients from intercept form  x/\xint + y/\yint + z/\zint = 1  →  a x + b y + c z = d
+% a = yint*zint,  b = xint*zint,  c = xint*yint,  d = xint*yint*zint
+\pgfmathsetmacro{\aCoeff}{\yint*\zint}
+\pgfmathsetmacro{\bCoeff}{\xint*\zint}
+\pgfmathsetmacro{\cCoeff}{\xint*\yint}
+\pgfmathsetmacro{\dConst}{\xint*\yint*\zint}
+
+% Unit normal n = (a,b,c)/|n|
+\pgfmathsetmacro{\nMag}{sqrt(\aCoeff*\aCoeff + \bCoeff*\bCoeff + \cCoeff*\cCoeff)}
+\pgfmathsetmacro{\nx}{\aCoeff/\nMag}
+\pgfmathsetmacro{\ny}{\bCoeff/\nMag}
+\pgfmathsetmacro{\nz}{\cCoeff/\nMag}
+
+% Aufpunkt Q  (compute z so it lies on the plane)
+\pgfmathsetmacro{\qz}{(\dConst - \aCoeff*\qx - \bCoeff*\qy)/\cCoeff}
+
+\pgfmathsetmacro{\labz}{(\dConst - \aCoeff*\labx - \bCoeff*\laby)/\cCoeff}
+
+
+
+% --- Custom in‑plane unit vectors u and v --------------------
+% First choose raw XY direction; then solve z so n·u = 0 ⇒ z = -(nx x + ny y)/nz
+% Finally normalise each to unit length.
+\pgfmathsetmacro{\uzraw}{-(\nx*\uxdir + \ny*\uydir)/\nz}
+\pgfmathsetmacro{\uMag}{sqrt(\uxdir*\uxdir + \uydir*\uydir + \uzraw*\uzraw)}
+\pgfmathsetmacro{\ux}{\uxdir/\uMag}
+\pgfmathsetmacro{\uy}{\uydir/\uMag}
+\pgfmathsetmacro{\uz}{\uzraw/\uMag}
+
+\pgfmathsetmacro{\vzraw}{-(\nx*\vxdir + \ny*\vydir)/\nz}
+\pgfmathsetmacro{\vMag}{sqrt(\vxdir*\vxdir + \vydir*\vydir + \vzraw*\vzraw)}
+\pgfmathsetmacro{\vx}{\vxdir/\vMag}
+\pgfmathsetmacro{\vy}{\vydir/\vMag}
+\pgfmathsetmacro{\vz}{\vzraw/\vMag}
+
+% Patch‑corner z values (solve plane eqn)
+\pgfmathsetmacro{\paz}{(\dConst-\aCoeff*\pax-\bCoeff*\pay)/\cCoeff}
+\pgfmathsetmacro{\pbz}{(\dConst-\aCoeff*\pbx-\bCoeff*\pby)/\cCoeff}
+\pgfmathsetmacro{\pcz}{(\dConst-\aCoeff*\pcx-\bCoeff*\pcy)/\cCoeff}
+\pgfmathsetmacro{\pdz}{(\dConst-\aCoeff*\pdx-\bCoeff*\pdy)/\cCoeff}
+
+
+\tdplotsetmaincoords{60}{20}
+
+A set of the form
+\(
+  \{ \vect{x} \in \R^{n} : \vect{a}^\top \vect{x} = b \}
+\)
+is called a \emph{hyperplane} in \(\R^{n}\) and it separates \(\R^n\) into the two sets
+\(\{\vect{x} \in \R^{n} : \vect{a}^\top \vect{x} \geq b \}\) and \(\{\vect{x} \in \R^{n} : \vect{a}^\top \vect{x} \leq b \}\), which are called \emph{halfspaces}.
+\(\vect{a}\) is orthogonal to the hyperplane:
+\[
+\begin{tikzpicture}[tdplot_main_coords,scale=0.7,every node/.style={font=\footnotesize}]
+
+  % Axis intercepts
+  \coordinate (A) at (0,0,\zint);
+  \coordinate (B) at (0,\yint,0);
+  \coordinate (C) at (\xint,0,0);
+
+  % Aufpunkt Q
+  \coordinate (Q) at (\qx,\qy,\qz);
+
+  % label
+  \coordinate (L) at (\labx,\laby,\labz);
+
+  % Normal arrow tips
+  \coordinate (nEndShort) at ($ (Q) + (\nshort*\nx, \nshort*\ny, \nshort*\nz) $);
+  \coordinate (nEndLong)  at ($ (Q) + (\nlong *\nx, \nlong *\ny, \nlong *\nz) $);
+
+  % In‑plane arrow tips
+  \coordinate (uEnd) at ($ (Q) + (\vecscale*\ux, \vecscale*\uy, \vecscale*\uz) $);
+  \coordinate (vEnd) at ($ (Q) + (\vecscale*\vx, \vecscale*\vy, \vecscale*\vz) $);
+
+  % Grey patch corners
+  \coordinate (P1) at (\pax,\pay,\paz);
+  \coordinate (P2) at (\pbx,\pby,\pbz);
+  \coordinate (P3) at (\pcx,\pcy,\pcz);
+  \coordinate (P4) at (\pdx,\pdy,\pdz);
+
+  
+  % --- coordinate axes (first part)
+  \draw[black,thick] (-0.4,0,0) -- (C);
+  \draw[black,thick] (0,-0.4,0) -- (B);
+  \draw[black,thick] (0,0,-0.4) -- (A);
+
+  % --- Plane patch
+  \path[fill=cyan!25,opacity=0.7,draw=none] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
+  \node[] at (L) {$\left\{\vect x \in \R^n : \vect{a}^\top \vect{x} = b \right\}$}; % how to make this "lie in the plane"?
+
+  % --- coordinate axes (second part)
+  --- coordinate axes (first part)
+\draw[black,thick] (C) -- (6,0,0) node[anchor=west]{$x_1$};
+\draw[black,thick] (B) -- (0,6,0) node[anchor=east]{$x_2$};
+\draw[black,thick] (A) -- (0,0,3) node[anchor=east]{$x_3$};
+
+  % --- Vectors
+    \draw[very thick,draw=vecGreen,-{>[width=5pt,length=5pt]}]  (Q) -- (nEndLong)  node[anchor=west]{$\vect a$};
+
+  % --- Yellow axis‑intercept markers
+\foreach \pt/\lab in {
+        (A)/{$\tfrac{b}{a_{3}}$},
+        (C)/{$\tfrac{b}{a_{1}}$},
+        (B)/{$\tfrac{b}{a_{2}}$}}{%
+  \node[tdplot_screen_coords,circle,fill=achsYellow,draw=black,inner sep=1.0pt] at \pt {};
+  \ifthenelse{\equal{\pt}{(C)}}%   <-- string test
+    {\node[tdplot_screen_coords,anchor=south,font=\footnotesize] at \pt {\lab};}%
+    {\node[tdplot_screen_coords,anchor=east,font=\footnotesize] at \pt {\lab};}%
+}
+
+\end{tikzpicture}
+\]
+
+The feasible set of a \gls{lp} problem is a \emph{polyhedron}, which is an intersection of \(m\) halfspaces, i.e. a set of the form \(\{ \vect{x} \in \R^{n} : \matr{A} \vect{x} \geq \vect{b} \}\).
+A bounded plyhedron is called a \emph{polytope}.
+
+\subsection{Standard Form}\label{sec:standardform_linear_programming}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

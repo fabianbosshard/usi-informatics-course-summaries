@@ -2682,14 +2682,17 @@ If people shake hands at a party, the number of people who shake an odd number o
 \end{example}
 
 \subsubsection{Basic notions for simple undirected graphs}
-\begin{definition}[Trail]\label{def:trail}
-A \(v_1\)-\(v_l\)-trail with length \(l\) is a sequence of vertices \(w = (v_1, \ldots, v_l)\) with 
+\begin{definition}[Walk]\label{def:walk}
+A \(v_1\)-\(v_l\)-walk with length \(l\) is a sequence of vertices \(w = (v_1, \ldots, v_l)\) with 
 \[
   (v_i, v_{i+1}) \in E \quad \forall i \in \{1, \ldots, l-1\} \qedhere
 \]
 \end{definition}
+\begin{definition}[Trail]\label{def:trail}
+  A \(v_1\)-\(v_l\)-trail is a \(v_1\)-\(v_l\)-walk for which all edges are distinct.
+\end{definition}
 \begin{definition}[Path]\label{def:path}
-  A \(v_1\)-\(v_l\)-path is a \(v_1\)-\(v_l\)-trail for which all vertices are distinct:
+  A \(v_1\)-\(v_l\)-path is a \(v_1\)-\(v_l\)-walk for which all vertices (and therefore also all edges) are distinct:
 \[
 \begin{tikzpicture}
   \tikzset{
@@ -2731,10 +2734,10 @@ Given a vertex  set \(V' \subseteq V\), the subgraph of \(G\) induced by \(V'\),
 \]
 
 \begin{definition}[Connected Components]\label{def:connected-components}
-Let \((V_i)_{i \in I}\) be a partition of the vertex set of a graph \(G\) such that all elements within each partition \((V_i)\) are connected by a trail (Def~\ref{def:trail}).
+Let \((V_i)_{i \in I}\) be a partition of the vertex set of a graph \(G\) such that all elements within each partition \((V_i)\) are connected by a path (Def~\ref{def:path}).
 That is
 \[
-\exists \text{$(u,v)$-trail} \iff \exists i \in I: u,v \in V_i
+\exists \text{$(u,v)$-path} \iff \exists i \in I: u,v \in V_i
 \]
 Then the induced subgraphs \(G[V_i]\) are called the \emph{connected components} of \(G\).
 \end{definition}

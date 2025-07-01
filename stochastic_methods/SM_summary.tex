@@ -1,5 +1,5 @@
 % \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
-\documentclass[11pt, headings=standardclasses, parskip=half, twoside]{scrartcl}
+\documentclass[10pt, headings=standardclasses, parskip=half, twoside]{scrartcl}
 
 \usepackage[automark]{scrlayer-scrpage}
 \clearpairofpagestyles           % start from a blank header/footer
@@ -13,7 +13,7 @@
 \usepackage{graphicx}
 \usepackage[dvipsnames]{xcolor}
 
-\usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
 \usepackage{pdflscape}   % for \begin{landscape}...\end{landscape}
 \usepackage{booktabs}
 \usepackage{array}
@@ -131,6 +131,33 @@
   colorlinks=false,        % don't wrap links in a colour
   pdfborder={0 0 0}        % no border around links
 ]{hyperref}
+
+
+
+% -------------------------------------------------
+% 2. load glossaries *after* hyperref
+\usepackage[acronym,              % create an “acronym” glossary
+            nomain,               % omit the main glossary (only acronyms)
+            toc,                  % add list of acronyms to the ToC
+            nonumberlist          % omit page list in the printed glossary
+           ]{glossaries-extra}
+
+% choose how the first appearance looks:
+%   long-short  → “Karush–Kuhn–Tucker (KKT)”
+%   short-long  → “KKT (Karush–Kuhn–Tucker)”
+\setabbreviationstyle[acronym]{long-short}
+
+% must be issued once *after* loading glossaries
+\makeglossaries
+
+% -------------------------------------------------
+% 3. define your acronyms
+\newacronym{kkt}{KKT}{Karush--Kuhn--Tucker conditions}
+\newacronym{licq}{LICQ}{Linear Independence Constraint Qualification}
+\newacronym{pmf}{PMF}{Probability Mass Function}
+
+
+
 
 
 
@@ -1482,7 +1509,7 @@ $$
 Then the extinction probability $\pi_0$ is a fixed point of $f$, i.e., $\pi_0$ satisfies $\pi_0=f(\pi_0)$.
 
 
-
+\clearpage
 \section{Counting Processes}\label{sec:counting}
 Poisson processes are a fundamental concept in stochastic modeling, providing a rigorous mathematical framework for understanding events that occur randomly in time or space. 
 Arrival times and counting processes (such as Poisson processes) find applications in a myriad of contexts, each with its own set of challenges and implications.
@@ -1497,8 +1524,6 @@ Arrival times and counting processes (such as Poisson processes) find applicatio
     \item \(N(t)\) is right-continuous: \(\lim_{t \to t_0^+} N(t) = N(t_0)\) \qedhere
   \end{itemize}
 \end{definition}
-\pagebreak[2]
-
 
 \begin{figure}[ht]
   \newcommand{\leftrightcontcolor}{black}
@@ -1570,16 +1595,12 @@ Arrival times and counting processes (such as Poisson processes) find applicatio
 A counting process counts the number of times a certain event has occurred by any given time \(t\). 
 The count starts at zero and can only increase as time moves forward.
 
-\begin{theorem}[Convergence of Binomial to Poisson]\label{thm:binomial_to_poisson}
-  Let \(X\) be the number of events in a time interval \(T\) divided into \(n\) smaller intervals of length \(\Delta t =\frac{T}{n}\).
-  % We are interested in counting the number of occurrences of a particular event within each small time interval $\Delta t$.
-  If each interval has a success probability \(p=\lambda \Delta t\), then as \(n \to \infty\) with \(n \Delta t = T\) fixed,
-  \[
-  \lim_{n \to \infty} \Prob(X=k) = \frac{(\lambda T)^k}{k!} e^{-\lambda T}
-  \]
-  Hence, \(X\) converges to a Poisson distribution with parameter \(\lambda T\).
-\end{theorem}
-\begin{proof}
+
+\subsubsection{From Binomial to Poisson}
+
+Consider a time interval \(T\) divided into \(n\) smaller intervals of length \(\Delta t = \frac{T}{n}\).
+We are interested in counting the number of occurrences of a particular event within each small time interval \(\Delta t\).
+
 Initially, let us model this as a Bernoulli process. 
 In each small time interval $\Delta t$, the event can either occur with probability $p$ or not occur with probability $1-p$:
 $$
@@ -1599,36 +1620,61 @@ The probability of observing exactly $k$ events in $T$ is
 $$
 \Prob(X=k)=\binom{n}{k} p^k(1-p)^{n-k}
 $$
-Substituting $p=\lambda \Delta t$, we get
-$$
-\Prob(X=k)=\binom{n}{k}(\lambda \Delta t)^k(1-\lambda \Delta t)^{n-k}
-$$
-As $n \rightarrow \infty$ (and hence $\Delta t \rightarrow 0$ while $n \Delta t=T$ remains constant), the binomial distribution converges to a Poisson distribution (see Section \ref{sec:distributions}).
-\end{proof}
+Substituting $p=\lambda \Delta t$ and using \(\Delta t = \frac{T}{n}\), we get
+% $$
+% \Prob(X=k)=\binom{n}{k}(\lambda \Delta t)^k(1-\lambda \Delta t)^{n-k}
+% $$
 \[
 \begin{aligned}
-\Prob(X = k) &= \binom{n}{k}\,(\lambda\Delta t)^k\,(1-\lambda\Delta t)^{n-k}\\
+\Prob(X = k) &= \binom{n}{k}(\lambda\Delta t)^k(1-\lambda\Delta t)^{n-k}\\
             &= \frac{n(n-1)\cdots(n-k+1)}{k!}
                \left(\frac{\lambda T}{n}\right)^k
-               \left(1-\frac{\lambda T}{n}\right)^{\,n-k}\\[4pt]
-            &= \frac{(\lambda T)^k}{k!}\,
-               \left(1-\frac{\lambda T}{n}\right)^{n}\!
-               \prod_{j=0}^{k-1}\!\left(1-\frac{j}{n}\right).
+               \left(1-\frac{\lambda T}{n}\right)^{\,n-k}\\
+            &= \frac{\prod_{i=1}^k (n-i+1)}{n^k}
+                \frac{(\lambda T)^k}{k!}
+                \left(1-\frac{\lambda T}{n}\right)^{n}
+                \left(1-\frac{\lambda T}{n}\right)^{-k}
 \end{aligned}
 \]
-
-As \(n\to\infty\) (so \(\Delta t = T/n \to 0\)),
+As $n \rightarrow \infty$ (and therefore $\Delta t \rightarrow 0$ while $n \Delta t=T$ remains constant),% the binomial distribution converges to a Poisson distribution (see Section \ref{sec:distributions}).
 \[
-\left(1-\frac{\lambda T}{n}\right)^{n}\;\longrightarrow\;e^{-\lambda T},
-\qquad
-\prod_{j=0}^{k-1}\left(1-\frac{j}{n}\right)\;\longrightarrow\;1,
+\frac{\prod_{i=1}^k (n-i+1)}{n^k} \longrightarrow 1,
+\quad
+\left(1-\frac{\lambda T}{n}\right)^{n}\longrightarrow e^{-\lambda T},
+\quad
+\left(1-\frac{\lambda T}{n}\right)^{-k} \longrightarrow 1
 \]
 hence
 \[
-\lim_{n\to\infty}\Prob(X=k)\;=\;\frac{(\lambda T)^k}{k!}\,e^{-\lambda T},
+  {\color{red}
+  \setlength{\fboxrule}{1pt}
+  \boxed{ 
+  \color{black}
+\lim_{n\to\infty}\Prob(X=k)
+\;=\;
+\lim_{n\to\infty}
+% \left(
+  \binom{n}{k}(\lambda\Delta t)^k(1-\lambda\Delta t)^{n-k}
+  % \right)
+\;=\;
+\frac{(\lambda T)^k}{k!}\,e^{-\lambda T}
+  }
+  }
 \]
-which is the probability mass function of a \(\operatorname{Poisson}(\lambda T)\) random variable. \qedhere
-  
+which is the \gls{pmf} of a \(\operatorname{Poisson}(\lambda T)\) random variable. \qedhere
+
+\begin{theorem}[Convergence of Binomial to Poisson]\label{thm:binomial_to_poisson}
+  Let \(X\) be the number of events in a time interval \(T\) divided into \(n\) smaller intervals of length \(\Delta t =\frac{T}{n}\).
+  % We are interested in counting the number of occurrences of a particular event within each small time interval $\Delta t$.
+  If each interval has a success probability \(p=\lambda \Delta t\), then as \(n \to \infty\) with \(n \Delta t = T\) fixed,
+  \begin{equation}\label{eq:binomial_to_poisson}
+  \lim_{n \to \infty} \Prob(X=k) = \frac{(\lambda T)^k}{k!} e^{-\lambda T}
+  \end{equation}
+  Hence, \(X\) converges to a Poisson distribution with parameter \(\lambda T\) (see \ref{sec:distributions}).
+\end{theorem}
+
+
+% As \(n\to\infty\) (so \(\Delta t = T/n \to 0\)),
 
 \subsection{Poisson Process}\label{subsec:poisson}
 models scenarios where events occur randomly in continuous time (or space) at a certain average rate.
@@ -1642,8 +1688,26 @@ models scenarios where events occur randomly in continuous time (or space) at a 
   \end{itemize}
 \end{definition}
 
-A crucial insight is that the waiting times between successive events in a homogeneous Poisson process are exponentially distributed with parameter \(\lambda\).
-This impplies that the Poisson process also has the memoryless property, meaning that the time until the next event occurs does not depend on how much time has already passed since the last event (see Theorem \ref{thm:memoryless}).
+A crucial insight is that the waiting times between successive events in a homogeneous Poisson process are exponentially distributed with parameter \(\lambda\):
+
+\subsubsection{From Poisson to Exponential}
+Consider a Poisson process with rate $\lambda$, where $N(t) \sim \operatorname{Poisson}(\lambda t)$ represents the number of events occurring in time $t$. Let $T$ be the waiting time until the first event, defined as
+$$
+T=\inf \{t>0 \mid N(t) \geq 1\}
+$$
+The probability of no events occurring in $[0, t]$ is given by
+\[
+P(T>t)=P(\text {no events in }[0, t])
+=
+P(N(t)=0)
+\overset{\eqref{eq:binomial_to_poisson}}{=}
+e^{-\lambda t}
+\]
+Since the survival function of an exponential distribution with rate $\lambda$ is $e^{-\lambda t}$, it follows that
+$$
+T \sim \operatorname{Exp}(\lambda) 
+$$
+This implies that the Poisson process also has the memoryless property, meaning that the time until the next event occurs does not depend on how much time has already passed since the last event (see Theorem \ref{thm:memoryless}).
 
 \begin{theorem}[Exponential Waiting Times]\label{thm:exp_waiting_times}
   The waiting time \(T\) until the first event is exponentially distributed:
@@ -1655,7 +1719,14 @@ This impplies that the Poisson process also has the memoryless property, meaning
 \begin{theorem}[Memoryless Property]\label{thm:memoryless}
   For an exponentially distributed waiting time \(T\),
   \[
-  \Prob(T > s + t \mid T > s) = \Prob(T > t)
+  \begin{aligned}
+  \Prob(T > s + t \mid T > s) 
+  &= \frac{\Prob(T > s + t \cap T > s)}{\Prob(T > s)} \\
+  &= \frac{\Prob(T > s + t)}{\Prob(T > s)}  \quad \text{(because \(\{T> s+t\}\subseteq\{T> s\}\))} \\
+  &= \frac{e^{-\lambda (s + t)}}{e^{-\lambda s}} \\
+  &= e^{-\lambda t} \\ 
+  &= \Prob(T > t)
+  \end{aligned}
   \]
   and hence the underlying Poisson process is memoryless.
 \end{theorem}
@@ -1709,6 +1780,41 @@ It can also be applied to birth-death processes, queueing systems, and any scena
 
 
 \subsection{Brownian Motion}\label{subsec:brownian}
+
+% -----------------------------------------------------
+\begin{center}
+    {\Large\bfseries Week 10 Summary: Stochastic Diffusion Processes}\\%[0.5em]
+    {\normalsize Stochastic Methods — Lecture Notes by Francisco Richter}\\%[1em]
+    {\small April 29, 2025}\par\medskip
+\end{center}
+
+\subsubsection{From Random Walks to Diffusions}
+Brownian motion sits at the interface between 
+\emph{discrete} counting processes studied earlier and \emph{continuous}–time models.  
+It emerges as the diffusive limit of a random walk with shrinking step--size and time–grid.
+
+\begin{definition}[Standard Brownian Motion]\label{def:BM}
+A process $\{W_t\}_{t\ge 0}$ is a \emph{standard Brownian motion} if
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item $W_0=0$ a.s.
+  \item\label{item:indep} \emph{Independent increments:} $W_{t}-W_{s}$ is independent of the past for $0\le s<t$.
+  \item\label{item:normal} $W_{t}-W_{s}\sim\mathcal N(0,t-s)\,$.
+  \item\label{item:cont} Paths $t\mapsto W_t$ are continuous a.s.
+\end{enumerate}
+\end{definition}
+
+\paragraph{Key properties.}
+\begin{itemize}[leftmargin=1em]
+  \item \textbf{Martingale:} $\Exp[W_t\mid \mathcal F_s]=W_s$.
+  \item \textbf{Scaling:} $c^{-1/2}W_{ct}$ is again Brownian.
+  \item \textbf{Quadratic variation:} $[W]_t = t$.
+  \item \textbf{Nowhere differentiable:} paths are rough on every scale.
+\end{itemize}
+
+
+
+
+
 
 
 \subsection{Stochastic Differential Equations}\label{subsec:sde}
@@ -1819,66 +1925,66 @@ Several methods exist for constructing bootstrap confidence intervals:
 
 
 \section{Exercises}
-\subsection{Week 2}
-\subsubsection{From Binomial to Poisson}
-Let $X_n \sim \operatorname{Bin}(n, p)$ be a binomial random variable with parameters $n$ and $p$. 
-Define $\lambda=n p$ and consider the limit as $n \rightarrow \infty$ while $p \rightarrow 0$ in such a way that $\lambda$ remains constant. 
-Show that the probability mass function of $X_n$ converges to the Poisson distribution with mean $\lambda$.
-\paragraph{Answer:}
-Let $X_n \sim \operatorname{Bin}(n, p)$ with
-$$
-P\left(X_n=k\right)=\binom{n}{k} p^k(1-p)^{n-k}
-$$
-Define $\textcolor{red}{\lambda=n p}$ and set $p=\lambda / n$. Then,
-$$
-P\left(X_n=k\right)=\binom{n}{k}\left(\frac{\lambda}{n}\right)^k\left(1-\frac{\lambda}{n}\right)^{n-k} .
-$$
-We now take the limit as $n \rightarrow \infty$ with $\lambda$ fixed and $k$ fixed.
-First, express the binomial coefficient as
-$$
-\binom{n}{k}=\frac{n(n-1) \cdots(n-k+1)}{k!} .
-$$
-For fixed $k$, as $n \rightarrow \infty$, each factor $n-i$ (for $i=0,1, \ldots, k-1$ ) behaves like $n$, so
-$$
-\lim _{n \rightarrow \infty}\binom{n}{k}\left(\frac{\lambda}{n}\right)^k=\lim _{n \rightarrow \infty} \frac{n(n-1) \cdots(n-k+1)}{k!} \cdot \frac{\lambda^k}{n^k}=\frac{\lambda^k}{k!} .
-$$
-Next, consider the term $\left(1-\frac{\lambda}{n}\right)^{n-k}$. We can write:
-$$
-\left(1-\frac{\lambda}{n}\right)^{n-k}=\left(1-\frac{\lambda}{n}\right)^n\left(1-\frac{\lambda}{n}\right)^{-k}
-$$
-Taking the limit as $n \rightarrow \infty$ :
-$$
-\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}
-$$
-by the standard limit $\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}$. Also, for fixed $k$,
-$$
-\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{-k}=1
-$$
-Combining these, we have
-$$
-\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{n-k}=e^{-\lambda}
-$$
-Thus, putting the pieces together,
-$$
-\lim _{n \rightarrow \infty} P\left(X_n=k\right)=\frac{\lambda^k}{k!} e^{-\lambda}
-$$
-This is exactly the probability mass function of a Poisson random variable with mean $\lambda$.
+% \subsection{Week 2}
+% \subsubsection{From Binomial to Poisson}
+% Let $X_n \sim \operatorname{Bin}(n, p)$ be a binomial random variable with parameters $n$ and $p$. 
+% Define $\lambda=n p$ and consider the limit as $n \rightarrow \infty$ while $p \rightarrow 0$ in such a way that $\lambda$ remains constant. 
+% Show that the probability mass function of $X_n$ converges to the Poisson distribution with mean $\lambda$.
+% \paragraph{Answer:}
+% Let $X_n \sim \operatorname{Bin}(n, p)$ with
+% $$
+% P\left(X_n=k\right)=\binom{n}{k} p^k(1-p)^{n-k}
+% $$
+% Define $\textcolor{red}{\lambda=n p}$ and set $p=\lambda / n$. Then,
+% $$
+% P\left(X_n=k\right)=\binom{n}{k}\left(\frac{\lambda}{n}\right)^k\left(1-\frac{\lambda}{n}\right)^{n-k} .
+% $$
+% We now take the limit as $n \rightarrow \infty$ with $\lambda$ fixed and $k$ fixed.
+% First, express the binomial coefficient as
+% $$
+% \binom{n}{k}=\frac{n(n-1) \cdots(n-k+1)}{k!} .
+% $$
+% For fixed $k$, as $n \rightarrow \infty$, each factor $n-i$ (for $i=0,1, \ldots, k-1$ ) behaves like $n$, so
+% $$
+% \lim _{n \rightarrow \infty}\binom{n}{k}\left(\frac{\lambda}{n}\right)^k=\lim _{n \rightarrow \infty} \frac{n(n-1) \cdots(n-k+1)}{k!} \cdot \frac{\lambda^k}{n^k}=\frac{\lambda^k}{k!} .
+% $$
+% Next, consider the term $\left(1-\frac{\lambda}{n}\right)^{n-k}$. We can write:
+% $$
+% \left(1-\frac{\lambda}{n}\right)^{n-k}=\left(1-\frac{\lambda}{n}\right)^n\left(1-\frac{\lambda}{n}\right)^{-k}
+% $$
+% Taking the limit as $n \rightarrow \infty$ :
+% $$
+% \lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}
+% $$
+% by the standard limit $\lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^n=e^{-\lambda}$. Also, for fixed $k$,
+% $$
+% \lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{-k}=1
+% $$
+% Combining these, we have
+% $$
+% \lim _{n \rightarrow \infty}\left(1-\frac{\lambda}{n}\right)^{n-k}=e^{-\lambda}
+% $$
+% Thus, putting the pieces together,
+% $$
+% \lim _{n \rightarrow \infty} P\left(X_n=k\right)=\frac{\lambda^k}{k!} e^{-\lambda}
+% $$
+% This is exactly the probability mass function of a Poisson random variable with mean $\lambda$.
 
-\subsubsection{From Poisson to Exponential}
-Consider a Poisson process with rate $\lambda$, where $N(t) \sim \operatorname{Poisson}(\lambda t)$ represents the number of events occurring in time $t$. Let $T$ be the waiting time until the first event, defined as
-$$
-T=\inf \{t>0 \mid N(t) \geq 1\}
-$$
-Show that the probability of no events occurring in $[0, t]$ is given by $P(T>t)=e^{-\lambda t}$, and conclude that $T \sim \operatorname{Exp}(\lambda)$.
-\paragraph{Answer:}
-Consider a Poisson process with rate $\lambda$. The number of events in a time interval of length $t$ is distributed as $N(t) \sim$ Poisson $(\lambda t)$. The waiting time $T$ until the first event is given by
-$$
-P(T>t)=P(\text { no events in }[0, t])=P(N(t)=0)=e^{-\lambda t}
-$$
-Since the survival function of an exponential distribution with rate $\lambda$ is $e^{-\lambda t}$, it follows that
-$$
-T \sim \operatorname{Exp}(\lambda) .
-$$
+% \subsubsection{From Poisson to Exponential}
+% Consider a Poisson process with rate $\lambda$, where $N(t) \sim \operatorname{Poisson}(\lambda t)$ represents the number of events occurring in time $t$. Let $T$ be the waiting time until the first event, defined as
+% $$
+% T=\inf \{t>0 \mid N(t) \geq 1\}
+% $$
+% Show that the probability of no events occurring in $[0, t]$ is given by $P(T>t)=e^{-\lambda t}$, and conclude that $T \sim \operatorname{Exp}(\lambda)$.
+% \paragraph{Answer:}
+% Consider a Poisson process with rate $\lambda$. The number of events in a time interval of length $t$ is distributed as $N(t) \sim$ Poisson $(\lambda t)$. The waiting time $T$ until the first event is given by
+% $$
+% P(T>t)=P(\text { no events in }[0, t])=P(N(t)=0)=e^{-\lambda t}
+% $$
+% Since the survival function of an exponential distribution with rate $\lambda$ is $e^{-\lambda t}$, it follows that
+% $$
+% T \sim \operatorname{Exp}(\lambda) .
+% $$
 
 
 
@@ -2021,6 +2127,107 @@ e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
 e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
 +\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}.
 \end{align*}
+
+
+
+\subsection{Mock Exam}
+
+Consider the stochastic-gradient-descent (SGD) recursion
+$$
+\theta_{k+1}=\theta_k-\eta \widehat{f^{\prime}\left(\theta_k\right)}, \quad \widehat{f^{\prime}\left(\theta_k\right)}=g\left(\theta_k\right)+\epsilon_k
+$$
+
+where the learning-rate is $\eta>0$, $g: \mathbb{R} \rightarrow \mathbb{R}$ is deterministic, and the noises are i.i.d. $\epsilon_k \sim$ $\mathcal{N}\left(0, \sigma^2\right)$.
+
+Show that, when the step size is small ( $\eta=\Delta t \ll 1$ ) and one rescales $\sigma^2=\eta \tilde{\sigma}^2$, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \eta\rfloor}$ converges (in distribution) to the Itô SDE
+$$
+d \Theta_t=-g\left(\Theta_t\right) d t+\tilde{\sigma} d W_t, \quad \Theta_0=1
+$$
+where $W_t$ is standard Brownian motion.
+
+\paragraph{Answer:}
+\[
+\begin{aligned}
+\theta_{k+1}&=\theta_k- \Delta t (g(\theta_k)+\epsilon_k) \\
+&=\theta_k- \underbrace{\Delta t \cdot g(\theta_k)}_{\text{deterministic}} + \underbrace{\Delta t \cdot \sigma \cdot  \delta_k}_{\text{random}}, \quad \delta_k \sim \mathcal{N}(0,1) \qquad \text{(symmetry of normal around 0)} \\
+\end{aligned}
+\]
+if we integrate, \(\Delta \Theta = \Theta_t - \Theta_0\)
+\[
+\Delta \Theta = -\sum \Delta t_i \cdot g(\theta) + \tilde{\sigma} \sum \underbrace{\sqrt{\Delta t_i}\cdot  \delta_i}_{\Delta W_t \sim \mathcal{N}(0,\Delta t_i)}\cdot  \Delta t_i
+\]
+As \(\Delta t \to 0\), \(\Delta W_t \to \dif W_t\) and \(\Delta t_i \to \dif t\), therefore
+\[
+\int \dif \Theta_t = -\int g(\Theta_t) \dif t + \tilde{\sigma} \int \dif W_t \dif t
+\]
+so,
+\[
+d \Theta_t = -g(\Theta_t) \dif t + \tilde{\sigma} \dif W_t \dif t
+\]
+where \(W_t\) is standard Brownian motion.
+
+% Derivation: SGD → Itô SDE
+\paragraph{1.  Split deterministic and random parts}
+\[
+\theta_{k+1}
+=\theta_k-\eta\bigl(g(\theta_k)+\epsilon_k\bigr)
+=\theta_k-\underbrace{\eta\,g(\theta_k)}_{\text{deterministic}}
++\underbrace{\eta\,\sigma\,\delta_k}_{\text{random}},
+\qquad
+\delta_k\sim\mathcal{N}(0,1).
+\]
+
+\paragraph{2.  Diffusion scaling}
+Assume the step size is small, \(\eta=\Delta t\ll1\), and set
+\[
+\sigma^2=\eta\,\tilde{\sigma}^2
+\quad\Longrightarrow\quad
+\sigma=\sqrt{\eta}\,\tilde{\sigma}.
+\]
+Then
+\[
+\theta_{k+1}
+=\theta_k-\Delta t\,g(\theta_k)
++\tilde{\sigma}\sqrt{\Delta t}\,\delta_k,
+\qquad
+\sqrt{\Delta t}\,\delta_k\sim\mathcal{N}(0,\Delta t).
+\]
+
+\paragraph{3.  Continuous-time interpolation}
+Define \(\displaystyle \Theta_t:=\theta_{\lfloor t/\eta\rfloor}\) and \(t_i=i\Delta t\).  
+For \(t=n\Delta t\),
+\[
+\Theta_t-\Theta_0
+=
+-\sum_{i=0}^{n-1}\Delta t\,g\bigl(\theta_{t_i}\bigr)
++\tilde{\sigma}\sum_{i=0}^{n-1}\sqrt{\Delta t}\,\delta_i.
+\]
+As \(\Delta t\to0\):
+\[
+\sum_{i}\Delta t\,g\bigl(\theta_{t_i}\bigr)
+\;\longrightarrow\;
+\int_0^{t} g(\Theta_s)\,ds,
+\qquad
+\sum_{i}\sqrt{\Delta t}\,\delta_i
+\;\longrightarrow\;
+W_t,
+\]
+where \(W_t\) is standard Brownian motion.
+
+\paragraph{4.  Limit SDE}
+\[
+\Theta_t-\Theta_0
+=
+-\int_0^{t} g(\Theta_s)\,ds
++\tilde{\sigma}\,W_t
+\;\;\Longrightarrow\;\;
+d\Theta_t
+=
+-g(\Theta_t)\,dt
++\tilde{\sigma}\,dW_t,
+\qquad
+\Theta_0=1.
+\]
 
 
 
