@@ -1,6 +1,7 @@
 % \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
 \documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
-\usepackage{ifthen} 
+\usepackage{ifthen}
+\usepackage{iftex}
 
 
 \usepackage[automark]{scrlayer-scrpage}
@@ -2141,6 +2142,8 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
 \tikzexternaldisable%
 \[
 \begin{tikzpicture}%[scale=0.3] %scale does not work here
+
+  \ifLuaTeX
   %---------------------------------------------------------------
   % LEFT PANEL : level sets of  f(x,y)=x^2+2y^2
   %---------------------------------------------------------------
@@ -2157,6 +2160,7 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
       name=left  % so we can anchor the second axis to it
     ]
       % Contours of f
+      % v v v need lualatex compilation!!!!!! v v v
       \addplot3[
         contour lua={
           draw color=black,
@@ -2165,6 +2169,7 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
         },
         % thick
       ] {(1 + x^2 + 2*y^2)};
+      % ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^
 
     %   % Starting point  x0 = (1,0.5)
     %   \addplot+[only marks, mark=*, mark size=2.2pt]
@@ -2195,15 +2200,16 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
   %---------------------------------------------------------------
   \begin{axis}[
     scale=0.8,
-      at={(left.east)}, anchor=west,   % stick to the right of the first axis
-      xshift=1.5cm,                      % manual separation
-      width=9cm, height=6cm,
-      axis lines=middle,
-      axis line style={->},
-      xlabel={\footnotesize$\alpha$},
-      xmin=0, xmax=0.7,
-      ymin=0, ymax=2.4,
-      xtick=\empty,
+    %\ifLuaTeX %The safe rule is: Never put a TeX conditional inside a PGF/TikZ option list. Decide outside the environment which complete block you want.
+    at={(left.east)}, anchor=west,   % stick to the right of the first axis
+    xshift=1.5cm,             
+    width=9cm, height=6cm,
+    axis lines=middle,
+    axis line style={->},
+    xlabel={\footnotesize$\alpha$},
+    xmin=0, xmax=0.7,
+    ymin=0, ymax=2.4,
+    xtick=\empty,
     ytick={2.0},
     yticklabel={\footnotesize$f\bigl(\vect{x}^{(k)}\bigr)$},
     yticklabel style={inner sep=1pt, outer sep=0pt},
@@ -2240,9 +2246,6 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
     \addplot[draw=none, domain=0:0.21, samples=2] {2.0 + \normalEta * \gprimeZero * x}
     node[pos=1, anchor= west, inner sep=0pt, outer sep=2pt, yshift=1mm]
     {\tiny{slope: $\eta\,g'(0)$}};
-
-
-
 
   % derived curvature parameter  \barη  via  α_min = (1- \barη)/3  (for this quadratic)
   \pgfmathsetmacro{\barEta}{1 - 3*\alphaL}
@@ -2295,7 +2298,56 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
   (axis cs:\alphaU,0) node[anchor=north east] {\tiny \eqref{eq:first_wolfe_condition} holds}%1. Wolfe}
   -- (axis cs:{\alphaU - 0.05},0);
 
+\end{axis}
+
+\else
+
+  \begin{axis}[
+    scale=0.8,           
+    width=9cm, height=6cm,
+    axis lines=middle,
+    axis line style={->},
+    xlabel={\footnotesize$\alpha$},
+    xmin=0, xmax=0.7,
+    ymin=0, ymax=2.4,
+    xtick=\empty,
+    ytick={2.0},
+    yticklabel={\footnotesize$f\bigl(\vect{x}^{(k)}\bigr)$},
+    yticklabel style={inner sep=1pt, outer sep=0pt},
+    clip=false,
+    ]
+    \pgfmathsetmacro{\normalEta}{0.2}         
+    \pgfmathsetmacro{\alphaL}{0.15}       
+    \pgfmathsetmacro{\gprimeZero}{-8}       
+    \addplot[black, thick, domain=0:0.6, samples=200]
+    {2.0 - 8*x + 12*x^2}
+    node[pos=1, anchor= south west, outer sep = 2pt, inner sep=0pt]
+    {\footnotesize$g(\alpha) = f\bigl(\vect{x}^{(k)} + \alpha\, \vect{d}^{(k)}\bigr)$};
+    \addplot[black, dashed, domain=0:0.21] {2.0 - 8*x}
+    node[pos=1, anchor= west, outer sep = 2pt, inner sep=0pt]
+    {\tiny{slope: $g'(0)$}};
+    \addplot[black, thick, domain=0:0.6] {2.0 + \normalEta * \gprimeZero * x} node[pos=1, anchor=west, outer sep = 2pt, inner sep=0pt] {\footnotesize$\ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\, g'(0)\,\alpha$};
+    \addplot[draw=none, domain=0:0.21, samples=2] {2.0 + \normalEta * \gprimeZero * x} node[pos=1, anchor= west, inner sep=0pt, outer sep=2pt, yshift=1mm] {\tiny{slope: $\eta\,g'(0)$}};
+    \pgfmathsetmacro{\barEta}{1 - 3*\alphaL}
+    \pgfmathsetmacro{\slopeEta}{\normalEta    * \gprimeZero}  
+    \pgfmathsetmacro{\slopeBar}{\barEta * \gprimeZero}
+    \pgfmathsetmacro{\gAlphaL}{2.0 - 8*\alphaL + 12*\alphaL*\alphaL}
+    \pgfmathsetmacro{\alphaU}{(1 - \normalEta)*abs(\gprimeZero)/12}
+    \pgfmathsetmacro{\gAlphaU}{2.0 - 8*\alphaU + 12*\alphaU*\alphaU}
+    \addplot[black, dashed, domain=0:0.21, samples=2] {2.0 + \slopeBar*x} node[pos=1, anchor=west, inner sep=0pt, outer sep=2pt] {\tiny{slope: $\bar{\eta}\,g'(0)$}};
+    \node[circle,fill=black,inner sep=1pt] at (axis cs:\alphaL,\gAlphaL) {};
+    \draw[dotted] (axis cs:\alphaL,\gAlphaL) -- (axis cs:\alphaL,0);
+    \addplot[black, domain={\alphaL-0.05}:{\alphaL+0.05}, samples=2] {\gAlphaL + \slopeBar*(x - \alphaL)};
+    \node[circle,fill=black,inner sep=1pt] at (axis cs:\alphaU,\gAlphaU) {};
+    \draw[dotted] (axis cs:\alphaU,\gAlphaU) -- (axis cs:\alphaU,0);
+    \draw (axis cs:\alphaL,0) -- (axis cs:\alphaL,-0.08);
+    \draw (axis cs:\alphaU,0) -- (axis cs:\alphaU,-0.08);
+    \draw[->, thick] (axis cs:\alphaL,0) node[anchor=north west] {\tiny \eqref{eq:second_wolfe_condition} holds} -- (axis cs:{\alphaL + 0.05},0);
+    \draw[->, thick] (axis cs:\alphaU,0) node[anchor=north east] {\tiny \eqref{eq:first_wolfe_condition} holds} -- (axis cs:{\alphaU - 0.05},0);
   \end{axis}
+
+\fi
+
 \end{tikzpicture}
 \]
 \tikzexternalenable%
@@ -3061,7 +3113,9 @@ Differences between Theorems~\ref{thm:SONC} and~\ref{thm:SOSC}:
 
 \section{Linear Programming}\label{sec:linear_programming}
 
-\subsection{``Generic'' Form}\label{sec:genericform_linear_programming}
+\subsection{General and Standard Form}
+
+\subsubsection{``Generic'' Form}\label{sec:genericform_linear_programming}
 
 In a \gls{lp} problem, \(f\) and all \(c_i\) are affine functions.
 Thus \eqref{eq:form_optimization_problem} can be written as
@@ -3083,22 +3137,33 @@ This is called the \emph{generic form} of a \gls{lp} problem.
 \item We do not lose generality by not including a constant term in \eqref{eq:form_linear_programming} since the location is unaffected by an additive constant.
 \item Since affine functions are convex (Definition~\ref{def:convex_function}), any local minimmizer of \eqref{eq:form_linear_programming} is a global minimizer.
 \item \(\vect{c}^\top \vect{x}\) is often called the \emph{cost} and the value \(\vect{c}^\top \vect{x}^{\ast}\) at a minimizer \(\vect{x}^{\ast}\) the \emph{optimal cost}.
+\item \nameref{sec:generalform_linear_programming} and \nameref{sec:standardform_linear_programming} are special cases of \eqref{eq:form_linear_programming}.
 \end{itemize}
 
 A \gls{lp} problem is either \emph{infeasible} ($\Omega = \emptyset$), \emph{unbounded} (the cost can be made arbitrarily small) or has \emph{at least one minimizer}.
+Note that in last case, the set of minimizers could also be unbounded.
 
 
-\subsection{General Form}\label{sec:generalform_linear_programming}
-Transformations:
+\subsubsection{General Form}\label{sec:generalform_linear_programming}
+\textcolor{orange}{Transformation}  from \nameref{sec:genericform_linear_programming} to \nameref{sec:generalform_linear_programming}:
 \begin{itemize}
-  \item \(\vect{a}_i^\top \vect{x} + b_i = 0    \quad \Longleftrightarrow \quad \vect{a}_i^\top \vect{x} + b_i \geq 0 \land -\vect{a}_i^\top \vect{x} - b_i \geq 0\)
-  \item \(\vect{a}_i^\top \vect{x} + b_i \geq 0 \quad \Longleftrightarrow \quad \vect{a}_i^\top \vect{x} \geq -b_i\)
+  \item \(\vect{a}_i^\top \vect{x} + b_i = 0    \quad \longrightarrow \quad \vect{a}_i^\top \vect{x} + b_i \geq 0 \land -\vect{a}_i^\top \vect{x} - b_i \geq 0\)
+  \item \(\vect{a}_i^\top \vect{x} + b_i \geq 0 \quad \longrightarrow \quad \vect{a}_i^\top \vect{x} \geq -b_i\)
 \end{itemize}
+% \[
+% \begin{aligned}
+%   \vect{a}_i^\top \vect{x} + b_i = 0    \quad &\longrightarrow \quad \vect{a}_i^\top \vect{x} + b_i \geq 0 \land -\vect{a}_i^\top \vect{x} - b_i \geq 0 \\
+%   \vect{a}_i^\top \vect{x} + b_i \geq 0 \quad &\longrightarrow \quad \vect{a}_i^\top \vect{x} \geq -b_i
+% \end{aligned}
+% \]
 Applying these transformations to \eqref{eq:form_optimization_problem}, we obtain \(m \geq |\mathcal{E} \cup \mathcal{I}|\) inequality constraints and \eqref{eq:form_linear_programming} can be written as
 \begin{equation}\label{eq:form_general_linear_programming}
-  \boxed{
+  {\color{Red}
+\boxed{ 
+\color{black}
     \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
     \matr{A} \vect{x} \geq \vect{b}
+  }
   }
 \end{equation}
 with \(\matr{A} \in \R^{m\times n}\), \(\vect{b} \in \R^{m}\) and \(\vect{c} \in \R^{n}\).
@@ -3107,38 +3172,30 @@ This form is important to understand the geometry of the feasible set.
 
 
 
+% ---------------- USER INPUT ---------------------------------
 \colorlet{achsYellow}{yellow!70!white}
 \colorlet{vecGreen}{green!70!white}
-\definecolor{vecPink}{RGB}{255, 188, 250}
-\colorlet{vecCyan}{cyan!20!white}
-\colorlet{vecBlueTemp}{blue!60!cyan}
-\colorlet{vecBlue}{vecBlueTemp!40!white}
+\colorlet{planeBlue}{cyan!25}
 
-
-% ---------------- USER INPUT ---------------------------------
-% Axis intercepts
+% axis intercepts
 \def\xint{5}
 \def\yint{4}
 \def\zint{0.8}
-% Aufpunkt (x_Q, y_Q)
-\def\qx{1.4}
-\def\qy{3}
 
-%label
-\def\labx{3}
-\def\laby{2.5}
-% Four XY corners of the grey plane patch (clockwise)
+% normal vector starting point (x_Q, y_Q)
+\def\qx{1.4} \def\qy{3}
+
+% label position
+\def\labx{3} \def\laby{2.5}
+
+% four XY corners of the plane patch (clockwise)
 \def\pax{4} \def\pay{6}
 \def\pbx{6} \def\pby{-1}
 \def\pcx{-1} \def\pcy{-1}
 \def\pdx{-1} \def\pdy{6}
-% Spannvektoren u, v
-\def\uxdir{2}  \def\uydir{-4}
-\def\vxdir{4}  \def\vydir{-2}
-% Arrow/scale knobs
-\def\nshort{0.8}   % |n_0|
-\def\nlong{2.4}   % |n|
-\def\vecscale{2.5}% |u|, |v|
+
+% normal vector
+\def\nLength{2.4}   % |n|
 % -------------------------------------------------------------
 
 % --------------- DERIVED QUANTITIES --------------------------
@@ -3155,29 +3212,13 @@ This form is important to understand the geometry of the feasible set.
 \pgfmathsetmacro{\ny}{\bCoeff/\nMag}
 \pgfmathsetmacro{\nz}{\cCoeff/\nMag}
 
-% Aufpunkt Q  (compute z so it lies on the plane)
+% Q  (compute z so it lies on the plane)
 \pgfmathsetmacro{\qz}{(\dConst - \aCoeff*\qx - \bCoeff*\qy)/\cCoeff}
 
+% label position (compute z so it lies on the plane)
 \pgfmathsetmacro{\labz}{(\dConst - \aCoeff*\labx - \bCoeff*\laby)/\cCoeff}
 
-
-
-% --- Custom in‑plane unit vectors u and v --------------------
-% First choose raw XY direction; then solve z so n·u = 0 ⇒ z = -(nx x + ny y)/nz
-% Finally normalise each to unit length.
-\pgfmathsetmacro{\uzraw}{-(\nx*\uxdir + \ny*\uydir)/\nz}
-\pgfmathsetmacro{\uMag}{sqrt(\uxdir*\uxdir + \uydir*\uydir + \uzraw*\uzraw)}
-\pgfmathsetmacro{\ux}{\uxdir/\uMag}
-\pgfmathsetmacro{\uy}{\uydir/\uMag}
-\pgfmathsetmacro{\uz}{\uzraw/\uMag}
-
-\pgfmathsetmacro{\vzraw}{-(\nx*\vxdir + \ny*\vydir)/\nz}
-\pgfmathsetmacro{\vMag}{sqrt(\vxdir*\vxdir + \vydir*\vydir + \vzraw*\vzraw)}
-\pgfmathsetmacro{\vx}{\vxdir/\vMag}
-\pgfmathsetmacro{\vy}{\vydir/\vMag}
-\pgfmathsetmacro{\vz}{\vzraw/\vMag}
-
-% Patch‑corner z values (solve plane eqn)
+% patch‑corners z value (compute z so they lie on the plane)
 \pgfmathsetmacro{\paz}{(\dConst-\aCoeff*\pax-\bCoeff*\pay)/\cCoeff}
 \pgfmathsetmacro{\pbz}{(\dConst-\aCoeff*\pbx-\bCoeff*\pby)/\cCoeff}
 \pgfmathsetmacro{\pcz}{(\dConst-\aCoeff*\pcx-\bCoeff*\pcy)/\cCoeff}
@@ -3196,7 +3237,7 @@ is called a \emph{hyperplane} in \(\R^{n}\) and it separates \(\R^n\) into the t
 \[
 \begin{tikzpicture}[tdplot_main_coords,scale=0.7,every node/.style={font=\footnotesize}]
 
-  % Axis intercepts
+  % axis intercepts
   \coordinate (A) at (0,0,\zint);
   \coordinate (B) at (0,\yint,0);
   \coordinate (C) at (\xint,0,0);
@@ -3207,28 +3248,22 @@ is called a \emph{hyperplane} in \(\R^{n}\) and it separates \(\R^n\) into the t
   % label
   \coordinate (L) at (\labx,\laby,\labz);
 
-  % Normal arrow tips
-  \coordinate (nEndShort) at ($ (Q) + (\nshort*\nx, \nshort*\ny, \nshort*\nz) $);
-  \coordinate (nEndLong)  at ($ (Q) + (\nlong *\nx, \nlong *\ny, \nlong *\nz) $);
+  % normal vector tip
+  \coordinate (nEnd)  at ($ (Q) + (\nLength *\nx, \nLength *\ny, \nLength *\nz) $);
 
-  % In‑plane arrow tips
-  \coordinate (uEnd) at ($ (Q) + (\vecscale*\ux, \vecscale*\uy, \vecscale*\uz) $);
-  \coordinate (vEnd) at ($ (Q) + (\vecscale*\vx, \vecscale*\vy, \vecscale*\vz) $);
-
-  % Grey patch corners
+  % plane patch corners
   \coordinate (P1) at (\pax,\pay,\paz);
   \coordinate (P2) at (\pbx,\pby,\pbz);
   \coordinate (P3) at (\pcx,\pcy,\pcz);
   \coordinate (P4) at (\pdx,\pdy,\pdz);
-
   
   % --- coordinate axes (first part)
   \draw[black,thick] (-0.4,0,0) -- (C);
   \draw[black,thick] (0,-0.4,0) -- (B);
   \draw[black,thick] (0,0,-0.4) -- (A);
 
-  % --- Plane patch
-  \path[fill=cyan!25,opacity=0.7,draw=none] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
+  % --- plane patch
+  \path[fill=planeBlue,opacity=0.7,draw=none] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
   \node[] at (L) {$\left\{\vect x \in \R^n : \vect{a}^\top \vect{x} = b \right\}$}; % how to make this "lie in the plane"?
 
   % --- coordinate axes (second part)
@@ -3237,10 +3272,10 @@ is called a \emph{hyperplane} in \(\R^{n}\) and it separates \(\R^n\) into the t
 \draw[black,thick] (B) -- (0,6,0) node[anchor=east]{$x_2$};
 \draw[black,thick] (A) -- (0,0,3) node[anchor=east]{$x_3$};
 
-  % --- Vectors
-    \draw[very thick,draw=vecGreen,-{>[width=5pt,length=5pt]}]  (Q) -- (nEndLong)  node[anchor=west]{$\vect a$};
+  % --- normal vector
+    \draw[very thick,draw=vecGreen,-{>[width=5pt,length=5pt]}]  (Q) -- (nEnd)  node[anchor=west]{$\vect a$};
 
-  % --- Yellow axis‑intercept markers
+  % --- axis‑intercept markers
 \foreach \pt/\lab in {
         (A)/{$\tfrac{b}{a_{3}}$},
         (C)/{$\tfrac{b}{a_{1}}$},
@@ -3254,18 +3289,174 @@ is called a \emph{hyperplane} in \(\R^{n}\) and it separates \(\R^n\) into the t
 \end{tikzpicture}
 \]
 
-The feasible set of a \gls{lp} problem is a \emph{polyhedron}, which is an intersection of \(m\) halfspaces, i.e. a set of the form \(\{ \vect{x} \in \R^{n} : \matr{A} \vect{x} \geq \vect{b} \}\).
-A bounded plyhedron is called a \emph{polytope}.
 
-\subsection{Standard Form}\label{sec:standardform_linear_programming}
+The feasible set of a \gls{lp} problem thus is an intersection of \(m\) halfspaces, i.e. a set of the form \(\{ \vect{x} \in \R^{n} : \matr{A} \vect{x} \geq \vect{b} \}\).
+It is a \emph{polyhedron} (Definition~\ref{def:polyhedron}).
+
+\begin{definition}[Polyhedron]\label{def:polyhedron}
+  A set of the form
+  \begin{equation}\label{eq:polyhedron}
+    P = \left\{ \vect{x} \in \R^{n} : \vect{a}_i^\top \vect{x} = b_i, \; i \in \mathcal{E}, \; \vect{a}_i^\top \vect{x} \geq b_i, \; i \in \mathcal{I} \right\}
+  \end{equation}
+  is called a {polyhedron}.
+A bounded polyhedron is called a \emph{polytope}.
+\end{definition}
+
+\subsubsection{Standard Form}\label{sec:standardform_linear_programming}
+The \emph{standard form} of a \gls{lp} problem is
+\begin{equation}\label{eq:form_standard_linear_programming}
+  {\color{Red}
+\boxed{ 
+\color{black}
+    \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
+    \begin{cases}
+      \matr{A} \vect{x} = \vect{b} \\
+      \vect{x} \geq \vect{0}
+    \end{cases}
+  }}
+\end{equation}
+with \(\matr{A} \in \R^{m\times n}\), \(\vect{b} \in \R^{m}\) and \(\vect{c} \in \R^{n}\).
+This form is important for designing algorithms.
+
+The standard form can be interpreted as follow:
+\begin{itemize}
+\item the columns \(\vect{A}_1, \ldots, \vect{A}_n\) of \(\matr{A}\) are the \emph{resource vectors}
+\item the non-negative variables \(x_j\) are the \emph{amount}/\emph{quantity} of resource \(j\)
+\item the \(c_j\) are the \emph{unit cost} of resource \(j\)
+\item the \(\vect{b}\) is the \emph{target} vector
+\end{itemize}
+We can therefore interpret a \gls{lp} problem in standard form as a minimal cost ``synthesis'' problem where (non-negative) quantities of some resources (ingredients) are used to get a target product (food) containing \(b_i\) of nutrient \(i\), 
+where \(c_j\) is the unit cost of ingredient \(j\) and \(a_{ij}\) is the amount of nutrient \(i\) in ingredient \(j\).
 
 
 
+\textcolor{orange}{Transformation} from \nameref{sec:standardform_linear_programming} to \nameref{sec:generalform_linear_programming} (easier):
+% \begin{itemize}
+%   \item \(\matr{A}    \quad \longrightarrow \quad \matr{A}'= 
+%   \begin{pmatrix}
+%     \matr{A} \\
+%     -\matr{A} \\
+%     \matr{I}_{n}
+%   \end{pmatrix}\)
+%   \item \(\vect{b}    \quad \longrightarrow \quad \vect{b}'= 
+%   \begin{pmatrix}
+%     \vect{b} \\
+%     -\vect{b} \\
+%     \vect{0}_{n}
+%   \end{pmatrix}\)
+% \end{itemize}
+\[
+\matr{A}' = \begin{pmatrix}
+  \matr{A} \\
+  -\matr{A} \\
+  \matr{I}_{n}
+\end{pmatrix},
+\qquad
+\vect{b}' = \begin{pmatrix}
+  \vect{b} \\
+  -\vect{b} \\
+  \vect{0}_{n}
+\end{pmatrix}
+\]
 
 
+\textcolor{orange}{Transformation} from \nameref{sec:generalform_linear_programming} to equivalent\footnote{Strictly speaking, we obtain a different problem, with a different set of variables and thus different feasible set. However, the transformed problem is equivalent to the original in the sense that it has the same optimal cost (or is infeasible, in the case the original was also infeasible).} problem in \nameref{sec:standardform_linear_programming}:
+\begin{itemize}
+\item non-positive variable: \(x_j \leq 0 \quad \longrightarrow \quad x_j' = -x_j \geq 0\)
+\item free variable (neither \(x_j \leq 0\) nor \(x_j \geq 0\)): \(x_j \in \R \quad \longrightarrow \quad x_j = x_j^+ - x_j^-, \quad x_j^+, x_j^- \geq 0\)
+\item inequality constraint: \(\vect{a}_i^\top \vect{x} \geq b_i \quad \longrightarrow \quad \vect{a}_i^\top \vect{x} - s_i = b_i, \quad s_i \geq 0\) (slack/surplus variable)
+\end{itemize}
 
 
+\subsection{Geometric Properties}\label{sec:geometric_properties_linear_programming}
+\subsubsection{Corner Points}\label{sec:corner_points_linear_programming}
+A general property of \gls{lp} problems is that minimizers can be found at ``corner points'', which we will define in 3 equivalent ways (Definition \ref{def:extreme_point}, \ref{def:vertex}, \ref{def:basic_feasible_solution}).
+\begin{definition}[Extreme Point]\label{def:extreme_point}
+\(\vect{x} \in P\) is an \emph{extreme point} of a polyhedron \(P\) if there exist no \(\vect{y},\vect{z} \in P \setminus \{\vect{x}\}\) and \(\lambda \in [0,1]\) such that
+\(
+  \vect{x} = \lambda \vect{y} + (1-\lambda) \vect{z}
+\).
+\end{definition}
+Intuitively, this means that \(\vect{x}\) cannot be in-between two other points of \(P\).
+\begin{definition}[Vertex]\label{def:vertex}
+\(\vect{x} \in P\) is a \emph{vertex} of a polyhedron \(P\) if there exists \(\vect{c} \in \R^{n}\) such that
+\(
+  \vect{c}^\top \vect{x} < \vect{c}^\top \vect{y}
+\)
+for all \(\vect{y} \in P\setminus\{\vect{x}\}\).
+\end{definition}
+Intuitively, this means that \(\vect{x}\) is a unique solution (strict minimizer) of a \gls{lp} problem with feasible set \(P\).
 
+Recall that \(\vect{c}^\top \vect{x} = b\) defines a family of parallel hyperplanes indexed by \(b\), and that \(\vect{c}\) points in the direction where \(\vect{c}^\top \vect{x} = b\) increases.
+Thus, if \(\vect{x}^\ast\) is a vertex of \(P\), the hyperplane \(\vect{c}^\top \vect{x} = b^\ast\) where \(b^\ast = \vect{c}^\top \vect{x}^\ast\) intersects \(P\) in only one point, \(\vect{x}^\ast\), and \(b^\ast\) is the smallest possible value of parameter \(b\) such that the hyperplane intersects \(P\) in at least one point.
+
+Definition \ref{def:extreme_point} and \ref{def:vertex} are purely geometric, i.e., they do not depend on a specific representation of the polyhedron \(P\), but they are difficult to use for finding the corner points of \(P\).
+Definition \ref{def:basic_feasible_solution} uses the algebraic representation \eqref{eq:polyhedron} of the polyhedron.
+It is less intuitive, but more practical, as it gives us a procedure for identifying all corner points.
+
+Consider a polyhedron \(P\) defined in the ``generic form'' (Definition~\ref{def:polyhedron}).
+Note that the general and standard from of \(P\) are special cases of this form.
+\begin{definition}[Basic Solution]\label{def:basic_solution}
+The vector \(\vect{x} \in \R^{n}\) is a \emph{basic solution} of \(P\) if all equality constraints are satisfied, i.e., \(\vect{a}_i^\top \vect{x} = b_i\) for all \(i \in \mathcal{E}\)
+and
+there are \(n\) constraints in \(\mathcal{A}(\vect{x})\) such that their gradients are linearly independent.
+\end{definition}
+\underline{Remarks:}
+\begin{itemize}
+\item If the number of constraints \(m = |\mathcal{E} \cup \mathcal{I}|\) defining \(P\) is less than \(n\), there cannot be \(n\) linearly independent constraints, thus there exists no basic solution of \(P\).
+\item If we choose \(n\) linearly independent constraints, there exists a unique point \(\vect{x} \in \R^{n}\) at which they are all active (the intersection of \(n\) non-parallel hyperplanes in \(\R^{n}\) is a unique point).
+      Thus, there can only be a finite number of basic solutions given a finite number of constraints and this number is bounded by \(\binom{m}{n}\). 
+\item A basic solution of a polyhedron \(P\) does not necessarily belong to \(P\), since we do not require that all inequality constraints are satisfied at \(\vect{x}\).
+\end{itemize}
+\begin{definition}[Basic Feasible Solution]\label{def:basic_feasible_solution}
+The vector \(\vect{x} \in \R^{n}\) is a \emph{basic feasible solution} of \(P\) if it is a basic solution and \(\vect{x} \in P\).
+\end{definition}
+\underline{Remarks:}
+\begin{itemize}
+  \item As mentioned, the 3 characterizations of corner points (Definition \ref{def:extreme_point}, \ref{def:vertex}, \ref{def:basic_feasible_solution}) are equivalent.
+  \item Although the number of corner points is finite, it can be very large. \begin{example}[Unit Cube]\label{ex:unit_cube}
+    The unit cube \(\{ \vect{x} \in \R^{n} : 0 \leq x_j \leq 1, \; j = 1,\ldots,n \}\) has \(2^n\) basic feasible solutions.
+  \end{example}
+  \item Not all polyhedra have basic feasible solutions (e.g. one constraint in \(\R^{n}\) with \(n > 1\)).
+\end{itemize}
+
+\begin{example}
+\label{ex:basic_feasible_solutions}
+Consider the polyhedron \(P \subset \R^{2}\) represented in the following figure and defined as the intersection of 4 halfspaces.
+\[
+\begin{tikzpicture}[scale=0.5]
+  \draw[name path=L1]  (-1.0,2.5) -- (5.5,-0.5);       % ℓ₁
+  \draw[name path=L2]  (-1.0,-2.5) -- (5.5,0.5);       % ℓ₂
+  \draw[name path=L3]  (-0.5,3)  -- (1.5,-2);          % ℓ₃
+  \draw[name path=L4]  (-0.5,-3) -- (1.5,2);           % ℓ₄
+
+  \path [name intersections={of=L1 and L3, by=A}]; % A = ℓ₁∩ℓ₃
+  \path [name intersections={of=L2 and L4, by=B}]; % B = ℓ₂∩ℓ₄
+  \path [name intersections={of=L2 and L3, by=C}]; % C = ℓ₂∩ℓ₃
+  \path [name intersections={of=L3 and L4, by=D}]; % D = ℓ₃∩ℓ₄
+  \path [name intersections={of=L4 and L1, by=E}]; % E = ℓ₄∩ℓ₁
+  \path [name intersections={of=L1 and L2, by=F}]; % F = ℓ₁∩ℓ₂
+
+  \fill[gray!20] (C) -- (D) -- (E) -- (F) -- cycle;
+  \draw              (C) -- (D) -- (E) -- (F) -- cycle;
+
+  \draw (A) -- (E);
+  \draw (B) -- (D);
+
+  \foreach \pt/\pos in {A/left, B/left, C/right, D/left, E/right, F/above}
+    {
+    \fill (\pt) circle (1.8pt);
+    \node[\pos] at (\pt) {\footnotesize$\pt$};
+    }
+
+  \node at ($($(D)!0.5!(F)$)!0.5!($(C)!0.5!(E)$)$) {$P$};
+\end{tikzpicture}
+\]
+$n=2$ constraints are linearly independent if they are not parallel.
+The points \(A, B, C, D, E, F\) are basic solutions but only \(C, D, E, F\) are basic feasible solutions.
+\end{example}
+
+% \subsubsection{Basic Solutions for Polyhedra in Standard Form}\label{sec:basic_solutions_standard_form}
 
 
 
