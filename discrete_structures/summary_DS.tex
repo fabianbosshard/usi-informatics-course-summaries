@@ -1793,8 +1793,8 @@ Assume \eqref{eq:inclusion_exclusion} holds for the union of \(n\) sets, for som
 Consider a union of a family of $(n+1)$ sets - of which we single out the $(n+1)^\text{th}$ set.
 \vspace{-\baselineskip}
 \begin{align}
-\left|\bigcup_{i=1}^{n+1} A_i\right| = & \left|\left(\bigcup_{i=1}^n A_i\right) \cup A_{n+1}\right| \overset{\ref{proof:inclusion-exclusion-BC}}{=} \left|\bigcup_{i=1}^n A_i\right|+\left|A_{n+1}\right|-\overbrace{\left|\left(\bigcup_{i=1}^n A_i\right) \cap A_{n+1}\right|}^{\overset{\ref{subsubsec:logical-laws}}{=}\left|\bigcup_{i=1}^n\left(A_i \cap A_{n+1}\right)\right|} \label{eq:inclusion_exclusion:step1} \\
-\overset{\ref{proof:inclusion-exclusion-IH}}{=} & \sum_{r=1}^n(-1)^{r-1} \sum_{1 \leq i_1<\ldots<i_r \leq n}\left|\bigcap_{k=1}^r A_{i_k}\right|+\left|A_{n+1}\right| \notag \\
+\left|\bigcup_{i=1}^{n+1} A_i\right| = & \left|\left(\bigcup_{i=1}^n A_i\right) \cup A_{n+1}\right| \overset{\text{\ref{proof:inclusion-exclusion-BC}}}{=} \left|\bigcup_{i=1}^n A_i\right|+\left|A_{n+1}\right|-\overbrace{\left|\left(\bigcup_{i=1}^n A_i\right) \cap A_{n+1}\right|}^{\overset{\text{\ref{subsubsec:logical-laws}}}{=}\left|\bigcup_{i=1}^n\left(A_i \cap A_{n+1}\right)\right|} \label{eq:inclusion_exclusion:step1} \\
+\overset{\text{\ref{proof:inclusion-exclusion-IH}}}{=} & \sum_{r=1}^n(-1)^{r-1} \sum_{1 \leq i_1<\ldots<i_r \leq n}\left|\bigcap_{k=1}^r A_{i_k}\right|+\left|A_{n+1}\right| \notag \\
 & -\sum_{r=1}^n(-1)^{r-1} \sum_{1 \leq i_1<\ldots<i_r \leq n}\left|\bigcap_{k=1}^r\left(A_{i_k} \cap A_{n+1}\right)\right| \label{eq:inclusion_exclusion:step2} \\
 = & \sum_{k=1}^{n}\left|A_k\right| +\sum_{r=2}^{n} (-1)^{r-1} \sum_{1\le i_1<\dots<i_r\le n} \left|\bigcap_{k=1}^r A_{i_k}\right| +\left|A_{n+1}\right| \notag \\
 & -\sum_{r=1}^{n} (-1)^{r-1} \sum_{1\le i_1<\dots<i_{r}\le n} \left|\left(\bigcap_{k=1}^{r} A_{i_k}\right)\cap A_{n+1}\right| \label{eq:inclusion_exclusion:step3} \\

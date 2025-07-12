@@ -2139,6 +2139,8 @@ $$
 
 where the learning-rate is $\eta>0$, $g: \mathbb{R} \rightarrow \mathbb{R}$ is deterministic, and the noises are i.i.d. $\epsilon_k \sim$ $\mathcal{N}\left(0, \sigma^2\right)$.
 
+\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)}]
+\item
 Show that, when the step size is small ( $\eta=\Delta t \ll 1$ ) and one rescales $\sigma^2=\eta \tilde{\sigma}^2$, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \eta\rfloor}$ converges (in distribution) to the Itô SDE
 $$
 d \Theta_t=-g\left(\Theta_t\right) d t+\tilde{\sigma} d W_t, \quad \Theta_0=1
@@ -2229,6 +2231,9 @@ d\Theta_t
 \Theta_0=1.
 \]
 
+\item Define the state-space of the Markov chain $\left\{\theta_k\right\}_{k \geq 0}$ and derive the transition density $P\left(\theta_{k+1} \mid \theta_k\right)$.
+
+\end{enumerate}
 
 
 

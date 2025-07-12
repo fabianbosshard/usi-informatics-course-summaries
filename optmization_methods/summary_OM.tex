@@ -229,8 +229,14 @@
 
 % commands for vectors and matrices
 \newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\boldsymbol{#1}}
 \newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
 % \newcommand{\vect}[1]{\vec{{#1}}\,}
+% \newcommand{\matr}[1]{\underline{#1}}
+% \newcommand{\vect}[1]{\vec{#1}}
+
+
+
 
 % commands for derivatives
 \newcommand{\dif}{\mathrm{d}}
@@ -315,7 +321,10 @@
 % 3. define your acronyms
 \newacronym{kkt}{KKT}{Karush--Kuhn--Tucker conditions}
 \newacronym{licq}{LICQ}{Linear Independence Constraint Qualification}
+
 \newacronym{lp}{LP}{Linear Programming}
+\newacronym{bfs}{BFS}{Basic Feasible Solution}
+
 \newacronym{qp}{QP}{Quadratic Programming}
 
 
@@ -3111,6 +3120,23 @@ Differences between Theorems~\ref{thm:SONC} and~\ref{thm:SOSC}:
 \clearpage
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Linear Programming}\label{sec:linear_programming}
 
 \subsection{General and Standard Form}
@@ -3158,13 +3184,10 @@ Note that in last case, the set of minimizers could also be unbounded.
 % \]
 Applying these transformations to \eqref{eq:form_optimization_problem}, we obtain \(m \geq |\mathcal{E} \cup \mathcal{I}|\) inequality constraints and \eqref{eq:form_linear_programming} can be written as
 \begin{equation}\label{eq:form_general_linear_programming}
-  {\color{Red}
 \boxed{ 
-\color{black}
     \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
     \matr{A} \vect{x} \geq \vect{b}
-  }
-  }
+    }
 \end{equation}
 with \(\matr{A} \in \R^{m\times n}\), \(\vect{b} \in \R^{m}\) and \(\vect{c} \in \R^{n}\).
 This is called the \emph{general form} of a \gls{lp} problem.
@@ -3305,15 +3328,13 @@ A bounded polyhedron is called a \emph{polytope}.
 \subsubsection{Standard Form}\label{sec:standardform_linear_programming}
 The \emph{standard form} of a \gls{lp} problem is
 \begin{equation}\label{eq:form_standard_linear_programming}
-  {\color{Red}
 \boxed{ 
-\color{black}
     \min_{\vect{x} \in \mathbb{R}^{n}} \vect{c}^\top \vect{x} \quad \text{subject to} \quad
     \begin{cases}
       \matr{A} \vect{x} = \vect{b} \\
       \vect{x} \geq \vect{0}
     \end{cases}
-  }}
+  }
 \end{equation}
 with \(\matr{A} \in \R^{m\times n}\), \(\vect{b} \in \R^{m}\) and \(\vect{c} \in \R^{n}\).
 This form is important for designing algorithms.
@@ -3372,9 +3393,9 @@ where \(c_j\) is the unit cost of ingredient \(j\) and \(a_{ij}\) is the amount 
 \subsubsection{Corner Points}\label{sec:corner_points_linear_programming}
 A general property of \gls{lp} problems is that minimizers can be found at ``corner points'', which we will define in 3 equivalent ways (Definition \ref{def:extreme_point}, \ref{def:vertex}, \ref{def:basic_feasible_solution}).
 \begin{definition}[Extreme Point]\label{def:extreme_point}
-\(\vect{x} \in P\) is an \emph{extreme point} of a polyhedron \(P\) if there exist no \(\vect{y},\vect{z} \in P \setminus \{\vect{x}\}\) and \(\lambda \in [0,1]\) such that
+\(\vect{x} \in P\) is an \emph{extreme point} of a polyhedron \(P\) if there exist no \(\vect{u},\vect{v} \in P \setminus \{\vect{x}\}\) and \(\lambda \in [0,1]\) such that
 \(
-  \vect{x} = \lambda \vect{y} + (1-\lambda) \vect{z}
+  \vect{x} = \lambda \vect{u} + (1-\lambda) \vect{v}
 \).
 \end{definition}
 Intuitively, this means that \(\vect{x}\) cannot be in-between two other points of \(P\).
@@ -3403,60 +3424,214 @@ there are \(n\) constraints in \(\mathcal{A}(\vect{x})\) such that their gradien
 \end{definition}
 \underline{Remarks:}
 \begin{itemize}
-\item If the number of constraints \(m = |\mathcal{E} \cup \mathcal{I}|\) defining \(P\) is less than \(n\), there cannot be \(n\) linearly independent constraints, thus there exists no basic solution of \(P\).
+\item If the number of constraints \(|\mathcal{E} \cup \mathcal{I}|\) defining \(P\) is less than \(n\), there cannot be \(n\) linearly independent constraints, thus there exists no basic solution of \(P\).
 \item If we choose \(n\) linearly independent constraints, there exists a unique point \(\vect{x} \in \R^{n}\) at which they are all active (the intersection of \(n\) non-parallel hyperplanes in \(\R^{n}\) is a unique point).
-      Thus, there can only be a finite number of basic solutions given a finite number of constraints and this number is bounded by \(\binom{m}{n}\). 
+      Thus, there can only be a finite number of basic solutions given a finite number of constraints and this number is bounded by \(\binom{|\mathcal{E} \cup \mathcal{I}|}{n}\). 
 \item A basic solution of a polyhedron \(P\) does not necessarily belong to \(P\), since we do not require that all inequality constraints are satisfied at \(\vect{x}\).
 \end{itemize}
 \begin{definition}[Basic Feasible Solution]\label{def:basic_feasible_solution}
-The vector \(\vect{x} \in \R^{n}\) is a \emph{basic feasible solution} of \(P\) if it is a basic solution and \(\vect{x} \in P\).
+The vector \(\vect{x} \in \R^{n}\) is a \emph{\gls{bfs}} of \(P\) if it is a basic solution and \(\vect{x} \in P\).
 \end{definition}
 \underline{Remarks:}
 \begin{itemize}
   \item As mentioned, the 3 characterizations of corner points (Definition \ref{def:extreme_point}, \ref{def:vertex}, \ref{def:basic_feasible_solution}) are equivalent.
   \item Although the number of corner points is finite, it can be very large. \begin{example}[Unit Cube]\label{ex:unit_cube}
-    The unit cube \(\{ \vect{x} \in \R^{n} : 0 \leq x_j \leq 1, \; j = 1,\ldots,n \}\) has \(2^n\) basic feasible solutions.
+    The unit cube \(\{ \vect{x} \in \R^{n} : 0 \leq x_j \leq 1, \; j = 1,\ldots,n \}\) has \(2^n\) \gls{bfs}s.
   \end{example}
-  \item Not all polyhedra have basic feasible solutions (e.g. one constraint in \(\R^{n}\) with \(n > 1\)).
+  \item Not all polyhedra have \gls{bfs}s (e.g. one constraint in \(\R^{n}\) with \(n > 1\))\footnote{see Section \ref{sec:existence_basic_feasible_solutions}}.
 \end{itemize}
 
-\begin{example}
-\label{ex:basic_feasible_solutions}
-Consider the polyhedron \(P \subset \R^{2}\) represented in the following figure and defined as the intersection of 4 halfspaces.
-\[
-\begin{tikzpicture}[scale=0.5]
-  \draw[name path=L1]  (-1.0,2.5) -- (5.5,-0.5);       % ℓ₁
-  \draw[name path=L2]  (-1.0,-2.5) -- (5.5,0.5);       % ℓ₂
-  \draw[name path=L3]  (-0.5,3)  -- (1.5,-2);          % ℓ₃
-  \draw[name path=L4]  (-0.5,-3) -- (1.5,2);           % ℓ₄
+% \begin{example}
+% \label{ex:basic_feasible_solutions}
+% Consider the polyhedron \(P \subset \R^{2}\) represented in the following figure and defined as the intersection of 4 halfspaces.
+% \[
+% \begin{tikzpicture}[scale=0.5]
+%   \draw[name path=L1]  (-1.0,2.5) -- (5.5,-0.5);       % ℓ₁
+%   \draw[name path=L2]  (-1.0,-2.5) -- (5.5,0.5);       % ℓ₂
+%   \draw[name path=L3]  (-0.5,3)  -- (1.5,-2);          % ℓ₃
+%   \draw[name path=L4]  (-0.5,-3) -- (1.5,2);           % ℓ₄
 
-  \path [name intersections={of=L1 and L3, by=A}]; % A = ℓ₁∩ℓ₃
-  \path [name intersections={of=L2 and L4, by=B}]; % B = ℓ₂∩ℓ₄
-  \path [name intersections={of=L2 and L3, by=C}]; % C = ℓ₂∩ℓ₃
-  \path [name intersections={of=L3 and L4, by=D}]; % D = ℓ₃∩ℓ₄
-  \path [name intersections={of=L4 and L1, by=E}]; % E = ℓ₄∩ℓ₁
-  \path [name intersections={of=L1 and L2, by=F}]; % F = ℓ₁∩ℓ₂
+%   \path [name intersections={of=L1 and L3, by=A}]; % A = ℓ₁∩ℓ₃
+%   \path [name intersections={of=L2 and L4, by=B}]; % B = ℓ₂∩ℓ₄
+%   \path [name intersections={of=L2 and L3, by=C}]; % C = ℓ₂∩ℓ₃
+%   \path [name intersections={of=L3 and L4, by=D}]; % D = ℓ₃∩ℓ₄
+%   \path [name intersections={of=L4 and L1, by=E}]; % E = ℓ₄∩ℓ₁
+%   \path [name intersections={of=L1 and L2, by=F}]; % F = ℓ₁∩ℓ₂
 
-  \fill[gray!20] (C) -- (D) -- (E) -- (F) -- cycle;
-  \draw              (C) -- (D) -- (E) -- (F) -- cycle;
+%   \fill[gray!20] (C) -- (D) -- (E) -- (F) -- cycle;
+%   \draw              (C) -- (D) -- (E) -- (F) -- cycle;
 
-  \draw (A) -- (E);
-  \draw (B) -- (D);
+%   \draw (A) -- (E);
+%   \draw (B) -- (D);
 
-  \foreach \pt/\pos in {A/left, B/left, C/right, D/left, E/right, F/above}
-    {
-    \fill (\pt) circle (1.8pt);
-    \node[\pos] at (\pt) {\footnotesize$\pt$};
-    }
+%   \foreach \pt/\pos in {A/left, B/left, C/right, D/left, E/right, F/above}
+%     {
+%     \fill (\pt) circle (1.8pt);
+%     \node[\pos] at (\pt) {\footnotesize$\pt$};
+%     }
 
-  \node at ($($(D)!0.5!(F)$)!0.5!($(C)!0.5!(E)$)$) {$P$};
-\end{tikzpicture}
-\]
-$n=2$ constraints are linearly independent if they are not parallel.
-The points \(A, B, C, D, E, F\) are basic solutions but only \(C, D, E, F\) are basic feasible solutions.
+%   \node at ($($(D)!0.5!(F)$)!0.5!($(C)!0.5!(E)$)$) {\footnotesize$P$};
+% \end{tikzpicture}
+% \]
+% $n=2$ constraints are linearly independent if they are not parallel.
+% The points \(A, B, C, D, E, F\) are basic solutions but only \(C, D, E, F\) are \gls{bfs}s.
+% \end{example}
+
+\subsubsection{Basic Solutions for Polyhedra in Standard Form}\label{sec:basic_solutions_standard_form}
+
+We now consider a polyhedron represented in standard form, i.e.,
+\begin{equation}\label{eq:polyhedron_standard_form}
+P = \{ \vect{x} \in \R^n : \matr{A} \vect{x} = \vect{b}, \; \vect{x} \geq \vect{0} \}
+\end{equation}
+where \(\matr{A} \in \R^{m\times n}\) and \(\vect{b} \in \R^{m}\) (the total number of constraints is \(|\mathcal{E} \cup \mathcal{I}| = m + n\)).
+
+We assume that \(\operatorname{rank}(\matr{A}) = m\), i.e., \(\matr{A}\) has ``full row rank'' (rows of \(\matr{A}\) are linearly independent).
+In particular, this requires \(m \leq n\).
+This is not restrictive because, if \(P\) is non-empty (i.e. the constraints are compatible), linearly dependent rows correspond to redundant constraints that can be discarded without changing the polyhedron.
+
+Consider a basic solution \(\vect{x}\) (Definition~\ref{def:basic_solution}).
+If the \(m\) equality constraints are satisfied, they are active at \(\vect{x}\) and they are linearly independent by the assumption on the rows of \(\matr{A}\).
+Thus, \(n - m\) inequality constraints must also be active at \(\vect{x}\), i.e., \(n - m\) coordinates of \(\vect{x}\) need to be zero. 
+However, we need to choose those variables so that the \(n\) active constraints are linearly independent.
+% example: if we have x + y + z = 1, x + y - z = 1/2, we can choose x or y to be zero, but not z
+
+\begin{theorem}[Basic Solutions - Standard Form]\label{thm:basic_solutions_standard_form}
+Assume \(P\) is a polyhedron in standard form \eqref{eq:polyhedron_standard_form} with \(\operatorname{rank}(\matr{A}) = m\).
+\(\vect{x} \in \R^n\) is a basic solution of \(P\) if and only if \(\matr{A} \vect{x} = \vect{b}\) and there exist indices \(j_1, \ldots, j_m \in \{1, \ldots, n\}\) (\emph{basic indices}) such that
+\begin{itemize}
+\item \(\matr{B} = [\vect{A}_{j_1}, \ldots, \vect{A}_{j_m}] \in \R^{m\times m}\) is non-singular (\emph{basis matrix})
+\item \(x_i = 0\) for \(i \notin \{j_1, \ldots, j_m\}\)
+\end{itemize}
+where \(\vect{A}_j\) is the \(j\)-th column of \(\matr{A}\).
+\end{theorem}
+
+We can thus construct all basic solutions of a polyhedron in standard form by 
+enumerating all sets of \(m\) linearly independent columns of \(\matr{A}\), 
+% putting them in a matrix \(\matr{B} = [\vect{A}_{j_1}, \ldots, \vect{A}_{j_m}]\),
+setting \(x_i = 0\) for \(i \notin \{j_1, \ldots, j_m\}\),
+and solving
+\begin{equation}\label{eq:basic_solution_standard_form_implicit}
+% {\color{Red}
+% \boxed{ 
+% \color{black}
+\matr{A} \vect{x} 
+= \sum_{j=1}^{n} x_j \vect{A}_j
+= \sum_{i=1}^{m} x_{j_i} \vect{A}_{j_i}
+= \matr{B} \vect{x}_\mathcal{B}
+= \vect{b} 
+% \quad \Longleftrightarrow \quad 
+% \vect{x}_\mathcal{B} = \matr{B}^{-1} \vect{b}
+% }
+% }
+\end{equation}
+where \(\vect{x}_\mathcal{B} = (x_{j_1}, \ldots, x_{j_m})^\top \in \R^m\) (\emph{basic variables}). % is the vector of basic variables corresponding to the basic indices \(j_1, \ldots, j_m\).
+Denoting the set of basic indices by \(\mathcal{B} = \{j_1, \ldots, j_m\}\) and the set of non-basic indices by \(\mathcal{N} = \{1, \ldots, n\} \setminus \mathcal{B}\), we thus have
+\begin{equation}\label{eq:basic_solution_standard_form}
+{\color{Red}
+\boxed{
+\color{black}
+\vect{x}_\mathcal{B} = \matr{B}^{-1} \vect{b}, \quad \vect{x}_\mathcal{N} = \vect{0}_{n-m}
+}
+}
+\end{equation}
+
+% The set of basic indices is often denoted by \(\mathcal{B} = \{j_1, \ldots, j_m\}\) and the set of non-basic indices by \(\mathcal{N} = \{1, \ldots, n\} \setminus \mathcal{B}\).
+
+% Denoting the set of basic indices by \(\mathcal{B} = \{j_1, \ldots, j_m\}\) and the set of non-basic indices by \(\mathcal{N} = \{1, \ldots, n\} \setminus \mathcal{B}\), we have constructed a basic solution
+% \[ 
+% \vect{x}
+% \quad
+% \text{where}
+% \quad
+% x_j = \begin{cases}
+%   \vect{x}_\mathcal{B}[i_j] \quad &  j \in \mathcal{B} \\
+%   0 \quad &  j \in \mathcal{N}
+% \end{cases}
+% \]
+With this procedure we can also find all \gls{bfs}s: 
+for each basic solution \(\vect{x}\) found, it is a \gls{bfs} if \(\vect{x}_\mathcal{B} \geq \vect{0}\) since \(x_i = 0\) for \(i \notin \{j_1, \ldots, j_m\}\) (\emph{non-basic variables}). 
+
+A set of \(m\) basic indices uniquely defines a basic solution (the corresponding basis matrix \(\matr{B}\) is invertible).
+However, several sets of basic indices may lead to the same basic solution if the latter is \emph{degenerate} (see \ref{sec:degeneracy_linear_programming}).
+
+
+\subsubsection{Degeneracy}\label{sec:degeneracy_linear_programming}
+is an important concept which can affect the behavior of algorithms.
+
+\begin{definition}\label{def:degeneracy}
+A basic solution \(\vect{x}\) of a generic polyhedron \(P\) is said to be degenerate if more than \(n\) linearly independent constraints are active at \(\vect{x}\).
+If there are exactly \(n\) linearly independent active constraints, \(\vect{x}\) is non-degenerate.
+\end{definition}
+
+For a standard form polyhedron, more than \(n\) active constraints (with the equality constraints satisfied) means that \textcolor{red}{more than \(n - m\) coordinates of \(\vect{x}\) are zero}.
+\textcolor{green}{This means that some of the basic variables in \(\vect{x}_\mathcal{B} = \matr{B}^{-1} \vect{b}\) are zero}.
+
+\subsubsection{Existence of Basic Feasible Solutions}\label{sec:existence_basic_feasible_solutions}
+In ``generic'' polyhedra of the form \eqref{eq:polyhedron}, \nameref{sec:corner_points_linear_programming} (i.e., \nameref{def:extreme_point}s / \nameref{def:vertex}es / \nameref{def:basic_feasible_solution}s) do not necessarily exist.
+Obviously, if \(|\mathcal{E} \cup \mathcal{I}| < n\), there cannot be \(n\) active constraints, thus there are no basic solutions and no \gls{bfs}s.
+
+A useful necessary and sufficient geometric condition is
+\begin{theorem}\label{thm:existence_basic_feasible_solutions}
+A non-empty polyhedron \(P\) has at least one \gls{bfs} if and only if it does \textcolor{red}{not} contain a line, i.e., a set of the form \(\{\vect{x} + \lambda \vect{d} : \lambda \in \R\}\).% with \(\vect{x}, \vect{d} \in \R^{n}\).
+\end{theorem}
+\begin{example}\label{ex:positive_orthant_cannot_contain_line}
+The polyhedron \(P = \{\vect{x} \in \R^{n} : \vect{x} \geq \vect{0}\}\) does not contain a line.
 \end{example}
+\begin{corollary}\label{cor:existence_basic_feasible_solutions}
+A non-empty polyhedron in standard form \eqref{eq:polyhedron_standard_form} has at least one \gls{bfs}.
+A non-empty polytope (bounded polyhedron) has at least one \gls{bfs}.
+\end{corollary}
+\begin{proof}
+Since the positive orthant does not contain a line (Example \ref{ex:positive_orthant_cannot_contain_line}), a set of the form \eqref{eq:polyhedron_standard_form}, a fortiori, cannot contain a line either (since the latter is a subset of former).
+A bounded set cannot contain a line either, since a line is unbounded.
+\end{proof}
 
-% \subsubsection{Basic Solutions for Polyhedra in Standard Form}\label{sec:basic_solutions_standard_form}
+\subsection{Optimality of Corner Points}\label{sec:optimality_corner_points_linear_programming}
+
+The following theorem formalizes the intuition that ``an optimal solution can be found at a corner point'':
+
+\begin{theorem}\label{thm:opt_extreme_point}
+Consider a \gls{lp} problem \(\min_{\vect{x}\in P} \vect{c}^\top \vect{x}\), where \(P\subseteq\R^{n}\) is a polyhedron.
+If there exists a minimizer and \(P\) has at least one \gls{bfs},
+then there exists a minimizer that is a \gls{bfs} of \(P\).
+\end{theorem}
+
+\underline{Remark:} \textcolor{red}{If \(P\) is in \nameref{sec:standardform_linear_programming}, it has at least one \gls{bfs} (Corollary~\ref{cor:existence_basic_feasible_solutions}) and thus if there is a minimizer, there exists a minimizer that is a \gls{bfs} of \(P\).}
+
+
+\begin{proof}
+Let \(\vect{x}^\ast\in P\) be a minimizer and \(c^\ast=\vect{c}^\top\vect{x}^\ast\) be the optimal cost.
+Then the set of minimizers
+\[
+  Q = \{\vect{x}\in P : \vect{c}^\top\vect{x}=c^\ast \}
+      = \{\vect{x}\in\R^{n} : \matr{A}\vect{x}\ge \vect{b},\;\vect{c}^\top\vect{x}=c^\ast\}
+\]
+is a polyhedron and not empty, because \(\vect{x}^\ast\in Q\).
+
+If \(P\) has at least one \gls{bfs}, it does not contain a line (Theorem~\ref{thm:existence_basic_feasible_solutions}) and thus, a fortiori, neither does \(Q\), since \(Q\subseteq P\).
+Therefore \(Q\) has at least one \gls{bfs}, henceforth denoted \(\vect{y}^\ast\).
+
+We now show that \(\vect{y}^\ast\) is also a \gls{bfs} of \(P\) employing the definition of a \nameref{def:vertex} (Definition~\ref{def:vertex}).
+If \(\vect{y}^\ast\) were not a \gls{bfs} of \(P\), there would exist \(\vect{u},\vect{v}\in P\setminus\{\vect{y}^\ast\}\) and \(\lambda\in(0,1)\) such that \(\vect{y}^\ast = \lambda\vect{u} + (1-\lambda)\vect{v}\).
+Then
+\[
+  c^\ast = \vect{c}^\top\vect{y}^\ast = \lambda \underbrace{\vect{c}^\top\vect{u}}_{\geq c^\ast} + (1-\lambda)\underbrace{\vect{c}^\top\vect{v}}_{\geq c^\ast} \geq \lambda c^\ast + (1-\lambda)c^\ast = c^\ast
+\]
+which implies that \(\vect{c}^\top\vect{u} = \vect{c}^\top\vect{v} = c^\ast\) and thus \(\vect{u},\vect{v}\in Q\).
+This contradicts the fact that \(\vect{y}^\ast\) is a \gls{bfs} of \(Q\), and hence \(\vect{y}^\ast\) must be a \gls{bfs} of \(P\).
+\end{proof}
+
+A slightly stronger result is
+\begin{theorem}\label{thm:opt_extreme_point_stronger}
+Consider a \gls{lp} problem \(\min_{\vect{x}\in P} \vect{c}^\top \vect{x}\), where \(P\subseteq\R^{n}\) is a polyhedron.
+If \(P\) has at least one \gls{bfs},
+then either the optimal cost is \(-\infty\) or there exists a minimizer that is a \gls{bfs} of \(P\).
+\end{theorem}
+
+\underline{Remark:}
+By transforming the problem into \nameref{sec:standardform_linear_programming}, we often change the variables and the feasible set.
+Thus, if a point is a \gls{bfs} of the transformed problem, it is not necessarily a \gls{bfs} of the original problem.
+Nonetheless, if we find a minimizer of the transformed problem at a \gls{bfs}, we also obtain a minimizer of the original problem.
 
 
 
@@ -3466,336 +3641,252 @@ The points \(A, B, C, D, E, F\) are basic solutions but only \(C, D, E, F\) are 
 
 
 
-% \clearpage
-
-% \section{chatV3}
 
 
 
+\subsection{Simplex Algorithm}\label{sec:simplex_algorithm_linear_programming}
+is based on Corollary~\ref{cor:existence_basic_feasible_solutions} and Theorem~\ref{thm:opt_extreme_point}: 
+it considers a \gls{lp} problem in standard from and explores the \glspl{bfs} of the feasible set, moving along its edges in directions that reduce the cost, until a minimizer is found.
 
-% % —————————————————————————–
-% %  Constrained Optimisation – Part 1
-% %  Concise notes after Deborah Sulem (Spring 2025)
-% %  Custom macros: \vect{} for vectors, \matr{} for matrices
-% % —————————————————————————–
 
-% % —————————————————————————–
-% % Generic problem statement and notation
-% % —————————————————————————–
-% \begin{equation}\label{eq:form_optimization_problem}
-% \min_{\vect{x}\in\R^{n}} f(\vect{x})
-% \quad\text{s.t.}\quad
-% c_{i}(\vect{x}) = 0,\; i\in\mathcal{E},
-% \qquad
-% c_{i}(\vect{x}) \ge 0,\; i\in\mathcal{I}.
+
+
+We consider a \gls{lp} problem in the form \eqref{eq:form_standard_linear_programming} with the feasible set
+\begin{equation}\label{eq:feasible_set_standard_linear_programming}
+P = \{\vect{x}\in\R^{n} : \matr{A}\vect{x}=\vect{b},\;\vect{x}\ge \vect{0}\}
+\end{equation}
+where \(\matr{A}\in\R^{m\times n}\) is a matrix with linearly independent rows.
+
+\subsubsection{Feasible and Basic Directions}
+
+
+The set of feasible directions (Definition~\ref{def:feasible_direction}, \ref{def:linearized_feasible_directions}) in the context of \gls{lp} becomes:
+\begin{theorem}[Feasible Direction]\label{thm:feasible_direction_lp}
+Let \(\vect{x} \in P\) be a feasible point and \(\vect{d} \in \R^{n}\) a direction. Then
+\begin{equation}\label{eq:feasible_direction_lp}
+% {\color{Red}
+\boxed{ 
+\color{black}
+\vect{d} \in \mathcal{F}(\vect{x}) \quad \Longleftrightarrow\quad
+\begin{cases}
+\matr{A}\vect{d} = \vect{0}\\
+d_i \ge 0, \quad i \in I_{0}
+\end{cases}
+}
+% }
+\end{equation}
+where 
+% \(I_0 \supseteq (\{1,\ldots,n\} \setminus \{j_1,\ldots,j_m\})\) 
+\(I_0\)
+are the indices in \(\{1,\ldots,n\}\) for which \(x_i = 0\).
+\end{theorem}
+
+At a \gls{bfs} \(\vect{x}^\ast\), we can express \(\mathcal{F}(\vect{x}^\ast)\) using a finite number of directions:
+\begin{definition}[Basic Direction]\label{def:basic_direction}
+Given the basic indices \(\mathcal{B} = \{j_1,\ldots,j_m\}\) and the corresponding basis matrix \(\matr{B} = [\vect{A}_{j_1},\ldots,\vect{A}_{j_m}]\) at \(\vect{x}^\ast\), we construct a basic direction \(\vect{d}\) as follows:
+\begin{enumerate}
+\item select a non-basic index \(j \in \mathcal{N} = \{1,\ldots,n\} \setminus \mathcal{B}\).
+\item set \(d_j = 1\) and \(d_i = 0\) for for all other non-basic indices \(i \in \mathcal{N} \setminus \{j\}\).
+i.e., moving in \(\vect{d}\) from \(\vect{x}^\ast\), the non-basic variable \(x_j\) is moved by one unit while the other non-basic variables are kept unchanged.
+\item set components at basic indices such that \(\matr{A}\vect{d} = \vect{0}\):
+\begin{equation}\label{eq:basic_direction_lp}
+\matr{A}\vect{d} = \sum_{i=1}^{n} d_i \vect{A}_i = \vect{A}_j + \sum_{i =1}^{m} \vect{A}_{j_i} d_{j_i} = \vect{A}_j + \matr{B} \vect{d}_\mathcal{B} = \vect{0} 
+\quad\Longrightarrow\quad 
+{\color{Red}
+\boxed{ 
+\color{black}
+\vect{d}_\mathcal{B} = -\matr{B}^{-1} \vect{A}_j
+}
+}
+\end{equation}
+where \(\vect{d}_\mathcal{B} = (d_{j_1},\ldots,d_{j_m})\) are the basic components of \(\vect{d}\).
+\end{enumerate}
+This defines the \emph{\(j^\text{th}\) basic direction} at \(\vect{x}^\ast\).
+\end{definition}
+\underline{Remarks:}
+\begin{itemize}
+\item There are as many basic directions as indices \(i\) such that \(x_i^\ast = 0\). 
+\item If \(\vect{x}^\ast\) is non-degenerate, there are \(n - m\) basic directions.
+\item If \(\vect{x}^\ast\) is non-degenerate, all basic directions are feasible, but if \(\vect{x}^\ast\) is degenerate, there may be a basic direction \(\vect{d}\) and a basic index \(j_i\) such that \(x_{j_i}^\ast = 0\) and \(d_{j_i} < 0\), which means that \(\vect{d}\) is \textcolor{red}{not} feasible!\footnote{important for \ref{sec:simplex_degenerate}} % HIGHLIGHT -> important to understand why step size could be 0, even though reduced cost is negative
+\item At a non-degenerate \gls{bfs}, moving along a basic direction corresponds to moving along an edge of the feasible set.
+\item At a \gls{bfs} (degenerate or not), any \(\vect{d} \in \mathcal{F}(\vect{x}^\ast)\) can be expressed as a linear combination of basic directions.
+\end{itemize}
+
+
+
+
+
+
+
+\subsubsection{Reduced Costs}\label{subsec:reduced_costs_lp}
+
+We now look at the change of the cost function \(f(\vect{x})=\vect{c}^{\top}\vect{x}\) along the \(j^\text{th}\) basic direction \(\vect{d}\).
+
+Directional derivative of \(f(\vect{x})\) at \gls{bfs} \(\vect{x}^\ast\) in direction \(\vect{d}\):
+\begin{equation}\label{eq:directional_derivative_lp}
+\nabla f(\vect{x}^\ast)^{\top}\vect{d} = \vect{c}^{\top}\vect{d} = \sum_{i=1}^{n} c_i d_i 
+= \vect{c}_\mathcal{B}^{\top}\vect{d}_\mathcal{B} + c_j
+\overset{\eqref{eq:basic_direction_lp}}{=}
+-\vect{c}_\mathcal{B}^{\top}\matr{B}^{-1}\vect{A}_j + c_j
+\end{equation}
+since \(d_i = 0\) for any non-basic index \(i\neq j\) and \(\vect{d}_\mathcal{B} = -\matr{B}^{-1}\vect{A}_j\).
+
+\begin{definition}[Reduced Cost]\label{def:reduced_cost}
+% Let \(\vect{x}^\ast\) be a \gls{bfs} with basis matrix \(\matr{B}\) and let  
+% \(\vect{c}_\mathcal{B}=(c_{j_1},\dots,c_{j_m})\) denote the vector of objective
+% coefficients associated with the basic variables.  
+For every index \(j\in\{1,\dots,n\}\) the \emph{reduced cost} of variable~\(x_j\) at \(\vect{x}^\ast\) is defined as
+\begin{equation}\label{eq:reduced_cost}
+\boxed{
+c^r_j
+=
+c_j-\vect{c}_\mathcal{B}^{\top}\matr{B}^{-1}\vect{A}_j
+}
+\end{equation}
+and the \emph{vector of reduced costs} can be written as
+% \begin{equation}\label{eq:reduced_cost_vector}
+% \boxed{
+\(
+\vect{c}^r
+=
+\vect{c}-\matr{A}^{\top}\matr{B}^{-1}\vect{c}_\mathcal{B}
+\).
+% }
 % \end{equation}
-% Here
-% \begin{itemize}
-% \item $f: \R^{n}\to\R$ is \emph{continuously differentiable} (unless stated otherwise);
-% \item $\vect{x}\in\R^{n}$ is the decision vector;
-% \item $\mathcal{E}$ ($|\mathcal{E}| = m_{e}$) and $\mathcal{I}$ ($|\mathcal{I}| = m_{i}$) index equality and inequality constraints, respectively;
-% \item each $c_{i}:\R^{n}\to\R$ is a continuous constraint function.
-% \end{itemize}
-% The problem is \emph{constrained} when $\mathcal{E}\cup\mathcal{I}\neq\varnothing$; otherwise (i.e.~$\mathcal{E}=\mathcal{I}=\varnothing$) it reduces to the classical \emph{unconstrained} optimization problem.
+\end{definition}
 
-% % —————————————————————————–
-% % Feasible region, active set, types of minimizers
-% % —————————————————————————–
-% \begin{definition}[Feasible point and feasible region]\label{def:feasible_region}
-% A point $\vect{x}\in\R^{n}$ is \emph{feasible} for~\eqref{eq:form_optimization_problem} if
-% \begin{align*}
-% c_{i}(\vect{x}) &= 0, & \text{for } i &\in \mathcal{E},\\[1mm]
-% c_{i}(\vect{x}) &\ge 0, & \text{for } i &\in \mathcal{I}.
-% \end{align*}
-% The set of all feasible points is the \emph{feasible region} (or set)
-% \[
-% \Omega := \bigl\{ \vect{x}\in\R^{n} : c_{i}(\vect{x}) = 0\; (i\in\mathcal{E}),\; c_{i}(\vect{x}) \ge 0\; (i\in\mathcal{I}) \bigr\}.
-% \]
-% When convenient, problem~\eqref{eq:form_optimization_problem} is written compactly as $\min_{\vect{x}\in\Omega} f(\vect{x})$.
-% \end{definition}
-
-% \begin{definition}[Active set]\label{def:active_set}
-% For a feasible point $\vect{x}\in\Omega$, the \emph{active set} is
-% \[
-% \mathcal{A}(\vect{x}) := \mathcal{E} \cup \bigl\{ i\in\mathcal{I} : c_{i}(\vect{x}) = 0 \bigr\}.
-% \]
-% Equality constraints are \emph{always} active; an inequality constraint is \emph{active} when it holds with equality, otherwise it is \emph{inactive}.
-% \end{definition}
-
-% \begin{definition}[Types of minimizers]\label{def:minimizers}
-% Let $\vect{x}^{\ast}\in\Omega$.
-% \begin{enumerate}[label=(\alph*),leftmargin=*]
-% \item $\vect{x}^{\ast}$ is a \emph{global minimizer} if $f(\vect{x}^{\ast}) \le f(\vect{x})$ for every $\vect{x}\in\Omega$.
-% \item $\vect{x}^{\ast}$ is a \emph{local minimizer} if there exists $\delta>0$ such that
-% \[
-% f(\vect{x}^{\ast}) \le f(\vect{x})\quad\text{for all }\vect{x}\in\Omega\cap B(\vect{x}^{\ast},\delta).
-% \]
-% \item $\vect{x}^{\ast}$ is a \emph{strict local minimizer} if the above inequality is strict for every $\vect{x}\neq\vect{x}^{\ast}$ in the same neighbourhood.
-% \end{enumerate}
-% Clearly, \textit{global $\Rightarrow$ strict local $\Rightarrow$ local}.
-% If $f$ and the active $c_{i}$’s are convex, the converse (local $\Rightarrow$ global) also holds.
-% \end{definition}
-
-% % —————————————————————————–
-% % Feasible directions (existing content retained)
-% % —————————————————————————–
-% % (Content assumed to be present and correct.)
-
-% % —————————————————————————–
-% % Tangent cone, geometric first-order condition
-% % —————————————————————————–
-% \begin{definition}[Feasible sequence, tangent vector and tangent cone]\label{def:tangent_cone}
-% \leavevmode
-% \begin{enumerate}[label=(\roman*),leftmargin=*]
-% \item A sequence $\{\vect{x}^{k}\}_{k\in\N}\subset\Omega$ is \emph{feasible in $\vect{x}^{\ast}$} if
-% $\vect{x}^{k}\neq\vect{x}^{\ast}$, $\vect{x}^{k}\to\vect{x}^{\ast}$ and each $\vect{x}^{k}$ is feasible.
-% \item A vector $\vect{d}\in\R^{n}$ is a \emph{tangent vector to $\Omega$ at $\vect{x}^{\ast}$} if there exist a feasible sequence $\{\vect{x}^{k}\}$ and positive scalars $t_k\to 0$ such that
-% \[
-% \lim_{k\to\infty} \frac{\vect{x}^{k}-\vect{x}^{\ast}}{t_k} = \vect{d}.
-% \]
-% \item The \emph{tangent cone} (or Bouligand cone) is the set of all tangent vectors:
-% \[
-% \mathcal{T}_{\Omega}(\vect{x}^{\ast}) := \bigl\{\vect{d}\in\R^{n} : \vect{d}\text{ is tangent to }\Omega\text{ at }\vect{x}^{\ast}\bigr\}.
-% \]
-% \end{enumerate}
-% \end{definition}
-% It is straightforward that $\mathcal{T}_{\Omega}(\vect{x}^{\ast})$ is indeed a cone, i.e., it is closed under non-negative scalar multiplication.
-
-% \begin{lemma}\label{lem:T_F_relation}
-% For any feasible $\vect{x}$ we always have $\mathcal{T}_{\Omega}(\vect{x})\subseteq\mathcal{F}(\vect{x})$. If \gls{licq} holds at $\vect{x}$, then $\mathcal{T}_{\Omega}(\vect{x}) = \mathcal{F}(\vect{x})$.
-% \end{lemma}
-% \begin{proof}[Idea of the proof]
-% The inclusion $\mathcal{T}_{\Omega}(\vect{x})\subseteq\mathcal{F}(\vect{x})$ follows directly from the first-order Taylor expansion of each constraint along a tangent sequence. Equality under \gls{licq} uses the fact that the Jacobian of the active constraints has full row rank, which allows one (via the implicit-function theorem) to construct a feasible curve with any prescribed infinitesimal direction $\vect{d}\in\mathcal{F}(\vect{x})$.
-% \end{proof}
-
-% \begin{theorem}[Geometric first-order necessary condition]\label{thm:geom_FONC}
-% If $\vect{x}^{\ast}$ is a local minimizer of~\eqref{eq:form_optimization_problem} and $f$ is continuously differentiable, then
-% \[
-% \nabla f(\vect{x}^{\ast})^{\top}\vect{d} \;\ge\; 0 \quad \forall\,\vect{d}\in\mathcal{T}_{\Omega}(\vect{x}^{\ast}).
-% \]
-% \end{theorem}
-% \begin{proof}
-% Suppose, by way of contradiction, that there exists a $\vect{d}\in\mathcal{T}_{\Omega}(\vect{x}^{\ast})$ with $\nabla f(\vect{x}^{\ast})^{\top}\vect{d}<0$. By the definition of the tangent cone, there is a feasible sequence $\{\vect{x}^{k}\}\to\vect{x}^{\ast}$ with corresponding positive scalars $t_k\downarrow 0$ such that $\frac{\vect{x}^{k}-\vect{x}^{\ast}}{t_k}\to\vect{d}$. A first-order Taylor expansion then gives
-% \[
-% f(\vect{x}^{k}) = f(\vect{x}^{\ast}) + t_k\,\nabla f(\vect{x}^{\ast})^{\top}\vect{d} + o(t_k),
-% \]
-% which is strictly less than $f(\vect{x}^{\ast})$ for large enough $k$, contradicting the local minimality of $\vect{x}^{\ast}$.
-% \end{proof}
-% Combining Lemma~\ref{lem:T_F_relation} with Theorem~\ref{thm:geom_FONC} immediately yields Lemma~\ref{lem:fundamental_condition} under the assumption of \gls{licq}.
-
-% % —————————————————————————–
-% % Proofs of fundamental optimality results
-% % —————————————————————————–
-% \begin{proof}[Proof of Lemma~\ref{lem:fundamental_condition}]
-% Under \gls{licq}, $\mathcal{F}(\vect{x}^{\ast}) = \mathcal{T}_{\Omega}(\vect{x}^{\ast})$ by Lemma~\ref{lem:T_F_relation}; hence the result follows directly from Theorem~\ref{thm:geom_FONC}.
-% \end{proof}
-
-% \begin{proof}[Sketch proof of Theorem~\ref{thm:KKT}]
-% Apply Farkas’ lemma (Lemma~\ref{lem:Farkas}) with $\matr{B}$ chosen as the gradients of the active inequalities and $\matr{C}$ as the gradients of the equalities. The geometric condition provided by Lemma~\ref{lem:fundamental_condition} forces $\nabla f(\vect{x}^{\ast})$ to lie within the cone generated by those gradients. This cone representation yields multipliers $\vect{\lambda}^{\ast}$ that satisfy the stationarity condition. Complementary slackness is then enforced by setting $\lambda_{i}^{\ast}=0$ for any inactive inequality. Uniqueness of $\vect{\lambda}^{\ast}$ follows from the linear independence (\gls{licq}) assumption.
-% \end{proof}
-
-% \begin{proof}[Sketch proof of Theorem~\ref{thm:SONC}]
-% For any $\vect{d}\in\mathcal{C}(\vect{x}^{\ast},\vect{\lambda}^{\ast})$, construct a feasible sequence $\vect{x}^{k}=\vect{x}^{\ast}+t_{k}\vect{d}+o(t_{k})$ as in Lemma~\ref{lem:T_F_relation}. A second-order Taylor expansion of the Lagrangian then shows
-% \[
-% f(\vect{x}^{k}) = f(\vect{x}^{\ast}) + \frac{t_{k}^{2}}{2}\,\vect{d}^{\top}\nabla^{2}_{\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast})\,\vect{d} + o(t_{k}^{2}).
-% \]
-% Since $f(\vect{x}^{k})\ge f(\vect{x}^{\ast})$, it follows that 
-% \[
-% \vect{d}^{\top}\nabla^{2}_{\vect{x}\vect{x}\,}\mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast})\,\vect{d} \ge 0.
-% \]
-% \end{proof}
-
-% \begin{proof}[Idea of the proof of Theorem~\ref{thm:SOSC}]
-% If the quadratic form $\vect{d}^{\top}\nabla^{2}_{\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast})\,\vect{d}$ is positive for every nonzero $\vect{d}$ in the critical cone, then the Taylor expansion provides
-% \[
-% f(\vect{x}^{k}) \ge f(\vect{x}^{\ast}) + \frac{\sigma}{4}\,\bigl\|\vect{x}^{k}-\vect{x}^{\ast}\bigr\|^{2}
-% \]
-% for all sufficiently small perturbations, which establishes that $\vect{x}^{\ast}$ is a strict local minimizer.
-% \end{proof}
-
-% % —————————————————————————–
-% % Strict complementary slackness and reduced Hessian
-% % —————————————————————————–
-% \begin{definition}[Strict complementary slackness]\label{def:SCS}
-% At a KKT point $(\vect{x}^{\ast},\vect{\lambda}^{\ast})$, the \emph{strict complementary slackness} condition holds if for each inequality index $i\in\mathcal{I}$ we have either $c_{i}(\vect{x}^{\ast})>0$ or $\lambda_{i}^{\ast}>0$ (i.e., not both equal to zero).
-% \end{definition}
-% When strict complementary slackness holds, the critical cone simplifies to the null space of the active-constraint Jacobian. Choosing a basis matrix $\matr{Z}\in\R^{n\times(n-m)}$ for this null space – with $m=|\mathcal{A}(\vect{x}^{\ast})|$ – the second-order conditions become
-% \[
-% \matr{Z}^{\top}\nabla^{2}_{\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast})\matr{Z}\succeq 0 \quad (\text{necessary}),
-% \qquad
-% \matr{Z}^{\top}\nabla^{2}_{\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\ast},\vect{\lambda}^{\ast})\matr{Z}\succ 0 \quad (\text{sufficient}).
-% \]
-% This matrix is often referred to as the \emph{reduced Hessian}.
-
-% % —————————————————————————–
-% % Sensitivity interpretation of Lagrange multipliers
-% % —————————————————————————–
-% \paragraph{Economic / sensitivity interpretation.}
-% Let $(\vect{x}^{\ast},\vect{\lambda}^{\ast})$ be a KKT point. Assume that $\mathcal{A}(\vect{x}^{\ast})$ remains unchanged under a small perturbation. Then, if one tightens a constraint $c_{i}$ from $0$ to $\varepsilon>0$, a first-order sensitivity analysis shows
-% \[
-% f_{\min}(\varepsilon) \;\approx\; f(\vect{x}^{\ast}) + \lambda_{i}^{\ast}\,\varepsilon.
-% \]
-% Thus, $\lambda_{i}^{\ast}$ represents the marginal cost of making constraint $i$ more stringent. Inactive inequalities have $\lambda_{i}^{\ast}=0$ because a small relaxation or tightening does not affect the optimum.
-
-% % —————————————————————————–
-% % End of document
-% % —————————————————————————–
-
-
-
-
-% \clearpage
+The reduced cost of a basic index \(j_i \in \mathcal{B}\) is zero:
+\begin{equation}\label{eq:reduced_cost_basic_index}
+c^r_{j_i} = c_{j_i} - \vect{c}_\mathcal{B}^{\top}\matr{B}^{-1}\vect{A}_{j_i}
+= c_{j_i} - \vect{c}_\mathcal{B}^{\top}\vect{e}_i
+= c_{j_i} - c_{j_i} = 0
+\end{equation}
 
 
 
 
 
-% %--------------------------------------------------------------------
-% % CONTINUATION — Constrained Optimisation
-% %--------------------------------------------------------------------
+\subsubsection{Optimality Conditions}
+The \nameref{lem:fundamental_condition} (Lemma~\ref{lem:fundamental_condition}) in the context of \gls{lp} becomes
+\begin{theorem}[Fundamental Necessary Condition]\label{thm:fundamental_condition_lp} 
+If \(\vect{x}^\ast\) is a local minimizer, then
+\[
+\vect{c}^\top \vect{d} \ge 0,\quad\forall\vect{d}\in \mathcal{F}(\vect{x}^\ast)
+\]
+in the context of \gls{lp}.
+\end{theorem}
 
-% \section{constraint chatGPT version 3}
 
-% \subsection{Feasible Directions}
+Using reduced costs we can restate this as
 
-% \begin{definition}[Feasible Direction]\label{def:feasible_direction}
-% Let $\vect{x}\in\Omega$ be a feasible point.  A vector $\vect{d}\in\mathbb{R}^{n}$ is a \emph{feasible direction} at $\vect{x}$ if there exists an $\varepsilon>0$ such that
-% \[
-%     \vect{x}+t\vect{d}\in\Omega,\qquad \forall\,t\in(0,\varepsilon].
-% \]
-% In words, we can move a sufficiently small step from $\vect{x}$ along~$\vect{d}$ while staying feasible.
-% \end{definition}
+\begin{theorem}[Necessary Optimality Condition]\label{thm:necessary_optimality_lp}
+Let~\(\vect{x}^\ast\) be a \gls{bfs} of \(P\) with a corresponding basis matrix \(\matr{B}\) and reduced cost vector \(\vect{c}^r\).  
+If \(\vect{x}^\ast\) is a minimizer and is \textcolor{red}{non-degenerate}, then 
+\(
+\vect{c}^r \ge \vect{0}_n
+\).
+\end{theorem}
 
-% \begin{remark}
-% Checking Definition~\ref{def:feasible_direction} directly is usually cumbersome.  The next definition provides an equivalent \emph{first-order} characterisation that only involves the constraints that are active at~$\vect{x}$.
-% \end{remark}
+\begin{theorem}[Sufficient Optimality Condition]\label{thm:sufficient_optimality_lp}
+Let~\(\vect{x}^\ast\) be a \gls{bfs} of \(P\) with a corresponding basis matrix \(\matr{B}\) and reduced cost vector \(\vect{c}^r\).  
+If
+\(
+\vect{c}^r \ge \vect{0}_n
+\),
+then \(\vect{x}^\ast\) is a minimizer.
+\end{theorem}
 
-% \begin{definition}[Set of Linearised Feasible Directions]\label{def:linearized_feasible_directions}
-% For a feasible point $\vect{x}\in\mathbb{R}^{n}$ the \emph{set of linearized feasible directions} is
-% \[
-%   \mathcal{F}(\vect{x})
-%   :=\bigl\{
-%       \vect{d}\in\mathbb{R}^{n} :
-%       \nabla c_{i}(\vect{x})^{\mathsf T}\vect{d}=0 \;\forall i\in\mathcal{E},\,
-%       \nabla c_{i}(\vect{x})^{\mathsf T}\vect{d}\ge 0 \;\forall i\in\mathcal{I}\cap\mathcal{A}(\vect{x})
-%     \bigr\}.
-% \]
-% Equivalently, $\vect{d}\in\mathcal{F}(\vect{x})$ iff the first-order Taylor expansions of the active constraints remain satisfied when moving in direction~$\vect{d}$.
-% \end{definition}
+A basis matrix \(\matr{B}\) is said to be optimal if
+\begin{enumerate}
+\item \(\vect{x}_\mathcal{B} = \matr{B}^{-1}\vect{b} \ge \vect{0}_m\) (i.e., the corresponding basic solution is feasible)
+\item \(\vect{c}^r = \vect{c} - \matr{A}^{\top}\matr{B}^{-1}\vect{c}_\mathcal{B} \ge \vect{0}_n\) (i.e., the reduced costs are non-negative)
+\end{enumerate}
 
-% \subsection{First-Order Optimality}
 
-% \begin{lemma}[Fundamental Necessary Condition]\label{lem:fundamental_necessary}
-% Suppose $\vect{x}^{\star}$ is a local minimizer of~\eqref{eq:form_optimization_problem} and a \emph{constraint qualification} (to be specified later) holds at $\vect{x}^{\star}$. Then
-% \[
-%     \nabla f(\vect{x}^{\star})^{\mathsf T}\vect{d}\ge 0,
-%     \qquad\forall\,\vect{d}\in\mathcal{F}(\vect{x}^{\star}).
-% \]
-% That is, no feasible direction is a descent direction at a local minimizer.
-% \end{lemma}
 
-% \begin{proof}
-% Let $\vect{d}\in\mathcal{F}(\vect{x}^{\star})$ and choose $\varepsilon>0$ such that $\vect{x}^{\star}+t\vect{d}$ is feasible for all $t\in(0,\varepsilon]$.  Because $\vect{x}^{\star}$ is a local minimizer we have $f(\vect{x}^{\star}+t\vect{d})\ge f(\vect{x}^{\star})$.  Dividing by~$t>0$ and letting $t\downarrow0$ yields the stated inequality.
-% \end{proof}
 
-% Before stating the main result we introduce the Lagrangian.
+\subsubsection{Non-degenerate Case}
+\label{subsec:simplex_non_deg}
 
-% \begin{definition}[Lagrangian]
-% The \emph{Lagrangian} associated with~\eqref{eq:form_optimization_problem} is
-% \[
-%   \mathcal{L}(\vect{x},\boldsymbol{\lambda})
-%   := f(\vect{x}) - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}\,c_{i}(\vect{x}),
-%   \qquad \boldsymbol{\lambda}\in\mathbb{R}^{|\mathcal{E}|+|\mathcal{I}|}.
-% \]
-% \end{definition}
 
-% \begin{theorem}[Karush-Kuhn-Tucker (KKT) Conditions]\label{thm:KKT}
-% Let $\vect{x}^{\star}$ be a local minimizer at which a constraint qualification holds.  Then there exists a vector of multipliers $\boldsymbol{\lambda}^{\star}\in\mathbb{R}^{|\mathcal{E}|+|\mathcal{I}|}$ such that
-% \begin{align}
-% \nabla_{\!\vect{x}}\mathcal{L}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star}) &= \boldsymbol{0}, &&\tag{KKT1}\label{eq:KKT_stationarity}\\
-% c_{i}(\vect{x}^{\star}) &= 0,            &&\forall i\in\mathcal{E}, \tag{KKT2}\\
-% c_{i}(\vect{x}^{\star}) &\ge 0,          &&\forall i\in\mathcal{I}, \tag{KKT3}\\
-% \lambda^{\star}_{i} &\ge 0,              &&\forall i\in\mathcal{I}, \tag{KKT4}\\
-% \lambda^{\star}_{i}\,c_{i}(\vect{x}^{\star}) &= 0, &&\forall i\in\mathcal{E}\cup\mathcal{I}. \tag{KKT5}\label{eq:KKT_complementarity}
-% \end{align}
-% Equations~\eqref{eq:KKT_stationarity}-\eqref{eq:KKT_complementarity} are called the \emph{stationarity}, \emph{primal feasibility}, \emph{dual feasibility}, and \emph{complementarity slackness} conditions, respectively.  A pair $(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})$ satisfying them is a \emph{KKT point}.
-% \end{theorem}
+\begin{algorithm}[h]
+\caption{One Iteration of the Simplex Method}\label{alg:simplex_step}
+\begin{algorithmic}[1]
+\Require \gls{bfs} \(\vect{x}\), corresponding basis \(\mathcal{B}\), linear program \((\matr{A},\vect{b},\vect{c})\)
+\ForAll{\(j\in\mathcal{N}\)} \Comment{compute vector of reduced costs \(\vect{c}^r\)}
+\State \(c^r_j \gets c_j-\vect{c}_\mathcal{B}^{\top}\matr{B}^{-1}\vect{A}_j\) \Comment{reduced cost for non-basic index \(j\) (Definition~\ref{def:reduced_cost})}
+\EndFor
+\If{\(\vect{c}^r_{\mathcal{N}}\ge\vect 0\)} \Comment{not necessary to check \(\vect{c}^r_{\mathcal{B}}\), as it is zero \eqref{eq:reduced_cost_basic_index}}
+\State \Return \(\vect{x}\) \Comment{\(\vect{x}\) is optimal, since all reduced costs are non-negative (Theorem~\ref{thm:sufficient_optimality_lp})}
+\EndIf
+\LComment{otherwise, we select one of the edges of the feasible set along which the cost decreases}
+\State  choose \(j\in\mathcal{N}\) such that \(c^r_j<0\) \label{alg:simplex:choose_entering_index} \Comment{entering index: corresponding basic direction is a descent direction}
+\State \(\vect{d}_\mathcal{B} \gets -\matr{B}^{-1}\vect{A}_j\) \Comment{compute corresponding \(j^\text{th}\) basic direction (Definition~\ref{def:basic_direction})}
+\LComment{see how far we can move along this direction before some basic variable hits zero (leaving index \(\ell\))}
+\If{\(\vect{d}_\mathcal{B}\ge \vect{0}\)} \Comment{if all basic variables increase, there is no limiting constraint}
+\State \Call{print}{``unbounded problem''}
+\EndIf
+\State $\displaystyle \theta \gets \min_{i\in\mathcal{B}:d_i<0}\frac{x_i}{-d_i}$  \label{alg:simplex:calculate_step_size} \Comment{largest feasible step until a basic variable (\(x_\ell\)) hits zero}
+\State choose $\ell \in \mathcal{B}$ that attains the minimum in the previous line  \label{alg:simplex:choose_leaving_index} \Comment{leaving index}
+\State $\vect{y} \gets \vect{x} + \theta\,\vect{d}$ \Comment{update \gls{bfs}}
+\State $\mathcal{B} \gets \bigl(\mathcal{B}\setminus\{\ell\}\bigr)\cup\{j\}$ \Comment{update basic indices}
+% \State \Return \(\vect{y}\) and \(\mathcal{B}\) 
+\end{algorithmic}
+\end{algorithm}
 
-% \begin{proof}[Sketch of proof]
-% We employ two ingredients.
-% \begin{enumerate}[label=\arabic*., wide, labelwidth=!]
-% \item The fundamental necessary condition (Lemma~\ref{lem:fundamental_necessary}).
-% \item Farkas' lemma (Lemma~\ref{lem:Farkas}).
-% \end{enumerate}
-% Writing $\mathcal{F}(\vect{x}^{\star})$ as a polyhedral cone generated by the gradients of the active constraints and applying Farkas' lemma to $\nabla f(\vect{x}^{\star})$, one obtains the existence of multipliers $\boldsymbol{\lambda}^{\star}$ fulfilling the stationarity and sign conditions.  Complementarity follows by construction; see any standard reference on nonlinear programming for details.
-% \end{proof}
 
-% \begin{lemma}[Farkas' Lemma]\label{lem:Farkas}
-% Let $B\in\mathbb{R}^{n\times m}$, $C\in\mathbb{R}^{n\times p}$ and $\vect{g}\in\mathbb{R}^{n}$.  Exactly one of the following statements is true:
-% \begin{enumerate}[label=\textbf{F\arabic*.}]
-% \item $\vect{g}=B\vect{y}+C\vect{w}$ for some $\vect{y}\ge\boldsymbol{0}$, $\vect{w}\in\mathbb{R}^{p}$. \label{item:F1}
-% \item There exists $\vect{d}\in\mathbb{R}^{n}$ such that $\vect{g}^{\mathsf T}\vect{d}<0$, $B^{\mathsf T}\vect{d}\ge\boldsymbol{0}$ and $C^{\mathsf T}\vect{d}=\boldsymbol{0}$. \label{item:F2}
-% \end{enumerate}
-% The two alternatives are mutually exclusive and exhaustive.
-% \end{lemma}
+%  Degeneracy (\(\theta=0\)) requires additional anti-cycling rules (e.g.\ Bland) but does \emph{not} invalidate the theory above.
 
-% \subsection{Constraint Qualification}
 
-% \begin{definition}[Linear Independence Constraint Qualification — \gls{licq}]\label{def:licq}
-% \gls{licq} is said to hold at a feasible point $\vect{x}$ if the set of active constraint gradients $\bigl\{\nabla c_{i}(\vect{x}) : i\in\mathcal{A}(\vect{x})\bigr\}$ is linearly independent.
-% \end{definition}
 
-% \begin{remark}
-% \begin{enumerate}[label=(\roman*)]
-% \item If all constraint functions are affine, \gls{licq} is satisfied everywhere.
-% \item When \gls{licq} holds at $\vect{x}^{\star}$ the multipliers $\vect{\lambda}^{\star}$ solving Theorem~\ref{thm:KKT} are unique.
-% \end{enumerate}
-% \end{remark}
 
-% \subsection{Second-Order Optimality}
+\subsubsection{Degenerate Case}\label{sec:simplex_degenerate}
 
-% For second-order results we need the \emph{critical cone} at a KKT point.
+When the current \gls{bfs}~$\vect{x}$ is {degenerate} (see \ref{sec:degeneracy_linear_programming}), at least one basic variable is already at~$0$.
+Consequently the step size chosen in Line~\ref{alg:simplex:calculate_step_size} of Algorithm~\ref{alg:simplex_step} can be
+\[
+  \theta = \min_{i\in\mathcal B : d_i<0}\frac{x_i}{-d_i}=0
+\]
+so that the new point $\,\vect{y}= \vect{x}+\theta\vect{d}\,$ coincides with the old one ($\vect{y}=\vect{x}$) even though the basis has changed.
+If this situation happens repeatedly the \emph{plain} simplex method can \emph{cycle}, i.e. visit the same degenerate vertex with different bases forever.
 
-% \begin{definition}[Critical Cone]\label{def:critical_cone}
-% Let $(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})$ be a KKT point.  The \emph{critical cone} is
-% \[
-%   \mathcal{C}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})
-%     := \Bigl\{ \vect{d}\in\mathcal{F}(\vect{x}^{\star}) :
-%          \nabla c_{i}(\vect{x}^{\star})^{\mathsf T}\vect{d}=0
-%          \ \forall i\in\mathcal{I}\cap\mathcal{A}(\vect{x}^{\star})\text{ with }\lambda^{\star}_{i}>0
-%        \Bigr\}.
-% \]
-% \end{definition}
+% \paragraph{Anti-cycling / pivot-selection rules.}
+To guarantee finite termination of Algorithm \ref{alg:simplex_step} one restricts the free choices made in Lines~\ref{alg:simplex:choose_entering_index} and \ref{alg:simplex:choose_leaving_index}.
+A widely used rule is \emph{Bland's (smallest-index) rule}:
+\begin{itemize}
+\item choose as entering index the {smallest} $j\in\mathcal N$ with $c^r_j<0$ in Line~\ref{alg:simplex:choose_entering_index}
+\item choose as leaving index the {smallest} $\ell\in\mathcal B$ that attains $\theta=\frac{x_\ell}{-d_\ell}$ in Line~\ref{alg:simplex:choose_leaving_index}
+\end{itemize}
 
-% \begin{definition}[Lagrangian Hessian]
-% The \emph{Hessian of the Lagrangian} at $(\vect{x},\boldsymbol{\lambda})$ is
-% \[
-%     \nabla^{2}_{\!\vect{x}\vect{x}}\mathcal{L}(\vect{x},\boldsymbol{\lambda})
-%     = \nabla^{2}f(\vect{x})
-%       - \sum_{i\in\mathcal{E}\cup\mathcal{I}} \lambda_{i}\,\nabla^{2}c_{i}(\vect{x}).
-% \]
-% \end{definition}
+Bland's rule prevents cycling even in the presence of degeneracy and therefore restores the finite-termination guarantee of the simplex algorithm.
 
-% \begin{theorem}[Second-Order Necessary Condition]\label{thm:SONC}
-% Under the assumptions of Theorem~\ref{thm:KKT}, let $(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})$ be a KKT point.  Then
-% \[
-%     \vect{d}^{\mathsf T}\nabla^{2}_{\!\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})\,\vect{d}\ge 0,
-%     \qquad \forall\,\vect{d}\in\mathcal{C}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star}).
-% \]
-% \end{theorem}
+Even with anti-cycling rules, degeneracy may slow the practical
+progress of the method because several consecutive iterations can keep
+the objective value unchanged before a strictly improving move is
+found.
 
-% \begin{theorem}[Second-Order Sufficient Condition]\label{thm:SOSC}
-% Let $(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})$ be a KKT point.  If
-% \[
-%     \vect{d}^{\mathsf T}\nabla^{2}_{\!\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})\,\vect{d}>0,
-%     \qquad \forall\,\vect{d}\in\mathcal{C}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})\setminus\{\boldsymbol{0}\},
-% \]
-% then $\vect{x}^{\star}$ is a \emph{strict} local minimizer of~\eqref{eq:form_optimization_problem}.
-% \end{theorem}
 
-% \begin{remark}
-% If $\nabla^{2}_{\!\vect{x}\vect{x}}\mathcal{L}(\vect{x}^{\star},\boldsymbol{\lambda}^{\star})\succ\boldsymbol{0}$ (positive definite) on \emph{all} directions in $\mathbb{R}^{n}$, the sufficient condition is automatically satisfied.
-% \end{remark}
+
+\subsubsection{Computational Complexity}\label{subsec:simplex_complexity}
+
+% With \(m\) constraints and \(n\) variables \((m\le n)\) every basis has \(m\) basic and \(|\mathcal N|=n-m\) non-basic columns.
+
+In a naïve implementation of Algorithm \ref{alg:simplex_step}, the two linear solves cost \(O(m^{3})\), scanning all non-basic columns for reduced costs adds \(O(mn)\):
+\[
+  O(m^{3}+mn)
+\]
+ 
+A \emph{revised} variant that stores and updates \(\matr{B}^{-1}\) improves the cost to:
+\[
+  O(m^{2}+mn)
+\]
+
+The number of possible bases is \(\binom{n}{m}\), thus the theoretical
+worst case is exponential in \(m\).  
+In practice the revised variant with good pivot rules is fast for large,
+sparse problems.
+
+
 
 
 
@@ -3813,272 +3904,272 @@ The points \(A, B, C, D, E, F\) are basic solutions but only \(C, D, E, F\) are 
 
 
 
-% \clearpage
+\clearpage
 
-% \section{Exam Topics}
-% \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
-%   \item In particular, revise:
-%   \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
-%     \item Optimality conditions
-%     \item Definitions of directional derivative and descent directions
-%     \item Definitions and properties of convex, strongly convex, Lipschitz and smooth functions
-%     \item Properties of multivariate quadratic functions
-%     \item Wolfe conditions
-%   \end{itemize}
-%   \item Do you know how to recognise a convex function? A smooth function?
-%   \item Do you know how to recognise that a point is a local minimizer?
-%   \item Do you know what is a descent direction?
-%   \item Do you know what is a quadratic function and in which cases it has a global minimizer?
-%   \item Do you know how to apply Gradient Descent and Newton's algorithms?
-%   \item Do you know how to apply the Wolfe conditions?
-%   \item Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?
-%   \item What are the eigenvalues of the following matrix? Its condition number? Its spectral norm? Its inverse? The eigenvalues of its inverse?
-%   \[
-%   \matr{A}=\begin{pmatrix}
-%   1 & 0 & 0 \\
-%   0 & 2.5 & 0 \\
-%   0 & 0 & 0.5
-%   \end{pmatrix}
-%   \]
-% \end{itemize}
-
-
+\section{Exam Topics}
+\begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
+  \item In particular, revise:
+  \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
+    \item Optimality conditions
+    \item Definitions of directional derivative and descent directions
+    \item Definitions and properties of convex, strongly convex, Lipschitz and smooth functions
+    \item Properties of multivariate quadratic functions
+    \item Wolfe conditions
+  \end{itemize}
+  \item Do you know how to recognise a convex function? A smooth function?
+  \item Do you know how to recognise that a point is a local minimizer?
+  \item Do you know what is a descent direction?
+  \item Do you know what is a quadratic function and in which cases it has a global minimizer?
+  \item Do you know how to apply Gradient Descent and Newton's algorithms?
+  \item Do you know how to apply the Wolfe conditions?
+  \item Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?
+  \item What are the eigenvalues of the following matrix? Its condition number? Its spectral norm? Its inverse? The eigenvalues of its inverse?
+  \[
+  \matr{A}=\begin{pmatrix}
+  1 & 0 & 0 \\
+  0 & 2.5 & 0 \\
+  0 & 0 & 0.5
+  \end{pmatrix}
+  \]
+\end{itemize}
 
 
 
-% \section*{Answers}
 
-% \begin{description}[leftmargin=1.5cm, style=nextline]
 
-%   \item[Q1: What are the optimality conditions?] 
-%   \textbf{A:} 
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{First-Order Necessary Condition:} For an unconstrained problem 
-%       \[
-%       \min_{\vect{x}} f(\vect{x}),
-%       \]
-%       a necessary condition for \(\vect{x}^*\) to be a local minimizer is 
-%       \[
-%       \nabla f(\vect{x}^*) = 0.
-%       \]
-%     \item \textbf{Second-Order Necessary Condition:} If \(\nabla f(\vect{x}^*) = 0\), a necessary condition is that the Hessian is positive semidefinite:
-%       \[
-%       \nabla^2 f(\vect{x}^*) \succeq 0.
-%       \]
-%     \item \textbf{Second-Order Sufficient Condition:} If \(\nabla f(\vect{x}^*) = 0\) and 
-%       \[
-%       \nabla^2 f(\vect{x}^*) \succ 0 \quad (\text{positive definite}),
-%       \]
-%       then \(\vect{x}^*\) is a strict local minimizer.
-%   \end{itemize}
+\section*{Answers}
 
-%   \item[Q2: What are the definitions of the directional derivative and descent directions?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Directional Derivative:} For a function \(f: \mathbb{R}^n \to \mathbb{R}\), the directional derivative at \(\vect{x}\) in the direction \(\vect{d}\) is defined as
-%       \[
-%       f'(\vect{x}; \vect{d}) = \lim_{t \to 0} \frac{f(\vect{x} + t \,\vect{d}) - f(\vect{x})}{t},
-%       \]
-%       provided the limit exists.
-%     \item \textbf{Descent Direction:} A vector \(\vect{d}\) is a descent direction at \(\vect{x}\) if
-%       \[
-%       \nabla f(\vect{x})^T \,\vect{d} < 0.
-%       \]
-%       This implies that for sufficiently small \(t > 0\), \(f(\vect{x} + t \,\vect{d}) < f(\vect{x})\).
-%   \end{itemize}
+\begin{description}[leftmargin=1.5cm, style=nextline]
 
-%   \item[Q3: What are the definitions and properties of convex, strongly convex, Lipschitz, and smooth functions?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Convex Function:} \(f\) is convex if for all \(\vect{x}, \vect{y}\) and \(\lambda \in [0,1]\),
-%       \[
-%       f(\lambda \,\vect{x} + (1-\lambda) \,\vect{y}) \le \lambda \,f(\vect{x}) + (1-\lambda) \,f(\vect{y}).
-%       \]
-%       For differentiable functions, this is equivalent to:
-%       \[
-%       f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) \quad \forall \,\vect{x},\vect{y}.
-%       \]
-%     \item \textbf{Strongly Convex Function:} \(f\) is strongly convex with parameter \(\mu > 0\) if
-%       \[
-%       f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) + \frac{\mu}{2} \|\vect{y} - \vect{x}\|^2.
-%       \]
-%       Equivalently, its Hessian satisfies
-%       \[
-%       \nabla^2 f(\vect{x}) \succeq \mu \matr{I} \quad \text{for all } \vect{x}.
-%       \]
-%     \item \textbf{Lipschitz Continuity:} A function \(f\) (or its gradient) is Lipschitz continuous if there exists a constant \(L \ge 0\) such that
-%       \[
-%       \|f(\vect{x}) - f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|,
-%       \]
-%       or for gradients,
-%       \[
-%       \|\nabla f(\vect{x}) - \nabla f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|.
-%       \]
-%     \item \textbf{Smooth Function:} A function is \(L\)-smooth if it is differentiable and its gradient is Lipschitz continuous with constant \(L\); that is,
-%       \[
-%       f(\vect{y}) \le f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y}-\vect{x}) + \frac{L}{2}\|\vect{y}-\vect{x}\|^2.
-%       \]
-%   \end{itemize}
+  \item[Q1: What are the optimality conditions?] 
+  \textbf{A:} 
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{First-Order Necessary Condition:} For an unconstrained problem 
+      \[
+      \min_{\vect{x}} f(\vect{x}),
+      \]
+      a necessary condition for \(\vect{x}^*\) to be a local minimizer is 
+      \[
+      \nabla f(\vect{x}^*) = 0.
+      \]
+    \item \textbf{Second-Order Necessary Condition:} If \(\nabla f(\vect{x}^*) = 0\), a necessary condition is that the Hessian is positive semidefinite:
+      \[
+      \nabla^2 f(\vect{x}^*) \succeq 0.
+      \]
+    \item \textbf{Second-Order Sufficient Condition:} If \(\nabla f(\vect{x}^*) = 0\) and 
+      \[
+      \nabla^2 f(\vect{x}^*) \succ 0 \quad (\text{positive definite}),
+      \]
+      then \(\vect{x}^*\) is a strict local minimizer.
+  \end{itemize}
 
-%   \item[Q4: What are the properties of multivariate quadratic functions?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{General Form:} A quadratic function in \(\mathbb{R}^n\) can be expressed as
-%       \[
-%       f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c,
-%       \]
-%       where \(\matr{A}\) is a symmetric matrix, \(\vect{b}\) is a vector, and \(c\) is a scalar.
-%     \item \textbf{Convexity:} The function is convex if \(\matr{A} \succeq 0\) (i.e., \(\matr{A}\) is positive semidefinite) and strictly convex if \(\matr{A} \succ 0\) (i.e., \(\matr{A}\) is positive definite).
-%     \item \textbf{Global Minimiser:}
-%       \begin{itemize}
-%         \item If \(\matr{A} \succ 0\), then the unique global minimizer is
-%           \[
-%           \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
-%           \]
-%         \item If \(\matr{A} \succeq 0\) but is singular, a global minimizer exists if and only if \(\vect{b}\) lies in the range (column space) of \(\matr{A}\); however, the minimizer may not be unique.
-%       \end{itemize}
-%   \end{itemize}
+  \item[Q2: What are the definitions of the directional derivative and descent directions?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Directional Derivative:} For a function \(f: \mathbb{R}^n \to \mathbb{R}\), the directional derivative at \(\vect{x}\) in the direction \(\vect{d}\) is defined as
+      \[
+      f'(\vect{x}; \vect{d}) = \lim_{t \to 0} \frac{f(\vect{x} + t \,\vect{d}) - f(\vect{x})}{t},
+      \]
+      provided the limit exists.
+    \item \textbf{Descent Direction:} A vector \(\vect{d}\) is a descent direction at \(\vect{x}\) if
+      \[
+      \nabla f(\vect{x})^T \,\vect{d} < 0.
+      \]
+      This implies that for sufficiently small \(t > 0\), \(f(\vect{x} + t \,\vect{d}) < f(\vect{x})\).
+  \end{itemize}
 
-%   \item[Q5: What are the Wolfe conditions?]
-%   \textbf{A:} The Wolfe conditions are used in line search methods to choose a step size \(\alpha\) and consist of:
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Armijo (Sufficient Decrease) Condition:}
-%       \[
-%       f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k,
-%       \]
-%       where \(0 < c_1 < 1\).
-%     \item \textbf{Curvature Condition:}
-%       \[
-%       \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k,
-%       \]
-%       with \(c_1 < c_2 < 1\).
-%   \end{itemize}
+  \item[Q3: What are the definitions and properties of convex, strongly convex, Lipschitz, and smooth functions?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Convex Function:} \(f\) is convex if for all \(\vect{x}, \vect{y}\) and \(\lambda \in [0,1]\),
+      \[
+      f(\lambda \,\vect{x} + (1-\lambda) \,\vect{y}) \le \lambda \,f(\vect{x}) + (1-\lambda) \,f(\vect{y}).
+      \]
+      For differentiable functions, this is equivalent to:
+      \[
+      f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) \quad \forall \,\vect{x},\vect{y}.
+      \]
+    \item \textbf{Strongly Convex Function:} \(f\) is strongly convex with parameter \(\mu > 0\) if
+      \[
+      f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) + \frac{\mu}{2} \|\vect{y} - \vect{x}\|^2.
+      \]
+      Equivalently, its Hessian satisfies
+      \[
+      \nabla^2 f(\vect{x}) \succeq \mu \matr{I} \quad \text{for all } \vect{x}.
+      \]
+    \item \textbf{Lipschitz Continuity:} A function \(f\) (or its gradient) is Lipschitz continuous if there exists a constant \(L \ge 0\) such that
+      \[
+      \|f(\vect{x}) - f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|,
+      \]
+      or for gradients,
+      \[
+      \|\nabla f(\vect{x}) - \nabla f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|.
+      \]
+    \item \textbf{Smooth Function:} A function is \(L\)-smooth if it is differentiable and its gradient is Lipschitz continuous with constant \(L\); that is,
+      \[
+      f(\vect{y}) \le f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y}-\vect{x}) + \frac{L}{2}\|\vect{y}-\vect{x}\|^2.
+      \]
+  \end{itemize}
 
-%   \item[Q6: How do you recognise a convex function? A smooth function?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Convex Functions:} Verify that the line segment between any two points on the graph lies above the graph; for differentiable functions, a nonnegative second derivative (or positive semidefinite Hessian) confirms convexity.
-%     \item \textbf{Smooth Functions:} These are functions that are continuously differentiable, often with a Lipschitz continuous gradient.
-%   \end{itemize}
+  \item[Q4: What are the properties of multivariate quadratic functions?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{General Form:} A quadratic function in \(\mathbb{R}^n\) can be expressed as
+      \[
+      f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c,
+      \]
+      where \(\matr{A}\) is a symmetric matrix, \(\vect{b}\) is a vector, and \(c\) is a scalar.
+    \item \textbf{Convexity:} The function is convex if \(\matr{A} \succeq 0\) (i.e., \(\matr{A}\) is positive semidefinite) and strictly convex if \(\matr{A} \succ 0\) (i.e., \(\matr{A}\) is positive definite).
+    \item \textbf{Global minimizer:}
+      \begin{itemize}
+        \item If \(\matr{A} \succ 0\), then the unique global minimizer is
+          \[
+          \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
+          \]
+        \item If \(\matr{A} \succeq 0\) but is singular, a global minimizer exists if and only if \(\vect{b}\) lies in the range (column space) of \(\matr{A}\); however, the minimizer may not be unique.
+      \end{itemize}
+  \end{itemize}
 
-%   \item[Q7: How do you recognise that a point is a local minimizer?]
-%   \textbf{A:} A point \(\vect{x}^*\) is a local minimizer if:
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{First-Order Test:} \(\nabla f(\vect{x}^*) = 0\).
-%     \item \textbf{Second-Order Test:} The Hessian \(\nabla^2 f(\vect{x}^*)\) is positive definite (or at least positive semidefinite with additional conditions to rule out saddle points).
-%     \item There exists a neighborhood \(U\) of \(\vect{x}^*\) such that \(f(\vect{x}^*) \le f(\vect{x})\) for all \(\vect{x} \in U\).
-%   \end{itemize}
+  \item[Q5: What are the Wolfe conditions?]
+  \textbf{A:} The Wolfe conditions are used in line search methods to choose a step size \(\alpha\) and consist of:
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Armijo (Sufficient Decrease) Condition:}
+      \[
+      f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k,
+      \]
+      where \(0 < c_1 < 1\).
+    \item \textbf{Curvature Condition:}
+      \[
+      \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k,
+      \]
+      with \(c_1 < c_2 < 1\).
+  \end{itemize}
 
-%   \item[Q8: What is a descent direction?]
-%   \textbf{A:} A descent direction \(\vect{d}\) at a point \(\vect{x}\) satisfies:
-%   \[
-%   \nabla f(\vect{x})^T \vect{d} < 0,
-%   \]
-%   ensuring that a sufficiently small move in the direction \(\vect{d}\) decreases the function value.
+  \item[Q6: How do you recognise a convex function? A smooth function?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Convex Functions:} Verify that the line segment between any two points on the graph lies above the graph; for differentiable functions, a nonnegative second derivative (or positive semidefinite Hessian) confirms convexity.
+    \item \textbf{Smooth Functions:} These are functions that are continuously differentiable, often with a Lipschitz continuous gradient.
+  \end{itemize}
 
-%   \item[Q9: What is a quadratic function and in which cases does it have a global minimizer?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Quadratic Function Form:}
-%       \[
-%       f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c.
-%       \]
-%     \item \textbf{Global Minimiser Existence:}
-%       \begin{itemize}
-%         \item If \(\matr{A} \succ 0\), the function is strictly convex and the unique global minimizer is
-%           \[
-%           \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
-%           \]
-%         \item If \(\matr{A} \succeq 0\) (but not positive definite), a global minimizer exists if \(\vect{b}\) lies in the range of \(\matr{A}\); otherwise, the function is unbounded below. The minimizer may not be unique in that case.
-%       \end{itemize}
-%   \end{itemize}
+  \item[Q7: How do you recognise that a point is a local minimizer?]
+  \textbf{A:} A point \(\vect{x}^*\) is a local minimizer if:
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{First-Order Test:} \(\nabla f(\vect{x}^*) = 0\).
+    \item \textbf{Second-Order Test:} The Hessian \(\nabla^2 f(\vect{x}^*)\) is positive definite (or at least positive semidefinite with additional conditions to rule out saddle points).
+    \item There exists a neighborhood \(U\) of \(\vect{x}^*\) such that \(f(\vect{x}^*) \le f(\vect{x})\) for all \(\vect{x} \in U\).
+  \end{itemize}
 
-%   \item[Q10: How do you apply Gradient Descent and Newton's algorithms?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Gradient Descent:} Update iteratively via
-%       \[
-%       \vect{x}_{k+1} = \vect{x}_k - \alpha_k \,\nabla f(\vect{x}_k),
-%       \]
-%       where the step size \(\alpha_k\) can be determined by a line search (often using Wolfe or Armijo conditions).
-%     \item \textbf{Newton's Method:} Update using second-order information:
-%       \[
-%       \vect{x}_{k+1} = \vect{x}_k - \bigl[\nabla^2 f(\vect{x}_k)\bigr]^{-1} \,\nabla f(\vect{x}_k).
-%       \]
-%       This method exhibits quadratic convergence near the minimizer provided the Hessian is positive definite and the initial guess is close enough.
-%   \end{itemize}
+  \item[Q8: What is a descent direction?]
+  \textbf{A:} A descent direction \(\vect{d}\) at a point \(\vect{x}\) satisfies:
+  \[
+  \nabla f(\vect{x})^T \vect{d} < 0,
+  \]
+  ensuring that a sufficiently small move in the direction \(\vect{d}\) decreases the function value.
 
-%   \item[Q11: How do you apply the Wolfe conditions during a line search?]
-%   \textbf{A:}
-%   \begin{enumerate}[leftmargin=2em]
-%     \item Choose an initial step size \(\alpha\) and compute the trial point \(\vect{x}_k + \alpha \,\vect{d}_k\).
-%     \item Verify the \textbf{Armijo condition}:
-%       \[
-%       f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k.
-%       \]
-%     \item Check the \textbf{Curvature condition}:
-%       \[
-%       \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k.
-%       \]
-%     \item If both conditions are met, accept \(\alpha\); otherwise, adjust (typically reduce) \(\alpha\) and repeat.
-%   \end{enumerate}
+  \item[Q9: What is a quadratic function and in which cases does it have a global minimizer?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Quadratic Function Form:}
+      \[
+      f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c.
+      \]
+    \item \textbf{Global minimizer Existence:}
+      \begin{itemize}
+        \item If \(\matr{A} \succ 0\), the function is strictly convex and the unique global minimizer is
+          \[
+          \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
+          \]
+        \item If \(\matr{A} \succeq 0\) (but not positive definite), a global minimizer exists if \(\vect{b}\) lies in the range of \(\matr{A}\); otherwise, the function is unbounded below. The minimizer may not be unique in that case.
+      \end{itemize}
+  \end{itemize}
 
-%   \item[Q12: Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Positive-Semidefinite:} Yes, because for any vector \(\vect{x}\),
-%       \[
-%       \vect{x}^T \matr{0}\,\vect{x} = 0 \ge 0.
-%       \]
-%     \item \textbf{Positive-Definite:} No, since for any nonzero \(\vect{x}\),
-%       \[
-%       \vect{x}^T \matr{0}\,\vect{x} = 0 \quad (\text{not strictly greater than } 0).
-%       \]
-%   \end{itemize}
+  \item[Q10: How do you apply Gradient Descent and Newton's algorithms?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Gradient Descent:} Update iteratively via
+      \[
+      \vect{x}_{k+1} = \vect{x}_k - \alpha_k \,\nabla f(\vect{x}_k),
+      \]
+      where the step size \(\alpha_k\) can be determined by a line search (often using Wolfe or Armijo conditions).
+    \item \textbf{Newton's Method:} Update using second-order information:
+      \[
+      \vect{x}_{k+1} = \vect{x}_k - \bigl[\nabla^2 f(\vect{x}_k)\bigr]^{-1} \,\nabla f(\vect{x}_k).
+      \]
+      This method exhibits quadratic convergence near the minimizer provided the Hessian is positive definite and the initial guess is close enough.
+  \end{itemize}
 
-%   \item[Q13: Given the matrix 
-%     \(
-%     \matr{A} = \begin{pmatrix}
-%     1 & 0 & 0 \\
-%     0 & 2.5 & 0 \\
-%     0 & 0 & 0.5
-%     \end{pmatrix},
-%     \)
-%     what are its eigenvalues, condition number, spectral norm, inverse, and the eigenvalues of its inverse?]
-%   \textbf{A:}
-%   \begin{itemize}[leftmargin=2em]
-%     \item \textbf{Eigenvalues:} They are the diagonal entries:
-%       \[
-%       \lambda_1 = 1,\quad \lambda_2 = 2.5,\quad \lambda_3 = 0.5.
-%       \]
-%     \item \textbf{Condition Number:} The 2-norm condition number is given by
-%       \[
-%       \kappa(\matr{A}) = \frac{2.5}{0.5} = 5.
-%       \]
-%     \item \textbf{Spectral Norm:} This is the largest absolute eigenvalue:
-%       \[
-%       \|\matr{A}\|_2 = 2.5.
-%       \]
-%     \item \textbf{Inverse of \(\matr{A}\):} Since \(\matr{A}\) is diagonal,
-%       \[
-%       \matr{A}^{-1} = \begin{pmatrix}
-%       1 & 0 & 0 \\
-%       0 & \frac{1}{2.5} & 0 \\
-%       0 & 0 & \frac{1}{0.5}
-%       \end{pmatrix} 
-%       = \begin{pmatrix}
-%       1 & 0 & 0 \\
-%       0 & 0.4 & 0 \\
-%       0 & 0 & 2
-%       \end{pmatrix}.
-%       \]
-%     \item \textbf{Eigenvalues of \(\matr{A}^{-1}\):} These are the reciprocals of the eigenvalues of \(\matr{A}\):
-%       \[
-%       1,\quad 0.4,\quad 2.
-%       \]
-%   \end{itemize}
+  \item[Q11: How do you apply the Wolfe conditions during a line search?]
+  \textbf{A:}
+  \begin{enumerate}[leftmargin=2em]
+    \item Choose an initial step size \(\alpha\) and compute the trial point \(\vect{x}_k + \alpha \,\vect{d}_k\).
+    \item Verify the \textbf{Armijo condition}:
+      \[
+      f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k.
+      \]
+    \item Check the \textbf{Curvature condition}:
+      \[
+      \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k.
+      \]
+    \item If both conditions are met, accept \(\alpha\); otherwise, adjust (typically reduce) \(\alpha\) and repeat.
+  \end{enumerate}
 
-% \end{description}
+  \item[Q12: Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Positive-Semidefinite:} Yes, because for any vector \(\vect{x}\),
+      \[
+      \vect{x}^T \matr{0}\,\vect{x} = 0 \ge 0.
+      \]
+    \item \textbf{Positive-Definite:} No, since for any nonzero \(\vect{x}\),
+      \[
+      \vect{x}^T \matr{0}\,\vect{x} = 0 \quad (\text{not strictly greater than } 0).
+      \]
+  \end{itemize}
+
+  \item[Q13: Given the matrix 
+    \(
+    \matr{A} = \begin{pmatrix}
+    1 & 0 & 0 \\
+    0 & 2.5 & 0 \\
+    0 & 0 & 0.5
+    \end{pmatrix},
+    \)
+    what are its eigenvalues, condition number, spectral norm, inverse, and the eigenvalues of its inverse?]
+  \textbf{A:}
+  \begin{itemize}[leftmargin=2em]
+    \item \textbf{Eigenvalues:} They are the diagonal entries:
+      \[
+      \lambda_1 = 1,\quad \lambda_2 = 2.5,\quad \lambda_3 = 0.5.
+      \]
+    \item \textbf{Condition Number:} The 2-norm condition number is given by
+      \[
+      \kappa(\matr{A}) = \frac{2.5}{0.5} = 5.
+      \]
+    \item \textbf{Spectral Norm:} This is the largest absolute eigenvalue:
+      \[
+      \|\matr{A}\|_2 = 2.5.
+      \]
+    \item \textbf{Inverse of \(\matr{A}\):} Since \(\matr{A}\) is diagonal,
+      \[
+      \matr{A}^{-1} = \begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & \frac{1}{2.5} & 0 \\
+      0 & 0 & \frac{1}{0.5}
+      \end{pmatrix} 
+      = \begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & 0.4 & 0 \\
+      0 & 0 & 2
+      \end{pmatrix}.
+      \]
+    \item \textbf{Eigenvalues of \(\matr{A}^{-1}\):} These are the reciprocals of the eigenvalues of \(\matr{A}\):
+      \[
+      1,\quad 0.4,\quad 2.
+      \]
+  \end{itemize}
+
+\end{description}
 
 
 
