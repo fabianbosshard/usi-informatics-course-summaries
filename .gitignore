@@ -3,6 +3,9 @@ script.tex
 script.pdf
 
 
+*.bib
+
+
 
 
 ## Core latex/pdflatex auxiliary files:

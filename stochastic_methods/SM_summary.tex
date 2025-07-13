@@ -1,5 +1,13 @@
+% author: Fabian Bosshard
+% © CC BY 4.0
+
+% compile with:
+% pdflatex -> biber -> pdflatex -> pdflatex
+
+
 % \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
 \documentclass[10pt, headings=standardclasses, parskip=half, twoside]{scrartcl}
+\usepackage{csquotes}
 
 \usepackage[automark]{scrlayer-scrpage}
 \clearpairofpagestyles           % start from a blank header/footer
@@ -38,12 +46,15 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18} % newest version is 1.18 (april 4, 2025)
 
+
 % define colors
-\definecolor{greenhaze}{rgb}{0.0, 0.64, 0.41}
 \definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
 
-% theorem environments
+
 \usepackage{thmtools}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
 \declaretheorem[style=assertionstyle,name=Theorem]{theorem}
@@ -52,20 +63,26 @@
 \declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
 \declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
 \declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
-% \declaretheoremstyle[headfont=\bfseries\color{greenhaze},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{greenhaze}\blacktriangleleft},postheadspace=1em]{definitionstyle}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ding{45},postheadspace=1em]{definitionstyle}
 \declaretheorem[style=definitionstyle,name=Definition]{definition}
+\declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
 \declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
-\declaretheorem[style=examplestyle,name=Example,]{example}
+\declaretheorem[style=examplestyle,name=Example]{example}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
-\declaretheorem[style=remarkstyle,name=Remark,]{remark}
+\declaretheorem[style=remarkstyle,name=Remark]{remark}
 \declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
 \declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=6pt,spacebelow=6pt,postheadspace=1em]{smallremarkstyle}
 \declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
 \declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
 \declaretheorem[style=digressionstyle,name=Digression]{digression}
-
+\let\proof\relax
+\let\endproof\relax
+\declaretheoremstyle[  headfont=\bfseries,  bodyfont=\normalfont,  spaceabove=6pt,  spacebelow=6pt,  qed=\ensuremath{\square},  postheadspace=1em]{proofstyle}
+\declaretheorem[  style=proofstyle,  name=Proof,  numbered=no]{proof}
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
 
 
 \usepackage{algorithm}
@@ -131,6 +148,11 @@
   colorlinks=false,        % don't wrap links in a colour
   pdfborder={0 0 0}        % no border around links
 ]{hyperref}
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
 
 
 
@@ -175,6 +197,17 @@
 \pagenumbering{roman}
 \thispagestyle{empty}
 \tableofcontents
+
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
+
+This document is an unofficial student-made summary of the course
+\href{https://search.usi.ch/en/courses/35270722/stochastic-methods}{Stochastic Methods} taught by \href{https://search.usi.ch/en/people/fd79a01270bbee6228453cacbb95a6c5/richter-mendoza-francisco-javier}{Francisco Javier Richter Mendoza} with the assistance of \href{https://search.usi.ch/en/people/41cc6fa578d8e9a32c12472007ae5ee9/quizi-jacopo}{Jacopo Quizi} in Spring 2025 at the \href{https://www.usi.ch/en}{Università della Svizzera italiana}.
+It is based on the lecture notes and other course materials.
+The summary is not exhaustive and may contain errors.
+If you find any, please report them to \href{mailto:fabianlucasbosshard@gmail.com}{fabianlucasbosshard@gmail.com} or open an issue at \url{https://github.com/fabianbosshard/USI_summaries}.
+
+\doclicenseThis
 
 % \pagebreak
 
@@ -1756,24 +1789,24 @@ Such processes can be simulated (see \ref{subsec:gillespie}) or analyzed theoret
 The Gillespie algorithm (also known as the \emph{stochastic simulation algorithm}) is widely used for simulating discrete-event systems, particularly chemical reaction networks. 
 It can also be applied to birth-death processes, queueing systems, and any scenario where events occur randomly in continuous time with state-dependent rates.
 
-\begin{algorithm}
-  \caption{Gillespie Stochastic Simulation Algorithm}
-  \begin{algorithmic}[1]
-    \State \textbf{Input:} initial time $t_0$, state $\vect{X}_0$, final time $T$
-    \State $t \gets t_0$ and $\vect{X} \gets \vect{X}_0$
-    \While{$t < T$}
-      \State $a_0\big(\vect{X}\big) \gets \sum_{j=1}^M a_j\big(\vect{X}\big)$
-      % \If{$a_0 = 0$}
-      %   \State \textbf{break}  \Comment{No more reactions possible}
-      % \EndIf
-      \State Draw $r_1, r_2 \sim \mathrm{U}(0,1)$
-      \State $\tau \gets (a_0(\vect{X}))^{-1} \ln\bigl(\frac{1}{r_1}\bigr)$ \Comment{determine next jump}
-      \State $\mu \gets \min \bigl\{n \mid r_2 a_0(\vect{X}) \leq \sum_{i=1}^n a_i(\vect{X})\bigr\}$ \Comment{determine next reaction}
-      \State $\vect{X}\gets \vect{X} + \vect{\nu}_\mu$ and $t \gets t + \tau$
-    \EndWhile
-    \State \Return $\vect{X}$
-  \end{algorithmic}
-  \end{algorithm}
+% \begin{algorithm}
+%   \caption{Gillespie Stochastic Simulation Algorithm}
+%   \begin{algorithmic}[1]
+%     \State \textbf{Input:} initial time $t_0$, state $\vect{X}_0$, final time $T$
+%     \State $t \gets t_0$ and $\vect{X} \gets \vect{X}_0$
+%     \While{$t < T$}
+%       \State $a_0\big(\vect{X}\big) \gets \sum_{j=1}^M a_j\big(\vect{X}\big)$
+%       % \If{$a_0 = 0$}
+%       %   \State \textbf{break}  \Comment{No more reactions possible}
+%       % \EndIf
+%       \State Draw $r_1, r_2 \sim \mathrm{U}(0,1)$
+%       \State $\tau \gets (a_0(\vect{X}))^{-1} \ln\bigl(\frac{1}{r_1}\bigr)$ \Comment{determine next jump}
+%       \State $\mu \gets \min \bigl\{n \mid r_2 a_0(\vect{X}) \leq \sum_{i=1}^n a_i(\vect{X})\bigr\}$ \Comment{determine next reaction}
+%       \State $\vect{X}\gets \vect{X} + \vect{\nu}_\mu$ and $t \gets t + \tau$
+%     \EndWhile
+%     \State \Return $\vect{X}$
+%   \end{algorithmic}
+%   \end{algorithm}
 
 
 \section{Stochastic Diffusion Processes}\label{sec:diffusion}
@@ -1781,12 +1814,6 @@ It can also be applied to birth-death processes, queueing systems, and any scena
 
 \subsection{Brownian Motion}\label{subsec:brownian}
 
-% -----------------------------------------------------
-\begin{center}
-    {\Large\bfseries Week 10 Summary: Stochastic Diffusion Processes}\\%[0.5em]
-    {\normalsize Stochastic Methods — Lecture Notes by Francisco Richter}\\%[1em]
-    {\small April 29, 2025}\par\medskip
-\end{center}
 
 \subsubsection{From Random Walks to Diffusions}
 Brownian motion sits at the interface between 
@@ -1825,8 +1852,6 @@ A process $\{W_t\}_{t\ge 0}$ is a \emph{standard Brownian motion} if
 
 
 
-
-\section{Stochastic Optimization}\label{sec:optimization}
 
 
 \section{Statistical Learning and Stochastic Inference}
@@ -1877,6 +1902,73 @@ Several methods exist for constructing bootstrap confidence intervals:
 
 
 
+
+\clearpage
+\section{Stochastic Optimization}\label{sec:optimization}
+
+\subsection{Stochastic Gradient Descent}\label{sec:SGD}
+
+Consider the stochastic-gradient-descent (SGD) recursion
+$$
+\theta_{k+1}=\theta_k-\eta \widehat{f^{\prime}\left(\theta_k\right)}, \qquad \widehat{f^{\prime}\left(\theta_k\right)}=g\left(\theta_k\right)+\epsilon_k
+$$
+where the learning-rate is $\eta>0$, $g: \mathbb{R} \rightarrow \mathbb{R}$ is deterministic, and the noises are i.i.d. $\epsilon_k \sim$ $\mathcal{N}\left(0, \sigma^2\right)$.
+
+
+% a)
+
+\begin{theorem}\label{thm:SGD_to_SDE}
+When the step size is small ($\eta=\Delta t \ll 1$) and one rescales the variance \textcolor{red}{$\sigma^2= \tilde{\sigma}^2 / \eta$}, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \eta\rfloor}$ converges (in distribution) to the Itô SDE
+$$
+\mathrm{d} \Theta_t=-g\left(\Theta_t\right) \mathrm{d} t+\tilde{\sigma} \mathrm{d} W_t, \qquad \Theta_0=1
+$$
+where $W_t$ is standard Brownian motion.
+\end{theorem}
+\begin{proof}
+\[
+\begin{aligned}
+\theta_{k+1} 
+&= \theta_k - \Delta t \cdot \widehat{f^{\prime}\left(\theta_k\right)} \\
+&= \theta_k - \Delta t \cdot (g(\theta_k) + \epsilon_k), \qquad \epsilon_k \sim \mathcal{N}(0, \sigma^2) \\
+&= \theta_k - \Delta t \cdot g(\theta_k) - \Delta t \cdot \epsilon_k \\
+&= \theta_k - \Delta t \cdot g(\theta_k) + \Delta t \cdot \epsilon_k \qquad \text{(symmetry of normal around 0)} \\
+&= \theta_k - {\Delta t \cdot g(\theta_k)} + {\Delta t \cdot \sigma \cdot  \delta_k}, \qquad \delta_k \sim \mathcal{N}(0,1) \\
+&= \theta_k - \Delta t \cdot g(\theta_k) +  \Delta t \cdot {\textstyle \frac{\tilde{\sigma}}{\sqrt{\Delta t}}} \cdot  \delta_k \\
+&= \theta_k - \Delta t \cdot g(\theta_k) + \tilde{\sigma} \cdot {\sqrt{\Delta t} \cdot  \delta_k} \\
+&= \theta_k - \underbrace{\Delta t \cdot g(\theta_k)}_{\text{deterministic}} + \underbrace{\tilde{\sigma} \cdot \Delta W_k}_{\text{random}}, \qquad \Delta W_k
+% = \sqrt{\Delta t} \cdot  \delta_i 
+\sim \mathcal{N}(0, \Delta t)
+\end{aligned}
+\] 
+\[
+\Longrightarrow \quad 
+\boxed{
+\Delta \theta_k = \theta_{k+1} - \theta_k = -\Delta t \cdot g(\theta_k) + \tilde{\sigma} \cdot \Delta W_k
+}
+\]
+
+Summing over \(N\) steps, we have
+\[
+\sum_{i=1}^{N} \Delta \theta_i
+= -\sum_{i=1}^{N} \Delta t \cdot g(\theta_i) + \tilde{\sigma} \sum_{i=1}^{N} \Delta W_i
+\]
+
+As \(\Delta t \to 0\) and \(N \to \infty\), we have
+\(\Delta W_i \to \mathrm{d} W_t\) and \(\Delta t \to \mathrm{d} t\), and thus 
+\[
+\int \mathrm{d} \Theta_t = -\int g(\Theta_t) \mathrm{d} t + \tilde{\sigma} \int \mathrm{d} W_t
+\]
+so,
+\[
+d \Theta_t = -g(\Theta_t) \mathrm{d} t + \tilde{\sigma} \mathrm{d} W_t
+\]
+where \(W_t\) is standard Brownian motion.
+\end{proof}
+
+
+
+
+
 \section{Important Distributions}
 \label{sec:distributions}
 
@@ -1885,7 +1977,7 @@ Several methods exist for constructing bootstrap confidence intervals:
 \newcolumntype{H}[1]{>{\arraybackslash\rule[-1ex]{0pt}{3.5ex}}m{#1}}
 
 
-\begin{table}[ht]
+\begin{table}[H]
 \begin{tabular}{|M{2.2cm}|M{8.8cm}|M{1.6cm}|M{1.6cm}|}
 \hline
 \multicolumn{1}{|H{2.2cm}|}{\textbf{Notation}} &
@@ -1924,7 +2016,7 @@ Several methods exist for constructing bootstrap confidence intervals:
 
 
 
-\section{Exercises}
+% \section{Exercises}
 % \subsection{Week 2}
 % \subsubsection{From Binomial to Poisson}
 % Let $X_n \sim \operatorname{Bin}(n, p)$ be a binomial random variable with parameters $n$ and $p$. 
@@ -1988,252 +2080,146 @@ Several methods exist for constructing bootstrap confidence intervals:
 
 
 
-\subsection{Quiz 8}
+% \subsection{Quiz 8}
 
-\begin{tikzpicture}[x=2cm,y=1cm]
-  % axes
-  \draw[->] (0,-2) -- (3.5,-2) node[below right] {$t$};
-  \foreach \x in {0,1,2,3} {
-    \draw (\x,-1.95) -- (\x,-2.05) node[below] {\small \x};
-  }
+% \(\lambda\): birth rate\\
+% \(\mu\): death rate
+% \[
+% \begin{tikzpicture}[x=1cm,y=0.5cm]
+%   % axes
+%   \draw[->] (0,-2) -- (3.5,-2) node[below right] {$t$};
+%   \foreach \x in {0,1,2,3} {
+%     \draw (\x,-1.95) -- (\x,-2.05) node[below] {\small \x};
+%   }
 
-  % heavy line style
-  \tikzset{heavy/.style={line width=2pt}}
+%   % heavy line style
+%   \tikzset{heavy/.style={line width=2pt}}
 
-  % coordinates of branching points
-  \coordinate (O) at (0,0);
-  \coordinate (A) at (1,0);
-  \coordinate (B) at (2,0.5);
-  \coordinate (C) at (3,0.8);
-  \coordinate (D) at (3,0.3);
-  \coordinate (E) at (3,-1);
+%   % coordinates of branching points
+%   \coordinate (O) at (0,0);
+%   \coordinate (A) at (1,0);
+%   \coordinate (B) at (2,0.5);
+%   \coordinate (C) at (3,0.8);
+%   \coordinate (D) at (3,0.3);
+%   \coordinate (E) at (3,-1);
 
-  % main trunk and branches
-  \draw[heavy] (O) -- (A);
-  % first split at t=1
-  \draw[heavy] (A) -- (B);
-  \draw[heavy] (A) -- (E);
-  % second split at t=2
-  \draw[heavy] (B) -- (C);
-  \draw[heavy] (B) -- (D);
-\end{tikzpicture}
+%   % main trunk and branches
+%   \draw[heavy] (O) -- (A);
+%   % first split at t=1
+%   \draw[heavy] (A) -- (B);
+%   \draw[heavy] (A) -- (E);
+%   % second split at t=2
+%   \draw[heavy] (B) -- (C);
+%   \draw[heavy] (B) -- (D);
+% \end{tikzpicture}
+% \]
+% first part: 2 processes\\
+% \(
+% \Delta t = \min\{\Delta t_1, \Delta t_2\} \sim \mathrm{Exp}(\lambda + \mu)
+% \)
 
-\(\lambda\): birth rate\\
-\(\mu\): death rate
- 
-
-first part: 2 processes\\
-\(
-\Delta t = \min\{\Delta t_1, \Delta t_2\} \sim \mathrm{Exp}(\lambda + \mu)
-\)
-
-then between first and second part: probability of having a birth\\
-\(\frac{\lambda}{\lambda + \mu}\)
+% then between first and second part: probability of having a birth\\
+% \(\frac{\lambda}{\lambda + \mu}\)
 
 
-second part: 4 processes
-
+% second part: 4 processes
 
 
 
-complete likelihood:
-\[
-(\lambda + \mu) \cdot e^{-(\lambda + \mu) \Delta t_1} \cdot \frac{\lambda}{\lambda + \mu} \cdot 2 (\lambda + \mu) \cdot e^{-2(\lambda + \mu) \Delta t_2} \cdot \frac{\lambda}{2 (\lambda + \mu)} \cdot e^{-3(\lambda + \mu) \Delta t_3}
-\]
-\[
-= 
-\]
 
-\[
-L
-= \lambda(1)\,\lambda(2)\;\times\;\mu(2.5)\,\bigl[\mu(3)\bigr]^2
-\;\times\;
-\exp\Biggl\{\;-\Bigl[\,
-\underbrace{\int_{0}^{1}1\,[\lambda+\mu]\,dt}_{\text{one lineage}}
-\;+\;\underbrace{\int{1}^{2}2\,[\lambda+\mu]\,dt}_{\text{two lineages}}
-\;+\;\underbrace{\int{2}^{2.5}3\,[\lambda+\mu]\,dt}_{\text{three lineages}}
-\;+\;\underbrace{\int{2.5}^{3}2\,[\lambda+\mu]\,dt}_{\text{two lineages}}
-\,\Bigr]\Biggr\}.
-\]
+% complete likelihood:
+% \[
+% (\lambda + \mu) \cdot e^{-(\lambda + \mu) \Delta t_1} \cdot \frac{\lambda}{\lambda + \mu} \cdot 2 (\lambda + \mu) \cdot e^{-2(\lambda + \mu) \Delta t_2} \cdot \frac{\lambda}{2 (\lambda + \mu)} \cdot e^{-3(\lambda + \mu) \Delta t_3}
+% \]
+% \[
+% = 
+% \]
 
-
-
-\subsection{Quiz 10}
-
-\begin{align*}
-\mathcal{L}(\tau)
-&=
-\bigl(\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)\bigr)
-e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
-\;\frac{\lambda\bigl(X^{(A)}_{t_1}\bigr)}
-      {\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)}
-\\
-&\times
-\bigl(\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
-     +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)\bigr)
-\\
-&\times
-     e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
-+\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
-\\
-&\times
-\frac{\lambda\bigl(X^{(B)}_{t_2}\bigr)}
-      {\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
-       +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)}
-\\
-&\times
-\bigl(\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
-     +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
-     +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)\bigr)
-\\
-&\times
-     e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
-+\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
-+\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
-\\
-&
-\times
-\frac{\mu\bigl(X^{(C)}_{t_3}\bigr)}
-     {\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
-      +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
-      +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)}
-\\
-&\times
-e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
-+\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
-\end{align*}
-This simplifies to:
-\begin{align*}
-\mathcal{L}(\tau)
-  &=
-e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
-\cdot
-\lambda\bigl(X^{(A)}_{t_1}\bigr)
-\\
-&\times
-     e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
-+\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
-\cdot
-\lambda\bigl(X^{(B)}_{t_2}\bigr)
-\\
-&\times
-     e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
-+\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
-+\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
-\cdot
-\mu\bigl(X^{(C)}_{t_3}\bigr)
-\\
-&\times
-e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
-+\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}.
-\end{align*}
+% \[
+% L
+% = \lambda(1)\,\lambda(2)\times\mu(2.5)\,\bigl[\mu(3)\bigr]^2
+% \times
+% \exp\Biggl\{\;-\Bigl[
+% \underbrace{\int_{0}^{1}1[\lambda+\mu]dt}_{\text{one lineage}}
+% +\underbrace{\int{1}^{2}2[\lambda+\mu]dt}_{\text{two lineages}}
+% +\underbrace{\int{2}^{2.5}3[\lambda+\mu]dt}_{\text{three lineages}}
+% +\underbrace{\int{2.5}^{3}2[\lambda+\mu]dt}_{\text{two lineages}}
+% \Bigr]\Biggr\}.
+% \]
 
 
 
-\subsection{Mock Exam}
+% \subsection{Quiz 10}
 
-Consider the stochastic-gradient-descent (SGD) recursion
-$$
-\theta_{k+1}=\theta_k-\eta \widehat{f^{\prime}\left(\theta_k\right)}, \quad \widehat{f^{\prime}\left(\theta_k\right)}=g\left(\theta_k\right)+\epsilon_k
-$$
+% \begin{align*}
+% \mathcal{L}(\tau)
+% &=
+% \bigl(\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)\bigr)
+% e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
+% \;\frac{\lambda\bigl(X^{(A)}_{t_1}\bigr)}
+%       {\lambda\bigl(X^{(A)}_{t_1}\bigr)+\mu\bigl(X^{(A)}_{t_1}\bigr)}
+% \\
+% &\times
+% \bigl(\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
+%      +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)\bigr)
+% \\
+% &\times
+%      e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
+% +\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
+% \\
+% &\times
+% \frac{\lambda\bigl(X^{(B)}_{t_2}\bigr)}
+%       {\lambda\bigl(X^{(B)}_{t_2}\bigr)+\mu\bigl(X^{(B)}_{t_2}\bigr)
+%        +\lambda\bigl(X^{(C)}_{t_2}\bigr)+\mu\bigl(X^{(C)}_{t_2}\bigr)}
+% \\
+% &\times
+% \bigl(\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
+%      +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
+%      +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)\bigr)
+% \\
+% &\times
+%      e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
+% +\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
+% +\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+% \\
+% &
+% \times
+% \frac{\mu\bigl(X^{(C)}_{t_3}\bigr)}
+%      {\lambda\bigl(X^{(C)}_{t_3}\bigr)+\mu\bigl(X^{(C)}_{t_3}\bigr)
+%       +\lambda\bigl(X^{(D)}_{t_3}\bigr)+\mu\bigl(X^{(D)}_{t_3}\bigr)
+%       +\lambda\bigl(X^{(E)}_{t_3}\bigr)+\mu\bigl(X^{(E)}_{t_3}\bigr)}
+% \\
+% &\times
+% e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
+% +\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+% \end{align*}
+% This simplifies to:
+% \begin{align*}
+% \mathcal{L}(\tau)
+%   &=
+% e^{-\!\!\int_{t_0}^{t_1}\!\!\bigl(\lambda(X^{(A)}_t)+\mu(X^{(A)}_t)\bigr)\,dt}
+% \cdot
+% \lambda\bigl(X^{(A)}_{t_1}\bigr)
+% \\
+% &\times
+%      e^{-\!\!\int_{t_1}^{t_2}\!\!\bigl(\lambda(X^{(B)}_t)+\mu(X^{(B)}_t)
+% +\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)\bigr)\,dt}
+% \cdot
+% \lambda\bigl(X^{(B)}_{t_2}\bigr)
+% \\
+% &\times
+%      e^{-\!\!\int_{t_2}^{t_3}\!\!\bigl(\lambda(X^{(C)}_t)+\mu(X^{(C)}_t)
+% +\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
+% +\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}
+% \cdot
+% \mu\bigl(X^{(C)}_{t_3}\bigr)
+% \\
+% &\times
+% e^{-\!\!\int_{t_3}^{t_4}\!\!\bigl(\lambda(X^{(D)}_t)+\mu(X^{(D)}_t)
+% +\lambda(X^{(E)}_t)+\mu(X^{(E)}_t)\bigr)\,dt}.
+% \end{align*}
 
-where the learning-rate is $\eta>0$, $g: \mathbb{R} \rightarrow \mathbb{R}$ is deterministic, and the noises are i.i.d. $\epsilon_k \sim$ $\mathcal{N}\left(0, \sigma^2\right)$.
 
-\begin{enumerate}[leftmargin=*,label=\textbf{\alph*)}]
-\item
-Show that, when the step size is small ( $\eta=\Delta t \ll 1$ ) and one rescales $\sigma^2=\eta \tilde{\sigma}^2$, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \eta\rfloor}$ converges (in distribution) to the Itô SDE
-$$
-d \Theta_t=-g\left(\Theta_t\right) d t+\tilde{\sigma} d W_t, \quad \Theta_0=1
-$$
-where $W_t$ is standard Brownian motion.
-
-\paragraph{Answer:}
-\[
-\begin{aligned}
-\theta_{k+1}&=\theta_k- \Delta t (g(\theta_k)+\epsilon_k) \\
-&=\theta_k- \underbrace{\Delta t \cdot g(\theta_k)}_{\text{deterministic}} + \underbrace{\Delta t \cdot \sigma \cdot  \delta_k}_{\text{random}}, \quad \delta_k \sim \mathcal{N}(0,1) \qquad \text{(symmetry of normal around 0)} \\
-\end{aligned}
-\]
-if we integrate, \(\Delta \Theta = \Theta_t - \Theta_0\)
-\[
-\Delta \Theta = -\sum \Delta t_i \cdot g(\theta) + \tilde{\sigma} \sum \underbrace{\sqrt{\Delta t_i}\cdot  \delta_i}_{\Delta W_t \sim \mathcal{N}(0,\Delta t_i)}\cdot  \Delta t_i
-\]
-As \(\Delta t \to 0\), \(\Delta W_t \to \dif W_t\) and \(\Delta t_i \to \dif t\), therefore
-\[
-\int \dif \Theta_t = -\int g(\Theta_t) \dif t + \tilde{\sigma} \int \dif W_t \dif t
-\]
-so,
-\[
-d \Theta_t = -g(\Theta_t) \dif t + \tilde{\sigma} \dif W_t \dif t
-\]
-where \(W_t\) is standard Brownian motion.
-
-% Derivation: SGD → Itô SDE
-\paragraph{1.  Split deterministic and random parts}
-\[
-\theta_{k+1}
-=\theta_k-\eta\bigl(g(\theta_k)+\epsilon_k\bigr)
-=\theta_k-\underbrace{\eta\,g(\theta_k)}_{\text{deterministic}}
-+\underbrace{\eta\,\sigma\,\delta_k}_{\text{random}},
-\qquad
-\delta_k\sim\mathcal{N}(0,1).
-\]
-
-\paragraph{2.  Diffusion scaling}
-Assume the step size is small, \(\eta=\Delta t\ll1\), and set
-\[
-\sigma^2=\eta\,\tilde{\sigma}^2
-\quad\Longrightarrow\quad
-\sigma=\sqrt{\eta}\,\tilde{\sigma}.
-\]
-Then
-\[
-\theta_{k+1}
-=\theta_k-\Delta t\,g(\theta_k)
-+\tilde{\sigma}\sqrt{\Delta t}\,\delta_k,
-\qquad
-\sqrt{\Delta t}\,\delta_k\sim\mathcal{N}(0,\Delta t).
-\]
-
-\paragraph{3.  Continuous-time interpolation}
-Define \(\displaystyle \Theta_t:=\theta_{\lfloor t/\eta\rfloor}\) and \(t_i=i\Delta t\).  
-For \(t=n\Delta t\),
-\[
-\Theta_t-\Theta_0
-=
--\sum_{i=0}^{n-1}\Delta t\,g\bigl(\theta_{t_i}\bigr)
-+\tilde{\sigma}\sum_{i=0}^{n-1}\sqrt{\Delta t}\,\delta_i.
-\]
-As \(\Delta t\to0\):
-\[
-\sum_{i}\Delta t\,g\bigl(\theta_{t_i}\bigr)
-\;\longrightarrow\;
-\int_0^{t} g(\Theta_s)\,ds,
-\qquad
-\sum_{i}\sqrt{\Delta t}\,\delta_i
-\;\longrightarrow\;
-W_t,
-\]
-where \(W_t\) is standard Brownian motion.
-
-\paragraph{4.  Limit SDE}
-\[
-\Theta_t-\Theta_0
-=
--\int_0^{t} g(\Theta_s)\,ds
-+\tilde{\sigma}\,W_t
-\;\;\Longrightarrow\;\;
-d\Theta_t
-=
--g(\Theta_t)\,dt
-+\tilde{\sigma}\,dW_t,
-\qquad
-\Theta_0=1.
-\]
-
-\item Define the state-space of the Markov chain $\left\{\theta_k\right\}_{k \geq 0}$ and derive the transition density $P\left(\theta_{k+1} \mid \theta_k\right)$.
-
-\end{enumerate}
 
 
 

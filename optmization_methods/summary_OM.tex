@@ -1,7 +1,28 @@
-% \documentclass[a2paper, 10pt, twocolumn, headings=standardclasses, parskip=half]{scrartcl}
+% author: Fabian Bosshard
+% © CC BY 4.0
+
+% compile with:
+% lualatex -> biber -> makeglossaries -> lualatex -> lualatex
+
+
+\begin{filecontents}[overwrite]{\jobname.bib}
+@book{nocedal2006,
+  author    = {Jorge Nocedal and Stephen J. Wright},
+  title     = {Numerical Optimization},
+  edition   = {Second},
+  year      = {2006},
+  publisher = {Springer},
+  isbn      = {9780387303031},
+  doi       = {10.1007/978-0-387-40065-5},
+  url       = {https://link.springer.com/book/10.1007/978-0-387-40065-5},
+}
+\end{filecontents}
+
+
 \documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
 \usepackage{ifthen}
 \usepackage{iftex}
+\usepackage{csquotes}
 
 
 \usepackage[automark]{scrlayer-scrpage}
@@ -33,6 +54,9 @@
 \renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
 
 \usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
 
 \usepackage{pifont}
 
@@ -296,6 +320,11 @@
   colorlinks=false,        % don't wrap links in a colour
   pdfborder={0 0 0}        % no border around links
 ]{hyperref}
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
 \usepackage{cleveref}
 
 
@@ -377,12 +406,29 @@
 
 \begin{document}
 
-\thispagestyle{empty}
+\pagenumbering{roman}
+\pagestyle{plain}
+
 
 \maketitle
 \tableofcontents
 
 
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
+
+This document is an unofficial student-made summary of the course 
+\href{https://search.usi.ch/en/courses/35270756/optimization-methods}{{Optimization Methods}} taught by \href{https://search.usi.ch/en/people/7ae0ccfefe31ec77de71003997572fbd/sulem-deborah}{Deborah~Sulem} in Spring~2025 at the \href{https://www.usi.ch/en}{Università della Svizzera italiana}.
+It is based on the slides and lecture notes, as well as \cite{nocedal2006}.
+The summary is not exhaustive and may contain errors.
+If you find any, please report them to \href{mailto:fabianlucasbosshard@gmail.com}{fabianlucasbosshard@gmail.com} or open an issue at \url{https://github.com/fabianbosshard/USI_summaries}.
+
+\doclicenseThis
+
+% ----- Keep the following commands unchanged -------------------
+\renewcommand{\emph}[1]{\textcolor{black}{#1}}
+\printbibliography[heading=bibintoc,title={References}]
+\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
 
 
 
@@ -397,7 +443,8 @@
 
 
 \clearpage
-\pagenumbering{arabic}  
+\pagenumbering{arabic}
+\pagestyle{scrheadings}
 \section{General formulation of an optimization problem}
 
 main components:
@@ -3904,272 +3951,272 @@ sparse problems.
 
 
 
-\clearpage
+% \clearpage
 
-\section{Exam Topics}
-\begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
-  \item In particular, revise:
-  \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
-    \item Optimality conditions
-    \item Definitions of directional derivative and descent directions
-    \item Definitions and properties of convex, strongly convex, Lipschitz and smooth functions
-    \item Properties of multivariate quadratic functions
-    \item Wolfe conditions
-  \end{itemize}
-  \item Do you know how to recognise a convex function? A smooth function?
-  \item Do you know how to recognise that a point is a local minimizer?
-  \item Do you know what is a descent direction?
-  \item Do you know what is a quadratic function and in which cases it has a global minimizer?
-  \item Do you know how to apply Gradient Descent and Newton's algorithms?
-  \item Do you know how to apply the Wolfe conditions?
-  \item Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?
-  \item What are the eigenvalues of the following matrix? Its condition number? Its spectral norm? Its inverse? The eigenvalues of its inverse?
-  \[
-  \matr{A}=\begin{pmatrix}
-  1 & 0 & 0 \\
-  0 & 2.5 & 0 \\
-  0 & 0 & 0.5
-  \end{pmatrix}
-  \]
-\end{itemize}
-
-
+% \section{Exam Topics}
+% \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
+%   \item In particular, revise:
+%   \begin{itemize}[nosep, itemsep=0pt, parsep=0pt, before={\parskip=0pt}]
+%     \item Optimality conditions
+%     \item Definitions of directional derivative and descent directions
+%     \item Definitions and properties of convex, strongly convex, Lipschitz and smooth functions
+%     \item Properties of multivariate quadratic functions
+%     \item Wolfe conditions
+%   \end{itemize}
+%   \item Do you know how to recognise a convex function? A smooth function?
+%   \item Do you know how to recognise that a point is a local minimizer?
+%   \item Do you know what is a descent direction?
+%   \item Do you know what is a quadratic function and in which cases it has a global minimizer?
+%   \item Do you know how to apply Gradient Descent and Newton's algorithms?
+%   \item Do you know how to apply the Wolfe conditions?
+%   \item Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?
+%   \item What are the eigenvalues of the following matrix? Its condition number? Its spectral norm? Its inverse? The eigenvalues of its inverse?
+%   \[
+%   \matr{A}=\begin{pmatrix}
+%   1 & 0 & 0 \\
+%   0 & 2.5 & 0 \\
+%   0 & 0 & 0.5
+%   \end{pmatrix}
+%   \]
+% \end{itemize}
 
 
 
-\section*{Answers}
 
-\begin{description}[leftmargin=1.5cm, style=nextline]
 
-  \item[Q1: What are the optimality conditions?] 
-  \textbf{A:} 
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{First-Order Necessary Condition:} For an unconstrained problem 
-      \[
-      \min_{\vect{x}} f(\vect{x}),
-      \]
-      a necessary condition for \(\vect{x}^*\) to be a local minimizer is 
-      \[
-      \nabla f(\vect{x}^*) = 0.
-      \]
-    \item \textbf{Second-Order Necessary Condition:} If \(\nabla f(\vect{x}^*) = 0\), a necessary condition is that the Hessian is positive semidefinite:
-      \[
-      \nabla^2 f(\vect{x}^*) \succeq 0.
-      \]
-    \item \textbf{Second-Order Sufficient Condition:} If \(\nabla f(\vect{x}^*) = 0\) and 
-      \[
-      \nabla^2 f(\vect{x}^*) \succ 0 \quad (\text{positive definite}),
-      \]
-      then \(\vect{x}^*\) is a strict local minimizer.
-  \end{itemize}
+% \section*{Answers}
 
-  \item[Q2: What are the definitions of the directional derivative and descent directions?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Directional Derivative:} For a function \(f: \mathbb{R}^n \to \mathbb{R}\), the directional derivative at \(\vect{x}\) in the direction \(\vect{d}\) is defined as
-      \[
-      f'(\vect{x}; \vect{d}) = \lim_{t \to 0} \frac{f(\vect{x} + t \,\vect{d}) - f(\vect{x})}{t},
-      \]
-      provided the limit exists.
-    \item \textbf{Descent Direction:} A vector \(\vect{d}\) is a descent direction at \(\vect{x}\) if
-      \[
-      \nabla f(\vect{x})^T \,\vect{d} < 0.
-      \]
-      This implies that for sufficiently small \(t > 0\), \(f(\vect{x} + t \,\vect{d}) < f(\vect{x})\).
-  \end{itemize}
+% \begin{description}[leftmargin=1.5cm, style=nextline]
 
-  \item[Q3: What are the definitions and properties of convex, strongly convex, Lipschitz, and smooth functions?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Convex Function:} \(f\) is convex if for all \(\vect{x}, \vect{y}\) and \(\lambda \in [0,1]\),
-      \[
-      f(\lambda \,\vect{x} + (1-\lambda) \,\vect{y}) \le \lambda \,f(\vect{x}) + (1-\lambda) \,f(\vect{y}).
-      \]
-      For differentiable functions, this is equivalent to:
-      \[
-      f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) \quad \forall \,\vect{x},\vect{y}.
-      \]
-    \item \textbf{Strongly Convex Function:} \(f\) is strongly convex with parameter \(\mu > 0\) if
-      \[
-      f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) + \frac{\mu}{2} \|\vect{y} - \vect{x}\|^2.
-      \]
-      Equivalently, its Hessian satisfies
-      \[
-      \nabla^2 f(\vect{x}) \succeq \mu \matr{I} \quad \text{for all } \vect{x}.
-      \]
-    \item \textbf{Lipschitz Continuity:} A function \(f\) (or its gradient) is Lipschitz continuous if there exists a constant \(L \ge 0\) such that
-      \[
-      \|f(\vect{x}) - f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|,
-      \]
-      or for gradients,
-      \[
-      \|\nabla f(\vect{x}) - \nabla f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|.
-      \]
-    \item \textbf{Smooth Function:} A function is \(L\)-smooth if it is differentiable and its gradient is Lipschitz continuous with constant \(L\); that is,
-      \[
-      f(\vect{y}) \le f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y}-\vect{x}) + \frac{L}{2}\|\vect{y}-\vect{x}\|^2.
-      \]
-  \end{itemize}
+%   \item[Q1: What are the optimality conditions?] 
+%   \textbf{A:} 
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{First-Order Necessary Condition:} For an unconstrained problem 
+%       \[
+%       \min_{\vect{x}} f(\vect{x}),
+%       \]
+%       a necessary condition for \(\vect{x}^*\) to be a local minimizer is 
+%       \[
+%       \nabla f(\vect{x}^*) = 0.
+%       \]
+%     \item \textbf{Second-Order Necessary Condition:} If \(\nabla f(\vect{x}^*) = 0\), a necessary condition is that the Hessian is positive semidefinite:
+%       \[
+%       \nabla^2 f(\vect{x}^*) \succeq 0.
+%       \]
+%     \item \textbf{Second-Order Sufficient Condition:} If \(\nabla f(\vect{x}^*) = 0\) and 
+%       \[
+%       \nabla^2 f(\vect{x}^*) \succ 0 \quad (\text{positive definite}),
+%       \]
+%       then \(\vect{x}^*\) is a strict local minimizer.
+%   \end{itemize}
 
-  \item[Q4: What are the properties of multivariate quadratic functions?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{General Form:} A quadratic function in \(\mathbb{R}^n\) can be expressed as
-      \[
-      f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c,
-      \]
-      where \(\matr{A}\) is a symmetric matrix, \(\vect{b}\) is a vector, and \(c\) is a scalar.
-    \item \textbf{Convexity:} The function is convex if \(\matr{A} \succeq 0\) (i.e., \(\matr{A}\) is positive semidefinite) and strictly convex if \(\matr{A} \succ 0\) (i.e., \(\matr{A}\) is positive definite).
-    \item \textbf{Global minimizer:}
-      \begin{itemize}
-        \item If \(\matr{A} \succ 0\), then the unique global minimizer is
-          \[
-          \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
-          \]
-        \item If \(\matr{A} \succeq 0\) but is singular, a global minimizer exists if and only if \(\vect{b}\) lies in the range (column space) of \(\matr{A}\); however, the minimizer may not be unique.
-      \end{itemize}
-  \end{itemize}
+%   \item[Q2: What are the definitions of the directional derivative and descent directions?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Directional Derivative:} For a function \(f: \mathbb{R}^n \to \mathbb{R}\), the directional derivative at \(\vect{x}\) in the direction \(\vect{d}\) is defined as
+%       \[
+%       f'(\vect{x}; \vect{d}) = \lim_{t \to 0} \frac{f(\vect{x} + t \,\vect{d}) - f(\vect{x})}{t},
+%       \]
+%       provided the limit exists.
+%     \item \textbf{Descent Direction:} A vector \(\vect{d}\) is a descent direction at \(\vect{x}\) if
+%       \[
+%       \nabla f(\vect{x})^T \,\vect{d} < 0.
+%       \]
+%       This implies that for sufficiently small \(t > 0\), \(f(\vect{x} + t \,\vect{d}) < f(\vect{x})\).
+%   \end{itemize}
 
-  \item[Q5: What are the Wolfe conditions?]
-  \textbf{A:} The Wolfe conditions are used in line search methods to choose a step size \(\alpha\) and consist of:
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Armijo (Sufficient Decrease) Condition:}
-      \[
-      f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k,
-      \]
-      where \(0 < c_1 < 1\).
-    \item \textbf{Curvature Condition:}
-      \[
-      \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k,
-      \]
-      with \(c_1 < c_2 < 1\).
-  \end{itemize}
+%   \item[Q3: What are the definitions and properties of convex, strongly convex, Lipschitz, and smooth functions?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Convex Function:} \(f\) is convex if for all \(\vect{x}, \vect{y}\) and \(\lambda \in [0,1]\),
+%       \[
+%       f(\lambda \,\vect{x} + (1-\lambda) \,\vect{y}) \le \lambda \,f(\vect{x}) + (1-\lambda) \,f(\vect{y}).
+%       \]
+%       For differentiable functions, this is equivalent to:
+%       \[
+%       f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) \quad \forall \,\vect{x},\vect{y}.
+%       \]
+%     \item \textbf{Strongly Convex Function:} \(f\) is strongly convex with parameter \(\mu > 0\) if
+%       \[
+%       f(\vect{y}) \ge f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y} - \vect{x}) + \frac{\mu}{2} \|\vect{y} - \vect{x}\|^2.
+%       \]
+%       Equivalently, its Hessian satisfies
+%       \[
+%       \nabla^2 f(\vect{x}) \succeq \mu \matr{I} \quad \text{for all } \vect{x}.
+%       \]
+%     \item \textbf{Lipschitz Continuity:} A function \(f\) (or its gradient) is Lipschitz continuous if there exists a constant \(L \ge 0\) such that
+%       \[
+%       \|f(\vect{x}) - f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|,
+%       \]
+%       or for gradients,
+%       \[
+%       \|\nabla f(\vect{x}) - \nabla f(\vect{y})\| \le L \,\|\vect{x} - \vect{y}\|.
+%       \]
+%     \item \textbf{Smooth Function:} A function is \(L\)-smooth if it is differentiable and its gradient is Lipschitz continuous with constant \(L\); that is,
+%       \[
+%       f(\vect{y}) \le f(\vect{x}) + \nabla f(\vect{x})^T (\vect{y}-\vect{x}) + \frac{L}{2}\|\vect{y}-\vect{x}\|^2.
+%       \]
+%   \end{itemize}
 
-  \item[Q6: How do you recognise a convex function? A smooth function?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Convex Functions:} Verify that the line segment between any two points on the graph lies above the graph; for differentiable functions, a nonnegative second derivative (or positive semidefinite Hessian) confirms convexity.
-    \item \textbf{Smooth Functions:} These are functions that are continuously differentiable, often with a Lipschitz continuous gradient.
-  \end{itemize}
+%   \item[Q4: What are the properties of multivariate quadratic functions?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{General Form:} A quadratic function in \(\mathbb{R}^n\) can be expressed as
+%       \[
+%       f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c,
+%       \]
+%       where \(\matr{A}\) is a symmetric matrix, \(\vect{b}\) is a vector, and \(c\) is a scalar.
+%     \item \textbf{Convexity:} The function is convex if \(\matr{A} \succeq 0\) (i.e., \(\matr{A}\) is positive semidefinite) and strictly convex if \(\matr{A} \succ 0\) (i.e., \(\matr{A}\) is positive definite).
+%     \item \textbf{Global minimizer:}
+%       \begin{itemize}
+%         \item If \(\matr{A} \succ 0\), then the unique global minimizer is
+%           \[
+%           \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
+%           \]
+%         \item If \(\matr{A} \succeq 0\) but is singular, a global minimizer exists if and only if \(\vect{b}\) lies in the range (column space) of \(\matr{A}\); however, the minimizer may not be unique.
+%       \end{itemize}
+%   \end{itemize}
 
-  \item[Q7: How do you recognise that a point is a local minimizer?]
-  \textbf{A:} A point \(\vect{x}^*\) is a local minimizer if:
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{First-Order Test:} \(\nabla f(\vect{x}^*) = 0\).
-    \item \textbf{Second-Order Test:} The Hessian \(\nabla^2 f(\vect{x}^*)\) is positive definite (or at least positive semidefinite with additional conditions to rule out saddle points).
-    \item There exists a neighborhood \(U\) of \(\vect{x}^*\) such that \(f(\vect{x}^*) \le f(\vect{x})\) for all \(\vect{x} \in U\).
-  \end{itemize}
+%   \item[Q5: What are the Wolfe conditions?]
+%   \textbf{A:} The Wolfe conditions are used in line search methods to choose a step size \(\alpha\) and consist of:
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Armijo (Sufficient Decrease) Condition:}
+%       \[
+%       f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k,
+%       \]
+%       where \(0 < c_1 < 1\).
+%     \item \textbf{Curvature Condition:}
+%       \[
+%       \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k,
+%       \]
+%       with \(c_1 < c_2 < 1\).
+%   \end{itemize}
 
-  \item[Q8: What is a descent direction?]
-  \textbf{A:} A descent direction \(\vect{d}\) at a point \(\vect{x}\) satisfies:
-  \[
-  \nabla f(\vect{x})^T \vect{d} < 0,
-  \]
-  ensuring that a sufficiently small move in the direction \(\vect{d}\) decreases the function value.
+%   \item[Q6: How do you recognise a convex function? A smooth function?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Convex Functions:} Verify that the line segment between any two points on the graph lies above the graph; for differentiable functions, a nonnegative second derivative (or positive semidefinite Hessian) confirms convexity.
+%     \item \textbf{Smooth Functions:} These are functions that are continuously differentiable, often with a Lipschitz continuous gradient.
+%   \end{itemize}
 
-  \item[Q9: What is a quadratic function and in which cases does it have a global minimizer?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Quadratic Function Form:}
-      \[
-      f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c.
-      \]
-    \item \textbf{Global minimizer Existence:}
-      \begin{itemize}
-        \item If \(\matr{A} \succ 0\), the function is strictly convex and the unique global minimizer is
-          \[
-          \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
-          \]
-        \item If \(\matr{A} \succeq 0\) (but not positive definite), a global minimizer exists if \(\vect{b}\) lies in the range of \(\matr{A}\); otherwise, the function is unbounded below. The minimizer may not be unique in that case.
-      \end{itemize}
-  \end{itemize}
+%   \item[Q7: How do you recognise that a point is a local minimizer?]
+%   \textbf{A:} A point \(\vect{x}^*\) is a local minimizer if:
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{First-Order Test:} \(\nabla f(\vect{x}^*) = 0\).
+%     \item \textbf{Second-Order Test:} The Hessian \(\nabla^2 f(\vect{x}^*)\) is positive definite (or at least positive semidefinite with additional conditions to rule out saddle points).
+%     \item There exists a neighborhood \(U\) of \(\vect{x}^*\) such that \(f(\vect{x}^*) \le f(\vect{x})\) for all \(\vect{x} \in U\).
+%   \end{itemize}
 
-  \item[Q10: How do you apply Gradient Descent and Newton's algorithms?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Gradient Descent:} Update iteratively via
-      \[
-      \vect{x}_{k+1} = \vect{x}_k - \alpha_k \,\nabla f(\vect{x}_k),
-      \]
-      where the step size \(\alpha_k\) can be determined by a line search (often using Wolfe or Armijo conditions).
-    \item \textbf{Newton's Method:} Update using second-order information:
-      \[
-      \vect{x}_{k+1} = \vect{x}_k - \bigl[\nabla^2 f(\vect{x}_k)\bigr]^{-1} \,\nabla f(\vect{x}_k).
-      \]
-      This method exhibits quadratic convergence near the minimizer provided the Hessian is positive definite and the initial guess is close enough.
-  \end{itemize}
+%   \item[Q8: What is a descent direction?]
+%   \textbf{A:} A descent direction \(\vect{d}\) at a point \(\vect{x}\) satisfies:
+%   \[
+%   \nabla f(\vect{x})^T \vect{d} < 0,
+%   \]
+%   ensuring that a sufficiently small move in the direction \(\vect{d}\) decreases the function value.
 
-  \item[Q11: How do you apply the Wolfe conditions during a line search?]
-  \textbf{A:}
-  \begin{enumerate}[leftmargin=2em]
-    \item Choose an initial step size \(\alpha\) and compute the trial point \(\vect{x}_k + \alpha \,\vect{d}_k\).
-    \item Verify the \textbf{Armijo condition}:
-      \[
-      f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k.
-      \]
-    \item Check the \textbf{Curvature condition}:
-      \[
-      \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k.
-      \]
-    \item If both conditions are met, accept \(\alpha\); otherwise, adjust (typically reduce) \(\alpha\) and repeat.
-  \end{enumerate}
+%   \item[Q9: What is a quadratic function and in which cases does it have a global minimizer?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Quadratic Function Form:}
+%       \[
+%       f(\vect{x}) = \frac{1}{2} \,\vect{x}^T \matr{A} \,\vect{x} + \vect{b}^T \,\vect{x} + c.
+%       \]
+%     \item \textbf{Global minimizer Existence:}
+%       \begin{itemize}
+%         \item If \(\matr{A} \succ 0\), the function is strictly convex and the unique global minimizer is
+%           \[
+%           \vect{x}^* = -\,\matr{A}^{-1}\,\vect{b}.
+%           \]
+%         \item If \(\matr{A} \succeq 0\) (but not positive definite), a global minimizer exists if \(\vect{b}\) lies in the range of \(\matr{A}\); otherwise, the function is unbounded below. The minimizer may not be unique in that case.
+%       \end{itemize}
+%   \end{itemize}
 
-  \item[Q12: Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Positive-Semidefinite:} Yes, because for any vector \(\vect{x}\),
-      \[
-      \vect{x}^T \matr{0}\,\vect{x} = 0 \ge 0.
-      \]
-    \item \textbf{Positive-Definite:} No, since for any nonzero \(\vect{x}\),
-      \[
-      \vect{x}^T \matr{0}\,\vect{x} = 0 \quad (\text{not strictly greater than } 0).
-      \]
-  \end{itemize}
+%   \item[Q10: How do you apply Gradient Descent and Newton's algorithms?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Gradient Descent:} Update iteratively via
+%       \[
+%       \vect{x}_{k+1} = \vect{x}_k - \alpha_k \,\nabla f(\vect{x}_k),
+%       \]
+%       where the step size \(\alpha_k\) can be determined by a line search (often using Wolfe or Armijo conditions).
+%     \item \textbf{Newton's Method:} Update using second-order information:
+%       \[
+%       \vect{x}_{k+1} = \vect{x}_k - \bigl[\nabla^2 f(\vect{x}_k)\bigr]^{-1} \,\nabla f(\vect{x}_k).
+%       \]
+%       This method exhibits quadratic convergence near the minimizer provided the Hessian is positive definite and the initial guess is close enough.
+%   \end{itemize}
 
-  \item[Q13: Given the matrix 
-    \(
-    \matr{A} = \begin{pmatrix}
-    1 & 0 & 0 \\
-    0 & 2.5 & 0 \\
-    0 & 0 & 0.5
-    \end{pmatrix},
-    \)
-    what are its eigenvalues, condition number, spectral norm, inverse, and the eigenvalues of its inverse?]
-  \textbf{A:}
-  \begin{itemize}[leftmargin=2em]
-    \item \textbf{Eigenvalues:} They are the diagonal entries:
-      \[
-      \lambda_1 = 1,\quad \lambda_2 = 2.5,\quad \lambda_3 = 0.5.
-      \]
-    \item \textbf{Condition Number:} The 2-norm condition number is given by
-      \[
-      \kappa(\matr{A}) = \frac{2.5}{0.5} = 5.
-      \]
-    \item \textbf{Spectral Norm:} This is the largest absolute eigenvalue:
-      \[
-      \|\matr{A}\|_2 = 2.5.
-      \]
-    \item \textbf{Inverse of \(\matr{A}\):} Since \(\matr{A}\) is diagonal,
-      \[
-      \matr{A}^{-1} = \begin{pmatrix}
-      1 & 0 & 0 \\
-      0 & \frac{1}{2.5} & 0 \\
-      0 & 0 & \frac{1}{0.5}
-      \end{pmatrix} 
-      = \begin{pmatrix}
-      1 & 0 & 0 \\
-      0 & 0.4 & 0 \\
-      0 & 0 & 2
-      \end{pmatrix}.
-      \]
-    \item \textbf{Eigenvalues of \(\matr{A}^{-1}\):} These are the reciprocals of the eigenvalues of \(\matr{A}\):
-      \[
-      1,\quad 0.4,\quad 2.
-      \]
-  \end{itemize}
+%   \item[Q11: How do you apply the Wolfe conditions during a line search?]
+%   \textbf{A:}
+%   \begin{enumerate}[leftmargin=2em]
+%     \item Choose an initial step size \(\alpha\) and compute the trial point \(\vect{x}_k + \alpha \,\vect{d}_k\).
+%     \item Verify the \textbf{Armijo condition}:
+%       \[
+%       f(\vect{x}_k + \alpha \,\vect{d}_k) \le f(\vect{x}_k) + c_1 \,\alpha \,\nabla f(\vect{x}_k)^T \vect{d}_k.
+%       \]
+%     \item Check the \textbf{Curvature condition}:
+%       \[
+%       \nabla f(\vect{x}_k + \alpha \,\vect{d}_k)^T \vect{d}_k \,\ge\, c_2 \,\nabla f(\vect{x}_k)^T \vect{d}_k.
+%       \]
+%     \item If both conditions are met, accept \(\alpha\); otherwise, adjust (typically reduce) \(\alpha\) and repeat.
+%   \end{enumerate}
 
-\end{description}
+%   \item[Q12: Is a square matrix with all entries equal to 0 positive-semidefinite? Positive-definite?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Positive-Semidefinite:} Yes, because for any vector \(\vect{x}\),
+%       \[
+%       \vect{x}^T \matr{0}\,\vect{x} = 0 \ge 0.
+%       \]
+%     \item \textbf{Positive-Definite:} No, since for any nonzero \(\vect{x}\),
+%       \[
+%       \vect{x}^T \matr{0}\,\vect{x} = 0 \quad (\text{not strictly greater than } 0).
+%       \]
+%   \end{itemize}
+
+%   \item[Q13: Given the matrix 
+%     \(
+%     \matr{A} = \begin{pmatrix}
+%     1 & 0 & 0 \\
+%     0 & 2.5 & 0 \\
+%     0 & 0 & 0.5
+%     \end{pmatrix},
+%     \)
+%     what are its eigenvalues, condition number, spectral norm, inverse, and the eigenvalues of its inverse?]
+%   \textbf{A:}
+%   \begin{itemize}[leftmargin=2em]
+%     \item \textbf{Eigenvalues:} They are the diagonal entries:
+%       \[
+%       \lambda_1 = 1,\quad \lambda_2 = 2.5,\quad \lambda_3 = 0.5.
+%       \]
+%     \item \textbf{Condition Number:} The 2-norm condition number is given by
+%       \[
+%       \kappa(\matr{A}) = \frac{2.5}{0.5} = 5.
+%       \]
+%     \item \textbf{Spectral Norm:} This is the largest absolute eigenvalue:
+%       \[
+%       \|\matr{A}\|_2 = 2.5.
+%       \]
+%     \item \textbf{Inverse of \(\matr{A}\):} Since \(\matr{A}\) is diagonal,
+%       \[
+%       \matr{A}^{-1} = \begin{pmatrix}
+%       1 & 0 & 0 \\
+%       0 & \frac{1}{2.5} & 0 \\
+%       0 & 0 & \frac{1}{0.5}
+%       \end{pmatrix} 
+%       = \begin{pmatrix}
+%       1 & 0 & 0 \\
+%       0 & 0.4 & 0 \\
+%       0 & 0 & 2
+%       \end{pmatrix}.
+%       \]
+%     \item \textbf{Eigenvalues of \(\matr{A}^{-1}\):} These are the reciprocals of the eigenvalues of \(\matr{A}\):
+%       \[
+%       1,\quad 0.4,\quad 2.
+%       \]
+%   \end{itemize}
+
+% \end{description}
 
 
 
