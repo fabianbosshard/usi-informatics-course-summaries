@@ -4,6 +4,8 @@ script.pdf
 
 
 *.bib
+*.dat
+*.lua
 
 
 

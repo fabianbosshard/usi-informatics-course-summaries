@@ -65,8 +65,8 @@
 \usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
-\usetikzlibrary{external}
-\tikzexternalize[prefix=tikz/]
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
 \usepackage{pgfplots}
 
 
@@ -245,7 +245,7 @@
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
 
 % The algopseudocodex package uses TikZ internally. The easiest solution would be to disable the externalization for the algorithmic environment by doing
-\AddToHook{env/algorithmic/begin}{\tikzexternaldisable} 
+% \AddToHook{env/algorithmic/begin}{\tikzexternaldisable} 
 
 
 % commands for functions etc.
@@ -501,7 +501,7 @@ The general formulation of optimization problems includes a large variety of pro
 \clearpage
 \section{Useful definitions and properties}
 
-\tikzexternaldisable
+% \tikzexternaldisable
 \begin{theorem}[Cauchy--Schwarz Inequality]
   The \emph{Cauchy--Schwarz inequality} states that for any vectors \(\vect{x}\), \(\vect{y}\) of an inner product space,
   \(
@@ -585,7 +585,7 @@ where \(\lambda_{i}(\matr{A})\) is the \(i\)-th eigenvalue of \(\matr{A}\).
     \node[anchor=east, inner sep = 0pt] at (A_condition_number_spd_margin) {\color{red}\ding{43} if $\matr{A} \succ 0$};
     \end{tikzpicture}
 \end{definition}
-\tikzexternalenable
+%\tikzexternalenable
 
 
 
@@ -1464,7 +1464,7 @@ We say that the sequence of iterates \(\{\vect{x}^{(k)}\}\) converges to \(\vect
 \settoheight{\letterheight}{A}
 \newlength\letterdepth
 \settoheight{\letterdepth}{g} 
-\tikzexternaldisable
+%\tikzexternaldisable
 \begin{lemma}
 \label{lem:optimality_error_strongly_convex}
 If \(f\) is differentiable, being \hyperref[def:mu_strongly_convex_function]{\(\mu\)-strongly convex} (Definition~\ref{def:mu_strongly_convex_function}) is equivalent to
@@ -1545,7 +1545,7 @@ Adding \(0 = \|\nabla f(\vect{x})\|^{2} - \|\nabla f(\vect{x})\|^{2}\) to the ri
 \end{tikzpicture}%
 \end{align*}%
 \end{proof}%
-\tikzexternalenable%
+%\tikzexternalenable%
 \begin{theorem}\label{thm:gd_linear_rate}
 Let \(f\) be \(L\)-smooth and \(\mu\)-strongly convex with unique minimizer \(\vect{x}^{*}\). If the step size satisfies \(\alpha\in\left(0,\frac{1}{L}\right]\), then for every iteration \(k\ge 0\) of gradient descent,
 \[
@@ -2195,7 +2195,7 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
 %   \end{axis}
 % \end{tikzpicture}
 % \end{center}
-\tikzexternaldisable%
+%\tikzexternaldisable%
 \[
 \begin{tikzpicture}%[scale=0.3] %scale does not work here
 
@@ -2406,7 +2406,7 @@ Whenever \(\alpha^{(k)}\) is \emph{not} chosen by solving the minimization probl
 
 \end{tikzpicture}
 \]
-\tikzexternalenable%
+%\tikzexternalenable%
 The Wolfe conditions are two conditions that guide the choice of a “good enough” step size \(\alpha^{(k)}\) at each iteration of a line search method to achieve global convergence. Consider the affine function
 \[
 \ell(\alpha) = f\bigl(\vect{x}^{(k)}\bigr) + \eta\,\alpha\, \nabla f\bigl(\vect{x}^{(k)}\bigr)^T \vect{d}^{(k)} %\text{,}
@@ -2883,7 +2883,7 @@ Then there exists a unique \(\vect{\lambda}^{\ast}\in\R^{|\mathcal{E}|+|\mathcal
     &\qquad\qquad\qquad&\lambda_{i}^{\ast} &\ge 0,                                              \quad \forall i\in\mathcal{I}                             &&\text{(dual feasibility)}                  \label{eq:KKT_dual_feas} \\
     &\qquad\qquad\qquad&\lambda_{i}^{\ast} \tikzmark{c_sl}c_{i}(\vect{x}^{\ast}) &= 0,   \quad \forall i\in\mathcal{E}\cup\mathcal{I}              &&\text{(complementary slackness)}           \label{eq:KKT_comp_slack} % complementarity slackness
   \end{align}
-\tikzexternaldisable%
+%\tikzexternaldisable%
 \begin{tikzpicture}[remember picture,overlay]
 \coordinate (c_sl_eq) at (pic cs:c_sl);
 \coordinate (c_sl_border) at ($ (current page text area.west |- c_sl_eq)$);
@@ -2893,7 +2893,7 @@ $\;\bullet\; i \in \mathcal{A}(\vect{x}^{\ast}) \Rightarrow c_i(\vect{x}^{\ast})
 $\;\bullet\; i \notin \mathcal{A}(\vect{x}^{\ast}) \Rightarrow \lambda_i^{\ast}=0$
 };
 \end{tikzpicture}%
-\tikzexternalenable%
+%\tikzexternalenable%
 \end{subequations}
 where \(\vect{\lambda}^{\ast}\) are called the \emph{Lagrange multipliers} at \(\vect{x}^{\ast}\) and the pair \((\vect{x}^{\ast},\vect{\lambda}^{\ast})\) is called a \gls{kkt} point.
 \end{theorem}
@@ -2945,7 +2945,7 @@ Satisfaction of the strict complementarity property usually makes it easier for 
 \end{lemma}
   Geometrically Lemma~\ref{lem:Farkas} says that if \(\vect{g} \notin K\), we can find a hyperplane with normal vector \(\vect{d}\) separating \(\vect{g}\) from the cone \(K\) such that \(\vect{g}\) lies on the opposite side of \(\vect{d}\):
 \[
-\tikzexternaldisable
+%\tikzexternaldisable
 \begin{tikzpicture}[>=Stealth, scale=0.6, every node/.style={font=\footnotesize}]
 
   %%% lengths %%%
@@ -3000,7 +3000,7 @@ Satisfaction of the strict complementarity property usually makes it easier for 
   \end{scope}
 
 \end{tikzpicture}
-\tikzexternalenable
+%\tikzexternalenable
 \]
 
 
