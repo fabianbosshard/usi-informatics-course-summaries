@@ -131,6 +131,7 @@
 \declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ding{45},postheadspace=1em]{definitionstyle}
 \declaretheorem[style=definitionstyle,name=Definition]{definition}
+\declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
 \declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
 \declaretheorem[style=examplestyle,name=Example]{example}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
@@ -141,6 +142,24 @@
 \declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
 \declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
 \declaretheorem[style=digressionstyle,name=Digression]{digression}
+\let\proof\relax
+\let\endproof\relax
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+\declaretheorem[
+  style=proofstyle,
+  name=Proof,
+  numbered=no
+]{proof}
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
 
 \usepackage{algorithm}
 \usepackage[italicComments=false]{algpseudocodex}
@@ -1435,7 +1454,7 @@ Checking if there a sorted array contains two elements $A[i]$ and $A[j]$ such th
   \path[fill=svgYellow] svg{m 159.00066 180.68498 c -1.73762 0.2329 -3.52017 1.9332 -4.15438 3.9617 -1.93334 6.18748 4.17728 11.41752 8.24309 7.05589 2.01369 -2.16033 2.33252 -5.93765 0.72019 -8.53574 -1.11593 -1.79827 -2.92915 -2.73437 -4.8089 -2.48185 m 13.72912 0.0343 c -4.32849 0.93564 -5.80559 7.56268 -2.46731 11.07237 3.31797 3.48832 8.4807 0.55579 8.48805 -4.82121 0.007 -3.90291 -2.90496 -6.92495 -6.02074 -6.25116 m -11.91158 1.96839 c 2.12471 0.75795 3.1901 4.07658 2.072 6.45468 -1.44298 3.06881 -5.04047 3.09642 -6.42381 0.0494 -1.65339 -3.64193 1.04938 -7.68202 4.35181 -6.50411 m 14.10412 0.0815 c 1.92986 0.88445 2.87946 3.68291 2.04479 6.02672 -1.34361 3.77289 -5.89501 3.44691 -6.89042 -0.49343 -0.90725 -3.59206 1.95363 -6.85862 4.84563 -5.53329};
   \path[fill=black] svg{m 163.74844 198.05128 c -1.44602 -0.71168 -2.35134 -1.80511 -1.96423 -2.37239 0.34368 -0.50361 0.76995 -0.40708 2.26783 0.51349 1.8136 1.11463 3.6586 1.10304 5.50715 -0.0346 1.0614 -0.65319 1.53608 -0.78082 1.84922 -0.49722 0.29948 0.27121 0.30756 0.54483 0.028 0.94623 -1.36659 1.96211 -5.18022 2.67862 -7.68796 1.44445 z};
   \end{tikzpicture}
-method (sometimes also called \emph{two-pointer} or \emph{sliding-window} method).
+method (sometimes also called ``{two-pointer}'' or ``{sliding-window}'' method).
 
 \begin{center}
 \begin{tikzpicture}[xscale=0.3, yscale=0.3]
