@@ -119,7 +119,7 @@
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
-\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+\renewcommand{\emph}[1]{\textbf{#1}}
 
 \usepackage{thmtools}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
@@ -268,9 +268,9 @@ If you find any, please report them to \href{mailto:fabianlucasbosshard@gmail.co
 \doclicenseThis
 
 % ----- Keep the following commands unchanged -------------------
-\renewcommand{\emph}[1]{\textcolor{black}{#1}}
+% \renewcommand{\emph}[1]{\textcolor{black}{#1}}
 \printbibliography[heading=bibintoc,title={References}]
-\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+% \renewcommand{\emph}[1]{\textbf{#1}}
 
 
 
@@ -1420,7 +1420,7 @@ Partitioning around the pivot takes $\Theta(n)$ time, and since the pivot is ran
     \begin{tabular}{l c c c c c}
         \toprule
         \textbf{Algorithm} & \multicolumn{3}{c}{\textbf{Time Complexity}} & \textbf{in place?} \\%& \textbf{Space}  \\
-                            & \emph{worst}      & \emph{average}       & \emph{best}  & \\%& \emph{worst} \\
+                            & {worst}      & {average}       & {best}  & \\%& \emph{worst} \\
         \midrule
         \textsc{InsertionSort} & \cellcolor{Red!\mixcolor}$\Theta(n^2)$    & \cellcolor{Red!\mixcolor}$\Theta(n^2)$        & \cellcolor{Green!\mixcolor}$\Theta(n)$   & \ding{52} \\%& \cellcolor{Blue!\mixcolor}$\mathcal{O}(1)$ \\
         \textsc{SelectionSort} & \cellcolor{Red!\mixcolor}$\Theta(n^2)$    & \cellcolor{Red!\mixcolor}$\Theta(n^2)$        & \cellcolor{Red!\mixcolor}$\Theta(n^2)$ & \ding{52} \\%& \cellcolor{Blue!\mixcolor}$\mathcal{O}(1)$ \\
@@ -1443,7 +1443,7 @@ When an array is sorted, many operations and queries (e.g. the one in Example \r
 \definecolor{svgGreenLight} {HTML}{8FC43A}
 \definecolor{svgYellow}     {HTML}{FFFF00}
 % Checking if there a sorted array contains two elements $A[i]$ and $A[j]$ such that $A[i] + q = A[j]$, can be done in linear running time using the \includegraphics[height=2ex]{images/Hungrycaterpillar.pdf} method (sometimes also called \emph{two-pointer} or \emph{sliding-window} method).
-Checking if there a sorted array contains two elements $A[i]$ and $A[j]$ such that $A[i] + q = A[j]$, can be done in linear running time using the 
+Checking if a sorted array contains two elements $A[i]$ and $A[j]$ such that $A[i] + q = A[j]$, can be done in linear running time using the 
 \begin{tikzpicture}[x=1mm,y=1mm,yscale=-1,scale=0.1]
   \path[fill=svgBlue] svg{m 157.18913 191.53421 c -0.65294 -0.39134 -1.41147 -1.16769 -1.81701 -1.85969 -0.59204 -1.01024 -0.67936 -1.42014 -0.58385 -2.74057 0.28372 -3.92242 4.20975 -6.0369 7.42406 -3.99845 1.65793 1.05143 2.05077 1.90213 2.05077 4.44099 0 2.45873 -0.25511 2.92729 -2.20157 4.04364 -1.77317 1.01696 -3.30611 1.05285 -4.8724 0.11408 z};
   \path[fill=svgRed] svg{m 162.16094 202.28463 c -2.31199 -0.80479 -5.51218 -3.34634 -7.18339 -5.70493 -3.3035 -4.66236 -3.51652 -11.58765 -0.5211 -16.94113 1.35536 -2.42231 4.21876 -5.04676 6.76393 -6.19948 1.86325 -0.84386 2.57212 -0.97367 5.319 -0.97393 2.42425 -2.3e-4 3.56364 0.16482 4.84708 0.70214 5.02426 2.10344 8.42886 6.56804 9.31109 12.20999 1.10931 7.09396 -3.21685 14.79046 -9.51276 16.92381 -2.6958 0.91348 -6.37153 0.90677 -9.02385 -0.0165 z m 8.25693 -4.80789 c 2.36514 -1.63378 1.37295 -2.92944 -1.08602 -1.41818 -2.06023 1.26619 -3.50533 1.15136 -6.43916 -0.51164 -0.73798 -0.41832 -0.89462 -0.41747 -1.18574 0.006 -0.48927 0.71217 0.16562 1.59506 1.76792 2.38344 2.0172 0.99255 5.13974 0.78569 6.943 -0.45995 z m -8.46621 -5.94253 c 1.57645 -0.87053 2.30023 -1.93159 2.55869 -3.75121 0.45522 -3.20479 -2.68621 -6.25609 -5.5574 -5.39791 -3.92371 1.17277 -4.86789 6.05337 -1.6771 8.66919 1.5928 1.30578 2.93149 1.44318 4.67581 0.47993 z m 12.92053 0.14281 c 1.77134 -0.78046 2.61059 -2.05403 2.76403 -4.19442 0.16774 -2.34026 -0.70928 -3.93178 -2.67604 -4.85616 -1.20596 -0.56677 -1.5875 -0.60079 -2.8612 -0.25518 -4.07594 1.10596 -4.71289 7.09715 -0.97404 9.16176 1.44063 0.79555 2.20211 0.82482 3.74725 0.144 z};
