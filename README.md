@@ -2,7 +2,6 @@
 
 Unofficial student‑written course notes for Bachelor and Master courses in Informatics at the **[Università della Svizzera italiana](https://www.usi.ch/en)** (USI), Lugano.
 
-[![Stars](https://img.shields.io/github/stars/fabianbosshard/usi-informatics-course-summaries?style=social)](https://github.com/fabianbosshard/usi-informatics-course-summaries/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/fabianbosshard/usi-informatics-course-summaries)](https://github.com/fabianbosshard/usi-informatics-course-summaries/commits/main)
 [![License](https://img.shields.io/github/license/fabianbosshard/usi-informatics-course-summaries)](LICENSE)
 

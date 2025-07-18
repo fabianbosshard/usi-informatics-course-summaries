@@ -1918,13 +1918,16 @@ where the learning-rate is $\eta>0$, $g: \mathbb{R} \rightarrow \mathbb{R}$ is d
 % a)
 
 \begin{theorem}\label{thm:SGD_to_SDE}
-When the step size is small ($\eta=\Delta t \ll 1$) and one rescales the variance \textcolor{red}{$\sigma^2= \tilde{\sigma}^2 / \eta$}, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \eta\rfloor}$ converges (in distribution) to the Itô SDE
+When the step size is small ($\eta=\Delta t \ll 1$) and one rescales the variance \textcolor{black}{$\sigma^2= \tilde{\sigma}^2 / \eta$}, the continuous-time interpolation $\Theta_t \approx \theta_{\lfloor t / \Delta t\rfloor}$ converges (in distribution) to the Itô SDE
 $$
 \mathrm{d} \Theta_t=-g\left(\Theta_t\right) \mathrm{d} t+\tilde{\sigma} \mathrm{d} W_t, \qquad \Theta_0=1
 $$
-where $W_t$ is standard Brownian motion.
+where $W_t$ is standard Brownian motion. 
 \end{theorem}
 \begin{proof}
+We can view \(k\) as an index for time, where \(k\) corresponds to the time \textcolor{red}{\(t_k = k \cdot \Delta t\)} and thus \(\Theta_{t_k} = \theta_{\lfloor t_k / \Delta t \rfloor} = \theta_k\).
+
+We can rewrite the SGD recursion as
 \[
 \begin{aligned}
 \theta_{k+1} 
@@ -1949,22 +1952,24 @@ where $W_t$ is standard Brownian motion.
 
 Summing over \(N\) steps, we have
 \[
-\sum_{i=1}^{N} \Delta \theta_i
-= -\sum_{i=1}^{N} \Delta t \cdot g(\theta_i) + \tilde{\sigma} \sum_{i=1}^{N} \Delta W_i
+\sum_{k=1}^{N} \Delta \theta_k
+= -\sum_{k=1}^{N} \Delta t \cdot g(\theta_k) + \tilde{\sigma} \sum_{k=1}^{N} \Delta W_k
 \]
 
 As \(\Delta t \to 0\) and \(N \to \infty\), we have
-\(\Delta W_i \to \mathrm{d} W_t\) and \(\Delta t \to \mathrm{d} t\), and thus 
+\(\Delta W_k \to \mathrm{d} W_t\) and \(\Delta t \to \mathrm{d} t\), and thus 
 \[
 \int \mathrm{d} \Theta_t = -\int g(\Theta_t) \mathrm{d} t + \tilde{\sigma} \int \mathrm{d} W_t
 \]
 so,
 \[
-d \Theta_t = -g(\Theta_t) \mathrm{d} t + \tilde{\sigma} \mathrm{d} W_t
+ \mathrm{d} \Theta_t = -g(\Theta_t) \mathrm{d} t + \tilde{\sigma} \mathrm{d} W_t
 \]
 where \(W_t\) is standard Brownian motion.
 \end{proof}
 
+
+\clearpage
 
 
 
