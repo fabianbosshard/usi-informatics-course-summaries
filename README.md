@@ -9,15 +9,15 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 
 ## 📚 Summaries
 
-### Algorithms & Data Structures
-* [Course page](https://search.usi.ch/en/courses/35270741/algorithms-data-structures)  
-* Lecturer: [Antonio Carzaniga](https://www.inf.usi.ch/carzaniga/)  
-* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/algorithms-and-data-structures.pdf)  
-
 ### Discrete Structures
 * [Course page](https://search.usi.ch/en/courses/35270737/discrete-structures)  
 * Lecturer: [Stefan Wolf](https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan)  
 * [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/discrete-structures.pdf)  
+
+### Algorithms & Data Structures
+* [Course page](https://search.usi.ch/en/courses/35270741/algorithms-data-structures)  
+* Lecturer: [Antonio Carzaniga](https://www.inf.usi.ch/carzaniga/)  
+* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/algorithms-and-data-structures.pdf)  
 
 ### Optimization Methods
 * [Course page](https://search.usi.ch/en/courses/35270756/optimization-methods)  
