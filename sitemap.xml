@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://fabianbosshard.github.io/usi-informatics-course-summaries/</loc>
+  </url>
+  <!-- PDF summaries -->
+  <url>
+    <loc>https://fabianbosshard.github.io/usi-informatics-course-summaries/summaries/discrete-structures.pdf</loc>
+  </url>
+  <url>
+    <loc>https://fabianbosshard.github.io/usi-informatics-course-summaries/summaries/algorithms-and-data-structures.pdf</loc>
+  </url>
+  <url>
+    <loc>https://fabianbosshard.github.io/usi-informatics-course-summaries/summaries/optimization-methods.pdf</loc>
+  </url>
+  <url>
+    <loc>https://fabianbosshard.github.io/usi-informatics-course-summaries/summaries/stochastic-methods.pdf</loc>
+  </url>
+</urlset>
