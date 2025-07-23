@@ -8,7 +8,7 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 
 ---
 
-**📂 [View full repository with LaTeX sources on GitHub](https://github.com/fabianbosshard/usi-informatics-course-summaries)**
+**📂 [View full repository on GitHub](https://github.com/fabianbosshard/usi-informatics-course-summaries)**
 
 ---
 
