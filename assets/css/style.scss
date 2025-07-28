@@ -22,3 +22,12 @@ pre, code { background: #f6f8fa; border-radius: 6px; }
   .wrapper { background: transparent; }   /* Minimal theme container */
   h1, h2, h3, h4, h5, h6 { color: #e6edf3; }
 }
+
+/* Hide the theme's automatic repo/title heading in the left header */
+header h1,
+header h1 a {
+  display: none;
+}
+
+/* Tighten leftover spacing a bit (optional) */
+header { padding-top: 0; }
