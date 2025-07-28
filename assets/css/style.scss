@@ -1,0 +1,24 @@
+---
+---
+@import "{{ site.theme }}";   /* load the current GitHub Pages theme */
+
+/* Let browsers know both schemes are supported (affects form controls, etc.) */
+html { color-scheme: light dark; }
+
+/* Default (light) — tweak only if you want different colors */
+body { background: #ffffff; color: #24292f; }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+hr { background: #d0d7de; }
+pre, code { background: #f6f8fa; border-radius: 6px; }
+
+/* Dark mode when the system prefers it */
+@media (prefers-color-scheme: dark) {
+  body { background: #0d1117; color: #e6edf3; }
+  a { color: #4493f8; }
+  a:visited { color: #a371f7; }
+  hr { background: #30363d; }
+  pre, code { background: #161b22; }
+  .wrapper { background: transparent; }   /* Minimal theme container */
+  h1, h2, h3, h4, h5, h6 { color: #e6edf3; }
+}
