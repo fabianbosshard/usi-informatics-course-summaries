@@ -1,31 +1,35 @@
 ---
 ---
-@import "{{ site.theme }}";   /* load the current GitHub Pages theme */
+/* Import the Cayman theme, then override */
+@import "jekyll-theme-cayman";
 
-/* Let browsers know both schemes are supported (affects form controls, etc.) */
+/* Dark mode */
 html { color-scheme: light dark; }
 
-/* Default (light) — tweak only if you want different colors */
-body { background: #ffffff; color: #24292f; }
-a { text-decoration: none; }
-a:hover { text-decoration: underline; }
-hr { background: #d0d7de; }
-pre, code { background: #f6f8fa; border-radius: 6px; }
+body { background:#ffffff; color:#24292f; }
+a { text-decoration:none; }
+a:hover { text-decoration:underline; }
+hr { background:#d0d7de; }
+pre, code { background:#f6f8fa; border-radius:6px; }
 
-/* Dark mode when the system prefers it */
 @media (prefers-color-scheme: dark) {
-  body { background: #0d1117; color: #e6edf3; }
-  a { color: #4493f8; }
-  a:visited { color: #a371f7; }
-  hr { background: #30363d; }
-  pre, code { background: #161b22; }
-  .wrapper { background: transparent; }   /* Minimal theme container */
-  h1, h2, h3, h4, h5, h6 { color: #e6edf3; }
+  body { background:#0d1117; color:#e6edf3; }
+  a { color:#4493f8; }
+  a:visited { color:#a371f7; }
+  hr { background:#30363d; }
+  pre, code { background:#161b22; }
+  h1, h2, h3, h4, h5, h6 { color:#e6edf3; }
 }
 
-/* Remove Cayman's big header bar (repo name + tagline) */
+/* --- Remove Cayman's top project title/tagline --- */
 .page-header,
-.project-name,
-.project-tagline {
+.page-header .project-name,
+.page-header .project-tagline {
   display: none !important;
+}
+
+/* Optional: tighten spacing after removing header bar */
+main, .main-content, .container-lg {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
