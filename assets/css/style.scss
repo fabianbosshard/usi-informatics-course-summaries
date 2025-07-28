@@ -23,15 +23,9 @@ pre, code { background: #f6f8fa; border-radius: 6px; }
   h1, h2, h3, h4, h5, h6 { color: #e6edf3; }
 }
 
-/* Hide the auto repo/title heading produced by GitHub Pages themes */
-header h1,
-header h1 a,
-.site-title,
-.site-title a,
-.page-header .project-name,
-.project-name {
+/* Remove Cayman's big header bar (repo name + tagline) */
+.page-header,
+.project-name,
+.project-tagline {
   display: none !important;
 }
-
-/* Tighten spacing after removing the header */
-header { padding-top: 0 !important; }
