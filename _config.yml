@@ -1,5 +1,5 @@
 title: "USI Informatics Course Summaries | Student Notes"
-description: "Student-written summaries & cheat-sheets for core Informatics courses at Università della Svizzera italiana (USI), Lugano."
+description: "High-quality, student-written summaries & cheat-sheets for core Informatics courses at Università della Svizzera italiana (USI), Lugano."
 
 # — canonical site info —
 url: "https://fabianbosshard.github.io/usi-informatics-course-summaries"
@@ -16,6 +16,3 @@ plugins:
 github: [metadata]
 
 theme: jekyll-theme-cayman
-
-sass:               # ← makes GitHub Pages compile assets/css/style.scss
-  sass_dir: assets
