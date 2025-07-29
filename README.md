@@ -13,30 +13,35 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 ### Discrete Structures
 * [Course page](https://search.usi.ch/en/courses/35270737/discrete-structures)  
 * Lecturer: [Stefan Wolf](https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan)  
-* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/discrete-structures.pdf)
-* [Download TeX](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/discrete-structures.tex)  
-
+* [USI Discrete Structures **summary (PDF)**](./summaries/usi-discrete-structures-summary.pdf)  
+* [USI Discrete Structures **source (TeX)**](./summaries/usi-discrete-structures-summary.tex)  
 
 ### Algorithms & Data Structures
 * [Course page](https://search.usi.ch/en/courses/35270741/algorithms-data-structures)  
 * Lecturer: [Antonio Carzaniga](https://www.inf.usi.ch/carzaniga/)  
-* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/algorithms-and-data-structures.pdf)
-* [Download TeX](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/algorithms-and-data-structures.tex)  
-
+* [USI Algorithms & Data Structures **summary (PDF)**](./summaries/usi-algorithms-and-data-structures-summary.pdf)  
+* [USI Algorithms & Data Structures **source (TeX)**](./summaries/usi-algorithms-and-data-structures-summary.tex)  
 
 ### Optimization Methods
 * [Course page](https://search.usi.ch/en/courses/35270756/optimization-methods)  
 * Lecturer: [Deborah Sulem](https://search.usi.ch/en/people/7ae0ccfefe31ec77de71003997572fbd/sulem-deborah)  
-* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/optimization-methods.pdf)
-* [Download TeX](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/optimization-methods.tex)  
-
+* [USI Optimization Methods **summary (PDF)**](./summaries/usi-optimization-methods-summary.pdf)  
+* [USI Optimization Methods **source (TeX)**](./summaries/usi-optimization-methods-summary.tex)  
 
 ### Stochastic Methods
 * [Course page](https://search.usi.ch/en/courses/35270722/stochastic-methods)  
 * Lecturer: [Francisco Javier Richter Mendoza](https://search.usi.ch/en/people/fd79a01270bbee6228453cacbb95a6c5/richter-mendoza-francisco-javier)  
-* [Download PDF](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/stochastic-methods.pdf)
-* [Download TeX](https://github.com/fabianbosshard/usi-informatics-course-summaries/raw/main/summaries/stochastic-methods.tex)  
+* [USI Stochastic Methods **summary (PDF)**](./summaries/usi-stochastic-methods-summary.pdf)  
+* [USI Stochastic Methods **source (TeX)**](./summaries/usi-stochastic-methods-summary.tex)  
 
+---
+
+## 🔨 Build all summaries at once
+To compile every `.tex` into a `.pdf`, run:
+```bash
+./build.sh
+```
+After successful builds, this script will delete **any** file in the `summaries/` directory that is not `.pdf` or `.tex`. **If you keep extra assets in that folder, move them elsewhere first.**
 
 ---
 

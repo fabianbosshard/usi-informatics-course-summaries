@@ -1,3 +1,18 @@
-title: USI Course Summaries
-description: Unofficial student-written course notes for Informatics at USI.
+title: "USI Informatics Course Summaries | Student Notes"
+description: "Student-written summaries & cheat-sheets for core Informatics courses at Università della Svizzera italiana (USI), Lugano."
+
+# — canonical site info —
+url: "https://fabianbosshard.github.io/usi-informatics-course-summaries"
+baseurl: ""      # leave empty because the site lives at the repo root
+lang: "en"
+
+# — SEO helpers built into GitHub Pages —
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+# — lets jekyll-seo-tag pull repo data (stars, forks) —
+github: [metadata]
+
 theme: jekyll-theme-cayman
