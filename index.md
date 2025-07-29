@@ -1,6 +1,4 @@
 ---
-title: "USI Informatics Course Summaries"
-description: "Student-written summaries for core Informatics courses at USI."
 keywords:
   - USI
   - Informatics
