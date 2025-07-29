@@ -1,15 +1,3 @@
----
-keywords:
-  - USI
-  - Informatics
-  - course summaries
-  - Discrete Structures
-  - Algorithms & Data Structures
-  - Optimization Methods
-  - Stochastic Methods
-layout: default   # Cayman's default layout
----
-
 # USI Informatics Course Summaries
 
 Unofficial student‑written course notes for Bachelor and Master courses in Informatics at the **[Università della Svizzera italiana](https://www.usi.ch/en)** (USI), Lugano.
