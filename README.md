@@ -49,8 +49,5 @@ After successful builds, this script will delete **any** file in the `summaries/
 - They are not official, not exhaustive and may contain mistakes.
 - If you find an error please [open an issue](https://github.com/fabianbosshard/usi-informatics-course-summaries/issues) or send an email to [fabianlucasbosshard@gmail.com](mailto:fabianlucasbosshard@gmail.com).
 
----
 
-<sub>Keywords:
-USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheatsheet, script, Algorithms & Data Structures, Discrete Structures, Optimization Methods, Stochastic Methods, Algorithms & Data Structures summary, Discrete Structures summary, Optimization Methods summary, Stochastic Methods summary</sub>
 

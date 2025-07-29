@@ -50,6 +50,4 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 
 ---
 
-<sub>Keywords:
-USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheatsheet, script, Algorithms & Data Structures, Discrete Structures, Optimization Methods, Stochastic Methods, Algorithms & Data Structures summary, Discrete Structures summary, Optimization Methods summary, Stochastic Methods summary</sub>
-
+<sub>USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheat sheet, script, LaTeX, PDF</sub>
