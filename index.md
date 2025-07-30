@@ -47,6 +47,7 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 ## 📄 About
 - They are not official, not exhaustive and may contain mistakes.
 - If you find an error please [open an issue](https://github.com/fabianbosshard/usi-informatics-course-summaries/issues) or send an email to [fabianlucasbosshard@gmail.com](mailto:fabianlucasbosshard@gmail.com).
+- This project was proudly supported by [Bosshard Career Consulting](https://bosshard-career-consulting.ch/), your go-to for career coaching.
 
 ---
 
