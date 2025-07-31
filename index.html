@@ -4,68 +4,95 @@
   <meta charset="utf-8">
   <title>USI Informatics Course Summaries</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 1. Meta description -->
+  <meta name="description"
+        content="Unofficial, student-written PDF summaries & cheat-sheets for core Informatics courses at USI (Lugano).">
+
+  <!-- 2. Canonical URL -->
+  <link rel="canonical"
+        href="https://fabianbosshard.github.io/usi-informatics-course-summaries/">
+
+  <!-- 3. Open Graph & Twitter cards -->
+  <meta property="og:title"       content="USI Informatics Course Summaries">
+  <meta property="og:description" content="High-quality, student-written PDF summaries for USI Informatics courses.">
+  <meta property="og:image"       content="https://…/preview.png">
+  <meta name="twitter:card"       content="summary_large_image">
+
+  <!-- 4. Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context":    "https://schema.org",
+    "@type":       "WebSite",
+    "url":         "https://fabianbosshard.github.io/usi-informatics-course-summaries/",
+    "name":        "USI Informatics Course Summaries",
+    "description": "Student-written Informatics course notes & cheat-sheets (PDF)."
+  }
+  </script>
+</head>
   <style>
-    /* ───── COLOR TOKENS ───── */
+    /* ─── COLOR TOKENS ─── */
     :root{
       /* dark (default) */
       --bg:#0d1117;--surface:#161b22;--border:#30363d;--fg:#e6edf3;--muted:#8b949e;--accent:#58a6ff;--radius:12px;
     }
-    @media (prefers-color-scheme:light){
-      :root{--bg:#f6f8fa;--surface:#ffffff;--border:#d0d7de;--fg:#24292f;--muted:#57606a;--accent:#0969da;}
-    }
+    @media(prefers-color-scheme:light){:root{
+      --bg:#fafbfc;--surface:#ffffff;--border:#d0d7de;--fg:#24292f;--muted:#57606a;--accent:#0969da;}}
 
-    /* ───── BASE RESET ───── */
+    /* ─── GLOBAL RESET ─── */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;}
 
-    /* ───── HERO ───── */
+    /* ─── UNIVERSAL LINK STYLE ─── */
+    a{color:var(--accent);text-decoration:none;border-bottom:1px dashed transparent;transition:border-color .3s;}
+    a:hover{border-color:var(--accent);}
+
+    /* ─── HERO ─── */
     header{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;}
     h1{font-size:clamp(2.5rem,6vw,4rem);font-weight:700;}
     .lead{margin-top:1rem;font-size:clamp(1rem,2.2vw,1.6rem);max-width:55ch;color:var(--muted)}
 
-    /* ───── MAIN SECTIONS ───── */
+    /* ─── SECTIONS fade-in on scroll ─── */
     main{max-width:1200px;margin:0 auto;padding:0 2rem 5rem;}
     section{margin-top:4rem;opacity:0;transform:translateY(40px);transition:all .6s ease;}
     section.visible{opacity:1;transform:none}
     section h2{font-size:clamp(1.75rem,3.8vw,2.5rem);border-bottom:1px solid var(--border);padding-bottom:.5rem;margin-bottom:1.5rem;}
 
-    /* ───── SUMMARY CARDS ───── */
+    /* ─── SUMMARY CARDS ─── */
     .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:transform .35s ease,box-shadow .35s ease;}
-    .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.25);}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:transform .4s ease,box-shadow .4s ease;}
+    .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.35);}    
     .card h3{font-size:1.25rem;margin-bottom:.35rem;line-height:1.3;}
     .card small{display:block;color:var(--muted);margin-bottom:.75rem}
     .links{display:flex;flex-wrap:wrap;gap:.75rem;}
-    .links a{color:var(--accent);text-decoration:none;border-bottom:1px dashed transparent;transition:border-color .3s;}
-    .links a:hover{border-color:var(--accent)}
 
     /* ───── BADGES & REPO LINK ───── */
     .badges{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-top:1rem;}
-    .badges img{height:24px;}
+    .badges img{height:18px;}
     .repo-link{text-align:center;margin:.5rem 0;}
 
-    /* ───── FOOTER ───── */
-    footer{margin-top:4rem;text-align:center;font-size:.875rem;color:var(--muted);}
+    /* ─── FOOTER ─── */
+    footer{margin-top:4rem;text-align:center;font-size:.875rem;color:var(--muted);}    
 
-    /* ───── PROMPT CURSOR ───── */
+    /* ─── PULSE-CURSOR ─── */
     .prompt{font-family:monospace;color:var(--accent);display:inline-block;}
     .prompt::after{content:"_";animation:blink 1s steps(2,end) infinite;}
     @keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
-    /* ───── NICE SCROLLBAR ───── */
+    /* ─── NICE SCROLLBAR ─── */
     ::-webkit-scrollbar{width:12px}
     ::-webkit-scrollbar-track{background:var(--bg)}
     ::-webkit-scrollbar-thumb{background:var(--border);border-radius:var(--radius)}
   </style>
 </head>
 <body>
-  <!-- Hero -->
-  <header>
-    <div class="prompt">fabian@usi:~$</div>
-    <h1>USI Informatics Course Summaries</h1>
-    <p class="lead">Unofficial student‑written notes, summaries &amp; cheat‑sheets for Bachelor and Master courses at USI, Lugano.</p>
 
+  <!-- Hero / intro -->
+  <header>
+    <!-- <div class="prompt">fabian@usi:~$</div> -->
+    <h1>USI Informatics Course Summaries</h1>
+    <p class="lead">Unofficial student-written course notes for Bachelor and Master courses in Informatics at the <a href="https://www.usi.ch/en" target="_blank" rel="noopener">Università della Svizzera italiana</a> (USI), Lugano.</p>
     <div class="badges">
       <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/stargazers" target="_blank" rel="noopener"><img alt="GitHub stars" src="https://img.shields.io/github/stars/fabianbosshard/usi-informatics-course-summaries?style=social"></a>
       <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/commits/main" target="_blank" rel="noopener"><img alt="Last commit" src="https://img.shields.io/github/last-commit/fabianbosshard/usi-informatics-course-summaries"></a>
@@ -75,14 +102,14 @@
   </header>
 
   <main>
-    <!-- Summaries -->
+    <!-- Summaries section -->
     <section id="summaries">
-      <h2>Summaries</h2>
+      <h2>📚 Summaries</h2>
       <div class="cards">
         <!-- 1. Discrete Structures -->
         <article class="card">
           <h3>Discrete Structures</h3>
-          <small>Lecturer · Stefan Wolf</small>
+          <small>Lecturer: <a href="https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan" target="_blank" rel="noopener">Stefan&nbsp;Wolf</a></small>
           <div class="links">
             <a href="summaries/usi-discrete-structures-summary.pdf" target="_blank" rel="noopener">PDF</a>
             <a href="summaries/usi-discrete-structures-summary.tex" target="_blank" rel="noopener">TeX</a>
@@ -91,7 +118,7 @@
         <!-- 2. Algorithms & Data Structures -->
         <article class="card">
           <h3>Algorithms &amp; Data Structures</h3>
-          <small>Lecturer · Antonio Carzaniga</small>
+          <small>Lecturer: <a href="https://www.inf.usi.ch/carzaniga/" target="_blank" rel="noopener">Antonio&nbsp;Carzaniga</a></small>
           <div class="links">
             <a href="summaries/usi-algorithms-and-data-structures-summary.pdf" target="_blank" rel="noopener">PDF</a>
             <a href="summaries/usi-algorithms-and-data-structures-summary.tex" target="_blank" rel="noopener">TeX</a>
@@ -100,7 +127,7 @@
         <!-- 3. Optimization Methods -->
         <article class="card">
           <h3>Optimization Methods</h3>
-          <small>Lecturer · Deborah Sulem</small>
+          <small>Lecturer: <a href="https://search.usi.ch/en/people/7ae0ccfefe31ec77de71003997572fbd/sulem-deborah" target="_blank" rel="noopener">Deborah&nbsp;Sulem</a></small>
           <div class="links">
             <a href="summaries/usi-optimization-methods-summary.pdf" target="_blank" rel="noopener">PDF</a>
             <a href="summaries/usi-optimization-methods-summary.tex" target="_blank" rel="noopener">TeX</a>
@@ -109,7 +136,7 @@
         <!-- 4. Stochastic Methods -->
         <article class="card">
           <h3>Stochastic Methods</h3>
-          <small>Lecturer · Francisco J. Richter Mendoza</small>
+          <small>Lecturer: <a href="https://search.usi.ch/en/people/fd79a01270bbee6228453cacbb95a6c5/richter-mendoza-francisco-javier" target="_blank" rel="noopener">Francisco&nbsp;Richter</a></small>
           <div class="links">
             <a href="summaries/usi-stochastic-methods-summary.pdf" target="_blank" rel="noopener">PDF</a>
             <a href="summaries/usi-stochastic-methods-summary.tex" target="_blank" rel="noopener">TeX</a>
@@ -118,21 +145,21 @@
       </div>
     </section>
 
-    <!-- About -->
+    <!-- About section -->
     <section id="about">
-      <h2>About</h2>
-      <ul style="list-style:disc;padding-left:1.25rem;">
-        <li>These summaries are unofficial, non‑exhaustive and may contain mistakes.</li>
+      <h2>📄 About</h2>
+      <ul style="padding-left:1.25rem;list-style:square;">
+        <li>These documents are <em>unofficial</em>, non-exhaustive and may contain mistakes.</li>
         <li>If you find an error please <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/issues" target="_blank" rel="noopener">open an issue</a> or email <a href="mailto:fabianlucasbosshard@gmail.com">fabianlucasbosshard@gmail.com</a>.</li>
         <li>This project is proudly supported by <a href="https://bosshard-career-consulting.ch" target="_blank" rel="noopener">Bosshard Career Consulting</a>.</li>
       </ul>
-      <sub style="display:block;margin-top:1rem;color:var(--muted);font-size:0.75rem;">USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheat sheet, script, LaTeX, PDF</sub>
+      <sub style="display:block;margin-top:1rem;color:var(--muted);font-size:.75rem;">USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheat sheet, script, LaTeX, PDF</sub>
     </section>
   </main>
 
-  <footer>
-    Built with &lt;3 by <a href="https://github.com/fabianbosshard" target="_blank" rel="noopener" style="color:var(--accent)">Fabian Bosshard</a> · <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries" target="_blank" rel="noopener" style="color:var(--accent)">Source on GitHub</a>
-  </footer>
+  <!-- <footer>
+    Built with &lt;3 by <a href="https://github.com/fabianbosshard" target="_blank" rel="noopener" style="color:var(--accent)">Fabian Bosshard</a> · <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries" target="_blank" rel="noopener" style="color:var(--accent)">Source on GitHub</a>
+  </footer> -->
 
   <!-- Reveal sections on scroll -->
   <script>
