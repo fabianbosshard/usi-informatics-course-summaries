@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>USI Informatics Course Summaries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 1. Meta description -->
+  <meta name="description"
+        content="Unofficial, student-written PDF summaries & cheat-sheets for core Informatics courses at USI (Lugano).">
+
+  <!-- 2. Canonical URL -->
+  <link rel="canonical"
+        href="https://fabianbosshard.github.io/usi-informatics-course-summaries/">
+
+  <!-- 3. Open Graph & Twitter cards -->
+  <meta property="og:title"       content="USI Informatics Course Summaries">
+  <meta property="og:description" content="High-quality, student-written PDF summaries for USI Informatics courses.">
+  <meta property="og:image"       content="https://…/preview.png">
+  <meta name="twitter:card"       content="summary_large_image">
+
+  <!-- 4. Structured data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context":    "https://schema.org",
+    "@type":       "WebSite",
+    "url":         "https://fabianbosshard.github.io/usi-informatics-course-summaries/",
+    "name":        "USI Informatics Course Summaries",
+    "description": "Student-written Informatics course notes & cheat-sheets (PDF)."
+  }
+  </script>
+
+  <!--
+    Load a modern monospaced font for a subtle hacker aesthetic.  JetBrains Mono
+    has excellent legibility and is open‑source.  A preconnect hint speeds up
+    downloads.  If the network request fails the browser gracefully falls back
+    to native monospace fonts.
+  -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!--
+    Include Font Awesome locally.  Icons are used sparingly to reinforce the
+    subject matter (e.g. PDFs, TeX) and help orient the reader.  The CSS file
+    is resolved relative to this HTML file, so it will still work when the
+    document is opened from the file system.
+  -->
+  <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+
+  <style>
+    /* ─── COLOR TOKENS ─── */
+    :root {
+      /*
+        A refreshed colour palette optimised for a "hacker" vibe while still
+        meeting contrast requirements.  Dark mode features inky blues and a
+        vibrant green accent reminiscent of terminal prompts.  Light mode
+        retains a calm palette with a cooler accent for good readability.
+      */
+      --bg:      #0a0f14; /* deep navy background */
+      --surface: #0f172a; /* slightly lighter surface for cards */
+      --border:  #243447; /* muted blue border */
+      --fg:      #e3ecf2; /* near‑white text */
+      --muted:   #8697a4; /* desaturated body copy */
+      --accent:  #00e676; /* neon terminal green */
+      --accent2: #00b2ff; /* secondary cyan used for highlights */
+      --radius:  10px;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg:      #f8f9fa; /* very light grey */
+        --surface: #ffffff; /* true white for cards */
+        --border:  #d0d7de; /* soft border */
+        --fg:      #212529; /* dark text */
+        --muted:   #57606a; /* medium grey */
+        --accent:  #0066cc; /* reserved blue accent */
+        --accent2: #009f6b; /* greenish secondary accent */
+        --radius:  10px;
+      }
+      /* remove heavy glows in light mode to preserve readability */
+      h1, section h2 {
+        text-shadow:none;
+      }
+    }
+
+    /* ─── GLOBAL RESET ─── */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'JetBrains Mono', Consolas, 'Courier New', monospace;
+      background:var(--bg);
+      color:var(--fg);
+      line-height:1.6;
+      /* subtle diagonal noise pattern to evoke the feel of a vintage
+         terminal without distracting from content */
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,0.015) 25%, transparent 25%),
+        linear-gradient(225deg, rgba(255,255,255,0.015) 25%, transparent 25%),
+        linear-gradient(45deg, rgba(255,255,255,0.015) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(255,255,255,0.015) 25%, transparent 25%);
+      background-size:4px 4px;
+      background-position:0 0, 0 2px, 2px -2px, -2px 0px;
+    }
+
+    /* ─── UNIVERSAL LINK STYLE ─── */
+    a{
+      color:var(--accent);
+      text-decoration:none;
+      border-bottom:1px dashed transparent;
+      transition:border-color .3s, color .3s;
+    }
+
+    /* ─── HERO ─── */
+    header{min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;}
+    h1{
+      font-size:clamp(2.6rem,6vw,4.2rem);
+      font-weight:600;
+      line-height:1.2;
+      /* gradient text with a subtle glow for that ‘cyber’ feel */
+      background-image:linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:0.5rem;
+    }
+    .lead{margin-top:1rem;font-size:clamp(1rem,2.2vw,1.6rem);max-width:55ch;color:var(--muted)}
+
+    /* ─── NEW INTRO PARAGRAPH & CTA BUTTON ─── */
+    .intro{
+      margin-top:1.5rem;
+      font-size:clamp(1rem,2vw,1.25rem);
+      max-width:75ch;
+      color:var(--muted);
+      text-align:center;
+    }
+    .button{
+      display:inline-block;
+      margin-top:1.2rem;
+      background:transparent;
+      color:var(--accent);
+      padding:.6em 1.4em;
+      border:2px solid var(--accent);
+      border-radius:var(--radius);
+      font-weight:600;
+      transition:all .3s;
+      position:relative;
+      overflow:hidden;
+    }
+    .button::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:var(--accent);
+      z-index:-1;
+      transform:scaleX(0);
+      transform-origin:left;
+      transition:transform .3s ease;
+    }
+    @media(hover:hover) and (pointer:fine){
+      .button:hover{
+        color:var(--bg);
+      }
+      .button:hover::after{
+        transform:scaleX(1);
+      }
+    }
+
+    /* ─── SECTIONS fade-in on scroll ─── */
+    main{max-width:1200px;margin:0 auto;padding:0 2rem 5rem;}
+    section{margin-top:4rem;opacity:0;transform:translateY(40px);transition:all .6s ease;}
+    section.visible{opacity:1;transform:none}
+    section h2{
+      font-size:clamp(1.75rem,3.8vw,2.5rem);
+      border-bottom:1px solid var(--border);
+      padding-bottom:.5rem;
+      margin-bottom:1.5rem;
+      /* unify heading style with hero: gradient */
+      background-image:linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    /* enhanced bullet styling in the About section */
+    section ul{
+      padding-left:0;
+      list-style:none;
+    }
+    section ul li{
+      position:relative;
+      padding-left:1.5rem;
+      margin-bottom:.7rem;
+      color:var(--fg);
+    }
+    section ul li::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:.45rem;
+      width:.55rem;
+      height:.55rem;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 6px var(--accent);
+    }
+
+    /* ─── SUMMARY CARDS ─── */
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+      gap:1.8rem;
+    }
+    .card{
+      position:relative;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem 1.5rem 1.25rem 1.75rem;
+      transition:transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+    }
+    /* vertical accent bar */
+    .card::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:0;
+      height:100%;
+      width:4px;
+      border-radius:4px 0 0 4px;
+      background:linear-gradient(180deg, var(--accent), var(--accent2));
+      opacity:0.8;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover{
+        transform:translateY(-6px) scale(1.02);
+        box-shadow:0 12px 32px rgba(0,0,0,0.5);
+        border-color:var(--accent);
+      }
+    }
+    .card h3{
+      font-size:1.25rem;
+      margin-bottom:.35rem;
+      line-height:1.3;
+      color:var(--accent);
+    }
+    .card small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:.75rem;
+    }
+    .links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+    }
+    /* style icons inside resource links */
+    .links a i{
+      color:var(--accent);
+      font-size:1rem;
+    }
+    .links a{
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+      color:var(--fg);
+      padding:.35rem .6rem;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      font-size:.875rem;
+      transition:background .3s, border-color .3s;
+    }
+    .links a:hover{
+      background:rgba(0,230,118,0.15);
+      border-color:var(--accent);
+      text-decoration:none;
+    }
+
+    /* ───── BADGES & REPO LINK ───── */
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:1rem;
+      margin-top:2rem;
+    }
+    .badges img{
+      height:22px;
+      filter:grayscale(60%) brightness(1.2);
+      transition:filter .3s;
+    }
+    .badges a:hover img{
+      filter:grayscale(0%) brightness(1.4) drop-shadow(0 0 3px var(--accent));
+    }
+    .repo-link{
+      text-align:center;
+      margin:.5rem 0;
+    }
+
+    /* ─── FOOTER ─── */
+    footer{
+      margin-top:4rem;
+      margin-bottom:2rem;
+      text-align:center;
+      font-size:.875rem;
+      color:var(--muted);
+    }
+
+    /* ─── PULSE-CURSOR ─── */
+    .prompt{font-family:monospace;color:#00be23;font-size:1.2rem;display:inline-block;margin-bottom:2rem}
+    .prompt::after{content:"_";animation:blink 1s steps(2,end) infinite;}
+    @keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+
+    /* ─── PROMPT BAR ─── */
+    .prompt-bar{
+      position:sticky;      /* keeps it fixed at the very top */
+      top:0;
+      width:100%;
+      background:var(--bg); /* re-use your existing dark/light token */
+      border-bottom:1px solid var(--border);
+      padding:.25rem 0.75rem;
+      z-index:999;          /* stays above everything else */
+    }
+    /* re-use the old blinking-cursor prompt style, but kill the margin */
+    .prompt-bar .prompt{margin:0;}
+    /* colourise prompt segments for authenticity */
+    .prompt .user{
+      /* show the current user in the secondary accent (green in light mode,
+         neon green in dark mode) */
+      color:var(--accent2);
+      font-weight:600;
+    }
+    .prompt .separator{
+      /* subtle separators inherit muted colour */
+      color:var(--muted);
+    }
+    .prompt .host{
+      /* host uses the primary accent (blue in light mode) */
+      color:var(--accent);
+    }
+    .prompt .path{
+      color:var(--muted);
+    }
+    .prompt .symbol{
+      color:var(--muted);
+    }
+
+    /* ─── NICE SCROLLBAR ─── */
+    ::-webkit-scrollbar{width:12px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:var(--radius)}
+
+    /*
+      Dark mode only: apply subtle glows to major headings.  In light mode these
+      are disabled in the corresponding prefers-colour-scheme block above.  The
+      specificity is kept low so that it can be overridden easily if the
+      consumer chooses to customise further.
+    */
+    @media (prefers-color-scheme: dark) {
+      h1 {
+        text-shadow:0 0 6px var(--accent), 0 0 14px var(--accent2);
+      }
+      section h2 {
+        text-shadow:0 0 4px var(--accent);
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+    <div class="prompt-bar">
+      <!--
+        The prompt is broken into semantic spans for colour coding.  Each part
+        reflects a shell prompt: user@host:path$.  Styles are defined in
+        CSS to give each element its own colour.  A non‑breaking space at the
+        end ensures appropriate spacing before the blinking cursor.
+      -->
+      <span class="prompt">
+        <span class="user">fabian</span>
+        <span class="separator">@</span>
+        <span class="host">usi</span>
+        <span class="separator">:</span>
+        <span class="path">~</span>
+        <span class="symbol">$</span>&nbsp;
+      </span>
+    </div>
+
+  <!-- Hero / intro -->
+  <header>
+    <!-- <div class="prompt">fabian@usi:~$&nbsp</div> -->
+    <h1>USI Informatics Course Summaries</h1>
+    <!-- <p class="lead">Student-written course notes for Bachelor and Master courses in Informatics at the <a href="https://www.usi.ch/en" target="_blank" rel="noopener">Università della Svizzera italiana (USI)</a>, Lugano.</p> -->
+
+    <!-- ✨ NEW INTRODUCTORY TEXT WITH EMOJIS -->
+    <p class="intro">👋 Hi, I'm Fabian - welcome! On this page you'll find a list of summaries (PDF + LaTeX) I wrote for Bachelor and Master courses in Informatics at the <a href="https://www.usi.ch/en" target="_blank" rel="noopener">Università della Svizzera italiana (USI)</a>, Lugano&nbsp☕️.
+      <!-- If these notes help you, please consider dropping a star&nbsp;⭐. -->
+    </p>
+    <!-- <a class="button" href="https://github.com/fabianbosshard/usi-informatics-course-summaries/stargazers" target="_blank" rel="noopener">⭐ Star the repo</a> -->
+
+    <!-- Existing badges -->
+    <div class="badges">
+      <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/stargazers" target="_blank" rel="noopener"><img alt="GitHub stars" src="https://img.shields.io/github/stars/fabianbosshard/usi-informatics-course-summaries?style=social"></a>
+      <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/commits/main" target="_blank" rel="noopener"><img alt="Last commit" src="https://img.shields.io/github/last-commit/fabianbosshard/usi-informatics-course-summaries"></a>
+      <a href="LICENSE" target="_blank" rel="noopener"><img alt="License" src="https://img.shields.io/github/license/fabianbosshard/usi-informatics-course-summaries"></a>
+    </div>
+    <div class="repo-link">
+      <a class="button" href="https://github.com/fabianbosshard/usi-informatics-course-summaries" target="_blank" rel="noopener" style="white-space:nowrap;">
+        <i class="fas fa-folder-open"></i>
+        View repository
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Summaries section -->
+    <section id="summaries">
+      <h2>📚 Summaries</h2>
+      <div class="cards">
+        <!-- 1. Discrete Structures -->
+        <article class="card">
+          <h3>Discrete Structures</h3>
+          <small>Lecturer: <a href="https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan" target="_blank" rel="noopener">Stefan Wolf</a></small>
+          <div class="links">
+            <a href="summaries/usi-discrete-structures-summary.pdf" target="_blank" rel="noopener" aria-label="Download PDF">
+              <i class="fas fa-file-pdf"></i>
+              PDF
+            </a>
+            <a href="summaries/usi-discrete-structures-summary.tex" target="_blank" rel="noopener" aria-label="View TeX source">
+              <i class="fas fa-file-code"></i>
+              TeX
+            </a>
+          </div>
+        </article>
+        <!-- 2. Algorithms & Data Structures -->
+        <article class="card">
+          <h3>Algorithms &amp; Data Structures</h3>
+          <small>Lecturer: <a href="https://www.inf.usi.ch/carzaniga/" target="_blank" rel="noopener">Antonio Carzaniga</a></small>
+          <div class="links">
+            <a href="summaries/usi-algorithms-and-data-structures-summary.pdf" target="_blank" rel="noopener" aria-label="Download PDF">
+              <i class="fas fa-file-pdf"></i>
+              PDF
+            </a>
+            <a href="summaries/usi-algorithms-and-data-structures-summary.tex" target="_blank" rel="noopener" aria-label="View TeX source">
+              <i class="fas fa-file-code"></i>
+              TeX
+            </a>
+          </div>
+        </article>
+        <!-- 3. Optimization Methods -->
+        <article class="card">
+          <h3>Optimization Methods</h3>
+          <small>Lecturer: <a href="https://search.usi.ch/en/people/7ae0ccfefe31ec77de71003997572fbd/sulem-deborah" target="_blank" rel="noopener">Deborah Sulem</a></small>
+          <div class="links">
+            <a href="summaries/usi-optimization-methods-summary.pdf" target="_blank" rel="noopener" aria-label="Download PDF">
+              <i class="fas fa-file-pdf"></i>
+              PDF
+            </a>
+            <a href="summaries/usi-optimization-methods-summary.tex" target="_blank" rel="noopener" aria-label="View TeX source">
+              <i class="fas fa-file-code"></i>
+              TeX
+            </a>
+          </div>
+        </article>
+        <!-- 4. Stochastic Methods -->
+        <article class="card">
+          <h3>Stochastic Methods</h3>
+          <small>Lecturer: <a href="https://search.usi.ch/en/people/fd79a01270bbee6228453cacbb95a6c5/richter-mendoza-francisco-javier" target="_blank" rel="noopener">Francisco Richter</a></small>
+          <div class="links">
+            <a href="summaries/usi-stochastic-methods-summary.pdf" target="_blank" rel="noopener" aria-label="Download PDF">
+              <i class="fas fa-file-pdf"></i>
+              PDF
+            </a>
+            <a href="summaries/usi-stochastic-methods-summary.tex" target="_blank" rel="noopener" aria-label="View TeX source">
+              <i class="fas fa-file-code"></i>
+              TeX
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- About section -->
+    <section id="about">
+      <h2>📄 About</h2>
+      <ul>
+        <li>These documents are <em>unofficial</em>, non-exhaustive and may contain mistakes.</li>
+        <li>If you find an error please <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries/issues" target="_blank" rel="noopener">open an issue</a> or email <a href="mailto:fabianlucasbosshard@gmail.com">fabianlucasbosshard@gmail.com</a>.</li>
+        <li>This project is proudly supported by <a href="https://bosshard-career-consulting.ch" target="_blank" rel="noopener">Bosshard Career Consulting</a>.</li>
+      </ul>
+      <sub style="display:block;margin-top:1rem;color:var(--muted);font-size:.75rem;">USI, summary, Università della Svizzera italiana, bachelor, master, informatics, computer science, artificial intelligence, notes, course notes, cheat sheet, script, LaTeX, PDF</sub>
+    </section>
+  </main>
+
+<footer>
+  <div class="footer-content">
+    <a href="https://github.com/fabianbosshard/usi-informatics-course-summaries">Source on GitHub</a>
+  </div>
+  <div class="footer-content">
+    <small>&copy; 2025 Fabian Bosshard</small>
+  </div>
+</footer>
+
+  <!-- Reveal sections on scroll -->
+  <script>
+    const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:0.15});
+    document.querySelectorAll('section').forEach(s=>io.observe(s));
+  </script>
+</body>
+</html>
