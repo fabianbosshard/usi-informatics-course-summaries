@@ -76,7 +76,7 @@
 
     /* ─── SUMMARY CARDS ─── */
     .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;}
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:transform .4s ease,box-shadow .4s ease;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:transform .4s ease,box-shadow .4s ease;position:relative;cursor:pointer}
     @media (hover: hover) and (pointer: fine) {
       .card:hover {
         transform: translateY(-6px) scale(1.02);
@@ -89,6 +89,7 @@
     .card h3{font-size:1.25rem;margin-bottom:.35rem;line-height:1.3;}
     .card small{display:block;color:var(--muted);margin-bottom:.75rem}
     .links{display:flex;flex-wrap:wrap;gap:.75rem;}
+    .links a{position:relative;z-index:2;}
 
     /* ───── BADGES & REPO LINK ───── */
     .badges{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-top:2rem;}
@@ -157,7 +158,8 @@
       <h2>📚 Summaries</h2>
       <div class="cards">
         <!-- 1. Discrete Structures -->
-        <article class="card">
+        <article class="card"
+          data-href="./usi-discrete-structures-summary.html">
           <h3>Discrete Structures</h3>
           <small>Lecturer: <a href="https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan" target="_blank" rel="noopener">Stefan Wolf</a></small>
           <div class="links">
@@ -166,7 +168,8 @@
           </div>
         </article>
         <!-- 2. Algorithms & Data Structures -->
-        <article class="card">
+        <article class="card"
+          data-href="./usi-algorithms-and-data-structures-summary.html">
           <h3>Algorithms &amp; Data Structures</h3>
           <small>Lecturer: <a href="https://www.inf.usi.ch/carzaniga/" target="_blank" rel="noopener">Antonio Carzaniga</a></small>
           <div class="links">
@@ -175,7 +178,8 @@
           </div>
         </article>
         <!-- 3. Optimization Methods -->
-        <article class="card">
+        <article class="card"
+          data-href="./usi-optimization-methods-summary.html">
           <h3>Optimization Methods</h3>
           <small>Lecturer: <a href="https://search.usi.ch/en/people/7ae0ccfefe31ec77de71003997572fbd/sulem-deborah" target="_blank" rel="noopener">Deborah Sulem</a></small>
           <div class="links">
@@ -184,7 +188,8 @@
           </div>
         </article>
         <!-- 4. Stochastic Methods -->
-        <article class="card">
+        <article class="card"
+          data-href="./usi-stochastic-methods-summary.html">
           <h3>Stochastic Methods</h3>
           <small>Lecturer: <a href="https://search.usi.ch/en/people/fd79a01270bbee6228453cacbb95a6c5/richter-mendoza-francisco-javier" target="_blank" rel="noopener">Francisco Richter</a></small>
           <div class="links">
@@ -216,7 +221,15 @@
   </div>
 </footer>
 
-  <!-- Reveal sections on scroll -->
+<script>
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', e=>{
+      if(!e.target.closest('a')){              // ignore clicks on real links
+        window.location.href = card.dataset.href;
+      }
+    });
+  });
+</script>
   <script>
     const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:0.15});
     document.querySelectorAll('section').forEach(s=>io.observe(s));
