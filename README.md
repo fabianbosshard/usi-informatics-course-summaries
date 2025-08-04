@@ -6,7 +6,7 @@ Unofficial student‑written course notes for Bachelor and Master courses in Inf
 
 ## 📚 Summaries
 
-[View full list of PDFs and LaTeX sources](https://fabianbosshard.github.io/usi-informatics-course-summaries/)
+[View full list of PDFs and LaTeX sources](https://fabianbosshard.github.io/usi-informatics-course-summaries.html)
 
 ---
 
