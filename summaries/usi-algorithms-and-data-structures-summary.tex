@@ -583,7 +583,7 @@ f(n) = \omega(g(n)) \Rightarrow \lim_{n \to \infty} \frac{f(n)}{g(n)} = \infty
 
 \subsection{Loop Invariant}
 \label{sec:loop_invariant}
-When using a \textbf{loop invariante}, 3 things need to be shown:
+When using a \textbf{loop invariant}, 3 things need to be shown:
 \begin{enumerate}
 \item \textbf{Initialization:} It is true prior to the first iteration of the loop.
 \item \textbf{Maintenance:} If it is true before an iteration of the loop, it remains true before the next iteration.
@@ -3145,11 +3145,11 @@ In a undirected graph, a \nameref{alg:dfs} yields only tree edges and back edges
 
 
 When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge:
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
   \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
   \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
   \item if \(v\) is \(\black\), then \((u,v)\) is a
-\begin{itemize}[before={\parskip=0pt},nosep]
+\begin{itemize}%[before={\parskip=0pt},nosep]
     \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
     \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
 \end{itemize}
