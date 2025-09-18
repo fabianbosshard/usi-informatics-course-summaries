@@ -932,22 +932,71 @@ In many scenarios, direct sampling from the target distribution \(f(x)\) is chal
 f(x)\le c\,q(x),\quad \text{for all } x.
 \]
 Then the rejection sampling algorithm can be used to generate samples from \(f(x)\).
+
+
+
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
-  \begin{axis}[domain=-6:6,
+  \begin{axis}[
+    domain=-6:6,
     ticks=none,
     x=1cm,
     legend cell align=left,
-    clip mode=individual]
-    \addplot[black,dashed,domain=-6:6, thick,samples=101] {exp(-x^2*0.1)};
-    \addlegendentry{\footnotesize{Proposal: $c\,q(x)$}}
-    \addplot[black,domain=-6:6, thick,samples=101] {exp(-abs(x*0.8))};
-    \addlegendentry{\footnotesize{Target: $f(x)$}}
-    \draw[red,dotted, very thick] (axis cs:2,{exp(-abs(2*0.8))}) -- node[midway, right, anchor=west, xshift=0.1cm, fill=white, fill opacity=1, inner sep=1pt] {\textcolor{black}{\footnotesize{Reject}}} (axis cs:2,{exp(-2^2*0.1)});
-    \draw[green,dotted, very thick] (axis cs:2,0) -- node[midway, right, anchor=west, xshift=0.1cm, fill=white, fill opacity=1, inner sep=1pt] {\textcolor{black}{\footnotesize{Accept}}} (axis cs:2,{exp(-abs(2*0.8))});
+    clip=false
+  ]
+
+    % y-values
+    \pgfmathsetmacro{\yA}{exp(-abs(2*0.8))}
+    \pgfmathsetmacro{\yR}{exp(-2^2*0.1)}
+
+    %--- measure boxes (same positions as your labels), invisible ---
+    \coordinate (A1) at (axis cs:2,\yA);
+    \coordinate (A0) at (axis cs:2,0);
+    \coordinate (R1) at (axis cs:2,\yR);
+
+    % place nodes at the *same* positions the labels will be
+    \path (A0) -- (A1)
+      node[pos=0.5, right, anchor=west, inner sep=1pt, outer sep=0pt, xshift=0.1cm,
+           text opacity=0, name=accbox]{\footnotesize Accept};
+    \path (A1) -- (R1)
+      node[pos=0.5, right, anchor=west, inner sep=1pt, outer sep=0pt, xshift=0.1cm,
+           text opacity=0, name=rejbox]{\footnotesize Reject};
+
+    %--- clip only the plots to (axis) MINUS the two text boxes (with tiny padding) ---
+    \begin{scope}[even odd rule]
+      \clip
+        (rel axis cs:0,0) rectangle (rel axis cs:1,1)
+        ([xshift=-1pt,yshift=-1pt]accbox.south west) rectangle
+        ([xshift= 1pt,yshift= 1pt]accbox.north east)
+        ([xshift=-1pt,yshift=-1pt]rejbox.south west) rectangle
+        ([xshift= 1pt,yshift= 1pt]rejbox.north east);
+
+      \addplot[black,dashed,thick,samples=101,clip=false,forget plot] {exp(-x^2*0.1)};
+      \addplot[black,thick,samples=101,clip=false,forget plot] {exp(-abs(x*0.8))};
+    \end{scope}
+
+    % legend (outside clip)
+    \addlegendimage{black,dashed,thick}
+    \addlegendentry{\footnotesize Proposal: $c\,q(x)$}
+    \addlegendimage{black,thick}
+    \addlegendentry{\footnotesize Target: $f(x)$}
+
+    % visible annotations (drawn after)
+    \draw[red,dotted,very thick] (A1) -- node[pos=0.5, right, anchor=west, xshift=0.1cm, inner sep=1pt]
+      {\textcolor{black}{\footnotesize Reject}} (R1);
+    \draw[green,dotted,very thick] (A0) -- node[pos=0.5, right, anchor=west, xshift=0.1cm, inner sep=1pt]
+      {\textcolor{black}{\footnotesize Accept}} (A1);
+
+    % DEBUG (optional): show exact boxes TikZ used
+    \draw[magenta,thin,dashed] (accbox.south west) rectangle (accbox.north east);
+    \draw[magenta,thin,dashed] (rejbox.south west) rectangle (rejbox.north east);
+
   \end{axis}
-  \end{tikzpicture}
+\end{tikzpicture}
 \end{center}
+
+
+
 
 \begin{theorem}[Rejection Sampling]\label{thm:rej}
 Let \(f(x)\) be the target density and \(q(x)\) be a proposal density, and suppose there exists a constant \(c\ge 1\) such that
