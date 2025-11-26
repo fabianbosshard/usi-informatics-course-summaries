@@ -1,0 +1,1063 @@
+% author: Fabian Bosshard
+% © CC BY 4.0
+
+\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen}
+\usepackage{iftex}
+\usepackage{csquotes}
+
+\usepackage[T1]{fontenc}     % handle accented glyphs properly
+\usepackage[english]{babel}  % load the hyphenation patterns you need
+
+
+
+\usepackage[automark]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+% \pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+
+
+
+
+
+
+
+
+% \usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=25mm, right=25mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=40mm, right=40mm, top=20mm, bottom=30mm]{geometry}
+
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{nicematrix}
+
+
+\usepackage{booktabs}
+\usepackage{array}
+
+
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+\usepackage{pifont}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings, decorations.text}
+\usepackage{tikz-3dplot}
+\usepackage{tikzpagenodes}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
+\usepackage{pgfplots}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{#1}}
+
+\usepackage{thmtools}
+
+\newlength{\thmspace} \setlength{\thmspace}{3pt plus 1pt minus 1pt} 
+
+\declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace;/, qed=\ensuremath{\vartriangleleft}, postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle, name=Theorem]{theorem}
+\declaretheorem[style=assertionstyle, name=Lemma, sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle, name=Corollary, sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle, name=Conjecture, sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle, name=Claim, sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle, name=Fact, sibling=theorem]{fact}
+
+\declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ding{45}, postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle, name=Definition]{definition}
+\declaretheorem[style=definitionstyle, name=Problem, sibling=definition]{problem}
+
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{definitionstyle}
+% \declaretheorem[style=definitionstyle, name=Definition]{definition}
+
+\declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\square}, postheadspace=1em]{proofstyle}
+\let\proof\relax \let\endproof\relax
+\declaretheorem[style=proofstyle, name=Proof, numbered=no]{proof}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{funblue}\blacktriangleleft}, postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle, name=Example,]{example}
+
+\declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle, name=Remark,]{remark}
+
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft}, postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+\declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont\footnotesize, spaceabove=\thmspace, spacebelow=\thmspace, postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+% The algopseudocodex package uses TikZ internally. The easiest solution would be to disable the externalization for the algorithmic environment by doing
+% \AddToHook{env/algorithmic/begin}{\tikzexternaldisable} 
+
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+
+
+
+
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+\newcommand{\blackheight}{\operatorname{bh}}
+
+% \algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+% \newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
+
+
+
+
+
+
+
+
+
+%% commands from the paper
+\newcommand{\gph}{{G}} % graph G
+\newcommand{\MPNN}{\text{MPNN}}
+\newcommand{\cheeg}{{h}_{\text{Cheeg}
+}}
+\newcommand{\res}{\text{Res}}
+\newcommand{\V}{{V}}
+\newcommand{\E}{{E}}
+\newcommand{\GAMma}{\boldsymbol{\Gamma}}
+%\newcommand{\MPNN}{\mathrm{MPNN}}
+\newcommand{\Hi}{\mathbf{H}}
+\newcommand{\Hit}{\mathbf{H}^{(t)}}
+\newcommand{\up}{\texttt{up}}
+\newcommand{\rs}{\text{r}}
+\newcommand{\mpas}{\text{a}}
+\newcommand{\agg}{\texttt{agg}}
+\newcommand{\com}{\text{com}}
+% \newcommand{\gph}{\text{G}} % graph G
+\newcommand{\colfirst}{\textcolor{red}}
+\newcommand{\colsecond}{\textcolor{blue}}
+\newcommand{\colthird}{\textcolor{violet}}
+% \newcommand{\MPNN}{\text{MPNN}}
+\newcommand{\rew}{\mathcal{R}}
+\newcommand{\eigen}{\boldsymbol{\psi}}
+\newcommand{\cost}{{c}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\DELta}{\boldsymbol{\Delta}}
+\newcommand{\KER}{\mathcal{K}}
+\newcommand{\OMEga}{\boldsymbol{\Omega}}
+\newcommand{\Anorm}{\boldsymbol{\text{A}}}
+\newcommand{\tel}{\text{MPNN}_{\text{tel}}}
+\newcommand{\poly}{\text{p}}
+\newcommand{\ourname}{\text{telescopic}-\text{MPNN}}
+\newcommand{\oper}{\boldsymbol{\text{S}}_{\rs,\mpas}}
+\newcommand{\xb}{\vb{x}}
+\newcommand{\Xb}{\mathbf{X}}
+\newcommand{\Wb}{\vb{W}}
+\newcommand{\Hb}{\mathbf{H}}
+\newcommand{\Ab}{\mathbf{A}}
+\newcommand{\Ib}{\mathbf{I}}
+\newcommand{\hb}{\mathbf{h}}
+\newcommand{\phib}{\boldsymbol{\phi}}
+\newcommand{\pepfunc}{\texttt{Peptides-func}\xspace}
+\newcommand{\pepstruct}{\texttt{Peptides-struct}\xspace}
+
+
+
+
+
+
+
+\title{Locality-Aware Graph Rewiring in GNNs - Summary}
+% \author{\today}
+% \date{}
+\author{Fabian Bosshard}
+\date{\today}
+
+
+
+% \usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green]{hyperref}
+% \usepackage{hyperref} % for printing use this version (without colorlinks)
+\usepackage[
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Locality-Aware Graph Rewiring in GNNs - Course Summary},
+  pdfkeywords={USI, locality-aware graph rewiring in gnns, course summary, informatics},
+  colorlinks=false,        % don't wrap links in a colour
+  pdfborder={0 0 0}        % no border around links
+]{hyperref}
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+\usepackage{cleveref}
+
+
+
+% load glossaries *after* hyperref
+\usepackage[acronym,              % create an “acronym” glossary
+            nomain,               % omit the main glossary (only acronyms)
+            toc,                  % add list of acronyms to the ToC
+            nonumberlist,         % omit page list in the printed glossary
+            automake,
+            nopostdot, nogroupskip, style=super, nonumberlist
+           ]{glossaries-extra}
+
+
+% choose how the first appearance looks:
+\setabbreviationstyle[acronym]{long-short}
+
+% must be issued once *after* loading glossaries
+\makeglossaries
+
+
+
+\newacronym{gdl}{GDL}{Graph Deep Learning}
+\newacronym{gnn}{GNN}{Graph Neural Network}
+\newacronym{gcn}{GCN}{Graph Convolutional Network}
+\newacronym{gin}{GIN}{Graph Isomorphism Network}
+\newacronym{gat}{GAT}{Graph Attention Network}
+\newacronym{gso}{GSO}{Graph Shift Operator}
+\newacronym{mpnn}{MPNN}{Message Passing Neural Network}
+\newacronym{laser}{LASER}{Locality-Aware Sequential Rewiring}
+
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+% table of acronyms (remember everything is in build folder)
+\printglossary[type=\acronymtype, title={List of Acronyms}]
+
+
+\section{basic notions}
+
+Let $G = (V, E)$ be an undirected graph.  
+The \emph{degree} of a node $v$ is the number of edges incident to it and is denoted $d_v$.  
+The \emph{diagonal degree matrix} is the matrix $\matr{D}\in\R^{n\times n}$ defined by
+\begin{equation}\label{eq:degree_matrix}
+    \matr{D}_{uv}
+    =
+    \begin{cases}
+        d_u &  u = v\\
+        0 & u \ne v
+    \end{cases}
+\end{equation}
+i.e. $\matr{D}$ simply places all node degrees on the diagonal.
+
+
+
+
+\subsection{normalized adjacency and multi-hop propagation}
+
+Let $G = (V,E)$ be an undirected graph with adjacency matrix $\matr{A} \in \R^{n\times n}$ defined by
+\begin{equation}\label{eq:adjacency_matrix}
+    \matr{A}_{uv}
+    =
+    \begin{cases}
+        1 & (u,v) \in E\\
+        0 & (u,v) \notin E
+    \end{cases}
+\end{equation}
+and diagonal degree matrix $\matr{D}$ as in \eqref{eq:degree_matrix}.
+
+\begin{definition}[normalized adjacency]\label{def:normalized_adjacency}
+The \emph{symmetrically normalized adjacency matrix} is
+\begin{equation}\label{eq:normalized_adjacency}
+    {\color{Red}\boxed{\color{black}
+    \hat{\matr{A}}
+    =
+    \matr{D}^{-1/2}\matr{A}\matr{D}^{-1/2}
+    }}
+\end{equation}
+Equivalently, for all $u,v \in V$,
+\[
+    \hat{\matr{A}}_{uv}
+    =
+    \begin{cases}
+        \dfrac{1}{\sqrt{d_u d_v}} & (u,v) \in E\\[0.5ex]
+        0 & (u,v) \notin E
+    \end{cases}
+\]
+\end{definition}
+
+The powers of $\hat{\matr{A}}$ describe how information propagates over multiple message-passing steps:
+
+\begin{proposition}[multi-hop propagation]\label{prop:multi_hop_propagation}
+The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
+\begin{equation}\label{eq:multi_hop_propagation}
+    (\hat{\matr{A}}^{k})_{vu}
+    =
+    \sum_{\pi}
+    \prod_{(x, y) \in \pi} \frac{1}{\sqrt{d_x d_y}}
+\end{equation}
+where the sum is over all walks $\pi = (v, \ldots, u)$
+of length $k$ from $v$ to $u$.
+\end{proposition}
+
+In particular, in a linear \gls{gcn} of the form
+\[
+    \matr{X}^{(t)} = \hat{\matr{A}}\,\matr{X}^{(t-1)}\matr{W}^{(t)},
+    \qquad
+    \matr{X}^{(m)} = \hat{\matr{A}}^{m}\matr{X}^{(0)}\matr{W}_{\text{eff}},
+\]
+the coefficient $(\hat{\matr{A}}^{m})_{vu}$ measures how strongly the initial features at node $u$ influence the features at node $v$ after $m$ layers.
+\hl[2]{Thus, $\hat{\matr{A}}^{m}$ encodes $m$-step information flow over the graph.}
+
+
+
+\begin{corollary}\label{cor:multi_hop_propagation_single_path}
+Let $v,u \in V$ with $r = d_{\gph}(v,u)$, where $d_{\gph}(\cdot,\cdot)$ denotes the shortest-path distance.
+Assume there is exactly one path
+\[
+    (v, u_{1}, \ldots, u_{r-1}, u)
+\]
+of length $r$ between $v$ and $u$:
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.4,
+  vertex/.style={
+    circle,
+    draw,
+    fill=green!40,
+    minimum size=10pt,
+    inner sep=0,
+    label={
+        [anchor=base, label distance=5pt]
+        below:{#1} % parentheses necessary, otherwise the '=' breaks TikZ parsing
+    }
+  },
+  measure/.style={|-|}
+]
+
+\node[vertex={$v$}] (v) at (0, 0) {};
+\node[vertex={$u_{1}$}] (u1) at (3, 0) {};
+\node[vertex={$u_{r-1}$}] (urm1) at (9, 0) {};
+\node[vertex={$u$}] (u) at (12, 0) {};
+
+
+\draw[] (v) -- (u1);
+\draw[] (u1) -- ($(u1)!1/3!(urm1)$);
+\draw[dotted] ($(u1)!1/3!(urm1)$) -- ($(u1)!2/3!(urm1)$);
+\draw[] ($(u1)!2/3!(urm1)$) -- (urm1);
+\draw[] (urm1) -- (u);
+
+
+\def\offset{-0.5cm};
+\draw[measure] ($(v) + (0, -1) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$d_{G}(v,u) = r$} ($(u) + (0, -1) + (0, \offset)$);
+
+
+\end{tikzpicture}
+\]
+Then
+\begin{equation}\label{eq:multi_hop_propagation_single_path}
+    (\hat{\matr{A}}^{r})_{vu}
+    =
+    \frac{1}{\sqrt{d_v d_{u_{1}}}} \cdot
+    \prod_{i=1}^{r-2} \frac{1}{\sqrt{d_{u_{i}} d_{u_{i+1}}}} \cdot
+    \frac{1}{\sqrt{d_{u_{r-1}} d_{u}}}
+    =
+    \frac{1}{\sqrt{d_v d_u}} \prod_{i=1}^{r-1} \frac{1}{d_{u_i}}
+\end{equation}
+\end{corollary}
+
+
+
+\subsubsection{distance layers and layer degrees}
+
+% For \gls{laser} and related methods it is useful to separate connections by graph distance.
+
+\begin{definition}[distance-$\ell$ adjacency and layer degree]\label{def:distance_layer_adjacency}
+For $\ell \in \N_0$, define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
+\begin{equation}\label{eq:distance_layer_adjacency}
+    \bigl(\matr{A}_{\ell}\bigr)_{uv}
+    =
+    \begin{cases}
+        1 & d_{\gph}(u,v) = \ell+1\\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+where $d_{\gph}(u,v)$ is the graph distance between $u$ and $v$.
+The corresponding \emph{layer degree} of a node $v$ at distance level $\ell$ is
+\begin{equation}\label{eq:layer_degree}
+    d_{v,\ell}
+    =
+    \sum_{u \in V} \bigl(\matr{A}_{\ell}\bigr)_{vu},
+\end{equation}
+i.e.\ the number of nodes at graph distance $\ell+1$ from $v$.
+Let $\matr{D}_{\ell}$ be the diagonal matrix with $(\matr{D}_{\ell})_{vv} = d_{v,\ell}$.
+The \emph{normalized distance-$(\ell+1)$ adjacency} is
+\begin{equation}\label{eq:normalized_distance_layer_adjacency}
+    {\color{Red}\boxed{\color{black}
+    \hat{\matr{A}}_{\ell}
+    =
+    \matr{D}_{\ell}^{-1/2}\matr{A}_{\ell}\matr{D}_{\ell}^{-1/2}
+    }}
+\end{equation}
+so that
+\[
+    \bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
+    =
+    \begin{cases}
+        \dfrac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{\gph}(u,v) = \ell+1\\[0.5ex]
+        0 & \text{otherwise}
+    \end{cases}
+\]
+\end{definition}
+
+Finally, we denote by
+\begin{equation}\label{eq:minimum_degree}
+    d_{\min}
+    =
+    \min_{v \in V} d_v
+\end{equation}
+the \emph{minimum node degree} in the graph.
+% Bounds involving powers of $d_{\min}$ quantify how the worst-case degree along a path affects information flow and Jacobian norms in \gls{gcn}- and \gls{laser}-type architectures.
+
+
+
+
+
+
+\subsection{graph Laplacian}
+
+\begin{definition}[graph Laplacian]\label{def:graph_laplacian}
+Let $G = (V,E)$ be an undirected graph with adjacency matrix $\matr{A}$ and diagonal degree matrix $\matr{D}$.
+The \emph{combinatorial graph Laplacian} is
+\begin{equation}\label{eq:graph_laplacian}
+    \matr{L} = \matr{D} - \matr{A}
+\end{equation}
+and the \emph{normalized graph Laplacian} is
+\begin{equation}\label{eq:normalized_graph_laplacian}
+    {\color{Red}\boxed{\color{black}
+    \matr{\Delta}
+    =
+    \matr{D}^{-1/2}\matr{L}\matr{D}^{-1/2}
+    \overset{\text{\eqref{eq:graph_laplacian}}}{=}
+    \matr{D}^{-1/2}(\matr{D} - \matr{A})\matr{D}^{-1/2}
+    \overset{\text{\eqref{eq:normalized_adjacency}}}{=}
+    \matr{I}_{n} - \hat{\matr{A}}
+    }}
+\end{equation}
+It is symmetric and positive semidefinite, and its eigenvalues satisfy
+\[
+    0 = \lambda_{0} \le \lambda_{1} \le \dots \le \lambda_{n-1}
+\]
+The quantity $\lambda_1$ is called the \emph{spectral gap}.
+If the graph is connected, then $\lambda_1>0$, i.e. there is a single zero eigenvalue \(\lambda_0 = 0\) whose eigenvector is a constant vector for all nodes in the graph.
+Otherwise, the number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph.
+\end{definition}
+
+To understand what \autoref{def:graph_laplacian} means, consider a function $f\colon V \to \R$.
+We identify $f$ with a vector $\vect{f} \in \R^{n}$ whose $v$-th entry is $f(v)$.
+Then the combinatorial Laplacian acts on $f$ as
+\[
+    (\matr{L}\vect{f})_v
+    =
+    d_v f(v) - \sum_{(u,v) \in E} f(u)
+\]
+Thus, $(\matr{L}\vect{f})_v$ is (up to the factor $d_v$) the difference between the value at $v$ and the sum of the values at its neighbors.
+
+For the normalized Laplacian, we have
+\[
+    (\matr{\Delta}\vect{f})_v
+    =
+    f(v)
+    -
+    \frac{1}{\sqrt{d_v}}
+    \sum_{(u,v) \in E}
+    \frac{f(u)}{\sqrt{d_u}}
+\]
+i.e., $(\matr{\Delta}\vect{f})_v$ is the value at $v$ minus a degree-normalized average of the neighbors.
+This is why the Laplacian is often viewed as a \emph{discrete second derivative} on the graph:
+\hl{it measures how much $f$ at $v$ deviates from its neighborhood}.
+
+A key identity for the combinatorial Laplacian is the quadratic form
+\begin{equation}\label{eq:laplacian_quadratic_form}
+    \vect{f}^{\top}\matr{L}\vect{f}
+    =
+    \frac{1}{2}
+    \sum_{(u,v) \in E}
+    \bigl(f(u) - f(v)\bigr)^{2}
+\end{equation}
+which shows that \(\matr{L}\) (and hence also \(\matr{\Delta}\)) is positive semidefinite, since the right-hand side is always nonnegative.
+Moreover, $\vect{f}^{\top}\matr{L}\vect{f}$ is small exactly when $f$ varies slowly across edges, so the Laplacian encodes the \emph{smoothness} of functions on the graph.
+
+
+
+
+\subsection{Cheeger inequality}
+
+The \emph{Cheeger inequality} relates the spectral gap $\lambda_1$ to the \emph{Cheeger constant} $h(G)$, which measures how difficult it is to separate the graph into two large pieces.  It states, in particular, that
+\[
+    \tfrac{1}{2}h(G)^2
+    \le
+    \lambda_1
+    \le
+    2 h(G),
+\]
+so a larger spectral gap implies that the graph is more ``well-connected.''
+
+
+\subsection{effective resistance}
+\begin{definition}[effective resistance]\label{def:effective_resistance}
+Let $G=(V,E)$ be an undirected graph.
+View each edge $(u,v)\in E$ as an electrical resistor of resistance $1\,$\(\Omega\).
+The resulting network has a well-defined \emph{effective resistance} between any two nodes.
+
+For two nodes $s,t \in V$, the \emph{effective resistance} $R(s,t)$ is defined as the voltage difference needed to send one unit of electrical current from $s$ to $t$.
+Equivalently:
+\begin{itemize}
+    \item inject $+1$ unit of current at $s$,
+    \item extract $-1$ unit of current at $t$,
+    \item let the current flow according to Kirchhoff’s laws,
+    \item then $R(s,t)$ is the resulting voltage difference between $s$ and $t$.
+\end{itemize}
+
+A fundamental formula expresses effective resistance using the (combinatorial) graph Laplacian $\matr{L}$:
+\begin{equation}\label{eq:effective_resistance}
+{\color{Red}\boxed{\color{black}
+    R(s,t)
+    =
+    (\vect{e}_s - \vect{e}_t)^{\top}
+    \matr{L}^{\dagger}
+    (\vect{e}_s - \vect{e}_t)
+}}
+\end{equation}
+where $\matr{L}^{\dagger}$ is the Moore--Penrose pseudoinverse of $\matr{L}$ and $\vect{e}_v$ is the standard basis vector of vertex $v$.
+\end{definition}
+
+
+\subsubsection{Interpretation}
+If the graph offers many short, parallel paths between $s$ and $t$, then current can flow easily, so $R(s,t)$ is small.
+If there are few or long paths, the current is “bottlenecked” and $R(s,t)$ is large.
+Thus, effective resistance measures how ``well-connected'' two nodes are inside the global geometry of the graph.
+
+\subsubsection{Connection to random walks}
+A \emph{random walk} on $G$ is the Markov chain that, from a node $v$, moves to a uniformly random neighbor of $v$.  Its transition matrix is
+\[
+    \matr{P} = \matr{D}^{-1}\matr{A}
+\]
+so $\matr{P}_{vu} = 1/d_v$ if $(v,u)\in E$.
+
+\medskip
+For two nodes $u,v$, the \emph{commute time} $\texttt{CT}(u,v)$ is the expected number of steps for the random walk to start at $u$, reach $v$, and return to $u$ again.  
+A fundamental fact is that commute time is proportional to the \emph{effective resistance} $R(u,v)$ when the graph is viewed as an electrical network with unit resistors:
+\begin{equation}\label{eq:commute_time_effective_resistance}
+    \texttt{CT}(u,v)
+    =
+    2|E|
+    R(u,v)
+\end{equation}
+This gives a geometric interpretation of how ``far apart'' two nodes are in terms of random-walk behavior,
+i.e. two nodes have small commute time exactly when they have small effective resistance.
+
+
+
+
+
+\subsection{message passing paradigm}
+
+We consider the case where each node $v$ has a feature $\vect{x}_{v}^{(0)} \in \R^{d}$. 
+It is common to stack the node features into a matrix $\matr{X}^{(0)} \in \R^{n \times d}$ consistently with the ordering of $\matr{A}$. 
+\glspl{gnn} are functions defined on the featured graph that can output node, edge, or graph-level values. %$\phib: (G, \Xb^{(0)}) \mapsto \Xb^{(T)}$, with $T$ denoting the number of layers of the GNN and $\Xb^{(T)} \in \R^{n \times d_T}$. 
+The most common family of \gls{gnn} architectures are \glspl{mpnn}, which compute latent node representations by stacking $T$ layers of the form:
+\begin{align}\label{eq:mpnn_update}
+{\color{Red}\boxed{\color{black}
+\vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)}, \agg^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}))
+}}
+\end{align}
+\noindent for $t = 1,\hdots, T$, where  $\agg^{(t)}$ is some permutation-invariant \emph{aggregation} function, while $\up^{(t)}$ \emph{updates} the node's current state with aggregated messages from its neighbors.
+
+
+\subsection{over-squashing and long-range interactions} 
+While the message-passing paradigm usually constitutes a strong inductive bias, it is problematic for capturing long-range interactions due to a phenomenon known as \emph{over-squashing}. %One issue is characterized by over-squashing. 
+Given two nodes $u, v$ at distance $d_{G}(u, v) = r$, an \gls{mpnn} will require $T \geq r$ layers to exchange messages between them. 
+When the receptive fields of the nodes expand too quickly (due to volume growth properties characteristic of many real-world scale free graphs), 
+the \gls{mpnn} needs to aggregate a large number of messages into fixed-size vectors, leading to some corruption of the information. 
+This effect on the propagation of information has been related to the Jacobian of node features decaying exponentially with $r$. %the upper bound on the Jacobian  $\|\partial\vect{x}_{v}^{(T)}/ \partial\vect{x}_{u}^{(0)}\|$ decaying exponentially with $r$ 
+More recently, it was shown that the Jacobian is affected by topological properties such as \nameref{def:effective_resistance}. % which can then be taken as indicators of whether and where over-squashing may manifest itself.  %black2023understanding, di2023over}. Over-squashing is particularly relevant when the graph presents `bottlenecks', which may be identified via edges that have high negative curvature \cite{topping2021understanding}.
+
+
+
+
+
+
+\subsection{graph rewiring}
+
+The main principle behind graph rewiring in \glspl{gnn} is to decouple the input graph $G$ from the computational one.
+ Namely, \emph{rewiring} consists of applying an operation $\mathcal{R}$ to 
+$G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{R}({E}))$ on the same vertices but with altered connectivity. We begin by generalizing the \gls{mpnn} formalism to account for the rewiring operation $\mathcal{R}$ as follows:
+\begin{equation}\label{eq:mpnn_rewiring}
+    {\color{Red}\boxed{\color{black}
+    \vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)},\agg_G^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}), \agg_{\mathcal{R}(G)}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \mathcal{R}(E)\}))
+    }}
+\end{equation}
+where a node feature is now updated based on information collected over the input graph $G$ and the rewired one $\mathcal{R}(G)$, through (potentially) independent aggregation maps. 
+Many rewiring-based \gls{gnn} models simply exchange messages over $\mathcal{R}(G)$, i.e., they take $\agg_G = 0$. 
+%We now review existing rewiring methods. % describing their limitations and finally, providing a list of desiderata that a rewiring strategy should satisfy. 
+The idea of rewiring 
+the graph is implicit to many \glspl{gnn}, from using Cayley graphs, to virtual nodes and cellular complexes. 
+Other works have studied the implications of \emph{directly} changing the connectivity of the graph to de-noise it, or to explore multi-hop aggregations. 
+Ever since over-squashing was identified as an issue in \glspl{mpnn}, several novel rewiring approaches have been proposed to mitigate this phenomenon. 
+
+%We distinguishes two classes, and later discuss main limitations thereof.
+
+
+
+
+
+\section{A general paradigm: dynamic rewiring with local constraints}\label{sec:general_framework}
+
+
+\textbf{Main idea.} 
+Our main contribution is a novel paradigm for graph rewiring that satisfies criteria (i)--(iii), leveraging a key principle: 
+instead of considering a {\em single} rewired graph $\mathcal{R}(\gph)$, we use a {\em sequence} of rewired graphs $\{\mathcal{R}_\ell(\gph)\}_\ell$ such that for smaller $\ell$, 
+the new edges added in $\mathcal{R}_\ell(\gph)$ are more `local' (with respect to the input graph $\gph$) and sampled based on optimizing a connectivity measure. 
+%We then study an instance of this paradigm, giving rise to the {\bf L}ocality {\bf A}ware {\bf SE}quential {\bf R}ewiring ({\bf LASER}) framework.
+
+
+
+In this Section, we discuss a general graph-rewiring paradigm that can enhance any MPNN and satisfies the criteria (i)--(iii) described above. 
+%In light of the analysis on the limitations of existing rewiring strategies, we argue that the only way of accommodating the conditions (i)--(iii) consists in replacing the single rewiring $\mathcal{R}$ with a sequence of rewiring $\{\mathcal{R}_\ell\}$. Namely, 
+Given a graph $\gph$, consider a trajectory of rewiring operations $\mathcal{R}_\ell$, starting at $\gph_0 = \gph$, of the form: 
+%and ending at an `ideal' graph $\gph_*$:
+\begin{equation}\label{eq:sequence_rewiring}
+\gph = \gph_0 \xhookrightarrow[]{\mathcal{R}_1} \gph_1 \xhookrightarrow[]{\mathcal{R}_2} \cdots \xhookrightarrow[]{\mathcal{R}_{L}} \gph_L
+\end{equation}
+Since we think of $\gph_\ell$ as the input graph evolved along a dynamical process for $\ell$ iterations, we refer to $\gph_\ell$ as the $\ell$-{\em snapshot}. % at time (step) $\ell$. 
+For the sake of simplicity, we assume $\mathcal{R}_\ell = \mathcal{R}$, though it is straightforward to extend the discussion below to the more general case. In order to account for the multiple snapshots, we modify the layer form in \eqref{eq:mpnn_rewiring} as
+\begin{equation}\label{eq:sequence_rewiring_mpnn}
+    {\color{Red}\boxed{\color{black}
+    \vect{x}_{v}^{(t)} = \up^{(t)}\Big(\vect{x}_{v}^{(t-1)},\Big(\agg_{\gph_\ell}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \E_\ell\})\Big)_{0\leq\ell\leq L}\Big)
+    }}
+\end{equation}
+where, instead of aggregating messages over a single rewired graph, we now consider all the snapshots $\gph_\ell$ in the sequence.
+
+Below we describe a rewiring paradigm based on an arbitrary \textbf{\em connectivity measure} $\mu: \V \times \V \to \R$ and \textbf{\em locality measure} $\nu: \V \times \V \to \mathbb{R}$. The measure $\mu$ can be any topological quantity that captures how easily different pairs of nodes can communicate in a graph, while the measure $\nu$ is any quantity that penalizes interactions among nodes that are `distant' according to some metric on the input graph. In a nutshell, our choice of $\mathcal{R}$ {\em samples edges to add according to the constraint $\nu$, prioritizing those that maximally benefit the measure $\mu$.} By keeping this generality, we provide a universal approach to do graph-rewiring that can be of interest independently of the specific choices of $\mu$ and $\nu$.
+%
+
+
+ %, and thus the robustness of the graph topology to over-squashing as per \cite{black2023understanding,di2023over}.
+%
+%The locality measure instead is meant to favor connecting nodes that are closer in the input graph. %We first describe an approach to graph-rewiring that works with any choice of connectivity and locality measures; then, we will pick up two specific measures $\mu$ and $\delta$ and describe a specific instance of such framework termed \textbf{LASER}.
+\paragraph{Improving connectivity while preserving locality.} The first property we demand of the rewiring sequence is that %the chosen connectivity measure increases along the different snapshots, i.e., 
+for all nodes $v,u$, we have $\mu_{\gph_{\ell+1}}(v,u) \geq \mu_{\gph_{\ell}}(v,u)$ and that for {\em some} nodes, the inequality is {\em strict}. %A simple way to implement this procedure is to define $\mathcal{R}$ such that an edge $(v,u)$ belongs to $\E_{\ell}$ if the connectivity measure of $(v,u)$ is sufficiently small. 
+%Since the connectivity measure $\mu$ is usually a global quantity, i
+If we connect all pairs of nodes with low $\mu$-value, however, we might end up adding non-local edges across distant nodes, hence quickly corrupting the %partial ordering provided by 
+locality of $\gph$. To avoid this, %preserve the locality of the graph encoded in the measure $\nu$, we then
+we {\em constrain} each rewiring by requiring the measure $\nu$ to take values in a certain range $\mathcal{I}_\ell\subset[0,\infty)$: an edge $(v,u)$ appears in the $\ell$-snapshot (for $1\leq \ell \leq L$) according to the following rule:
+\begin{equation}\label{eq:local_constraint}
+(v,u)\in \E_{\ell} \,\, \text{if} \,\, \Big(\mu_{\gph_0}(v,u) < \epsilon \,\,\, \mathrm{and} \,\,\, \nu_{\gph_0}(v,u)\in\mathcal{I}_{\ell} \Big) \,\,\,  \mathrm{or} \,\,\, (v,u)\in\E_{\ell-1}. 
+\end{equation}
+To make the rewiring more efficient, the connectivity and locality measures are computed {\em once} over the input graph $\gph_0$. Since the edges to be added connect nodes with low $\mu$-values, the rewiring makes the graphs $\gph_\ell$ friendlier to message-passing as $\ell$ grows. Moreover, by taking increasing ranges of values for the intervals $\mathcal{I}_{\ell}$, we make sure that new edges connect distant nodes, as specified by $\nu$, only at later snapshots. %with respect to the input graph topology. 
+Sequential rewiring allows us to interpolate between the given graph and one with better connectivity, creating intermediate snapshots that {\em progressively} add non-local edges. By accounting for all the snapshots $\gph_\ell$ in \eqref{eq:mpnn_rewiring}, the GNN can access both the input graph, and more connected ones, %and an increasingly better sequence of message-passing templates %$\gph_{\ell}$ so that nodes $v,u$ that are distant, i.e. such that $\delta(v,u)$ is large, can at most interact directly only at the later snapshots. In particular, 
+%through the different aggregations maps $\agg_{\gph_\ell}$, %the GNN is endowed with the ability to separate local contributions from non-local ones,
+at a much {\em finer level} than `instantaneous' rewirings, defined next. 
+
+
+
+
+\clearpage
+
+\section{Locality Aware Sequential Rewiring}\label{sec:laser}
+
+
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.5,
+  vertex/.style={
+    circle,
+    draw,
+    fill=green!40,
+    minimum size=10pt,
+    inner sep=0,
+    label={
+        [anchor=base, label distance=5pt]
+        below:{#1} % parentheses necessary, otherwise the '=' breaks TikZ parsing
+    }
+  },
+  measure/.style={
+    |-|,
+    >=stealth
+  }
+]
+
+\node[vertex={$v = u_0$}] (v) at (0, 0) {};
+\node[vertex={$u_{\ell-1}$}] (ulm1) at (6, 0) {};
+\node[vertex={$j = u_\ell$}] (j) at (9, 0) {};
+\node[vertex={$u_{\ell+1}$}] (ulp1) at (12, 0) {};
+\node[vertex={$u = u_r$}] (u) at (18, 0) {};
+
+\draw[] (v) -- ($(v)!1/3!(ulm1)$);
+\draw[dotted] ($(v)!1/3!(ulm1)$) -- ($(v)!2/3!(ulm1)$);
+\draw[] ($(v)!2/3!(ulm1)$) -- (ulm1);
+
+\draw[] (ulm1) -- (j);
+\draw[] (j) -- (ulp1);
+
+\draw[] (ulp1) -- ($(ulp1)!1/3!(u)$);
+\draw[dotted] ($(ulp1)!1/3!(u)$) -- ($(ulp1)!2/3!(u)$);
+\draw[] ($(ulp1)!2/3!(u)$) -- (u);
+
+
+\draw[blue, densely dashed] (v) to[out=45, in=135] node[pos=0.24, above, rotate=25] {LASER} (j);
+\node[above right=0pt of j, rotate=45, outer sep=2pt, inner sep=0pt, anchor=west] {$\in \mathcal{N}_{\ell}^{\rho}(v)$};
+
+\def\offset{-0.5cm};
+\draw[measure] ($(v) + (0, -1) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$d_{G_0}(v,u) = r$} ($(u) + (0, -1) + (0, \offset)$);
+\draw[measure] ($(v) + (0, -2) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$d_{G_0}(v,j) = \ell$} ($(j) + (0, -2) + (0, \offset)$);
+\draw[measure, densely dashed] ($(v) + (0, -3) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$d_{G_\ell}(v,u) = \color{blue} 1 + \color{black} r - \ell$} ($(u) + (0, -3) + (0, \offset)$);
+
+\end{tikzpicture}
+\]
+
+
+
+
+We have a unique path
+\[
+(v = u_0, u_1, \dots, u_{r-1}, u_r = u),
+\]
+and we assume \(j = u_\ell\).
+From \autoref{cor:multi_hop_propagation_single_path}, for the full path from \(v\) to \(u\):
+\[
+(\hat{\matr{A}}^{r})_{vu}
+=
+\frac{1}{\sqrt{d_v d_u}}
+\prod_{s=1}^{r-1} \frac{1}{d_{u_s}}
+\]
+
+For the sub-path from \(j = u_\ell\) to \(u = u_r\) of length \(r-\ell\), the same reasoning gives
+\[
+(\hat{\matr{A}}^{r-\ell})_{ju}
+=
+\frac{1}{\sqrt{d_j d_u}}
+\prod_{s=\ell+1}^{r-1} \frac{1}{d_{u_s}}.
+\]
+
+Now we plug this into our expression:
+\[
+\begin{aligned}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
+&=
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\color{red}\ell\color{black}-1}\frac{1}{d_{u_s}}}
+\cdot
+\frac{(\hat{\matr{A}}^{r-\ell})_{ju}}{\prod_{s = {\color{red}\ell}}^{r-1}\frac{1}{d_{u_s}}} \\
+&\overset{\text{\eqref{eq:multi_hop_propagation_single_path}}}{=}
+\color{gray}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\color{black}
+\cdot
+\frac{\frac{1}{\sqrt{d_j d_u}} \prod_{s=\ell+1}^{r-1} \frac{1}{d_{u_s}}}
+{\prod_{s = \ell}^{r-1}\frac{1}{d_{u_s}}} \\
+&=
+\color{gray}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\color{black}
+\cdot
+\frac{1}{\sqrt{d_j d_u}}
+\cdot
+\frac{\prod_{s=\ell+1}^{r-1} \frac{1}{d_{u_s}}}{\frac{1}{d_{u_\ell}}\prod_{s=\ell+1}^{r-1} \frac{1}{d_{u_s}}} \\
+&=
+\color{gray}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\color{black}
+\cdot
+\frac{1}{\sqrt{d_j d_u}} \cdot d_{u_\ell} \\
+&=
+\color{gray}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\color{black}
+\cdot
+\sqrt{\frac{d_j}{d_u}}
+\end{aligned}
+\]
+So the exact identity is:
+\[
+\boxed{
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
+{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
+=
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\cdot
+\sqrt{\frac{d_j}{d_u}}
+}
+\]
+
+Here we used only:
+\begin{itemize}
+\item the unique-path formula \eqref{eq:multi_hop_propagation_single_path} from \autoref{cor:multi_hop_propagation_single_path}
+\item simple factor cancellation in the product of degrees
+\end{itemize}
+
+
+
+
+
+
+\paragraph{Where do inequalities come in?}
+
+Now, the paper wants a lower bound of the form
+\[
+\frac{\|\tilde J\|}{\|J\|}
+\;\ge\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
+\]
+
+Given the exact expression above, there are two “places” where inequalities must be used:
+
+(i) Bounding the first factor from below using \(d_{\min}\)
+Recall
+\[
+(\hat{\matr{A}}_{\ell-1})_{vj} = \frac{1}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}
+\]
+and
+\[
+\frac{1}{\sqrt{d_v d_u}}\prod_{s=1}^{\ell-1} \frac{1}{d_{u_s}}
+\;\le\;
+\frac{1}{d_{\min}^\ell},
+\]
+because each degree in the product is \(\ge d_{\min}\).
+
+Thus
+\[
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
+{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\;\ge\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}},
+\]
+and this step is valid and uses only:
+\begin{itemize}
+\item definition of \(\hat{\matr{A}}_{\ell-1}\),
+\item definition of \(d_{\min}\),
+\item the trivial inequality \(d_v, d_u, d_{u_s} \ge d_{\min}\).
+\end{itemize}
+
+You can safely annotate this as
+\[
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
+{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\;\overset{d_{u_s}\ge d_{\min}}{\ge}\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
+\]
+
+(ii) What about the factor \(\sqrt{d_j/d_u}\)?
+From the exact expression we got
+\[
+\frac{\|\tilde J\|}{\|J\|}
+=
+\left(
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
+{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\right)
+\cdot
+\sqrt{\frac{d_j}{d_u}}.
+\]
+
+To get
+\[
+\frac{\|\tilde J\|}{\|J\|}
+\;\ge\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}},
+\]
+you would need
+\[
+\sqrt{\frac{d_j}{d_u}} \;\ge\; 1
+\quad\Longleftrightarrow\quad
+d_j \ge d_u.
+\]
+
+But the proposition does not assume any monotonicity or ordering of degrees along the path, so in general this inequality is not guaranteed. 
+We only know both degrees are \(\ge d_{\min}\), which does not imply \(d_j \ge d_u\) or vice versa.
+
+So:
+\begin{itemize}
+\item the step where the paper effectively “drops” the \(\sqrt{d_j/d_u}\) factor and keeps only the first piece is not justified without a further assumption like \(d_j \ge d_u\),
+\item the part using \(d_{\min}\) on the first factor is fine.
+\end{itemize}
+
+
+\paragraph{Summary}
+
+I’d suggest you keep the algebra honest and then add a remark about the gap. For example:
+\begin{align}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
+     {\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
+&=
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\cdot
+\frac{(\hat{\matr{A}}^{r-\ell})_{ju}}{\prod_{s = \ell}^{r-1}\frac{1}{d_{u_s}}} \\
+&\overset{\text{\eqref{eq:multi_hop_propagation_single_path}}}{=}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\cdot
+\sqrt{\frac{d_j}{d_u}}. \label{eq:laser_ratio_exact}
+\end{align}
+
+Using $d_{u_s} \ge d_{\min}$ and the definition
+$(\hat{\matr{A}}_{\ell-1})_{vj} = 1/\sqrt{d_{v,\ell-1} d_{j,\ell-1}}$,
+we obtain the valid bound
+\begin{equation}\label{eq:laser_ratio_first_factor_bound}
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
+\;\ge\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
+\end{equation}
+Combining \eqref{eq:laser_ratio_exact} and
+\eqref{eq:laser_ratio_first_factor_bound} yields
+\[
+\frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
+     {\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
+\;\ge\;
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}
+\cdot
+\sqrt{\frac{d_j}{d_u}}.
+\]
+Note that to drop the factor $\sqrt{d_j/d_u}$ and recover exactly the inequality
+stated in the paper, one would need an additional assumption such as $d_j \ge d_u$,
+which is not part of the proposition as written.
+
+You’ve then:
+\begin{itemize}
+	\item justified all equalities from your earlier definitions,
+	\item explained exactly which inequality uses \(d_{\min}\),
+	\item and isolated the subtle gap in the original proof into a clearly stated extra assumption.
+\end{itemize}
+
+
+\end{document}
