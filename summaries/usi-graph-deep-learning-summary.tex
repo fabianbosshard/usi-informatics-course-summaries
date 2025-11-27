@@ -296,7 +296,7 @@
 
 
 
-\title{Locality-Aware Graph Rewiring in GNNs - Summary}
+\title{Locality-Aware Graph Rewiring in GNNs}
 % \author{\today}
 % \date{}
 \author{Fabian Bosshard}
@@ -339,7 +339,6 @@
 \makeglossaries
 
 
-
 \newacronym{gdl}{GDL}{Graph Deep Learning}
 \newacronym{gnn}{GNN}{Graph Neural Network}
 \newacronym{gcn}{GCN}{Graph Convolutional Network}
@@ -348,6 +347,20 @@
 \newacronym{gso}{GSO}{Graph Shift Operator}
 \newacronym{mpnn}{MPNN}{Message Passing Neural Network}
 \newacronym{laser}{LASER}{Locality-Aware Sequential Rewiring}
+
+% experimental details 
+\newacronym{oom}{OOM}{Out Of Memory}
+\newacronym{ap}{AP}{Average Precision}
+\newacronym{mae}{MAE}{Mean Absolute Error}
+\newacronym{mrr}{MRR}{Mean Reciprocal Rank}
+\newacronym{lrgb}{LRGB}{Long Range Graph Benchmark}
+\newacronym{sdrf}{SDRF}{Stochastic Discrete Ricci Flow}
+\newacronym{borf}{BORF}{Batch Ollivier-Ricci Flow}
+\newacronym{fosr}{FOSR}{First-Order Spectral Rewiring}
+\newacronym{gtr}{GTR}{Greedy Total Resistance rewiring}
+
+
+
 
 
 
@@ -364,11 +377,22 @@
 \printglossary[type=\acronymtype, title={List of Acronyms}]
 
 
-\section{basic notions}
 
-Let $G = (V, E)$ be an undirected graph.  
-The \emph{degree} of a node $v$ is the number of edges incident to it and is denoted $d_v$.  
-The \emph{diagonal degree matrix} is the matrix $\matr{D}\in\R^{n\times n}$ defined by
+
+\section{Background}
+
+Let $G = (V, E)$ be an undirected graph with the
+adjacency matrix $\matr{A} \in \R^{n\times n}$
+\begin{equation}\label{eq:adjacency_matrix}
+    \matr{A}_{uv}
+    =
+    \begin{cases}
+        1 & (u,v) \in E\\
+        0 & (u,v) \notin E
+    \end{cases}
+\end{equation}
+
+The \emph{diagonal degree matrix} $\matr{D}\in\R^{n\times n}$ is defined by
 \begin{equation}\label{eq:degree_matrix}
     \matr{D}_{uv}
     =
@@ -384,18 +408,8 @@ i.e. $\matr{D}$ simply places all node degrees on the diagonal.
 
 \subsection{normalized adjacency and multi-hop propagation}
 
-Let $G = (V,E)$ be an undirected graph with adjacency matrix $\matr{A} \in \R^{n\times n}$ defined by
-\begin{equation}\label{eq:adjacency_matrix}
-    \matr{A}_{uv}
-    =
-    \begin{cases}
-        1 & (u,v) \in E\\
-        0 & (u,v) \notin E
-    \end{cases}
-\end{equation}
-and diagonal degree matrix $\matr{D}$ as in \eqref{eq:degree_matrix}.
 
-\begin{definition}[normalized adjacency]\label{def:normalized_adjacency}
+\begin{definition}\label{def:normalized_adjacency}
 The \emph{symmetrically normalized adjacency matrix} is
 \begin{equation}\label{eq:normalized_adjacency}
     {\color{Red}\boxed{\color{black}
@@ -404,18 +418,19 @@ The \emph{symmetrically normalized adjacency matrix} is
     \matr{D}^{-1/2}\matr{A}\matr{D}^{-1/2}
     }}
 \end{equation}
-Equivalently, for all $u,v \in V$,
+or, entrywise,
 \[
+\begin{verticalhack}
     \hat{\matr{A}}_{uv}
     =
     \begin{cases}
         \dfrac{1}{\sqrt{d_u d_v}} & (u,v) \in E\\[0.5ex]
         0 & (u,v) \notin E
     \end{cases}
+    \end{verticalhack}
+    \qedhere
 \]
 \end{definition}
-
-The powers of $\hat{\matr{A}}$ describe how information propagates over multiple message-passing steps:
 
 \begin{proposition}[multi-hop propagation]\label{prop:multi_hop_propagation}
 The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
@@ -428,15 +443,6 @@ The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
 where the sum is over all walks $\pi = (v, \ldots, u)$
 of length $k$ from $v$ to $u$.
 \end{proposition}
-
-In particular, in a linear \gls{gcn} of the form
-\[
-    \matr{X}^{(t)} = \hat{\matr{A}}\,\matr{X}^{(t-1)}\matr{W}^{(t)},
-    \qquad
-    \matr{X}^{(m)} = \hat{\matr{A}}^{m}\matr{X}^{(0)}\matr{W}_{\text{eff}},
-\]
-the coefficient $(\hat{\matr{A}}^{m})_{vu}$ measures how strongly the initial features at node $u$ influence the features at node $v$ after $m$ layers.
-\hl[2]{Thus, $\hat{\matr{A}}^{m}$ encodes $m$-step information flow over the graph.}
 
 
 
@@ -486,13 +492,15 @@ of length $r$ between $v$ and $u$:
 \]
 Then
 \begin{equation}\label{eq:multi_hop_propagation_single_path}
+    \begin{aligned}
     (\hat{\matr{A}}^{r})_{vu}
-    =
+    &=
     \frac{1}{\sqrt{d_v d_{u_{1}}}} \cdot
     \prod_{i=1}^{r-2} \frac{1}{\sqrt{d_{u_{i}} d_{u_{i+1}}}} \cdot
-    \frac{1}{\sqrt{d_{u_{r-1}} d_{u}}}
-    =
+    \frac{1}{\sqrt{d_{u_{r-1}} d_{u}}} \\
+    &=
     \frac{1}{\sqrt{d_v d_u}} \prod_{i=1}^{r-1} \frac{1}{d_{u_i}}
+    \end{aligned}
 \end{equation}
 \end{corollary}
 
@@ -502,8 +510,8 @@ Then
 
 % For \gls{laser} and related methods it is useful to separate connections by graph distance.
 
-\begin{definition}[distance-$\ell$ adjacency and layer degree]\label{def:distance_layer_adjacency}
-For $\ell \in \N_0$, define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
+\begin{definition}\label{def:distance_layer_adjacency}
+For $\ell \in \N_0$, we define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
 \begin{equation}\label{eq:distance_layer_adjacency}
     \bigl(\matr{A}_{\ell}\bigr)_{uv}
     =
@@ -512,7 +520,7 @@ For $\ell \in \N_0$, define the \emph{distance-($\ell+1$) adjacency matrix} $\ma
         0 & \text{otherwise}
     \end{cases}
 \end{equation}
-where $d_{\gph}(u,v)$ is the graph distance between $u$ and $v$.
+where $d_{\gph}(u,v)$ is the shortest-path distance.
 The corresponding \emph{layer degree} of a node $v$ at distance level $\ell$ is
 \begin{equation}\label{eq:layer_degree}
     d_{v,\ell}
@@ -526,17 +534,20 @@ The \emph{normalized distance-$(\ell+1)$ adjacency} is
     {\color{Red}\boxed{\color{black}
     \hat{\matr{A}}_{\ell}
     =
-    \matr{D}_{\ell}^{-1/2}\matr{A}_{\ell}\matr{D}_{\ell}^{-1/2}
+    \matr{D}_{\ell}^{-1/2} \matr{A}_{\ell} \matr{D}_{\ell}^{-1/2}
     }}
 \end{equation}
 so that
 \[
-    \bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
-    =
-    \begin{cases}
-        \dfrac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{\gph}(u,v) = \ell+1\\[0.5ex]
-        0 & \text{otherwise}
-    \end{cases}
+\begin{verticalhack}
+\bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
+=
+\begin{cases}
+    \frac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{\gph}(u,v) = \ell+1 \\
+    0 & \text{otherwise}
+\end{cases}
+\end{verticalhack}
+\qedhere
 \]
 \end{definition}
 
@@ -556,8 +567,7 @@ the \emph{minimum node degree} in the graph.
 
 \subsection{graph Laplacian}
 
-\begin{definition}[graph Laplacian]\label{def:graph_laplacian}
-Let $G = (V,E)$ be an undirected graph with adjacency matrix $\matr{A}$ and diagonal degree matrix $\matr{D}$.
+\begin{definition}\label{def:graph_laplacian}
 The \emph{combinatorial graph Laplacian} is
 \begin{equation}\label{eq:graph_laplacian}
     \matr{L} = \matr{D} - \matr{A}
@@ -565,7 +575,7 @@ The \emph{combinatorial graph Laplacian} is
 and the \emph{normalized graph Laplacian} is
 \begin{equation}\label{eq:normalized_graph_laplacian}
     {\color{Red}\boxed{\color{black}
-    \matr{\Delta}
+    \hat{\matr{L}}
     =
     \matr{D}^{-1/2}\matr{L}\matr{D}^{-1/2}
     \overset{\text{\eqref{eq:graph_laplacian}}}{=}
@@ -578,36 +588,33 @@ It is symmetric and positive semidefinite, and its eigenvalues satisfy
 \[
     0 = \lambda_{0} \le \lambda_{1} \le \dots \le \lambda_{n-1}
 \]
-The quantity $\lambda_1$ is called the \emph{spectral gap}.
-If the graph is connected, then $\lambda_1>0$, i.e. there is a single zero eigenvalue \(\lambda_0 = 0\) whose eigenvector is a constant vector for all nodes in the graph.
-Otherwise, the number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph.
+$\lambda_1$ is called the \emph{spectral gap}.
+The number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph.
 \end{definition}
 
-To understand what \autoref{def:graph_laplacian} means, consider a function $f\colon V \to \R$.
-We identify $f$ with a vector $\vect{f} \in \R^{n}$ whose $v$-th entry is $f(v)$.
-Then the combinatorial Laplacian acts on $f$ as
-\[
-    (\matr{L}\vect{f})_v
-    =
-    d_v f(v) - \sum_{(u,v) \in E} f(u)
-\]
-Thus, $(\matr{L}\vect{f})_v$ is (up to the factor $d_v$) the difference between the value at $v$ and the sum of the values at its neighbors.
-
-For the normalized Laplacian, we have
-\[
-    (\matr{\Delta}\vect{f})_v
-    =
-    f(v)
-    -
-    \frac{1}{\sqrt{d_v}}
-    \sum_{(u,v) \in E}
-    \frac{f(u)}{\sqrt{d_u}}
-\]
-i.e., $(\matr{\Delta}\vect{f})_v$ is the value at $v$ minus a degree-normalized average of the neighbors.
+To understand \autoref{def:graph_laplacian}, consider a function $f\colon V \to \R$.
+Denote by $\vect{f} \in \R^{n}$ the vector whose $v$-th entry is $f(v)$.
+Then
+% \begin{equation}\label{eq:laplacian_action_on_function}
+% (\matr{L}\vect{f})_v
+% =
+% d_v f(v) - \sum_{(u,v) \in E} f(u)
+% \end{equation}
+% i.e., $(\matr{L}\vect{f})_v$ is (up to the factor $d_v$) the difference between the value at $v$ and the sum of the values at its neighbors.
+% For the normalized Laplacian, we have
+\begin{equation}\label{eq:normalized_laplacian_action_on_function}
+(\hat{\matr{L}}\vect{f})_v
+=
+f(v)
+-
+\frac{1}{\sqrt{d_v}}
+\sum_{(u,v) \in E}
+\frac{f(u)}{\sqrt{d_u}}
+\end{equation}
+i.e., $(\hat{\matr{L}}\vect{f})_v$ is the value at $v$ minus a degree-normalized average of the neighbors.
 This is why the Laplacian is often viewed as a \emph{discrete second derivative} on the graph:
-\hl{it measures how much $f$ at $v$ deviates from its neighborhood}.
-
-A key identity for the combinatorial Laplacian is the quadratic form
+\hl[2]{it measures how much $f$ at $v$ deviates from its neighborhood}.
+Another important identity is the quadratic form
 \begin{equation}\label{eq:laplacian_quadratic_form}
     \vect{f}^{\top}\matr{L}\vect{f}
     =
@@ -615,8 +622,8 @@ A key identity for the combinatorial Laplacian is the quadratic form
     \sum_{(u,v) \in E}
     \bigl(f(u) - f(v)\bigr)^{2}
 \end{equation}
-which shows that \(\matr{L}\) (and hence also \(\matr{\Delta}\)) is positive semidefinite, since the right-hand side is always nonnegative.
-Moreover, $\vect{f}^{\top}\matr{L}\vect{f}$ is small exactly when $f$ varies slowly across edges, so the Laplacian encodes the \emph{smoothness} of functions on the graph.
+which shows that \(\matr{L}\) (and hence also \(\hat{\matr{L}}\)) is positive semidefinite, since the right-hand side is always nonnegative.
+Moreover, \eqref{eq:laplacian_quadratic_form} is small exactly when $f$ varies slowly across edges, so the Laplacian encodes the \emph{smoothness} of functions on the graph.
 
 
 
@@ -631,25 +638,16 @@ The \emph{Cheeger inequality} relates the spectral gap $\lambda_1$ to the \emph{
     \le
     2 h(G),
 \]
-so a larger spectral gap implies that the graph is more ``well-connected.''
+so a larger spectral gap implies that the graph is more ``well-connected''.
 
 
 \subsection{effective resistance}
 \begin{definition}[effective resistance]\label{def:effective_resistance}
-Let $G=(V,E)$ be an undirected graph.
 View each edge $(u,v)\in E$ as an electrical resistor of resistance $1\,$\(\Omega\).
-The resulting network has a well-defined \emph{effective resistance} between any two nodes.
+The resulting network has a well-defined resistance between any two nodes.
 
 For two nodes $s,t \in V$, the \emph{effective resistance} $R(s,t)$ is defined as the voltage difference needed to send one unit of electrical current from $s$ to $t$.
-Equivalently:
-\begin{itemize}
-    \item inject $+1$ unit of current at $s$,
-    \item extract $-1$ unit of current at $t$,
-    \item let the current flow according to Kirchhoff’s laws,
-    \item then $R(s,t)$ is the resulting voltage difference between $s$ and $t$.
-\end{itemize}
-
-A fundamental formula expresses effective resistance using the (combinatorial) graph Laplacian $\matr{L}$:
+It can be computed as
 \begin{equation}\label{eq:effective_resistance}
 {\color{Red}\boxed{\color{black}
     R(s,t)
@@ -665,138 +663,39 @@ where $\matr{L}^{\dagger}$ is the Moore--Penrose pseudoinverse of $\matr{L}$ and
 
 \subsubsection{Interpretation}
 If the graph offers many short, parallel paths between $s$ and $t$, then current can flow easily, so $R(s,t)$ is small.
-If there are few or long paths, the current is “bottlenecked” and $R(s,t)$ is large.
+If there are few or long paths, the current is ``bottlenecked'' and $R(s,t)$ is large.
 Thus, effective resistance measures how ``well-connected'' two nodes are inside the global geometry of the graph.
 
 \subsubsection{Connection to random walks}
 A \emph{random walk} on $G$ is the Markov chain that, from a node $v$, moves to a uniformly random neighbor of $v$.  Its transition matrix is
-\[
-    \matr{P} = \matr{D}^{-1}\matr{A}
-\]
+\begin{equation}\label{eq:random_walk_transition_matrix}
+\matr{P} = \matr{D}^{-1}\matr{A}
+\end{equation}
 so $\matr{P}_{vu} = 1/d_v$ if $(v,u)\in E$.
 
 \medskip
 For two nodes $u,v$, the \emph{commute time} $\texttt{CT}(u,v)$ is the expected number of steps for the random walk to start at $u$, reach $v$, and return to $u$ again.  
-A fundamental fact is that commute time is proportional to the \emph{effective resistance} $R(u,v)$ when the graph is viewed as an electrical network with unit resistors:
+It can be related to the \nameref{def:effective_resistance} via
 \begin{equation}\label{eq:commute_time_effective_resistance}
     \texttt{CT}(u,v)
     =
     2|E|
     R(u,v)
 \end{equation}
-This gives a geometric interpretation of how ``far apart'' two nodes are in terms of random-walk behavior,
+giving a geometric interpretation of how ``far apart'' two nodes are in terms of random-walk behavior,
 i.e. two nodes have small commute time exactly when they have small effective resistance.
 
 
 
 
 
-\subsection{message passing paradigm}
-
-We consider the case where each node $v$ has a feature $\vect{x}_{v}^{(0)} \in \R^{d}$. 
-It is common to stack the node features into a matrix $\matr{X}^{(0)} \in \R^{n \times d}$ consistently with the ordering of $\matr{A}$. 
-\glspl{gnn} are functions defined on the featured graph that can output node, edge, or graph-level values. %$\phib: (G, \Xb^{(0)}) \mapsto \Xb^{(T)}$, with $T$ denoting the number of layers of the GNN and $\Xb^{(T)} \in \R^{n \times d_T}$. 
-The most common family of \gls{gnn} architectures are \glspl{mpnn}, which compute latent node representations by stacking $T$ layers of the form:
-\begin{align}\label{eq:mpnn_update}
-{\color{Red}\boxed{\color{black}
-\vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)}, \agg^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}))
-}}
-\end{align}
-\noindent for $t = 1,\hdots, T$, where  $\agg^{(t)}$ is some permutation-invariant \emph{aggregation} function, while $\up^{(t)}$ \emph{updates} the node's current state with aggregated messages from its neighbors.
-
-
-\subsection{over-squashing and long-range interactions} 
-While the message-passing paradigm usually constitutes a strong inductive bias, it is problematic for capturing long-range interactions due to a phenomenon known as \emph{over-squashing}. %One issue is characterized by over-squashing. 
-Given two nodes $u, v$ at distance $d_{G}(u, v) = r$, an \gls{mpnn} will require $T \geq r$ layers to exchange messages between them. 
-When the receptive fields of the nodes expand too quickly (due to volume growth properties characteristic of many real-world scale free graphs), 
-the \gls{mpnn} needs to aggregate a large number of messages into fixed-size vectors, leading to some corruption of the information. 
-This effect on the propagation of information has been related to the Jacobian of node features decaying exponentially with $r$. %the upper bound on the Jacobian  $\|\partial\vect{x}_{v}^{(T)}/ \partial\vect{x}_{u}^{(0)}\|$ decaying exponentially with $r$ 
-More recently, it was shown that the Jacobian is affected by topological properties such as \nameref{def:effective_resistance}. % which can then be taken as indicators of whether and where over-squashing may manifest itself.  %black2023understanding, di2023over}. Over-squashing is particularly relevant when the graph presents `bottlenecks', which may be identified via edges that have high negative curvature \cite{topping2021understanding}.
 
 
 
 
+\section{Theoretical analysis}\label{sec:theoretical_analysis}
 
-
-\subsection{graph rewiring}
-
-The main principle behind graph rewiring in \glspl{gnn} is to decouple the input graph $G$ from the computational one.
- Namely, \emph{rewiring} consists of applying an operation $\mathcal{R}$ to 
-$G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{R}({E}))$ on the same vertices but with altered connectivity. We begin by generalizing the \gls{mpnn} formalism to account for the rewiring operation $\mathcal{R}$ as follows:
-\begin{equation}\label{eq:mpnn_rewiring}
-    {\color{Red}\boxed{\color{black}
-    \vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)},\agg_G^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}), \agg_{\mathcal{R}(G)}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \mathcal{R}(E)\}))
-    }}
-\end{equation}
-where a node feature is now updated based on information collected over the input graph $G$ and the rewired one $\mathcal{R}(G)$, through (potentially) independent aggregation maps. 
-Many rewiring-based \gls{gnn} models simply exchange messages over $\mathcal{R}(G)$, i.e., they take $\agg_G = 0$. 
-%We now review existing rewiring methods. % describing their limitations and finally, providing a list of desiderata that a rewiring strategy should satisfy. 
-The idea of rewiring 
-the graph is implicit to many \glspl{gnn}, from using Cayley graphs, to virtual nodes and cellular complexes. 
-Other works have studied the implications of \emph{directly} changing the connectivity of the graph to de-noise it, or to explore multi-hop aggregations. 
-Ever since over-squashing was identified as an issue in \glspl{mpnn}, several novel rewiring approaches have been proposed to mitigate this phenomenon. 
-
-%We distinguishes two classes, and later discuss main limitations thereof.
-
-
-
-
-
-\section{A general paradigm: dynamic rewiring with local constraints}\label{sec:general_framework}
-
-
-\textbf{Main idea.} 
-Our main contribution is a novel paradigm for graph rewiring that satisfies criteria (i)--(iii), leveraging a key principle: 
-instead of considering a {\em single} rewired graph $\mathcal{R}(\gph)$, we use a {\em sequence} of rewired graphs $\{\mathcal{R}_\ell(\gph)\}_\ell$ such that for smaller $\ell$, 
-the new edges added in $\mathcal{R}_\ell(\gph)$ are more `local' (with respect to the input graph $\gph$) and sampled based on optimizing a connectivity measure. 
-%We then study an instance of this paradigm, giving rise to the {\bf L}ocality {\bf A}ware {\bf SE}quential {\bf R}ewiring ({\bf LASER}) framework.
-
-
-
-In this Section, we discuss a general graph-rewiring paradigm that can enhance any MPNN and satisfies the criteria (i)--(iii) described above. 
-%In light of the analysis on the limitations of existing rewiring strategies, we argue that the only way of accommodating the conditions (i)--(iii) consists in replacing the single rewiring $\mathcal{R}$ with a sequence of rewiring $\{\mathcal{R}_\ell\}$. Namely, 
-Given a graph $\gph$, consider a trajectory of rewiring operations $\mathcal{R}_\ell$, starting at $\gph_0 = \gph$, of the form: 
-%and ending at an `ideal' graph $\gph_*$:
-\begin{equation}\label{eq:sequence_rewiring}
-\gph = \gph_0 \xhookrightarrow[]{\mathcal{R}_1} \gph_1 \xhookrightarrow[]{\mathcal{R}_2} \cdots \xhookrightarrow[]{\mathcal{R}_{L}} \gph_L
-\end{equation}
-Since we think of $\gph_\ell$ as the input graph evolved along a dynamical process for $\ell$ iterations, we refer to $\gph_\ell$ as the $\ell$-{\em snapshot}. % at time (step) $\ell$. 
-For the sake of simplicity, we assume $\mathcal{R}_\ell = \mathcal{R}$, though it is straightforward to extend the discussion below to the more general case. In order to account for the multiple snapshots, we modify the layer form in \eqref{eq:mpnn_rewiring} as
-\begin{equation}\label{eq:sequence_rewiring_mpnn}
-    {\color{Red}\boxed{\color{black}
-    \vect{x}_{v}^{(t)} = \up^{(t)}\Big(\vect{x}_{v}^{(t-1)},\Big(\agg_{\gph_\ell}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \E_\ell\})\Big)_{0\leq\ell\leq L}\Big)
-    }}
-\end{equation}
-where, instead of aggregating messages over a single rewired graph, we now consider all the snapshots $\gph_\ell$ in the sequence.
-
-Below we describe a rewiring paradigm based on an arbitrary \textbf{\em connectivity measure} $\mu: \V \times \V \to \R$ and \textbf{\em locality measure} $\nu: \V \times \V \to \mathbb{R}$. The measure $\mu$ can be any topological quantity that captures how easily different pairs of nodes can communicate in a graph, while the measure $\nu$ is any quantity that penalizes interactions among nodes that are `distant' according to some metric on the input graph. In a nutshell, our choice of $\mathcal{R}$ {\em samples edges to add according to the constraint $\nu$, prioritizing those that maximally benefit the measure $\mu$.} By keeping this generality, we provide a universal approach to do graph-rewiring that can be of interest independently of the specific choices of $\mu$ and $\nu$.
-%
-
-
- %, and thus the robustness of the graph topology to over-squashing as per \cite{black2023understanding,di2023over}.
-%
-%The locality measure instead is meant to favor connecting nodes that are closer in the input graph. %We first describe an approach to graph-rewiring that works with any choice of connectivity and locality measures; then, we will pick up two specific measures $\mu$ and $\delta$ and describe a specific instance of such framework termed \textbf{LASER}.
-\paragraph{Improving connectivity while preserving locality.} The first property we demand of the rewiring sequence is that %the chosen connectivity measure increases along the different snapshots, i.e., 
-for all nodes $v,u$, we have $\mu_{\gph_{\ell+1}}(v,u) \geq \mu_{\gph_{\ell}}(v,u)$ and that for {\em some} nodes, the inequality is {\em strict}. %A simple way to implement this procedure is to define $\mathcal{R}$ such that an edge $(v,u)$ belongs to $\E_{\ell}$ if the connectivity measure of $(v,u)$ is sufficiently small. 
-%Since the connectivity measure $\mu$ is usually a global quantity, i
-If we connect all pairs of nodes with low $\mu$-value, however, we might end up adding non-local edges across distant nodes, hence quickly corrupting the %partial ordering provided by 
-locality of $\gph$. To avoid this, %preserve the locality of the graph encoded in the measure $\nu$, we then
-we {\em constrain} each rewiring by requiring the measure $\nu$ to take values in a certain range $\mathcal{I}_\ell\subset[0,\infty)$: an edge $(v,u)$ appears in the $\ell$-snapshot (for $1\leq \ell \leq L$) according to the following rule:
-\begin{equation}\label{eq:local_constraint}
-(v,u)\in \E_{\ell} \,\, \text{if} \,\, \Big(\mu_{\gph_0}(v,u) < \epsilon \,\,\, \mathrm{and} \,\,\, \nu_{\gph_0}(v,u)\in\mathcal{I}_{\ell} \Big) \,\,\,  \mathrm{or} \,\,\, (v,u)\in\E_{\ell-1}. 
-\end{equation}
-To make the rewiring more efficient, the connectivity and locality measures are computed {\em once} over the input graph $\gph_0$. Since the edges to be added connect nodes with low $\mu$-values, the rewiring makes the graphs $\gph_\ell$ friendlier to message-passing as $\ell$ grows. Moreover, by taking increasing ranges of values for the intervals $\mathcal{I}_{\ell}$, we make sure that new edges connect distant nodes, as specified by $\nu$, only at later snapshots. %with respect to the input graph topology. 
-Sequential rewiring allows us to interpolate between the given graph and one with better connectivity, creating intermediate snapshots that {\em progressively} add non-local edges. By accounting for all the snapshots $\gph_\ell$ in \eqref{eq:mpnn_rewiring}, the GNN can access both the input graph, and more connected ones, %and an increasingly better sequence of message-passing templates %$\gph_{\ell}$ so that nodes $v,u$ that are distant, i.e. such that $\delta(v,u)$ is large, can at most interact directly only at the later snapshots. In particular, 
-%through the different aggregations maps $\agg_{\gph_\ell}$, %the GNN is endowed with the ability to separate local contributions from non-local ones,
-at a much {\em finer level} than `instantaneous' rewirings, defined next. 
-
-
-
-
-\clearpage
-
-\section{Locality Aware Sequential Rewiring}\label{sec:laser}
-
+\subsection{Jacobian sensitivity}
 
 \[
 \begin{tikzpicture}[
@@ -909,155 +808,202 @@ Now we plug this into our expression:
 \sqrt{\frac{d_j}{d_u}}
 \end{aligned}
 \]
-So the exact identity is:
-\[
-\boxed{
+So
+\begin{equation}\label{eq:laser_ratio_exact}
 \frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
 {\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
 =
 \frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
 \cdot
 \sqrt{\frac{d_j}{d_u}}
-}
-\]
-
-Here we used only:
-\begin{itemize}
-\item the unique-path formula \eqref{eq:multi_hop_propagation_single_path} from \autoref{cor:multi_hop_propagation_single_path}
-\item simple factor cancellation in the product of degrees
-\end{itemize}
+\end{equation}
 
 
-
-
-
-
-\paragraph{Where do inequalities come in?}
-
-Now, the paper wants a lower bound of the form
-\[
-\frac{\|\tilde J\|}{\|J\|}
-\;\ge\;
-\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
-\]
-
-Given the exact expression above, there are two “places” where inequalities must be used:
-
-(i) Bounding the first factor from below using \(d_{\min}\)
-Recall
+Using
 \[
 (\hat{\matr{A}}_{\ell-1})_{vj} = \frac{1}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}
 \]
 and
 \[
 \frac{1}{\sqrt{d_v d_u}}\prod_{s=1}^{\ell-1} \frac{1}{d_{u_s}}
-\;\le\;
-\frac{1}{d_{\min}^\ell},
+\le
+\frac{1}{d_{\min}^\ell}
 \]
-because each degree in the product is \(\ge d_{\min}\).
-
-Thus
-\[
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
-{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
-\;\ge\;
-\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}},
-\]
-and this step is valid and uses only:
-\begin{itemize}
-\item definition of \(\hat{\matr{A}}_{\ell-1}\),
-\item definition of \(d_{\min}\),
-\item the trivial inequality \(d_v, d_u, d_{u_s} \ge d_{\min}\).
-\end{itemize}
-
-You can safely annotate this as
-\[
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
-{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
-\;\overset{d_{u_s}\ge d_{\min}}{\ge}\;
-\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
-\]
-
-(ii) What about the factor \(\sqrt{d_j/d_u}\)?
-From the exact expression we got
-\[
-\frac{\|\tilde J\|}{\|J\|}
-=
-\left(
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}
-{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
-\right)
-\cdot
-\sqrt{\frac{d_j}{d_u}}.
-\]
-
-To get
-\[
-\frac{\|\tilde J\|}{\|J\|}
-\;\ge\;
-\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}},
-\]
-you would need
-\[
-\sqrt{\frac{d_j}{d_u}} \;\ge\; 1
-\quad\Longleftrightarrow\quad
-d_j \ge d_u.
-\]
-
-But the proposition does not assume any monotonicity or ordering of degrees along the path, so in general this inequality is not guaranteed. 
-We only know both degrees are \(\ge d_{\min}\), which does not imply \(d_j \ge d_u\) or vice versa.
-
-So:
-\begin{itemize}
-\item the step where the paper effectively “drops” the \(\sqrt{d_j/d_u}\) factor and keeps only the first piece is not justified without a further assumption like \(d_j \ge d_u\),
-\item the part using \(d_{\min}\) on the first factor is fine.
-\end{itemize}
-
-
-\paragraph{Summary}
-
-I’d suggest you keep the algebra honest and then add a remark about the gap. For example:
-\begin{align}
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
-     {\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
-&=
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
-\cdot
-\frac{(\hat{\matr{A}}^{r-\ell})_{ju}}{\prod_{s = \ell}^{r-1}\frac{1}{d_{u_s}}} \\
-&\overset{\text{\eqref{eq:multi_hop_propagation_single_path}}}{=}
-\frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
-\cdot
-\sqrt{\frac{d_j}{d_u}}. \label{eq:laser_ratio_exact}
-\end{align}
-
-Using $d_{u_s} \ge d_{\min}$ and the definition
-$(\hat{\matr{A}}_{\ell-1})_{vj} = 1/\sqrt{d_{v,\ell-1} d_{j,\ell-1}}$,
-we obtain the valid bound
+we obtain the bound
 \begin{equation}\label{eq:laser_ratio_first_factor_bound}
 \frac{(\hat{\matr{A}}_{\ell-1})_{vj}}{\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{\ell-1}\frac{1}{d_{u_s}}}
 \;\ge\;
-\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}.
+\frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}
 \end{equation}
+
+
 Combining \eqref{eq:laser_ratio_exact} and
 \eqref{eq:laser_ratio_first_factor_bound} yields
-\[
+\begin{equation}\label{eq:laser_ratio_final_bound}
+\boxed{
 \frac{(\hat{\matr{A}}_{\ell-1})_{vj}(\hat{\matr{A}}^{r-\ell})_{ju}}
      {\frac{1}{\sqrt{d_v d_u}}\prod_{s = 1}^{r-1}\frac{1}{d_{u_s}}}
-\;\ge\;
+\ge
 \frac{(d_{\min})^\ell}{\sqrt{d_{v,\ell-1} d_{j,\ell-1}}}
 \cdot
-\sqrt{\frac{d_j}{d_u}}.
-\]
-Note that to drop the factor $\sqrt{d_j/d_u}$ and recover exactly the inequality
-stated in the paper, one would need an additional assumption such as $d_j \ge d_u$,
-which is not part of the proposition as written.
+\sqrt{\frac{d_j}{d_u}}
+}
+\end{equation}
 
-You’ve then:
-\begin{itemize}
-	\item justified all equalities from your earlier definitions,
-	\item explained exactly which inequality uses \(d_{\min}\),
-	\item and isolated the subtle gap in the original proof into a clearly stated extra assumption.
-\end{itemize}
+
+
+
+\subsection{Locality awareness}
+
+
+
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.5,
+  vertex/.style={
+    circle,
+    draw,
+    fill=green!40,
+    minimum size=10pt,
+    inner sep=0
+  },
+  measure/.style={
+    |-|,
+    >=stealth
+  }
+]
+
+\def\zLocation{10cm}
+\def\cliqueRadius{2.5cm}
+\coordinate (cliqueCenter) at ($(\zLocation,0) + (\cliqueRadius,0)$);
+
+\node[circle, draw, dashed, fill=blue!20, minimum size=\cliqueRadius, inner sep=0pt] (clique) at (cliqueCenter) {};
+\node at (cliqueCenter) {$|\texttt{clique}| = n$};
+
+
+\node[vertex, label={[anchor=base, label distance=7pt]below:{$v$}}] (v) at (0, 0) {};
+\node[vertex, label={[anchor=base, label distance=7pt]below:{$z'$}}] (zprime) at ($(\zLocation,0) - (0.2*\zLocation,0)$) {};
+\node[vertex, label={[anchor=base, label distance=7pt, xshift=-6pt, yshift=3]below:{$z$}}] (z) at (\zLocation, 0) {};
+
+\draw[] (v) -- ($(v)!1/5!(zprime)$);
+\draw[dotted] ($(v)!1/5!(zprime)$) -- ($(v)!4/5!(zprime)$);
+\draw[] ($(v)!4/5!(zprime)$) -- (zprime);
+
+\draw[] (zprime) -- (z);
+
+\def\offset{-0.5cm};
+\draw[measure] ($(v) + (0, -1) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$L$} ($(z) + (0, -1) + (0, \offset)$);
+\end{tikzpicture}
+\]
+
+
+
+
+
+
+
+
+\subsection{message passing paradigm}
+
+We consider the case where each node $v$ has a feature $\vect{x}_{v}^{(0)} \in \R^{d}$. 
+It is common to stack the node features into a matrix $\matr{X}^{(0)} \in \R^{n \times d}$ consistently with the ordering of $\matr{A}$. 
+\glspl{gnn} are functions defined on the featured graph that can output node, edge, or graph-level values. %$\phib: (G, \Xb^{(0)}) \mapsto \Xb^{(T)}$, with $T$ denoting the number of layers of the GNN and $\Xb^{(T)} \in \R^{n \times d_T}$. 
+The most common family of \gls{gnn} architectures are \glspl{mpnn}, which compute latent node representations by stacking $T$ layers of the form:
+\begin{align}\label{eq:mpnn_update}
+{\color{Red}\boxed{\color{black}
+\vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)}, \agg^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}))
+}}
+\end{align}
+\noindent for $t = 1,\hdots, T$, where  $\agg^{(t)}$ is some permutation-invariant \emph{aggregation} function, while $\up^{(t)}$ \emph{updates} the node's current state with aggregated messages from its neighbors.
+
+
+\subsection{over-squashing and long-range interactions} 
+While the message-passing paradigm usually constitutes a strong inductive bias, it is problematic for capturing long-range interactions due to a phenomenon known as \emph{over-squashing}. %One issue is characterized by over-squashing. 
+Given two nodes $u, v$ at distance $d_{G}(u, v) = r$, an \gls{mpnn} will require $T \geq r$ layers to exchange messages between them. 
+When the receptive fields of the nodes expand too quickly (due to volume growth properties characteristic of many real-world scale free graphs), 
+the \gls{mpnn} needs to aggregate a large number of messages into fixed-size vectors, leading to some corruption of the information. 
+This effect on the propagation of information has been related to the Jacobian of node features decaying exponentially with $r$. %the upper bound on the Jacobian  $\|\partial\vect{x}_{v}^{(T)}/ \partial\vect{x}_{u}^{(0)}\|$ decaying exponentially with $r$ 
+More recently, it was shown that the Jacobian is affected by topological properties such as \nameref{def:effective_resistance}. % which can then be taken as indicators of whether and where over-squashing may manifest itself.  %black2023understanding, di2023over}. Over-squashing is particularly relevant when the graph presents `bottlenecks', which may be identified via edges that have high negative curvature \cite{topping2021understanding}.
+
+
+
+
+
+
+\subsection{graph rewiring}
+
+The main principle behind graph rewiring in \glspl{gnn} is to decouple the input graph $G$ from the computational one.
+ Namely, \emph{rewiring} consists of applying an operation $\mathcal{R}$ to 
+$G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{R}({E}))$ on the same vertices but with altered connectivity. We begin by generalizing the \gls{mpnn} formalism to account for the rewiring operation $\mathcal{R}$ as follows:
+\begin{equation}\label{eq:mpnn_rewiring}
+    {\color{Red}\boxed{\color{black}
+    \vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)},\agg_G^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}), \agg_{\mathcal{R}(G)}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \mathcal{R}(E)\}))
+    }}
+\end{equation}
+where a node feature is now updated based on information collected over the input graph $G$ and the rewired one $\mathcal{R}(G)$, through (potentially) independent aggregation maps. 
+Many rewiring-based \gls{gnn} models simply exchange messages over $\mathcal{R}(G)$, i.e., they take $\agg_G = 0$. 
+%We now review existing rewiring methods. % describing their limitations and finally, providing a list of desiderata that a rewiring strategy should satisfy. 
+The idea of rewiring 
+the graph is implicit to many \glspl{gnn}, from using Cayley graphs, to virtual nodes and cellular complexes. 
+Other works have studied the implications of \emph{directly} changing the connectivity of the graph to de-noise it, or to explore multi-hop aggregations. 
+Ever since over-squashing was identified as an issue in \glspl{mpnn}, several novel rewiring approaches have been proposed to mitigate this phenomenon. 
+
+%We distinguishes two classes, and later discuss main limitations thereof.
+
+
+
+
+
+\section{A general paradigm: dynamic rewiring with local constraints}\label{sec:general_framework}
+
+
+\textbf{Main idea.} 
+Our main contribution is a novel paradigm for graph rewiring that satisfies criteria (i)--(iii), leveraging a key principle: 
+instead of considering a {\em single} rewired graph $\mathcal{R}(\gph)$, we use a {\em sequence} of rewired graphs $\{\mathcal{R}_\ell(\gph)\}_\ell$ such that for smaller $\ell$, 
+the new edges added in $\mathcal{R}_\ell(\gph)$ are more `local' (with respect to the input graph $\gph$) and sampled based on optimizing a connectivity measure. 
+%We then study an instance of this paradigm, giving rise to the {\bf L}ocality {\bf A}ware {\bf SE}quential {\bf R}ewiring ({\bf LASER}) framework.
+
+
+
+In this Section, we discuss a general graph-rewiring paradigm that can enhance any MPNN and satisfies the criteria (i)--(iii) described above. 
+%In light of the analysis on the limitations of existing rewiring strategies, we argue that the only way of accommodating the conditions (i)--(iii) consists in replacing the single rewiring $\mathcal{R}$ with a sequence of rewiring $\{\mathcal{R}_\ell\}$. Namely, 
+Given a graph $\gph$, consider a trajectory of rewiring operations $\mathcal{R}_\ell$, starting at $\gph_0 = \gph$, of the form: 
+%and ending at an `ideal' graph $\gph_*$:
+\begin{equation}\label{eq:sequence_rewiring}
+\gph = \gph_0 \xhookrightarrow[]{\mathcal{R}_1} \gph_1 \xhookrightarrow[]{\mathcal{R}_2} \cdots \xhookrightarrow[]{\mathcal{R}_{L}} \gph_L
+\end{equation}
+Since we think of $\gph_\ell$ as the input graph evolved along a dynamical process for $\ell$ iterations, we refer to $\gph_\ell$ as the $\ell$-{\em snapshot}. % at time (step) $\ell$. 
+For the sake of simplicity, we assume $\mathcal{R}_\ell = \mathcal{R}$, though it is straightforward to extend the discussion below to the more general case. In order to account for the multiple snapshots, we modify the layer form in \eqref{eq:mpnn_rewiring} as
+\begin{equation}\label{eq:sequence_rewiring_mpnn}
+    {\color{Red}\boxed{\color{black}
+    \vect{x}_{v}^{(t)} = \up^{(t)}\Big(\vect{x}_{v}^{(t-1)},\Big(\agg_{\gph_\ell}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \E_\ell\})\Big)_{0\leq\ell\leq L}\Big)
+    }}
+\end{equation}
+where, instead of aggregating messages over a single rewired graph, we now consider all the snapshots $\gph_\ell$ in the sequence.
+
+Below we describe a rewiring paradigm based on an arbitrary \textbf{\em connectivity measure} $\mu: \V \times \V \to \R$ and \textbf{\em locality measure} $\nu: \V \times \V \to \mathbb{R}$. The measure $\mu$ can be any topological quantity that captures how easily different pairs of nodes can communicate in a graph, while the measure $\nu$ is any quantity that penalizes interactions among nodes that are `distant' according to some metric on the input graph. In a nutshell, our choice of $\mathcal{R}$ {\em samples edges to add according to the constraint $\nu$, prioritizing those that maximally benefit the measure $\mu$.} By keeping this generality, we provide a universal approach to do graph-rewiring that can be of interest independently of the specific choices of $\mu$ and $\nu$.
+%
+
+
+ %, and thus the robustness of the graph topology to over-squashing as per \cite{black2023understanding,di2023over}.
+%
+%The locality measure instead is meant to favor connecting nodes that are closer in the input graph. %We first describe an approach to graph-rewiring that works with any choice of connectivity and locality measures; then, we will pick up two specific measures $\mu$ and $\delta$ and describe a specific instance of such framework termed \textbf{LASER}.
+\paragraph{Improving connectivity while preserving locality.} The first property we demand of the rewiring sequence is that %the chosen connectivity measure increases along the different snapshots, i.e., 
+for all nodes $v,u$, we have $\mu_{\gph_{\ell+1}}(v,u) \geq \mu_{\gph_{\ell}}(v,u)$ and that for {\em some} nodes, the inequality is {\em strict}. %A simple way to implement this procedure is to define $\mathcal{R}$ such that an edge $(v,u)$ belongs to $\E_{\ell}$ if the connectivity measure of $(v,u)$ is sufficiently small. 
+%Since the connectivity measure $\mu$ is usually a global quantity, i
+If we connect all pairs of nodes with low $\mu$-value, however, we might end up adding non-local edges across distant nodes, hence quickly corrupting the %partial ordering provided by 
+locality of $\gph$. To avoid this, %preserve the locality of the graph encoded in the measure $\nu$, we then
+we {\em constrain} each rewiring by requiring the measure $\nu$ to take values in a certain range $\mathcal{I}_\ell\subset[0,\infty)$: an edge $(v,u)$ appears in the $\ell$-snapshot (for $1\leq \ell \leq L$) according to the following rule:
+\begin{equation}\label{eq:local_constraint}
+(v,u)\in \E_{\ell} \,\, \text{if} \,\, \Big(\mu_{\gph_0}(v,u) < \epsilon \,\,\, \mathrm{and} \,\,\, \nu_{\gph_0}(v,u)\in\mathcal{I}_{\ell} \Big) \,\,\,  \mathrm{or} \,\,\, (v,u)\in\E_{\ell-1}. 
+\end{equation}
+To make the rewiring more efficient, the connectivity and locality measures are computed {\em once} over the input graph $\gph_0$. Since the edges to be added connect nodes with low $\mu$-values, the rewiring makes the graphs $\gph_\ell$ friendlier to message-passing as $\ell$ grows. Moreover, by taking increasing ranges of values for the intervals $\mathcal{I}_{\ell}$, we make sure that new edges connect distant nodes, as specified by $\nu$, only at later snapshots. %with respect to the input graph topology. 
+Sequential rewiring allows us to interpolate between the given graph and one with better connectivity, creating intermediate snapshots that {\em progressively} add non-local edges. By accounting for all the snapshots $\gph_\ell$ in \eqref{eq:mpnn_rewiring}, the GNN can access both the input graph, and more connected ones, %and an increasingly better sequence of message-passing templates %$\gph_{\ell}$ so that nodes $v,u$ that are distant, i.e. such that $\delta(v,u)$ is large, can at most interact directly only at the later snapshots. In particular, 
+%through the different aggregations maps $\agg_{\gph_\ell}$, %the GNN is endowed with the ability to separate local contributions from non-local ones,
+at a much {\em finer level} than `instantaneous' rewirings, defined next. 
+
+
 
 
 \end{document}
