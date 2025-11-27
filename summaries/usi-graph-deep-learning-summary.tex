@@ -906,10 +906,10 @@ Combining \eqref{eq:laser_ratio_exact} and
 
 \subsection{message passing paradigm}
 
-We consider the case where each node $v$ has a feature $\vect{x}_{v}^{(0)} \in \R^{d}$. 
-It is common to stack the node features into a matrix $\matr{X}^{(0)} \in \R^{n \times d}$ consistently with the ordering of $\matr{A}$. 
-\glspl{gnn} are functions defined on the featured graph that can output node, edge, or graph-level values. %$\phib: (G, \Xb^{(0)}) \mapsto \Xb^{(T)}$, with $T$ denoting the number of layers of the GNN and $\Xb^{(T)} \in \R^{n \times d_T}$. 
-The most common family of \gls{gnn} architectures are \glspl{mpnn}, which compute latent node representations by stacking $T$ layers of the form:
+% We consider the case where each node $v$ has a feature $\vect{x}_{v}^{(0)} \in \R^{d}$. 
+% It is common to stack the node features into a matrix $\matr{X}^{(0)} \in \R^{n \times d}$ consistently with the ordering of $\matr{A}$. 
+% \glspl{gnn} are functions defined on the featured graph that can output node, edge, or graph-level values. %$\phib: (G, \Xb^{(0)}) \mapsto \Xb^{(T)}$, with $T$ denoting the number of layers of the GNN and $\Xb^{(T)} \in \R^{n \times d_T}$. 
+A common \gls{gnn} family are \glspl{mpnn}, which compute latent node representations by stacking $T$ layers of the form
 \begin{align}\label{eq:mpnn_update}
 {\color{Red}\boxed{\color{black}
 \vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)}, \agg^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}))
@@ -935,7 +935,9 @@ More recently, it was shown that the Jacobian is affected by topological propert
 
 The main principle behind graph rewiring in \glspl{gnn} is to decouple the input graph $G$ from the computational one.
  Namely, \emph{rewiring} consists of applying an operation $\mathcal{R}$ to 
-$G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{R}({E}))$ on the same vertices but with altered connectivity. We begin by generalizing the \gls{mpnn} formalism to account for the rewiring operation $\mathcal{R}$ as follows:
+$G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{R}({E}))$ on the same vertices but with altered connectivity. 
+
+We begin by generalizing the \gls{mpnn} formalism to account for the rewiring operation $\mathcal{R}$ as follows:
 \begin{equation}\label{eq:mpnn_rewiring}
     {\color{Red}\boxed{\color{black}
     \vect{x}_{v}^{(t)} = \up^{(t)}(\vect{x}_{v}^{(t-1)},\agg_G^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in E\}), \agg_{\mathcal{R}(G)}^{(t)}(\{\vect{x}_{u}^{(t-1)}: (v,u)\in \mathcal{R}(E)\}))
@@ -943,10 +945,10 @@ $G = ({V}, {E})$, thereby producing a new graph $\mathcal{R}(G) = ({V},\mathcal{
 \end{equation}
 where a node feature is now updated based on information collected over the input graph $G$ and the rewired one $\mathcal{R}(G)$, through (potentially) independent aggregation maps. 
 Many rewiring-based \gls{gnn} models simply exchange messages over $\mathcal{R}(G)$, i.e., they take $\agg_G = 0$. 
+
 %We now review existing rewiring methods. % describing their limitations and finally, providing a list of desiderata that a rewiring strategy should satisfy. 
-The idea of rewiring 
-the graph is implicit to many \glspl{gnn}, from using Cayley graphs, to virtual nodes and cellular complexes. 
-Other works have studied the implications of \emph{directly} changing the connectivity of the graph to de-noise it, or to explore multi-hop aggregations. 
+% The idea of rewiring the graph is implicit to many \glspl{gnn}, from using Cayley graphs, to virtual nodes and cellular complexes. 
+% Other works have studied the implications of \emph{directly} changing the connectivity of the graph to de-noise it, or to explore multi-hop aggregations. 
 Ever since over-squashing was identified as an issue in \glspl{mpnn}, several novel rewiring approaches have been proposed to mitigate this phenomenon. 
 
 %We distinguishes two classes, and later discuss main limitations thereof.
@@ -958,9 +960,9 @@ Ever since over-squashing was identified as an issue in \glspl{mpnn}, several no
 \section{A general paradigm: dynamic rewiring with local constraints}\label{sec:general_framework}
 
 
-\textbf{Main idea.} 
-Our main contribution is a novel paradigm for graph rewiring that satisfies criteria (i)--(iii), leveraging a key principle: 
-instead of considering a {\em single} rewired graph $\mathcal{R}(\gph)$, we use a {\em sequence} of rewired graphs $\{\mathcal{R}_\ell(\gph)\}_\ell$ such that for smaller $\ell$, 
+\paragraph{Main idea} 
+% Our main contribution is a novel paradigm for graph rewiring that satisfies criteria (i)--(iii), leveraging a key principle: 
+Anstead of considering a \emph{single} rewired graph $\mathcal{R}(\gph)$, we use a \emph{sequence} of rewired graphs $\{\mathcal{R}_\ell(\gph)\}_\ell$ such that for smaller $\ell$, 
 the new edges added in $\mathcal{R}_\ell(\gph)$ are more `local' (with respect to the input graph $\gph$) and sampled based on optimizing a connectivity measure. 
 %We then study an instance of this paradigm, giving rise to the {\bf L}ocality {\bf A}ware {\bf SE}quential {\bf R}ewiring ({\bf LASER}) framework.
 
@@ -973,7 +975,7 @@ Given a graph $\gph$, consider a trajectory of rewiring operations $\mathcal{R}_
 \begin{equation}\label{eq:sequence_rewiring}
 \gph = \gph_0 \xhookrightarrow[]{\mathcal{R}_1} \gph_1 \xhookrightarrow[]{\mathcal{R}_2} \cdots \xhookrightarrow[]{\mathcal{R}_{L}} \gph_L
 \end{equation}
-Since we think of $\gph_\ell$ as the input graph evolved along a dynamical process for $\ell$ iterations, we refer to $\gph_\ell$ as the $\ell$-{\em snapshot}. % at time (step) $\ell$. 
+Since we think of $\gph_\ell$ as the input graph evolved along a dynamical process for $\ell$ iterations, we refer to $\gph_\ell$ as the $\ell$-\emph{snapshot}. % at time (step) $\ell$. 
 For the sake of simplicity, we assume $\mathcal{R}_\ell = \mathcal{R}$, though it is straightforward to extend the discussion below to the more general case. In order to account for the multiple snapshots, we modify the layer form in \eqref{eq:mpnn_rewiring} as
 \begin{equation}\label{eq:sequence_rewiring_mpnn}
     {\color{Red}\boxed{\color{black}
@@ -982,26 +984,32 @@ For the sake of simplicity, we assume $\mathcal{R}_\ell = \mathcal{R}$, though i
 \end{equation}
 where, instead of aggregating messages over a single rewired graph, we now consider all the snapshots $\gph_\ell$ in the sequence.
 
-Below we describe a rewiring paradigm based on an arbitrary \textbf{\em connectivity measure} $\mu: \V \times \V \to \R$ and \textbf{\em locality measure} $\nu: \V \times \V \to \mathbb{R}$. The measure $\mu$ can be any topological quantity that captures how easily different pairs of nodes can communicate in a graph, while the measure $\nu$ is any quantity that penalizes interactions among nodes that are `distant' according to some metric on the input graph. In a nutshell, our choice of $\mathcal{R}$ {\em samples edges to add according to the constraint $\nu$, prioritizing those that maximally benefit the measure $\mu$.} By keeping this generality, we provide a universal approach to do graph-rewiring that can be of interest independently of the specific choices of $\mu$ and $\nu$.
+Below we describe a rewiring paradigm based on an arbitrary \emph{connectivity measure} $\mu: \V \times \V \to \R$ and \emph{locality measure} $\nu: \V \times \V \to \mathbb{R}$. 
+The measure $\mu$ can be any topological quantity that captures how easily different pairs of nodes can communicate in a graph, while the measure $\nu$ is any quantity that penalizes interactions among nodes that are `distant' according to some metric on the input graph. 
+% In a nutshell, our choice of $\mathcal{R}$ \emph{samples edges to add according to the constraint $\nu$, prioritizing those that maximally benefit the measure $\mu$.} By keeping this generality, we provide a universal approach to do graph-rewiring that can be of interest independently of the specific choices of $\mu$ and $\nu$.
 %
 
 
  %, and thus the robustness of the graph topology to over-squashing as per \cite{black2023understanding,di2023over}.
 %
 %The locality measure instead is meant to favor connecting nodes that are closer in the input graph. %We first describe an approach to graph-rewiring that works with any choice of connectivity and locality measures; then, we will pick up two specific measures $\mu$ and $\delta$ and describe a specific instance of such framework termed \textbf{LASER}.
-\paragraph{Improving connectivity while preserving locality.} The first property we demand of the rewiring sequence is that %the chosen connectivity measure increases along the different snapshots, i.e., 
-for all nodes $v,u$, we have $\mu_{\gph_{\ell+1}}(v,u) \geq \mu_{\gph_{\ell}}(v,u)$ and that for {\em some} nodes, the inequality is {\em strict}. %A simple way to implement this procedure is to define $\mathcal{R}$ such that an edge $(v,u)$ belongs to $\E_{\ell}$ if the connectivity measure of $(v,u)$ is sufficiently small. 
+\paragraph{Improving connectivity while preserving locality} 
+The first property we demand of the rewiring sequence is that %the chosen connectivity measure increases along the different snapshots, i.e., 
+for all nodes $v,u$, we have $\mu_{\gph_{\ell+1}}(v,u) \geq \mu_{\gph_{\ell}}(v,u)$ and that for \emph{some} nodes, the inequality is \emph{strict}. %A simple way to implement this procedure is to define $\mathcal{R}$ such that an edge $(v,u)$ belongs to $\E_{\ell}$ if the connectivity measure of $(v,u)$ is sufficiently small. 
 %Since the connectivity measure $\mu$ is usually a global quantity, i
 If we connect all pairs of nodes with low $\mu$-value, however, we might end up adding non-local edges across distant nodes, hence quickly corrupting the %partial ordering provided by 
 locality of $\gph$. To avoid this, %preserve the locality of the graph encoded in the measure $\nu$, we then
-we {\em constrain} each rewiring by requiring the measure $\nu$ to take values in a certain range $\mathcal{I}_\ell\subset[0,\infty)$: an edge $(v,u)$ appears in the $\ell$-snapshot (for $1\leq \ell \leq L$) according to the following rule:
+we \emph{constrain} each rewiring by requiring the measure $\nu$ to take values in a certain range $\mathcal{I}_\ell\subset[0,\infty)$: an edge $(v,u)$ appears in the $\ell$-snapshot (for $1\leq \ell \leq L$) according to the following rule:
 \begin{equation}\label{eq:local_constraint}
 (v,u)\in \E_{\ell} \,\, \text{if} \,\, \Big(\mu_{\gph_0}(v,u) < \epsilon \,\,\, \mathrm{and} \,\,\, \nu_{\gph_0}(v,u)\in\mathcal{I}_{\ell} \Big) \,\,\,  \mathrm{or} \,\,\, (v,u)\in\E_{\ell-1}. 
 \end{equation}
-To make the rewiring more efficient, the connectivity and locality measures are computed {\em once} over the input graph $\gph_0$. Since the edges to be added connect nodes with low $\mu$-values, the rewiring makes the graphs $\gph_\ell$ friendlier to message-passing as $\ell$ grows. Moreover, by taking increasing ranges of values for the intervals $\mathcal{I}_{\ell}$, we make sure that new edges connect distant nodes, as specified by $\nu$, only at later snapshots. %with respect to the input graph topology. 
-Sequential rewiring allows us to interpolate between the given graph and one with better connectivity, creating intermediate snapshots that {\em progressively} add non-local edges. By accounting for all the snapshots $\gph_\ell$ in \eqref{eq:mpnn_rewiring}, the GNN can access both the input graph, and more connected ones, %and an increasingly better sequence of message-passing templates %$\gph_{\ell}$ so that nodes $v,u$ that are distant, i.e. such that $\delta(v,u)$ is large, can at most interact directly only at the later snapshots. In particular, 
+To make the rewiring more efficient, the connectivity and locality measures are computed \emph{once} over the input graph $\gph_0$.
+Since the edges to be added connect nodes with low $\mu$-values, the rewiring makes the graphs $\gph_\ell$ friendlier to message-passing as $\ell$ grows. 
+Moreover, by taking increasing ranges of values for the intervals $\mathcal{I}_{\ell}$, we make sure that new edges connect distant nodes, as specified by $\nu$, only at later snapshots. %with respect to the input graph topology. 
+% Sequential rewiring allows us to interpolate between the given graph and one with better connectivity, creating intermediate snapshots that \emph{progressively} add non-local edges. 
+By accounting for all the snapshots $\gph_\ell$ in \eqref{eq:mpnn_rewiring}, the GNN can access both the input graph, and more connected ones, %and an increasingly better sequence of message-passing templates %$\gph_{\ell}$ so that nodes $v,u$ that are distant, i.e. such that $\delta(v,u)$ is large, can at most interact directly only at the later snapshots. In particular, 
 %through the different aggregations maps $\agg_{\gph_\ell}$, %the GNN is endowed with the ability to separate local contributions from non-local ones,
-at a much {\em finer level} than `instantaneous' rewirings, defined next. 
+at a much \emph{finer level} than `instantaneous' rewirings, defined next. 
 
 
 
