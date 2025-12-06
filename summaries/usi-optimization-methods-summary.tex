@@ -78,7 +78,8 @@
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
-\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+\definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
 
 \usepackage{thmtools}
 
@@ -432,13 +433,17 @@ The \LaTeX{} source is also available there.
 
 \doclicenseThis
 
-% ----- Keep the following commands unchanged -------------------
+% % this will cause an infinite loop:
+% \newcommand{\emphoriginal}[1]{\emph{#1}}
+% \renewcommand{\emph}[1]{\textcolor{black}{#1}}
+% \printbibliography[heading=bibintoc,title={References}]
+% \renewcommand{\emph}[1]{\emphoriginal{#1}} % Now you'd think we are restoring the original. BUT \emphoriginal EXPANDS TO \emph INSIDE ITS BODY. And you just redefined \emph to call \emphoriginal. So: \emph → \emphoriginal → \emph → \emphoriginal → ...
+
+% correct way:
+\let\emphoriginal\emph           % save original meaning
 \renewcommand{\emph}[1]{\textcolor{black}{#1}}
 \printbibliography[heading=bibintoc,title={References}]
-\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
-
-
-
+\let\emph\emphoriginal           % restore original meaning
 
 
 
