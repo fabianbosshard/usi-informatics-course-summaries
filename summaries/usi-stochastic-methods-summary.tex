@@ -52,7 +52,8 @@
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
-\renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+\definecolor{highlightpurple}{rgb}{0.5, 0.0, 0.5}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
 
 
 \usepackage{thmtools}
@@ -219,7 +220,7 @@ The \LaTeX{} source is also available there.
 \clearpage
 \pagenumbering{arabic}
 \section{Random Numbers}
-A \textit{random number} is an unpredictable value generated independently of other numbers, lacking any discernible pattern.
+A \emph{random number} is an unpredictable value generated independently of other numbers, lacking any discernible pattern.
 
 \subsection{Random Number Generators}
 
@@ -230,23 +231,23 @@ A \textit{random number} is an unpredictable value generated independently of ot
     \]
     where:
     \begin{itemize}[before={\parskip=0pt}, nosep]
-        \item $S$ is the \textit{seed space} (a finite set of initial states). A seed \(s \in S\) is used to initialize the RNG.
-        \item $T$ is the \textit{target space} (typically the interval $[0,1)$ or a set of integers).
+        \item $S$ is the \emph{seed space} (a finite set of initial states). A seed \(s \in S\) is used to initialize the RNG.
+        \item $T$ is the \emph{target space} (typically the interval $[0,1)$ or a set of integers).
         \item The function $R$ maps each seed $s \in S$ to a target $u \in T$ in a manner that appears random. \qedhere
     \end{itemize}
 \end{definition}
 
 A high-quality random number generator should have the following properties:
     \begin{itemize}[before={\parskip=0pt}, nosep]
-        \item \textbf{Unpredictability}: Future values cannot be deduced without knowing the seed and algorithm.
-        \item \textbf{Reproducibility}: Given the same seed, the RNG should produce the same sequence of numbers.
-        \item \textbf{Representation of True Randomness}: All outcomes have an equitable chance.
-        \item \textbf{Long period}: The sequence of numbers should be long before repeating.
-        \item \textbf{Efficiency}: The RNG should generate numbers quickly.
+        \item \emph{Unpredictability}: Future values cannot be deduced without knowing the seed and algorithm.
+        \item \emph{Reproducibility}: Given the same seed, the RNG should produce the same sequence of numbers.
+        \item \emph{Representation of True Randomness}: All outcomes have an equitable chance.
+        \item \emph{Long period}: The sequence of numbers should be long before repeating.
+        \item \emph{Efficiency}: The RNG should generate numbers quickly.
     \end{itemize}
 
 \begin{example}
-    The \textit{linear congruential generator} generates a sequence of random numbers via the following linear recurrence relation:
+    The \emph{linear congruential generator} generates a sequence of random numbers via the following linear recurrence relation:
     \[
     X_{n+1}=\left(a X_{n}+c\right) \bmod m
     \]
@@ -254,18 +255,18 @@ A high-quality random number generator should have the following properties:
     \begin{itemize}[before={\parskip=0pt}, nosep]
         \item $X_{n+1}$ is the next number in the sequence.
         \item $X_{n}$ is the current number.
-        \item $a, c$, and $m$ are constants, known as the \textit{multiplier}, \textit{increment}, and \textit{modulus}, respectively.
+        \item $a, c$, and $m$ are constants, known as the \emph{multiplier}, \emph{increment}, and \emph{modulus}, respectively.
         \item mod denotes the modulus operation.
         \item The initial or seed value $X_{0}=S$ is required to start the sequence. \qedhere
     \end{itemize}
 \end{example}
 
 \begin{example}
-    The \textit{PCG64 RNG} is the default generator in newer versions of NumPy. 
+    The \emph{PCG64 RNG} is the default generator in newer versions of NumPy. 
     It combines a 128-bit lLCG with an output permutation to produce high-quality 64-bit pseudorandom numbers. 
     The algorithm proceeds in two main stages:
     \begin{enumerate}
-        \item \textbf{State Update}: The 128-bit state $s_{n}$ is updated via the LCG:
+        \item \emph{State Update}: The 128-bit state $s_{n}$ is updated via the LCG:
         \[
         s_{n+1}=\left(s_{n} \cdot a+c\right) \bmod 2^{128},
         \]
@@ -274,7 +275,7 @@ A high-quality random number generator should have the following properties:
             \item $a$ is a carefully chosen 128-bit multiplier,
             \item $c$ is a 128-bit odd increment (ensuring a full period).
         \end{itemize}
-        \item \textbf{Output Permutation}: A permutation is applied to the updated state to produce the final output.
+        \item \emph{Output Permutation}: A permutation is applied to the updated state to produce the final output.
     \end{enumerate}
     This combination yields high-quality 64-bit pseudorandom numbers that are uniform, independent, and have an extremely long period. 
 \end{example}
@@ -427,7 +428,7 @@ More generally, if there is a measurable mapping
 \[
 \phi: U \rightarrow[0,1],
 \]
-we can define a probability measure $\operatorname{P}_{U}$ on $U$ by \textit{pulling back} $\mu$:
+we can define a probability measure $\operatorname{P}_{U}$ on $U$ by \emph{pulling back} $\mu$:
 \[
 \operatorname{P}_{U}(A)=\mu(\phi(A)),
 \]
@@ -461,7 +462,7 @@ With a probability measure $P$ established on our sample space $U$, we now intro
 % For discrete random variables, the distribution is fully characterized by the function $f_{X}$ defined on $R(X)$.
 
 \begin{definition}[Probability Mass Function]{}
-    Let $X$ be a discrete random variable with range $R(X)$. The \textit{probability mass function} (pmf) of $X$ is the function
+    Let $X$ be a discrete random variable with range $R(X)$. The \emph{probability mass function} (pmf) of $X$ is the function
     \[
     f_{X}: R(X) \rightarrow[0,1]
     \]
@@ -558,7 +559,7 @@ With a probability measure $P$ established on our sample space $U$, we now intro
 % \end{example}
 
 \begin{definition}[Probability Density Function]{}
-For a continuous random variable $X$ with range $R(X) \subseteq \mathbb{R}$, the distribution is described by the \textit{probability density function} (pdf) $f_{X}$. This function is nonnegative and satisfies
+For a continuous random variable $X$ with range $R(X) \subseteq \mathbb{R}$, the distribution is described by the \emph{probability density function} (pdf) $f_{X}$. This function is nonnegative and satisfies
 \[
 \operatorname{P}(a \leq X \leq b)=\int_{a}^{b} f_{X}(x) \mathrm{d} x
 \]
@@ -569,7 +570,7 @@ for any interval $[a, b] \subseteq R(X)$, with the normalization
 \end{definition}
 
 \begin{definition}{Cumulative Distribution Function}{}
-    The \textit{cumulative distribution function} (CDF) of a random variable $X$ is defined by
+    The \emph{cumulative distribution function} (CDF) of a random variable $X$ is defined by
     \[
     F(x)=\operatorname{P}(X \leq x) .
     \]
@@ -1272,7 +1273,7 @@ P((u,v)\in E)=p.
 \end{definition}
 Key properties include:
 \begin{itemize}
-  \item \textbf{Degree Distribution:} In \(G(n,p)\), the degree \(k\) of any node follows a binomial distribution,
+  \item \emph{Degree Distribution:} In \(G(n,p)\), the degree \(k\) of any node follows a binomial distribution,
   \[
   P(k)=\binom{n-1}{k} p^k (1-p)^{n-1-k}.
   \]
@@ -1280,13 +1281,13 @@ Key properties include:
   \[
   P(k)\approx \frac{(np)^k}{k!} \mathrm{e}^{-np}.
   \]
-  \item \textbf{Connectivity and Phase Transition:}
+  \item \emph{Connectivity and Phase Transition:}
   A critical phenomenon occurs at the threshold
   \[
   p_c\approx \frac{\ln(n)}{n},
   \]
   where the graph transitions from having many small disconnected components to containing a single giant component.
-  \item \textbf{Clustering Coefficient:} 
+  \item \emph{Clustering Coefficient:} 
   Because edges are formed independently, the clustering coefficient (the probability that two neighbors of a node are connected) is low, roughly equal to \(p\).
 \end{itemize}
 
@@ -1885,10 +1886,10 @@ A process $\{W_t\}_{t\ge 0}$ is a \emph{standard Brownian motion} if
 
 \paragraph{Key properties.}
 \begin{itemize}[leftmargin=1em]
-  \item \textbf{Martingale:} $\Exp[W_t\mid \mathcal F_s]=W_s$.
-  \item \textbf{Scaling:} $c^{-1/2}W_{ct}$ is again Brownian.
-  \item \textbf{Quadratic variation:} $[W]_t = t$.
-  \item \textbf{Nowhere differentiable:} paths are rough on every scale.
+  \item \emph{Martingale}: $\Exp[W_t\mid \mathcal F_s]=W_s$.
+  \item \emph{Scaling}: $c^{-1/2}W_{ct}$ is again Brownian.
+  \item \emph{Quadratic variation}: $[W]_t = t$.
+  \item \emph{Nowhere differentiable}: paths are rough on every scale.
 \end{itemize}
 
 
