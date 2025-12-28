@@ -665,7 +665,7 @@ Let \(v\) be the \((k+1)^{\text{th}}\) node added to \(S\), and let \((u,v)\) be
 Consider any \(s\)-\(v\) path \(P\):
   \[
 \begin{tikzpicture}[>=Stealth, scale=0.4, font=\footnotesize]
-\useasboundingbox (-3,-2) rectangle (5,2);
+\useasboundingbox (-3,-2.5) rectangle (5,2.5);
 % background blob
 \fill[black!20] plot[smooth cycle,tension=0.7] coordinates {(-3.4,1.5) (-2.0,2.3) (-0.4,2.0) (1.6,2.2) (3.6,1.6) (4.5,0.7) (5.1,-0.2) (4.6,-1.3) (3.2,-2.1) (1.3,-2.3) (-0.6,-2.0) (-2.2,-1.7) (-3.2,-0.8)};
 \node at (-2.75,1.5) {\(S\)};
@@ -685,6 +685,7 @@ Consider any \(s\)-\(v\) path \(P\):
 % \draw (current bounding box.north east) -- (current bounding box.north west) -- (current bounding box.south west) -- (current bounding box.south east) -- cycle; % debugging
 \end{tikzpicture} 
 \]
+
 Let \((x, y)\) be the first edge in \(P\) that leaves \(S\), and let \(P'\) be the subpath to \(x\).
 For the length \(\ell\) of \(P\), we have
 \[

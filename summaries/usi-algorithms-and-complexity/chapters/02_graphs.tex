@@ -305,32 +305,22 @@ Suppose no edge joins two nodes in the same layer.
 Then we can 2-color the graph, e.g. red for odd layers and blue for even layers.
 So \ref{lem:layers_bipartite}.\ref{item:no_edge_same_layer_bipartite} holds.
 
-\begin{minipage}[b]{0.55\textwidth}
 Suppose \((x, y)\) is an edge joining two nodes in the same layer \(L_j\).
 Let 
 \[
 z = \operatorname{lca}(x, y)
 \]
 be the lowest level common ancestor in the \nameref{alg:bfs} tree and let \(L_i\) be the layer of \(z\).
-Consider a cycle that takes edge \((x, y)\), then the path in the \nameref{alg:bfs} tree from \(y\) to \(z\), and then the path in the \nameref{alg:bfs} tree from \(z\) to \(x\).
-The length of this cycle is
+
 \[
-\underbrace{1}_{(x, y)} + \underbrace{(j - i)}_{y \leadsto z} + \underbrace{(j - i)}_{z \leadsto x} = 1 + 2(j - i) 
-\]
-which is odd.
-So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
-\end{minipage}%
-\hfill%
-\begin{minipage}[b]{0.35\textwidth}
-  \centering
-\begin{tikzpicture}[every node/.style={circle,draw,minimum size=5mm,inner sep=0pt},>=stealth, scale=0.7]
+\begin{tikzpicture}[every node/.style={circle,draw,minimum size=3.4mm,inner sep=0pt},>=stealth, scale=0.45, font=\footnotesize]
   % layers
   \usetikzlibrary{shapes.symbols}
   \definecolor{blob}{RGB}{190,190,190}
   \tikzset{
     fixedcloud/.style={
       cloud, cloud puffs=16, cloud puff arc=120,
-      minimum width=4cm, minimum height=1.5cm,
+      minimum width=2.8cm, minimum height=1cm,
       inner sep=0pt, draw=none, fill=blob
     }
   }
@@ -346,19 +336,19 @@ So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
   \node (y) at (2,0) {$y$};
 
   % Edges
-  \draw[rounded corners=4pt] (s) 
-    -- ($($(s)!0.42!(z)$)!0.15!90:(z)$)
-    -- ($($(s)!0.58!(z)$)!0.15!270:(z)$)
+  \draw[rounded corners=2pt] (s) 
+    -- ($($(s)!0.42!(z)$) + ($(s)!0.05!90:(z)$) - (s)$)
+    -- ($($(s)!0.58!(z)$) + ($(s)!0.05!270:(z)$)  - (s)$)
     -- (z);
   \draw (s)  -- ++(-0.1,-0.8);
   \draw (s)  -- ++(-1,-0.7);
-  \draw[rounded corners=4pt] (x) 
-    -- ($($(x)!0.5!(z)$)!0.1!270:(z)$)
-    -- ($($(x)!0.6!(z)$)!0.1!90:(z)$)
-    -- (z);
-  \draw[rounded corners=4pt] (y) 
-    -- ($($(y)!0.4!(z)$)!0.1!90:(z)$)
-    -- ($($(y)!0.5!(z)$)!0.1!270:(z)$)
+\draw[rounded corners=2pt] (x)
+  -- ($($(x)!0.5!(z)$) + ($(x)!0.05!270:(z)$) - (x)$)
+  -- ($($(x)!0.6!(z)$) + ($(x)!0.05!90:(z)$)  - (x)$)
+  -- (z);
+  \draw[rounded corners=2pt] (y) 
+    -- ($($(y)!0.4!(z)$) + ($(y)!0.05!90:(z)$) - (y)$)
+    -- ($($(y)!0.5!(z)$) + ($(y)!0.05!270:(z)$) - (y)$)
     -- (z);
   \draw[red] (x) -- (y);
 
@@ -366,7 +356,14 @@ So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
   \node[draw=none,fill=none,left=8mm of Li] {$L_i$};
   \node[draw=none,fill=none,left=8mm of Lj] {$L_j$};
 \end{tikzpicture}
-\end{minipage}
+\]
+Consider a cycle that takes edge \((x, y)\), then the path in the \nameref{alg:bfs} tree from \(y\) to \(z\), and then the path in the \nameref{alg:bfs} tree from \(z\) to \(x\).
+The length of this cycle is
+\[
+\underbrace{1}_{(x, y)} + \underbrace{(j - i)}_{y \leadsto z} + \underbrace{(j - i)}_{z \leadsto x} = 1 + 2(j - i) 
+\]
+which is odd.
+So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
 \end{proof}
 
 \begin{proof}[`\(\Leftarrow\)' of \autoref{thm:bipartite_odd_cycle}]
@@ -501,10 +498,21 @@ By \autoref{lem:dfs-edges-finish-times}, \((u,v)\) must be a back edge.
 \end{proof}
 
 
-When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge\tikzmark{edge-color}:
+When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge:
+\begin{itemize}%[before={\parskip=0pt},nosep]
+  \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
+  \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
+  \item if \(v\) is \(\black\), then \((u,v)\) is a
+\begin{itemize}%[before={\parskip=0pt},nosep]
+    \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
+    \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
+\end{itemize}
+\end{itemize}
+Observe that the gray vertices always form a linear chain of descendants corresponding to the stack of active \textsc{DFSvisit} invocations.
+
+\begin{example}[Edge Classification]
+\[
 \begin{tikzpicture}[
-  remember picture,
-  overlay,
   scale = 0.5,
   >=Stealth,
   vertex/.style={draw, ellipse, minimum width=1cm, minimum height=0.6cm, line width=0.6pt, inner sep=0pt, font=\footnotesize},
@@ -513,12 +521,6 @@ When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color 
   back/.style   ={dashed, blue, ->},
   cross/.style  ={densely dotted, green!60!black, ->}
 ]
-\coordinate (edge-color-y) at (pic cs:edge-color);
-\coordinate (edge-color-border) at (current page.east |- edge-color-y);
-\coordinate (edge-color-margin) at ($(edge-color-border) + (\textwidth,0) + (-\paperwidth,0)$);
-% \node[circle, draw=red, minimum size=2mm, inner sep=0pt] at (edge-color-margin) {}; % debugging
-\begin{scope}[shift={(edge-color-margin)}, scale=0.8]
-\begin{scope}[shift={(-9,-6.5)}]
 
 %--- Nodes ----------------------------------------------------------
 \node[vertex, label=left:$a$] (a) at (0, 6) {1/10};
@@ -555,24 +557,9 @@ When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color 
   \draw[cross] (0,-1.8) -- +(1.2,0); \node[anchor=west, font=\footnotesize] at (1.4,-1.8) {cross};
 \end{scope}
 
-\end{scope}
-\end{scope}
-
 \end{tikzpicture}
-\begin{itemize}%[before={\parskip=0pt},nosep]
-  \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
-  \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
-  \item if \(v\) is \(\black\), then \((u,v)\) is a
-\begin{itemize}%[before={\parskip=0pt},nosep]
-    \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
-    \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
-\end{itemize}
-\end{itemize}
-
-
-Observe that the gray vertices always form a linear chain of descendants corresponding to the stack of active \textsc{DFSvisit} invocations.
-
-
+\]
+\end{example}
 
 
 

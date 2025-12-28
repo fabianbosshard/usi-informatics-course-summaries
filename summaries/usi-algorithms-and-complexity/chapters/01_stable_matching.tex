@@ -96,18 +96,17 @@ The matching created by \autoref{alg:gale_shapley} is stable.
 Assume there is an unstable pair \((m, w)\), where \(m \in M\) and \(w \in W\) after termination of \autoref{alg:gale_shapley}.
 
 
-\medskip
 
-We can distinguish two cases:\tikzmark{distinguish-cases}%
-\begin{tikzpicture}[>=latex, remember picture, overlay, scale=1]
-\coordinate (distinguishcases-y) at (pic cs:distinguish-cases);
-\coordinate (distinguishcases-border) at (current page.east |- distinguishcases-y);
-\coordinate (distinguishcases-margin) at ($(distinguishcases-border) + 0.5*(\textwidth,0) + 0.5*(-\paperwidth,0)$);
-\begin{scope}[shift={(distinguishcases-margin)}, scale=0.8]
-\begin{scope}[shift={(-2,-0.75)}]
+We can distinguish two cases:
+\begin{enumerate}[label=Case \arabic*:, ref=Case \arabic*, leftmargin=*, labelindent=1em]
+\item \(m\) never proposed to \(w\) \label{proof:gale_shapley:stability:case:never_proposed}
+\item \(m\) proposed to \(w\) \label{proof:gale_shapley:stability:case:proposed}
+\end{enumerate}
+\[
+\begin{tikzpicture}[>=latex, scale=0.8]
 \def\matchingellipse{(0,0) ellipse (2 and 1)}
 \filldraw[fill=gray!20, draw=gray!60]\matchingellipse;
-\node[left] at (-1.6,0.8) {\footnotesize matching};
+\node[right] at (1.6,0.8) {\footnotesize matching};
 \node (m) at (-1.0,0.5) {\footnotesize $m$};
 \node (w) at (1.0,0.5) {\footnotesize $w$};
 \node (mp) at (-1.0,-0.5) {\footnotesize $m'$};
@@ -115,14 +114,8 @@ We can distinguish two cases:\tikzmark{distinguish-cases}%
 \draw[densely dotted, latex -latex] (m) -- node[pos=0.5, above]{\footnotesize ?} (w);
 \draw[latex -latex] (m) -- (wp);
 \draw[latex -latex] (mp) -- (w);
-\end{scope}
-\end{scope}
 \end{tikzpicture}
-
-\begin{enumerate}[label=Case \arabic*:, ref=Case \arabic*, leftmargin=*, labelindent=1em, itemsep=\smallskipamount, topsep=\medskipamount]
-\item \(m\) never proposed to \(w\) \label{proof:gale_shapley:stability:case:never_proposed}
-\item \(m\) proposed to \(w\) \label{proof:gale_shapley:stability:case:proposed}
-\end{enumerate}
+\]
 
 In \ref{proof:gale_shapley:stability:case:never_proposed}, by \autoref{obs:gale_shapley:men_propose_in_decreasing_order}, \(m\) prefers his final partner \(w'\) to \(w\), contradicting the assumption that \((m,w)\) is an unstable pair. \medskip
 
