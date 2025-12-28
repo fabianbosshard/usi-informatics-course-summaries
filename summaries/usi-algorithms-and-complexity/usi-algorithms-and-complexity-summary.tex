@@ -1,0 +1,668 @@
+% author: Fabian Bosshard
+% © CC BY 4.0
+
+% \documentclass[twocolumn, a3paper, fontsize=9pt, headings=standardclasses, parskip=never]{scrartcl}
+\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half]{scrartcl}
+% \documentclass[a4paper, fontsize=9pt, headings=standardclasses]{scrartcl}
+
+\usepackage{csquotes}
+
+
+
+\usepackage[automark]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+% \pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames, table]{xcolor}
+\usepackage{colortbl}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+
+
+
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+% --- Soul + hyperlinks, references, citations etc. ---
+
+% --- hyperref core ---
+\soulregister\href7
+\soulregister\url7
+\soulregister\hyperref7
+\soulregister\nameref7
+\soulregister\Nameref7
+\soulregister\autoref7
+
+% --- cleveref / varioref ---
+\soulregister\cref7
+\soulregister\Cref7
+\soulregister\cpageref7
+\soulregister\Cpageref7
+\soulregister\vref7
+\soulregister\Vref7
+
+% --- standard LaTeX referencing commands ---
+\soulregister\ref7
+\soulregister\pageref7
+\soulregister\eqref7
+\soulregister\label7   % rarely needed but safe
+
+% --- biblatex / natbib ---
+\soulregister\cite7
+\soulregister\parencite7
+\soulregister\footcite7
+\soulregister\textcite7
+\soulregister\autocite7
+\soulregister\Cite7
+\soulregister\Citeauthor7
+\soulregister\Citeyear7
+\soulregister\citeauthor7
+\soulregister\citeyear7
+
+% --- glossaries, acronyms, etc. ---
+\soulregister\gls7
+\soulregister\Gls7
+\soulregister\glspl7
+\soulregister\Glspl7
+\soulregister\acrshort7
+\soulregister\acrlong7
+\soulregister\acrfull7
+\soulregister\Acrshort7
+\soulregister\Acrlong7
+\soulregister\Acrfull7
+
+% --- misc. text-formatting macros ---
+\soulregister\textbf7
+\soulregister\textit7
+\soulregister\emph7
+\soulregister\underline7
+\soulregister\textcolor7
+\soulregister\color7
+\soulregister\foreignlanguage7
+
+
+
+\usepackage[left=40mm, right=40mm, top=20mm, bottom=30mm]{geometry} % for A4
+% \usepackage[left=25mm, right=25mm, top=25mm, bottom=35mm]{geometry} % for A3
+% \usepackage{showframe}
+\usepackage{changepage}
+
+
+% float management ––––––––––––––––––––––––––––––––––––––––––––––––
+\usepackage{float}
+\usepackage{placeins} 
+\usepackage{etoolbox}
+
+% \makeatletter
+%   % single-column floats
+%   \def\fps@figure {htb} 
+%   \def\fps@table  {htb}
+
+%   % double-column floats
+%   \def\fps@figure*{htb} 
+%   \def\fps@table* {htb}
+% \makeatother
+
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\preto\subsubsection{\FloatBarrier} 
+
+\setcounter{topnumber}{8}
+\setcounter{bottomnumber}{8}
+\setcounter{totalnumber}{20}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\floatpagefraction}{1.0}
+\renewcommand{\dblfloatpagefraction}{1.0}
+
+% On a float‐only page, kill the default “centered” glue
+\makeatletter
+  \setlength{\@fptop}{0pt} % no extra space above
+  \setlength{\@fpsep}{\floatsep} % between floats: same as \floatsep
+  \setlength{\@fpbot}{0pt plus 1fil} % infinite stretch below, so floats are pushed up
+\makeatother
+% ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+
+% \newlength\tindent
+% \setlength{\tindent}{\parindent}
+% \setlength{\parindent}{0pt}
+% \renewcommand{\indent}{\hspace*{\tindent}}
+
+\newlength{\savedparindent}
+\setlength{\savedparindent}{\parindent} % remember the class's default
+\setlength{\parindent}{0pt}             % turn off automatic indenting
+\renewcommand{\indent}{\hspace*{\savedparindent}} % manual indent on demand
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{cancel} % for \cancel, \bcancel, \xcancel, \cancelto
+
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+% \setlist{nosep} % = no itemsep, no parsep, minimal topsep
+
+
+
+\usepackage{pifont}
+\usepackage{marvosym}
+
+\usepackage{booktabs}
+% \usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{hhline} % for double lines in tables
+\usepackage{ragged2e}
+\usepackage{makecell}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, backgrounds, chains, svg.path, hobby}
+\usepackage{forest}
+\usepackage{tikz-cd}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+
+\definecolor{AccentBlue}{HTML}{013399}
+\definecolor{AccentRed}{HTML}{CC0100}  
+\definecolor{AccentPurple}{HTML}{660066}
+\definecolor{AccentGray}{HTML}{666666}
+
+
+\definecolor{highlightpurple}{rgb}{0.5, 0.0, 0.5}
+% \renewcommand{\emph}[1]{\textcolor{highlightpurple}{#1}}
+% \renewcommand{\emph}[1]{\textsl{#1}}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+% \renewcommand{\emph}[1]{\textbf{#1}}
+
+
+\usepackage{thmtools}
+
+% 717 \providecommand\thmcontinues[1]{%
+% 718 \ifcsname hyperref\endcsname
+% 719 \hyperref[#1]{continuing}
+% 720 \else
+% 721 continuing
+% 722 \fi
+% 723 from p.\,\pageref{#1}%
+% 724 }
+\renewcommand\thmcontinues[1]{%
+  \ifcsname hyperref\endcsname
+    \hyperref[#1]{continuing}%
+  \else
+    continuing%
+  \fi
+}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem, numberwithin=section]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Lemma, numbered=no]{lemma*} % unnumbered lemma
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle,name=Fact,sibling=theorem]{fact}
+\declaretheorem[style=assertionstyle,name=Property,sibling=theorem]{property}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ding{45},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
+\declaretheorem[style=definitionstyle, name=Problem, sibling=definition]{problem}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example, numberwithin=section]{example}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark, numberwithin=section]{remark}
+\declaretheorem[style=remarkstyle,name=Observation, sibling=remark]{observation}
+\declaretheorem[style=remarkstyle,name=Invariant, sibling=remark]{invariant}
+\declaretheorem[style=remarkstyle,name=Assumption, sibling=remark]{assumption}
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=6pt,spacebelow=6pt,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression, numberwithin=section]{digression}
+\let\proof\relax
+\let\endproof\relax
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+\declaretheorem[
+  style=proofstyle,
+  name=Proof,
+  numbered=no
+]{proof}
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+
+
+% =========================
+% Meta / research statements
+% =========================
+
+% --- style (pick one): looks like your assertion boxes, but no qed symbol ---
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  postheadspace=1em,
+  qed=\ensuremath{\vartriangleleft}
+]{metastyle}
+
+% --- numbered (shares counter with theorem) ---
+\declaretheorem[style=metastyle,name=Question,sibling=theorem]{question}
+\declaretheorem[style=metastyle,name=Open Question,sibling=theorem]{openquestion}
+\declaretheorem[style=metastyle,name=Open Problem,sibling=theorem]{openproblem}
+\declaretheorem[style=metastyle,name=Challenge,sibling=theorem]{challenge}
+\declaretheorem[style=metastyle,name=Research Direction,sibling=theorem]{researchdirection}
+\declaretheorem[style=metastyle,name=Fundamental Question,sibling=theorem]{fundamentalquestion} 
+
+% --- unnumbered (starred) variants ---
+\declaretheorem[style=metastyle,name=Question,numbered=no]{question*}
+\declaretheorem[style=metastyle,name=Open Question,numbered=no]{openquestion*}
+\declaretheorem[style=metastyle,name=Open Problem,numbered=no]{openproblem*}
+\declaretheorem[style=metastyle,name=Challenge,numbered=no]{challenge*}
+\declaretheorem[style=metastyle,name=Research Direction,numbered=no]{researchdirection*}
+\declaretheorem[style=metastyle,name=Fundamental Question,numbered=no]{fundamentalquestion*}
+
+
+
+
+
+% after declaring theorem environments:
+\renewcommand{\definitionautorefname}{Definition}
+\renewcommand{\lemmaautorefname}{Lemma}
+\renewcommand{\theoremautorefname}{Theorem}
+\renewcommand{\corollaryautorefname}{Corollary}
+\renewcommand{\propositionautorefname}{Proposition}
+\renewcommand{\conjectureautorefname}{Conjecture}
+\renewcommand{\claimautorefname}{Claim}
+\renewcommand{\exampleautorefname}{Example}
+\renewcommand{\remarkautorefname}{Remark}
+\renewcommand{\invariantautorefname}{Invariant}
+\renewcommand{\assumptionautorefname}{Assumption}
+\renewcommand{\observationautorefname}{Observation}
+\renewcommand{\cautionautorefname}{Caution}
+\renewcommand{\digressionautorefname}{Digression}
+
+\renewcommand{\questionautorefname}{Question}
+\renewcommand{\openquestionautorefname}{Open Question}
+\renewcommand{\openproblemautorefname}{Open Problem}
+\renewcommand{\challengeautorefname}{Challenge}
+\renewcommand{\researchdirectionautorefname}{Research Direction}
+\renewcommand{\fundamentalquestionautorefname}{Fundamental Question}
+
+\makeatletter
+\def\thmt@dummyctrautorefname~#1\null{Proof\null}
+\makeatother
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
+\usepackage{algorithm}
+\usepackage[italicComments=false]{algpseudocodex}
+
+
+
+% numbering within sections ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\numberwithin{equation}{section}
+
+
+
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\counterwithin{algorithm}{section} % works with the 'algorithm' package
+
+
+
+% notation makros ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+\newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\vec{{#1}}\,}
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for special constants
+\newcommand{\eu}{\mathrm{e}}
+\newcommand{\iu}{\mathrm{i}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+\newcommand{\blackheight}{\operatorname{bh}}
+
+% \algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} % object.field with field in normal math font
+\newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}} 
+\newcommand{\attributenormal}[1]{\ensuremath{#1}}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+
+% \usepackage[colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black]{hyperref}
+
+% \usepackage[
+%   pdfauthor={Fabian Bosshard},
+%   pdftitle={USI - Algorithms and Complexity - Course Summary},
+%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
+%   colorlinks=false,       
+%   pdfborder={0.2 0.2 0.2},      % thin border
+%   linkbordercolor={0 0.6 1},      % internal links
+%   urlbordercolor={0 0.6 1},       % URLs
+%   citebordercolor={0 0.6 1}       % citations
+% ]{hyperref}
+
+% \definecolor{hyperlinkcolor}{HTML}{0000FF}
+% \usepackage[
+%   pdfauthor={Fabian Bosshard},
+%   pdftitle={USI - Algorithms and Complexity - Course Summary},
+%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
+%   colorlinks=true,    
+%   linkcolor=hyperlinkcolor,      % internal links
+%   urlcolor=hyperlinkcolor,       % URLs
+%   citecolor=hyperlinkcolor       % citations
+% ]{hyperref}
+
+% \definecolor{hyperlinkcolor}{HTML}{0000FF}
+% \usepackage[
+%   pdfauthor={Fabian Bosshard},
+%   pdftitle={USI - Algorithms and Complexity - Course Summary},
+%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
+%   colorlinks=false,       
+%   pdfborder={0.1 0.1 0.1},      % thin border
+%   linkbordercolor=hyperlinkcolor,      % internal links
+%   urlbordercolor=hyperlinkcolor,       % URLs
+%   citebordercolor=hyperlinkcolor       % citations
+% ]{hyperref}
+
+\usepackage[
+  linktoc=all,      % make the whole entry (text + pagenumber) a link
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Algorithms and Complexity - Course Notes},
+  pdfkeywords={USI, Algorithms and Complexity, course notes, informatics},
+  colorlinks=false,  
+  pdfborder={0.0 0.0 0.0},      
+  linkbordercolor={0 0.6 1},      % internal links
+  urlbordercolor={0 0.6 1},       % URLs
+  citebordercolor={0 0.6 1}       % citations
+]{hyperref}
+
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+
+
+
+
+\makeatletter
+
+% --------------------
+% equations + floats
+% --------------------
+\renewcommand*{\theHequation}{\thesection.\arabic{equation}}
+
+\renewcommand*{\theHfigure}{\thesection.\arabic{figure}}
+\renewcommand*{\theHtable}{\thesection.\arabic{table}}
+\renewcommand*{\theHalgorithm}{\thesection.\arabic{algorithm}}
+
+% --------------------
+% theorem-like: assertion family
+% --------------------
+\renewcommand*{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand*{\theHlemma}{\thesection.\arabic{lemma}}
+\renewcommand*{\theHcorollary}{\thesection.\arabic{corollary}}
+\renewcommand*{\theHproposition}{\thesection.\arabic{proposition}}
+\renewcommand*{\theHconjecture}{\thesection.\arabic{conjecture}}
+\renewcommand*{\theHclaim}{\thesection.\arabic{claim}}
+\renewcommand*{\theHfact}{\thesection.\arabic{fact}}
+\renewcommand*{\theHproperty}{\thesection.\arabic{property}}
+
+% --------------------
+% theorem-like: definition family
+% --------------------
+\renewcommand*{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand*{\theHaxiom}{\thesection.\arabic{axiom}}
+\renewcommand*{\theHproblem}{\thesection.\arabic{problem}}
+
+% --------------------
+% theorem-like: other families
+% --------------------
+\renewcommand*{\theHexample}{\thesection.\arabic{example}}
+
+\renewcommand*{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand*{\theHobservation}{\thesection.\arabic{observation}}
+\renewcommand*{\theHinvariant}{\thesection.\arabic{invariant}}
+\renewcommand*{\theHassumption}{\thesection.\arabic{assumption}}
+\renewcommand*{\theHcaution}{\thesection.\arabic{caution}}
+\renewcommand*{\theHsmallremark}{\thesection.\arabic{smallremark}}
+
+\renewcommand*{\theHdigression}{\thesection.\arabic{digression}}
+
+
+\renewcommand*{\theHquestion}{\thesection.\arabic{question}}
+\renewcommand*{\theHopenquestion}{\thesection.\arabic{openquestion}}
+\renewcommand*{\theHopenproblem}{\thesection.\arabic{openproblem}}
+\renewcommand*{\theHchallenge}{\thesection.\arabic{challenge}}
+\renewcommand*{\theHresearchdirection}{\thesection.\arabic{researchdirection}}
+\renewcommand*{\theHfundamentalquestion}{\thesection.\arabic{fundamentalquestion}}
+
+
+
+\makeatother
+
+
+
+
+
+
+\makeatletter
+\RedeclareSectionCommand[
+  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+]{section}
+\RedeclareSectionCommand[
+  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+]{subsection}
+\RedeclareSectionCommand[
+  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+]{subsubsection}
+\makeatother
+
+
+
+
+
+
+\title{Algorithms \& Complexity - Summary}
+\author{Fabian Bosshard}
+\date{\today}
+
+
+
+
+
+
+% ======================================================
+% BUILD MODE TOGGLE
+% ======================================================
+% Uncomment *one* of the two lines below depending on what you want.
+
+% \newcommand{\buildmode}{full}    % ← compile everything (default)
+\newcommand{\buildmode}{speed}   % ← only compile selected chapters
+
+% ------------------------------------------------------
+% For partial compilation, list the chapters you’re editing:
+\ifx\buildmode\undefined\else
+  \ifx\buildmode\speed
+    \includeonly{
+      chapters/05_network_flow
+    }
+  \fi
+\fi
+% ======================================================
+
+
+
+
+
+\begin{document}
+\pagenumbering{arabic}
+
+
+
+
+\maketitle
+\thispagestyle{scrheadings}
+\tableofcontents
+
+% \section*{Preface}
+% \addcontentsline{toc}{section}{Preface}
+
+% \doclicenseThis
+
+% ----- Keep the following commands unchanged -------------------
+% \renewcommand{\emph}[1]{\textcolor{black}{#1}}
+% \renewcommand{\emph}[1]{\textbf{#1}}
+
+\clearpage
+\include{chapters/00_intro_basics}
+\clearpage
+\include{chapters/01_stable_matching}
+\clearpage
+\include{chapters/02_graphs}
+\clearpage
+\include{chapters/03_greedy}
+\clearpage
+\include{chapters/04_dp}
+\clearpage
+\include{chapters/05_network_flow}
+\clearpage
+\include{chapters/06_complexity}
+\clearpage
+
+\include{chapters/90_exercises}
+
+
+
+
+
+
+
+\end{document}

@@ -1,0 +1,1164 @@
+
+\section{Graphs}\label{sec:graphs}
+
+
+\subsection{Representations of Graphs}
+
+\newcommand{\mixcolor}{70}
+
+\definecolor{Red}{rgb}{1.0, 0.0, 0.0}
+\definecolor{Orange}{rgb}{1.0, 0.5, 0.0}
+\definecolor{Yellow}{rgb}{1.0, 1.0, 0.0}
+\definecolor{Green}{rgb}{0.0, 1.0, 0.0}
+\definecolor{BlueGreen}{rgb}{0.0, 1.0, 0.5}
+\definecolor{Blue}{rgb}{0.0, 1.0, 1.0}
+
+\newcolumntype{C}{>{\centering\arraybackslash}m{35mm}}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{table}[h]
+\centering
+\begin{tabular}{l C @{\hspace{10pt}} C}
+\toprule
+\textbf{Operation}                                             & \multicolumn{2}{c}{\textbf{Representation}}                                                                     \\
+&                             {Adjacency List} &                                                              {Adjacency Matrix}                                                 \\
+\midrule
+% accessing vertex $u$ &        \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal} &                          \cellcolor{Blue!\mixcolor}\makecell{$O(1)$\\optimal}             \\
+% \addlinespace[2pt]
+% iteration through $V$ &       \cellcolor{Green!\mixcolor}\makecell{$\Theta(n)$\\optimal} &                  \cellcolor{Green!\mixcolor}\makecell{$\Theta(n)$\\optimal}         \\
+% \addlinespace[2pt]
+space complexity &            \cellcolor{Green!\mixcolor}\makecell{$\Theta(n+m)$\\optimal} &              \cellcolor{Red!\mixcolor}\makecell{$\Theta(n^{2})$\\possibly very bad} \\
+\addlinespace[2pt]
+checking $(u,v)\in E$ &       \cellcolor{Orange!\mixcolor}\makecell{$O(\deg(u))$\\bad} &                             \cellcolor{Blue!\mixcolor}\makecell{$\Theta(1)$\\optimal}        \\
+\addlinespace[2pt]
+iteration through $E$ &       \cellcolor{Yellow!\mixcolor}\makecell{$\Theta(n+m)$\\okay (not optimal)} &  \cellcolor{Red!\mixcolor}\makecell{$\Theta(n^{2})$\\possibly very bad} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+in adjacency list, we often keep crosslinks between the same edges to avoid traversing lists unnecessarily
+
+\begin{digression}[Sparse Matrix Representation]
+We can use a multilist structure to store sparse matrices.
+For that, we create \(2 n\) linked lists, one for each row and one for each column.
+Each non-zero entry \(a_{ij}\) is stored in a node that contains the value \(a_{ij}\), the row index \(i\), the column index \(j\), a pointer to the next non-zero entry in row \(i\), and a pointer to the next non-zero entry in column \(j\).
+With this representation, all standard matrix operations (such as multiplication, transposition) can be performed efficiently.
+\end{digression}
+
+
+
+\subsection{Basic Definitions}
+a graph \(G=(V,E)\) consists of a set \(V\) of \(n=|V|\) vertices and a set \(E\) of \(m=|E|\) edges.
+If pairs in \(E\) are ordered, the graph is \emph{directed}, otherwise it is \emph{undirected}.
+In a digraph, self-loops \((v,v)\) are allowed.
+
+\medskip 
+
+in a graph:\\
+\indent number of edges: \(0 \leq m \leq \binom{n}{2} = \frac{n(n-1)}{2} \in O(n^2)\) \\
+\indent sum of degrees: \(\sum_{v\in V} \deg(v) = 2m\) 
+
+\smallskip
+
+in a digraph:\\
+\indent number of edges: \(0 \leq m \leq n^2\) \\
+\indent sum of degrees: \(\sum_{v\in V} \deg^+(v) = \sum_{v\in V} \deg^-(v) = m\)
+
+\medskip
+
+\emph{sparse} if \(m\) is \(O(n)\), else \emph{dense}
+
+
+
+
+\begin{definition}[Path]\label{def:path}
+  A path \(P\) in an undirected graph is a sequence of nodes \(v_1, \ldots, v_k\) with the property that each consecutive pair \(v_i, v_{i+1}\) is joined by an edge in \(E\).
+\end{definition}
+
+\begin{definition}[Simple Path]\label{def:simple_path}
+  A path is simple if all nodes are distinct.
+\end{definition}
+
+\begin{definition}[Connected Graph]\label{def:connected_graph}
+  An undirected graph is connected if for every pair of nodes \(u\) and \(v\), there is a path between \(u\) and \(v\).
+\end{definition}
+
+\begin{definition}[Cycle]\label{def:cycle}
+  A cycle is a path \(v_1, \ldots, v_k\) in which \(v_1 = v_k\), \(k > 2\), and all other nodes are distinct, i.e., all nodes are distinct except the first and last.
+\end{definition}
+
+\begin{definition}[Tree]\label{def:tree}
+  An undirected graph is a \emph{tree} if it is connected and does not contain a cycle.
+\end{definition}
+
+\begin{theorem}
+  Let \(G\) be an undirected graph of \(n\) nodes.
+  If we pick any two of the following statements, they imply the remaining one:
+  \begin{itemize}[itemsep=0.05em]
+    \item \(G\) is connected.
+    \item \(G\) does not contain a cycle.
+    \item \(G\) has \(n-1\) edges. \qedhere
+  \end{itemize}
+\end{theorem}
+
+An acyclic undirected graph (which need not be connected) is a collection of free trees; it is called a forest.
+
+\smallskip
+
+An acyclic digraph is called a directed acyclic graph; a DAG.
+
+\begin{definition}[Rooted tree]
+  Given a tree \(T\), choose a root node \(r\) and orient each edge away from \(r\).
+  Can be used to model hierarchical structure.
+  \begin{itemize}[nolistsep, noitemsep]
+    \item \emph{depth} of a node: \(\#\) edges from the root to the node
+    \item \emph{height} of a node: \(\#\) edges from the node to the deepest leaf
+    \item \emph{height} of a tree: height of the root \qedhere
+  \end{itemize}
+\end{definition}
+
+
+
+
+\subsection{Breadth-First Search}
+\label{sec:bfs}
+
+intuition: explore outward from \(s\) in all possible directions, adding nodes one `layer' at a time
+\[
+\begin{tikzpicture}[line cap=round, scale=0.8]
+  \usetikzlibrary{shapes.symbols}
+  \definecolor{blob}{RGB}{190,190,190}
+
+  % location of the layers
+  \coordinate (s) at (0,0);
+  \coordinate (L1) at (3,0);
+  \coordinate (L2) at (6,0);
+  \coordinate (dots) at (9,0);
+  \coordinate (Lk) at (12,0);
+
+  % edges
+  \draw[-] (s) -- ($(L1) + (0, 0.6)$);
+  \draw[-] (s) -- ($(L1) - (0, 0.8)$);
+  % edges between L1 and L2
+  \draw[-] ($(L1) + (0, 0.6)$) -- ($(L2) + (0, 1.0)$);
+  \draw[-] ($(L1) - (0, 0.3)$) -- ($(L2) + (0, 0.4)$);
+  \draw[-] ($(L1) - (0, 0.9)$) -- ($(L2) - (0, 0.7)$);
+  % edges between L2 and dots
+  \draw[-] ($(L2) + (0, 1.0)$) -- ($(dots) + (-1.5, 0.8)$);
+  \draw[-] ($(L2) + (0, -0.1)$) -- ($(dots) + (-1.5, 0.2)$);
+  \draw[-] ($(L2) + (0, -0.7)$) -- ($(dots) + (-1.5, -0.9)$);
+  % edges between dots and Lk
+  \draw[-] ($(dots) + (1.5, 0.8)$) -- ($(Lk) + (0, 1.1)$);
+  \draw[-] ($(dots) + (1.5, -0.2)$) -- ($(Lk) + (0, -0.6)$);
+
+  % layers
+  \tikzset{
+    fixedcloud/.style={
+      cloud, cloud puffs=13, cloud puff arc=120,
+      minimum width=1.5cm, minimum height=2.5cm,
+      inner sep=0pt, draw=none, fill=blob, aspect=1
+    }
+  }
+\node[circle, inner sep=0pt, minimum size=0.6cm, draw=black, fill=white] (s_layer) at (s) {$s$};
+\node[fixedcloud] (L1_layer) at (L1) {};
+\node[align=center, inner sep=0pt] at (L1_layer.center) {$L_1$\\{\footnotesize $\delta=1$}};
+\node[fixedcloud] (L2_layer) at (L2) {};
+\node[align=center, inner sep=0pt] at (L2_layer.center) {$L_2$\\{\footnotesize $\delta=2$}};
+\node at (dots) {\huge $\cdots$};
+\node[fixedcloud] (Lk_layer) at (Lk) {};
+\node[align=center, inner sep=0pt] at (Lk_layer.center) {$L_{l_s}$\\{\footnotesize $\delta=l_s$}};
+\end{tikzpicture}
+\]
+
+\nameref{alg:bfs} discovers vertices in increasing order of edge distance from \(s\).
+
+Distance of \(v\): \(\delta(s,v) = \text{min \# edges in any path from \(s\) to \(v\)}\)
+
+Layer \(L_i\) consists of all nodes \(v\) at distance exactly \(i\) from \(s\): \(L_i = \{v \in V \mid \delta(s,v) = i\}\)
+
+the number of layers is \(l_s = \max_{v \in V} \delta(s,v)\) and depends on \(s\)
+
+to implement \nameref{alg:bfs}, we need to know which vertices have been visited and which haven't\\
+- keep a ``frontier'' of verices that have been discovered but not yet processed (a FIFO queue)\\
+- initially all vertices (except \(s\)) are marked as undiscovered (\(\white\))\\
+- when a vertex is discovered, it is marked as discovered (\(\gray\)) and added to the frontier\\
+- after processing a discovered vertex, it is marked as finished (\(\black\))
+
+
+
+
+\begin{algorithm}[h]
+\caption{BFS}\label{alg:bfs}
+\begin{algorithmic}[1]
+\Function{BFS}{$G,\,s$} \Comment{\(s\) is the source}
+  \ForAll{$u\in V \setminus \{s\}$}
+    \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$ \Comment{initialization}
+  \EndFor
+  % \State Initialize $\attrib{v}{color}\gets\white$, $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attrib{s}{color},\attribnormal{s}{\delta},\attrib{s}{\pi}\gets \gray,0,\nil$ \Comment{initialize source \(s\)}
+  \State $Q\gets\emptyset$ \Comment{initialize empty queue for vertices to visit}
+  \State \Call{Enqueue}{$Q,s$}
+  \While{$Q\neq\emptyset$} \label{alg:bfs:dequeue-while}
+    \State $u\gets$ \Call{Dequeue}{$Q$} \Comment{get next vertex from the frontier}
+    \ForAll{$v\in\Gamma(u)$} \label{alg:bfs:inner-loop}
+      \If{$\attrib{v}{color}=\white$} \Comment{first time we have seen \(v\)?}
+        \State $\attrib{v}{color}\gets\gray$ \Comment{mark it discovered}
+        \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+1$ \Comment{set its distance from \(s\)}
+        \State $\attrib{v}{\pi}\gets u$ \Comment{set its parent}
+        \State \Call{Enqueue}{$Q,v$} 
+      \EndIf
+    \EndFor
+    \State $\attrib{u}{color}\gets\black$ \Comment{we are done with \(u\)}
+  \EndWhile
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Predecessor pointers define an inverted tree (root = \(s\))\\
+if we reverse these edges, we get a rooted tree called \nameref{alg:bfs} tree\\
+\indent \(\exists\) many \nameref{alg:bfs} trees (depends on the order of vertices placed on the queue)
+
+tree edges: edges of \nameref{alg:bfs} tree \\ 
+cross edges: remaining edges
+
+We define the \nameref{alg:bfs} tree as \(T_{\text{\nameref{alg:bfs}}}=(V_\pi,E_\pi)\) where
+\[
+V_\pi = \{v\in V\mid v.\pi \neq \nil \} \cup \{s\}
+\quad
+\text{and}
+\quad
+E_\pi = \{(v.\pi,v)\mid v\in V_\pi \setminus \{s\}\}
+\]
+
+\begin{property}
+Let \(T_{\text{\nameref{alg:bfs}}}\) be a \nameref{alg:bfs} tree of \(G = (V, E)\).
+Let \((x, y)\) be an edge of \(G\).
+Then \hl{the level of \(x\) and \(y\) differ by at most \(1\)} (same layer or one apart):
+\[
+(x, y) \in E \quad \Longrightarrow \quad | \delta(s,x) - \delta(s,y) | \leq 1
+\qedhere
+\]
+\end{property}
+
+Running time of \nameref{alg:bfs}:\\
+We enqueue a vertex only if is $\white$, and we immediately color it $\gray$; thus, we enqueue every vertex at most once.\\
+So the \emph{outer loop} at Line \ref{alg:bfs:dequeue-while} executes at most \(n\) times (once for each vertex).\\
+For each vertex \(u\), the \emph{inner loop} at Line \ref{alg:bfs:inner-loop} executes \(1 + \deg(u)\) times.
+
+Total time:
+\[
+\begin{aligned}
+  T(n) &= n + \sum_{u \in V} (\deg(u) + 1) = n + \underbrace{\sum_{u \in V} \deg(u)}_{=2m} + \underbrace{\sum_{u \in V} 1}_{=n} \\[-12pt]
+  &= 2n + 2m \in O(n + m)
+\end{aligned}
+\]
+
+Cross edges are not arbitrary.
+They connect nodes on the same layer or in neighboring layers.
+
+% \clearpage
+
+\subsection{Bipartite Graphs}
+
+\begin{definition}[Bipartite]\label{def:bipartite}
+An undirected graph \(G=(V,E)\) is bipartite if the nodes can be colored red or blue such that every edge has one red and one blue end.\\
+\indent - a bipartite graph is \(2\)-colorable \\
+\indent - a \(2\)-colorable graph is bipartite \\
+\indent \(\Rightarrow\) a bipartite graph is a \(2\)-colorable graph
+\end{definition}
+
+many graph problems become:\\
+\indent - easier if the underlying graph is bipartite (matching)\\
+\indent - tractable if the underlying graph is bipartite (independent set)
+
+\begin{theorem}\label{thm:bipartite_odd_cycle}
+  a graph \(G\) is bipartite iff it contains no odd length cycle.
+\end{theorem}
+
+\begin{proof}[`\(\Rightarrow\)' of \autoref{thm:bipartite_odd_cycle}]
+not possible to \(2\)-color an odd cycle, let alone \(G\).
+\end{proof}
+\begin{corollary}
+  any cycle in a bipartite graph has an even \(\numof\)edges.
+\end{corollary}
+
+\begin{lemma}\label{lem:layers_bipartite}
+For `\(\Leftarrow\)' of \autoref{thm:bipartite_odd_cycle}, we use the layers of \nameref{alg:bfs}: Let \(G\) be a connected graph and let \(L_0, \ldots, L_k\) be the layers produced by \nameref{alg:bfs} starting at node \(s\).
+\begin{enumerate}
+\item if no edge of \(G\) joins 2 nodes of the same layer, then \(G\) is bipartite \label{item:no_edge_same_layer_bipartite}
+\item if an edge of \(G\) joins 2 nodes of the same layer, then \(G\) contains an odd length cycle, and hence is not bipartite \label{item:edge_same_layer_odd_cycle}
+\qedhere
+\end{enumerate}
+\end{lemma}
+
+\begin{corollary}[of \autoref{lem:layers_bipartite}]\label{cor:layers_bipartite}
+  \leavevmode
+  \begin{itemize}
+  \item \(G\) has no odd cycle iff no edge joins two nodes of the same \nameref{alg:bfs} layer
+  \item \(G\) is bipartite iff no edge joins two nodes of the same \nameref{alg:bfs} layer
+  \qedhere
+  \end{itemize}
+\end{corollary}
+
+\begin{proof}[of \autoref{lem:layers_bipartite}]
+Suppose no edge joins two nodes in the same layer.
+Then we can 2-color the graph, e.g. red for odd layers and blue for even layers.
+So \ref{lem:layers_bipartite}.\ref{item:no_edge_same_layer_bipartite} holds.
+
+\begin{minipage}[b]{0.55\textwidth}
+Suppose \((x, y)\) is an edge joining two nodes in the same layer \(L_j\).
+Let 
+\[
+z = \operatorname{lca}(x, y)
+\]
+be the lowest level common ancestor in the \nameref{alg:bfs} tree and let \(L_i\) be the layer of \(z\).
+Consider a cycle that takes edge \((x, y)\), then the path in the \nameref{alg:bfs} tree from \(y\) to \(z\), and then the path in the \nameref{alg:bfs} tree from \(z\) to \(x\).
+The length of this cycle is
+\[
+\underbrace{1}_{(x, y)} + \underbrace{(j - i)}_{y \leadsto z} + \underbrace{(j - i)}_{z \leadsto x} = 1 + 2(j - i) 
+\]
+which is odd.
+So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
+\end{minipage}%
+\hfill%
+\begin{minipage}[b]{0.35\textwidth}
+  \centering
+\begin{tikzpicture}[every node/.style={circle,draw,minimum size=5mm,inner sep=0pt},>=stealth, scale=0.7]
+  % layers
+  \usetikzlibrary{shapes.symbols}
+  \definecolor{blob}{RGB}{190,190,190}
+  \tikzset{
+    fixedcloud/.style={
+      cloud, cloud puffs=16, cloud puff arc=120,
+      minimum width=4cm, minimum height=1.5cm,
+      inner sep=0pt, draw=none, fill=blob
+    }
+  }
+  \coordinate (Li) at (0, 3);
+  \node[fixedcloud] (Li_layer) at (Li) {};
+  \coordinate (Lj) at (0, 0);
+  \node[fixedcloud] (Lj_layer) at (Lj) {};
+
+  % nodes
+  \node (s) at (0,6) {$s$};
+  \node (z) at (1,3) {$z$};
+  \node (x) at (0,0) {$x$};
+  \node (y) at (2,0) {$y$};
+
+  % Edges
+  \draw[rounded corners=4pt] (s) 
+    -- ($($(s)!0.42!(z)$)!0.15!90:(z)$)
+    -- ($($(s)!0.58!(z)$)!0.15!270:(z)$)
+    -- (z);
+  \draw (s)  -- ++(-0.1,-0.8);
+  \draw (s)  -- ++(-1,-0.7);
+  \draw[rounded corners=4pt] (x) 
+    -- ($($(x)!0.5!(z)$)!0.1!270:(z)$)
+    -- ($($(x)!0.6!(z)$)!0.1!90:(z)$)
+    -- (z);
+  \draw[rounded corners=4pt] (y) 
+    -- ($($(y)!0.4!(z)$)!0.1!90:(z)$)
+    -- ($($(y)!0.5!(z)$)!0.1!270:(z)$)
+    -- (z);
+  \draw[red] (x) -- (y);
+
+  % Layer labels
+  \node[draw=none,fill=none,left=8mm of Li] {$L_i$};
+  \node[draw=none,fill=none,left=8mm of Lj] {$L_j$};
+\end{tikzpicture}
+\end{minipage}
+\end{proof}
+
+\begin{proof}[`\(\Leftarrow\)' of \autoref{thm:bipartite_odd_cycle}]
+\autoref{lem:layers_bipartite}.
+\end{proof}
+
+
+
+
+
+% \clearpage
+
+\subsection{Depth-First Search}
+\label{sec:dfs}
+
+\nameref{alg:dfs} is \hl{recursive} process.
+
+we maintain four auxiliary arrays:
+\begin{itemize}
+\item \(\attrib{u}{color}\): undiscovered (\(\white\)), discovered (\(\gray\)), finished (\(\black\)).
+\item \(\attribnormal{u}{d}\) (discovery time): time when \nameref{alg:dfs} started at vertex \(u\).
+\item \(\attribnormal{u}{f}\) (finish time): time when \(u\) is finished processing (all neighbors have been visited).
+\item \(\attribnormal{u}{\pi}\) (predecessor pointer): vertex which discovered \(u\). the edge \((\attribnormal{u}{\pi}, u)\) is a tree edge in the \nameref{alg:dfs} recursion tree.
+\end{itemize}
+
+\begin{algorithm}
+\caption{DFS}\label{alg:dfs}
+\begin{algorithmic}[1]
+\Function{DFS}{$G$}
+  \ForAll{$u\in V$}
+    \State $\attrib{u}{color},\attrib{u}{\pi}\gets \white,\nil$ \Comment{initialization}
+  \EndFor
+  \State $T\gets 0$ 
+  \ForAll{$u\in V$} \label{alg:dfs:for_all_vertices}
+    \If{$\attrib{u}{color}=\white$} \Comment{undiscovered vertex?}
+      \State \Call{DFSvisit}{$u$} \Comment{...start a new search here} \label{alg:dfs:new_tree}
+    \EndIf
+  \EndFor
+\EndFunction
+
+\Function{DFSvisit}{$u$} \Comment{new \nameref{alg:dfs} search at \(u\)} \label{alg:dfs:dfsvisit}
+  \State $\attrib{u}{color}\gets\gray$ \Comment{\(u\) has been discovered} \label{alg:dfs:discover}
+  \State $T\gets T+1$
+  \State $\attribnormal{u}{d}\gets T$ \label{alg:dfs:discover_time}
+  \ForAll{$v\in\Gamma(u)$}  \label{alg:dfs:explore_edges}
+    \If{$\attrib{v}{color}=\white$} \Comment{first time we have seen \(v\)?}
+      \State $\attrib{v}{\pi}\gets u$
+      \State \Call{DFSvisit}{$v$} \Comment{...visit it} \label{alg:dfs:recursive_call}
+    \EndIf
+  \EndFor
+  \State $\attrib{u}{color}\gets\black$ \Comment{we are done with \(u\)} \label{alg:dfs:finish}
+  \State $T\gets T+1$
+  \State $\attribnormal{u}{f}\gets T$ \label{alg:dfs:finish_time}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+Running time of \nameref{alg:dfs}:\\
+- the call \Call{DFSvisit}{} is made exactly once for each vertex\\
+- ignoring time for recursive calls, each vertex \(u\) is processed in \(O(1 + \deg(u))\) time
+
+Total time:
+\[
+\begin{aligned}
+  T(n) &= n + \sum_{u \in V} (\deg(u) + 1) = n + \underbrace{\sum_{u \in V} \deg(u)}_{=2m} + \underbrace{\sum_{u \in V} 1}_{=n} \\[-12pt]
+  &= 2n + 2m \in O(n + m)
+\end{aligned}
+\]
+
+
+Since \nameref{alg:dfs} always explores all vertices, we define the predecessor subgraph as \(G_\pi=(V,E_\pi)\), where
+\[
+E_\pi = \{(v.\pi,v)\mid v\in V \AND v.\pi \neq \nil\}
+\]
+It is a \nameref{alg:dfs} \emph{forest}, comprising several {\nameref{alg:dfs} trees}.
+
+\subsubsection{Edge Classification}
+
+for undirected graphs, there are two types of edges: 
+\begin{itemize}
+\item \emph{tree edges} 
+\item \emph{back edges}: \(\attribnormal{v}{d} < \attribnormal{u}{d}\) AND \(\attribnormal{u}{\pi} \neq v\) 
+\end{itemize}
+Observation: for each edge in an undirected graph, either \(u\) is a proper ancestor (\(\attribnormal{u}{d} < \attribnormal{v}{d}\)) or a proper descendant (\(\attribnormal{u}{d} > \attribnormal{v}{d}\)) of \(v\) (by \autoref{lem:parenthesis_dfs}).
+
+{for directed graphs, there are three types of non-tree edges:}
+% Each edge \((u,v) \in E\) is classified as one of the following:
+\nopagebreak
+\begin{itemize}
+  %\item \emph{tree edges} are edges \((u,v) \in E_\pi\) in the \nameref{alg:dfs} forest \(G_\pi\). \((u,v)\) is a tree edge if \(v\) was first discovered by exploring the edge \((u,v)\) in Line~\ref{alg:dfs:explore_edges}.
+  \item \emph{back edges} \((u,v)\) where  \(v\) is an ancestor (not necessarily proper) of \(u\) 
+  \item \emph{forward edges} \((u,v)\) where \(v\) is a proper descendant of \(u\)
+  \item \emph{cross edges} \((u,v)\) where \(u\) and \(v\) are neither ancestor nor descendant of one another
+\end{itemize}
+
+\subsubsection{Properties of the \nameref{alg:dfs} Forest \(G_\pi\)} \label{sec:dfs_properties}
+
+  % \(v\) is a descendant of \(u\) \(\Longleftrightarrow\) \(v\) is discovered during the time in which \(u\) is gray
+  \nameref{alg:dfs} imposes a nesting structure on the discovery-finish time intervals (no overlapping intervals!):
+  \begin{lemma}[parenthesis]\label{lem:parenthesis_dfs}
+     for any two vertices \(u_1\) and \(u_2\):
+    \begin{itemize}
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \subset [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}]\) \(\Longleftrightarrow\) \(u_1\) is a descendant of \(u_2\)
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \supset [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}]\) \(\Longleftrightarrow\) \(u_2\) is a descendant of \(u_1\)
+      \item \([\attribnormal{u_1}{d}, \attribnormal{u_1}{f}] \cap [\attribnormal{u_2}{d}, \attribnormal{u_2}{f}] = \emptyset\) \(\Longleftrightarrow\) neither is a descendant of the other
+      \qedhere
+    \end{itemize}
+  \end{lemma}
+  % \(v\) is a descendant of \(u\) \(\Longleftrightarrow\) at the time \attribnormal{u}{d} that the search discovers \(u\), there is a path from \(u\) to \(v\) consisting entirely of white vertices
+
+
+
+\begin{lemma}\label{lem:dfs-edges-finish-times}
+Let \((u, v)\) be any graph edge.
+If it is a tree, forward, or cross edge, then \(\attribnormal{u}{f} > \attribnormal{v}{f}\).
+If it is a back edge, then \(\attribnormal{u}{f} \le \attribnormal{v}{f}\).
+\end{lemma}
+\begin{proof}
+\autoref{lem:parenthesis_dfs}.
+\end{proof}
+
+\begin{lemma}\label{lem:digraph-cycle-back-edge}
+A directed graph has a cycle iff the \nameref{alg:dfs} forest has a back edge.
+\end{lemma}
+\begin{proof}
+`\(\Leftarrow\)' easy: If there is a back edge then there is a cycle.
+`\(\Rightarrow\)': 
+Consider a cycle. 
+In a cycle there must be an edge \((u,v)\) with \(\attribnormal{u}{f} < \attribnormal{v}{f}\).
+By \autoref{lem:dfs-edges-finish-times}, \((u,v)\) must be a back edge.
+\end{proof}
+
+
+When during an \nameref{alg:dfs} an edge \((u,v)\) is first explored, the color of \(v\) yields information about the edge\tikzmark{edge-color}:
+\begin{tikzpicture}[
+  remember picture,
+  overlay,
+  scale = 0.5,
+  >=Stealth,
+  vertex/.style={draw, ellipse, minimum width=1cm, minimum height=0.6cm, line width=0.6pt, inner sep=0pt, font=\footnotesize},
+  tree/.style   ={black, ->},
+  fwd/.style    ={densely dotted, red, ->},
+  back/.style   ={dashed, blue, ->},
+  cross/.style  ={densely dotted, green!60!black, ->}
+]
+\coordinate (edge-color-y) at (pic cs:edge-color);
+\coordinate (edge-color-border) at (current page.east |- edge-color-y);
+\coordinate (edge-color-margin) at ($(edge-color-border) + (\textwidth,0) + (-\paperwidth,0)$);
+% \node[circle, draw=red, minimum size=2mm, inner sep=0pt] at (edge-color-margin) {}; % debugging
+\begin{scope}[shift={(edge-color-margin)}, scale=0.8]
+\begin{scope}[shift={(-9,-6.5)}]
+
+%--- Nodes ----------------------------------------------------------
+\node[vertex, label=left:$a$] (a) at (0, 6) {1/10};
+\node[vertex, label=left:$b$ ] (b) at (-3, 3) {2/5};
+\node[vertex, label=left:$c$ ] (c) at (-3, 0) {3/4};
+\node[vertex, label=above:$f$] (f) at (3, 3) {6/9};
+\node[vertex, label=right:$g$] (g) at (3, 0) {7/8};
+\node[vertex, label=right:$d$] (d) at (7, 6) {11/14};
+\node[vertex, label=right:$e$] (e) at (7, 3) {12/13};
+
+%--- Tree edges (solid black) --------------------------------------
+\draw[tree] (a) -- (b);
+\draw[tree] (b) -- (c);
+\draw[tree] (a) -- (f);
+\draw[tree] (f) -- (g);
+\draw[tree] (d) -- (e);
+
+%--- Forward edge(s) (red dotted) ----------------------------------
+\draw[fwd] (a) -- (c);
+
+%--- Back edge(s) (blue dashed) ------------------------------------
+\draw[back] (g) -- (a);
+
+%--- Cross edges (green dotted) ------------------------------------
+\draw[cross] (d) -- (a);
+\draw[cross] (e) -- (f);
+\draw[cross] (g) -- (c);
+
+%--- Legend ---------------------------------------------------------
+\begin{scope}[shift={(6,1.5)}]
+  \draw[tree]  (0,0) -- +(1.2,0); \node[anchor=west, font=\footnotesize] at (1.4,0) {tree};
+  \draw[fwd]   (0,-0.6) -- +(1.2,0); \node[anchor=west, font=\footnotesize] at (1.4,-0.6) {forward};
+  \draw[back]  (0,-1.2) -- +(1.2,0); \node[anchor=west, font=\footnotesize] at (1.4,-1.2) {back};
+  \draw[cross] (0,-1.8) -- +(1.2,0); \node[anchor=west, font=\footnotesize] at (1.4,-1.8) {cross};
+\end{scope}
+
+\end{scope}
+\end{scope}
+
+\end{tikzpicture}
+\begin{itemize}%[before={\parskip=0pt},nosep]
+  \item if \(v\) is \(\white\), then \((u,v)\) is a tree edge
+  \item if \(v\) is \(\gray\), then \((u,v)\) is a back edge
+  \item if \(v\) is \(\black\), then \((u,v)\) is a
+\begin{itemize}%[before={\parskip=0pt},nosep]
+    \item forward edge if \(\attribnormal{u}{d} < \attribnormal{v}{d}\)
+    \item cross edge if \(\attribnormal{u}{d} > \attribnormal{v}{d}\)
+\end{itemize}
+\end{itemize}
+
+
+Observe that the gray vertices always form a linear chain of descendants corresponding to the stack of active \textsc{DFSvisit} invocations.
+
+
+
+
+
+\subsection{Connectivity in Directed Graphs} \label{sec:connectivity_digraphs}
+
+\begin{definition}[strongly connected]\label{def:strongly_connected}
+A directed graph is \emph{strongly connected} if for each \(u\) and \(v\), there is a path from \(u\) to \(v\) and a path from \(v\) to \(u\).
+\end{definition}
+
+\begin{lemma}\label{lem:source-strongly_connected}
+Let \(s\) be any node. 
+\(G\) is strongly connected iff every node is reachable from \(s\) AND \(s\) is reachable from every node.
+\end{lemma}
+
+\begin{proof}
+`\(\Rightarrow\)' follows from definition.
+`\(\Leftarrow\)':
+Consider two nodes \(u\) and \(v\).
+\[
+\begin{tikzpicture}[>=Stealth, scale=0.4, font=\footnotesize]
+\useasboundingbox (-3,-2) rectangle (5,2);
+% background blob
+\fill[black!20] plot[smooth cycle,tension=0.7] coordinates {(-3.4,1.5) (-2.0,2.3) (-0.4,2.0) (1.6,2.2) (3.6,1.6) (4.5,0.7) (5.1,-0.2) (4.6,-1.3) (3.2,-2.1) (1.3,-2.3) (-0.6,-2.0) (-2.2,-1.7) (-3.2,-0.8)};
+% nodes
+\tikzset{state/.style={circle,draw,fill=white,minimum size=9pt,inner sep=0pt}}
+\node[state] (s) at (-1.5,0.0) {\(s\)};
+\node[state] (u) at (3.3,0.5)  {\(u\)};
+\node[state] (v) at (2.4,-1.5) {\(v\)};
+% paths
+\draw[<-, rounded corners=3pt] (s) -- (-0.4, 1.2) -- (0.8, 1.4) -- (1.9, 1.1) -- (u); % u -> s
+\draw[->, rounded corners=3pt] (s) -- (-0.2, 0.2) -- (0.9, 0.4) -- (2.0, 0.2) -- (u); % s -> u
+\draw[<-, rounded corners=3pt] (s) -- (-0.6,-1.3) -- (0.9,-1.9) -- (1.7,-1.8) -- (v); % v -> s
+\draw[->, rounded corners=3pt] (s) -- (-0.5,-0.8) -- (0.5,-0.2) -- (1.5,-0.6) -- (v); % s -> v
+% \draw (current bounding box.north east) -- (current bounding box.north west) -- (current bounding box.south west) -- (current bounding box.south east) -- cycle; % debugging
+\end{tikzpicture} 
+\]
+Path from \(u\) to \(v\): Concatenate \(u \leadsto s\) and \(s \leadsto v\).
+Path from \(v\) to \(u\): Concatenate \(v \leadsto s\) and \(s \leadsto u\).
+\end{proof}
+
+\begin{theorem}\label{thm:strongly_connected_test}
+We can test if \(G\) is strongly connected in \(O(n + m)\) time.
+\end{theorem}
+\begin{proof}
+  Pick any node \(s\).
+  Run \nameref{alg:bfs} (or \nameref{alg:dfs}) from \(s\) in \(G\).
+  Run \nameref{alg:bfs} (or \nameref{alg:dfs}) from \(s\) in \(G^{\top}\).
+  If all nodes are reached in both searches, then \(G\) is strongly connected (by \autoref{lem:source-strongly_connected}).
+\end{proof}
+
+\begin{theorem}[Tarjan, 1972]\label{thm:tarjan_strongly_connected_components}
+The strongly connected components of a directed graph can be computed in \(O(n + m)\)
+\end{theorem}
+
+
+
+
+
+
+\subsection{Topological Sort}\label{sec:topological_sort}
+\begin{definition}[topological order]\label{def:topological_order}
+  A \emph{topological order} of a directed \(G=(V,E)\) is a ordering of its vertices \(v_1, \ldots, v_n\) such that for every edge \((v_i, v_j)\), we have \(i < j\).
+\end{definition}
+\begin{lemma}\label{lem:dag_topological_order}
+If \(G\) has a topological order, then \(G\) is a DAG.
+\end{lemma}
+
+\begin{proof}[Contradiction]
+  Suppose \(G\) has a topological order \(v_1, \ldots, v_n\) and also has a directed cycle \(C\).
+  Let \(v_i\) be the lowest-indexed node in \(C\) and \(v_j\) be the node just before \(v_i\) in \(C\):
+  \[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.6,
+  vertex/.style={circle,draw,fill=gray!40,minimum size=14pt,inner sep=0}
+]
+\node[vertex] (v1) at (0, 0) {$v_1$};
+\node[] at (1, 0) {$\hdots$};
+\node[vertex] (vi) at (2, 0) {$v_i$};
+\node[] at (3, 0) {$\hdots$};
+\node[vertex] (ui) at (4, 0) {};
+\node[] at (5, 0) {$\hdots$};
+\node[vertex] (uj) at (6, 0) {};
+\node[] at (7, 0) {$\hdots$};
+\node[vertex] (vj) at (8, 0) {$v_j$};
+\node[] at (9, 0) {$\hdots$};
+\node[vertex] (vn) at (10, 0) {$v_n$};
+
+\def\Hbig{0.6}
+\draw[blue,->] (vj.north) -- ($(vj.north)+(0,\Hbig)$) -- ($(vi.north)+(0,\Hbig)$) -- (vi.north);
+
+\draw[blue,->] (vi) to[out=-45, in=225] (ui);
+\draw[ dotted, blue,->] (ui) to[out=-45, in=225] (uj);
+\draw[blue,->] (uj) to[out=-45, in=225] (vj);
+
+\node[blue, anchor=south east] at ($(vj.north)+(0,\Hbig)$) {the directed cycle $C$};
+\end{tikzpicture}
+\]
+Then \((v_j, v_i)\) is an edge with \(j > i\), by our choice of \(v_i\).
+This contradicts the definition of a \nameref{def:topological_order}, which requires \(i < j\) for every edge \((v_i, v_j)\).
+\end{proof}
+
+\begin{lemma}\label{lem:dag_has_source}
+If \(G\) is a DAG, then \(G\) has a node with no incoming edges (a \emph{source}).
+\end{lemma}
+\begin{proof}[Contradiction]
+  Suppose \(G\) is a DAG and every node has at least one incoming edge.
+  Pick any node \(v\), and begin following edges backwards from \(v\).
+  Since every node has an incoming edge, we can repeat this process and if \(G\) is finite, we must eventually revisit a node, say \(w\).
+  Let \(C\) denote the sequence of nodes encountered between successive visits to \(w\).
+  Then \(C\) is a cycle.
+\end{proof}
+\begin{caution}
+The converse of \autoref{lem:dag_has_source} does not hold!
+\end{caution}
+
+\begin{lemma}\label{lem:dag_has_topological_order}
+If \(G\) is a DAG, then \(G\) has a topological order.
+\end{lemma}
+\begin{proof}[Induction]\label{proof:dag_has_topological_order}
+The inductive proof spells out a \hyperref[alg:topological_sort_recursive]{recursive algorithm}.
+\begin{enumerate}[partopsep=0em, label=(\roman*)]
+\item Base case:
+For \(n=1\), we just have one node, which trivially has a topological order.~\textcolor{Green}{\ding{52}}
+\item Induction hypothesis:
+Assume a DAG of \(n \ge 2\) nodes has a topological order. 
+\label{proof:dag_has_topological_order:induction_hypothesis}
+\item Induction step:
+Let \(G\) be a DAG with \(n+1\) nodes.
+By \autoref{lem:dag_has_source}, \(G\) has a source node, say \(v\).
+\(G \setminus \{v\}\) is a DAG (removing \(v\) cannot create cycles) with \(n\) nodes.
+By~\ref{proof:dag_has_topological_order:induction_hypothesis}, \(G \setminus \{v\}\) has a TO.
+Append \(v\) to the front of this TO.
+This is a TO for \(G\) since \(v\) has no incoming edges.~\textcolor{Green}{\ding{52}}
+\qedhere
+\end{enumerate}
+\end{proof}
+\begin{algorithm}[h]
+\caption{Topological Sort (Recursive)}\label{alg:topological_sort_recursive}
+\begin{algorithmic}[1]
+\Function{TopologicalSort}{$G$}
+  \If{\(G\) is empty}
+    \State \Return empty list \Comment{recursion bottoms out here}
+  \EndIf
+  \State Find a node \(v\) with no incoming edges
+  \State Remove \(v\) from \(G\)
+  \State \(L \gets [v]\) concatenated  with \Call{TopologicalSort}{\(G \setminus \{v\}\)}
+  \State \Return \(L\)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}
+\autoref{alg:topological_sort_recursive} finds a TO in \(O(n + m)\) time.
+\end{theorem}
+\begin{proof}
+Maintain the following information:
+\begin{itemize}
+  \item \(\texttt{in\_degree}[w]\): number of incoming edges to node \(w\)
+  \item \(S\): set of nodes with no incoming edges
+\end{itemize}
+Initialization: \(O(n + m)\), one scan through \(G\) to find out the in-degrees of all nodes and populate \(S\).
+
+When removing a node \(v\) from \(S\), we decrement \(\texttt{in\_degree}[w]\) for each outgoing edge \((v, w)\).
+If \(\texttt{in\_degree}[w]\) hits zero, we add \(w\) to \(S\).
+This is \(O(1)\) work per edge incident to \(v\).
+\end{proof}
+
+\autoref{alg:topological_sort} is an alternative way to find a TO of a DAG using \nameref{alg:dfs}.
+
+\begin{algorithm}[h]
+\caption{Topological Sort (DFS)}\label{alg:topological_sort}
+\begin{algorithmic}[1]
+\Function{topSort}{$G$}
+  \ForAll{$u\in V$}
+    \State $\attrib{u}{color} \gets \white$ \Comment{initialization}
+  \EndFor
+  \State $S \gets \emptyset$ \Comment{empty stack}
+  \ForAll{$u\in V$}
+    \If{$\attrib{u}{color}=\white$}
+      \State \Call{topVisit}{$u$}
+    \EndIf
+  \EndFor
+  \While{$S \neq \emptyset$} \Comment{while stack not empty}
+    \State output \Call{pop}{$S$} \Comment{pop stack for final TO}
+  \EndWhile
+\EndFunction
+
+\Function{topVisit}{$u$}
+  \State $\attrib{u}{color}\gets\gray$ \Comment{mark \(u\) visited} 
+  \ForAll{$v\in\Gamma(u)$}
+    \If{$\attrib{v}{color}=\white$}
+      \State \Call{topVisit}{$v$} 
+    \EndIf
+  \EndFor
+  \State push \(u\) onto \(S\) \Comment{last to finish is top of stack}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+In \autoref{lem:dfs-edges-finish-times} we have seen that if \((u,v)\) is a tree/forward/cross edge, then \(\attribnormal{u}{f} > \attribnormal{v}{f}\).
+Since a DAG has no back edges (it is acyclic), we have \(\attribnormal{u}{f} > \attribnormal{v}{f}\) for every directed edge \((u,v)\).
+Thus, ordering vertices in decreasing order of finish times when running \autoref{alg:dfs} yields a TO.
+Hence, \autoref{alg:topological_sort} is correct.
+
+\begin{remark}
+Vertex with highest finish time in \nameref{alg:dfs} is a source of the DAG.
+\end{remark}
+
+
+
+
+\subsection{Applications of DFS}
+
+\subsubsection{Longest Path in a DAG}\label{sec:longest_path_dag}
+Given a DAG \(G=(V,E)\), where each vertex \(u\) is thought of as a task that takes \(\attrib{u}{time}\) time units to complete,
+and each edge \((u,v)\) represents a precedence constraint (task \(u\) must be completed before task \(v\) can begin),
+we want to know the minimum time required to complete all tasks, assuming maximum parallelism.
+This is equivalent to computing the maximum cost of any path in the DAG, where cost is defined as the sum of \(\attrib{u}{time}\) values of the vertices along the path.
+
+We can solve this in \(O(n + m)\) time through \nameref{alg:dfs}.
+The idea is to associate each vertex \(u\) with the \hl{maximum cost of any path that starts at this vertex}, denoted by \(\attrib{u}{cost}\).
+We let \(\texttt{max\_cost}\) be the maximum cost of all \(u\)'s neighbors.% and set \(\attrib{u}{cost} = \texttt{max\_cost} + \attrib{u}{time}\).
+
+\begin{algorithm}[h]
+\caption{Longest Path in a DAG}\label{alg:longest_path_dag}
+\begin{algorithmic}[1]
+\Function{LongPathVisit}{$u$}
+  \State $\attrib{u}{color}\gets\gray$ \Comment{mark \(u\) visited} 
+  \State $\texttt{max\_cost} \gets 0$ \Comment{initialize max outgoing cost}
+  \ForAll{$v\in\Gamma(u)$}
+    \If{$\attrib{v}{color}=\white$}
+      \State \Call{LongPathVisit}{$v$} \Comment{process \(v\) if undiscovered}
+    \EndIf
+    \State $\texttt{max\_cost} \gets \max (\texttt{max\_cost}, \attrib{v}{cost})$ \Comment{update maximum cost}
+  \EndFor
+  \State \(\attrib{u}{cost} \gets \texttt{max\_cost} + \attrib{u}{time}\) \Comment{save final cost}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Because the graph is acyclic, every edge \((u,v)\) goes from \(u\) to a vertex \(v\) whose finish time is greater than \(u\)'s (by \autoref{lem:dfs-edges-finish-times}).
+Therefore, \(\attrib{v}{cost}\) is fully defined before it is accessed by \(u\).
+The longest path in the entire DAG is the largest value of \(\attrib{u}{cost}\) among all vertices \(u\).
+
+
+
+% \clearpage
+
+\subsubsection{Biconnected Components}\label{sec:biconnected_components}
+Let \(G=(V,E)\) be a connected, undirected graph.
+\begin{definition}[cut vertex]\label{def:cut_vertex}
+any vertex whose removal (along with incident edges) disconnects the graph
+\end{definition}
+\begin{definition}[bridge]\label{def:bridge}
+any edge whose removal disconnects the graph
+\end{definition}
+\begin{definition}[biconnected]\label{def:biconnected}
+a graph is biconnected if it contains no cut vertices
+\end{definition}
+a graph is \(k\)-connected if it remains connected after removing any \(k-1\) vertices.
+\begin{definition}[biconnected component]\label{def:biconnected_component}
+partition \(E\) into maximal subgraphs that are biconnected.
+\end{definition}
+Biconnected components are the equivalence classes of the co-cyclicity relation.
+Two edges \(e_1, e_2 \in E\) are co-cyclic if there is a simple cycle that contains both, or if \(e_1 = e_2\).
+
+\(G\) is biconnected iff it consists of one biconnected component.
+
+\begin{lemma}\label{lem:cut_vertex_root}
+ The root \(r\) of the \nameref{alg:dfs} tree is a cut vertex iff it has \(\ge 2\) children.
+\end{lemma}
+\begin{lemma}\label{lem:cut_vertex_internal}
+An internal (i.e. not a leaf and not the root) vertex \(u\) of the \nameref{alg:dfs} tree is a cut vertex 
+iff there exists a subtree rooted at a child \(v\) of \(u\) such that 
+there is no back edge from any vertex in this subtree to a proper ancestor of \(u\).
+\end{lemma}
+
+We can exploit the structure of the \nameref{alg:dfs} tree to determine cut vertices.
+
+Keeping track of all back edges from each subtree is expensive.
+
+Instead we can just keep track of one back edge from each subtree, the one that goes highest (closest to the root) in the tree.
+
+Observe: discovery times decrease as we go up the tree.
+
+Idea: keep track of back edge \((x, w)\) with smallest discovery time \(\attribnormal{w}{d}\)
+
+\begin{definition}[low value]\label{def:low_value}
+highest up we can reach from the subtree rooted at \(v\) (via back edges):
+\vspace{-1em}
+\[
+  % {\color{Red}
+  % % \setlength{\fboxrule}{1pt}
+  % \boxed{ 
+  % \color{black}
+\begin{verticalhack}
+\attrib{v}{low}
+:= \min\biggl(
+\{\attribnormal{v}{d}\} \cup
+\Bigl\{\attribnormal{w}{d} \ \Bigm|\ 
+\begin{aligned}
+& (x,w)\ \text{is a back edge for some}\\[-4pt]
+& \text{(nonproper) descendant } x \text{ of } v
+\end{aligned}
+\Bigr\}
+\biggr)
+\end{verticalhack}
+\qedhere
+% }}
+\]
+\end{definition}
+
+Once \(\attrib{v}{low}\) is computed for all vertices \(v\), we can test wether a given non-root vertex \(u\) is a cut vertex by \autoref{lem:cut_vertex_internal} as follows:
+\(u\) is a \hl{cut vertex} iff it has a child \(v\) in the \nameref{alg:dfs} tree such that \(\attrib{v}{low} \ge \attribnormal{u}{d}\).
+Moreover, \((u,v)\) is a \hl{bridge} iff it is a tree edge (i.e. \(u = \attrib{v}{\pi}\)) and \(\attrib{v}{low} > \attribnormal{u}{d}\).
+\[
+\begin{tikzpicture}[
+  % line cap=round,
+  % line join=round,
+  >=stealth, 
+  font=\footnotesize,
+  scale=0.8,
+]
+\begin{scope} % left figure
+  % trapezoid-like block 
+  \coordinate (A) at (-1.2,0);
+  \coordinate (B) at ( 1.2,0);
+  \coordinate (C) at ( 0.4,2);
+  \coordinate (D) at (-0.4,2);
+  \draw[thick] (A)--(B)--(C)--(D)--cycle;
+
+  % vertices v, u, w
+  \coordinate (vcoor) at (0,2);
+  \coordinate (ucoor) at (0.3,2.6);
+  \coordinate (wcoor) at ($(ucoor)!2!180:(vcoor)$);
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (v) at (vcoor) {$v$};
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (u) at (ucoor) {$u$};
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (w) at (wcoor) {$w$};
+
+  % tree edges
+  \draw[thick] (v)--(u);
+  \draw[thick] (u)--($(u)!0.35!0:(w)$);
+  \draw[thick, densely dotted] ($(u)!0.35!0:(w)$)--($(u)!0.65!0:(w)$);
+  \draw[thick] ($(u)!0.65!0:(w)$)--(w);
+
+  % dotted back edges
+  \draw[thick, densely dotted] (-0.3,1.5) to[bend left=40] (u);
+  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
+  \draw[thick, densely dotted] (-0.5,1.0) to[bend left=45] (w);
+
+  % annotations
+  \node[right=0.1 of u] {$u$ is \textbf{not} a cut vertex};
+  \node[right=0.3 of v] {$\attrib{v}{low} = \attribnormal{w}{d} < \attribnormal{u}{d}$};
+\end{scope}
+
+\begin{scope}[xshift=5cm] % mid figure (cut vertex)
+  % trapezoid-like block 
+  \coordinate (A) at (-1.2,0);
+  \coordinate (B) at ( 1.2,0);
+  \coordinate (C) at ( 0.4,2);
+  \coordinate (D) at (-0.4,2);
+  \draw[thick] (A)--(B)--(C)--(D)--cycle;
+
+  % vertices v and u on the side arm
+  \coordinate (vcoor) at (0,2);
+  \coordinate (ucoor) at (0.3,2.6);
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (v) at (vcoor) {$v$};
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (u) at (ucoor) {$u$};
+
+  % the tree edge (v--u) and its upward continuation
+  \draw[thick] (v)--(u);
+  \draw[thick] (u)--($(u)!0.6!180:(v)$);
+  \draw[thick,densely dotted] ($(u)!0.6!180:(v)$)--($(u)!1.2!180:(v)$);
+
+  % dotted back edges / paths 
+  \draw[thick, densely dotted] (-0.3,1.5) to[bend left=45] (u);
+  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
+
+  % annotations
+  \node[right=0.1 of u] {$u$ is a cut vertex};
+  \node[right=0.3 of v] {$\attrib{v}{low} \ge \attribnormal{u}{d}$};
+\end{scope}
+
+\begin{scope}[xshift=10cm] % right figure (bridge)
+  % trapezoid-like block 
+  \coordinate (A) at (-1.2,0);
+  \coordinate (B) at ( 1.2,0);
+  \coordinate (C) at ( 0.4,2);
+  \coordinate (D) at (-0.4,2);
+  \draw[thick] (A)--(B)--(C)--(D)--cycle;
+
+  % vertices v and u on the side arm
+  \coordinate (vcoor) at (0,2);
+  \coordinate (ucoor) at (0.3,2.6);
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (v) at (vcoor) {$v$};
+  \node[circle,draw,thick,fill=white,inner sep=0pt, minimum size=10] (u) at (ucoor) {$u$};
+
+  % the tree edge (v--u) and its upward continuation
+  \draw[thick] (v)--(u);
+  \draw[thick] (u)--($(u)!0.6!180:(v)$);
+  \draw[thick,densely dotted] ($(u)!0.6!180:(v)$)--($(u)!1.2!180:(v)$);
+
+  % dotted back edges / paths 
+  \draw[thick, densely dotted] (-0.5,1.0) to[bend left=45] (v);
+  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
+
+  % annotations
+  \node[right=0.1 of u] {$(u,v)$ is a bridge};
+  \node[right=0.3 of v] {$\attrib{v}{low} > \attribnormal{u}{d}$};
+\end{scope}
+\end{tikzpicture}
+\]
+
+\begin{algorithm}
+\caption{Modification of \hyperref[alg:dfs:dfsvisit]{\textsc{DFSvisit}} for \attribute{low} computation}\label{alg:low_computation}
+\begin{algorithmic}[1]
+\Function{LowComputation}{$u$} 
+  \State $\attrib{u}{color}\gets\gray$ \Comment{\(u\) has been discovered} \label{alg:low_computation:discover}
+  \State $T\gets T+1$
+  \State $\attrib{u}{low} \gets \attribnormal{u}{d} \gets T$ \Comment{set discovery time and init low} \label{alg:low_computation:discover_time}
+  \ForAll{$v\in\Gamma(u)$}  \label{alg:low_computation:explore_edges}
+    \If{$\attrib{v}{color}=\white$} \Comment{\((u,v)\) is a tree edge}
+      \State $\attrib{v}{\pi}\gets u$ \Comment{\(v\)'s parent is \(u\)}
+      \State \Call{LowComputation}{$v$} \label{alg:low_computation:recursive_call}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attrib{v}{low})$ \Comment{update \(\attrib{u}{low}\) (propagate \(\attrib{v}{low}\) up)} \label{alg:low_computation:update_low_tree}
+    \ElsIf{$v \neq \attrib{u}{\pi}$} \Comment{\((u,v)\) is a back edge}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attribnormal{v}{d})$ \Comment{update \(\attrib{u}{low}\) (consider back edge to \(v\))} \label{alg:low_computation:update_low_back}
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+\caption{Modification of \hyperref[alg:dfs:dfsvisit]{\textsc{DFSvisit}} to find cut vertices}\label{alg:find_cut_vertices}
+\begin{algorithmic}[1]
+\Function{findCutVertices}{$u$} 
+  \State $\attrib{u}{color}\gets\gray$ \Comment{\(u\) has been discovered} \label{alg:find_cut_vertices:discover}
+  \State $T\gets T+1$
+  \State $\attrib{u}{low} \gets \attribnormal{u}{d} \gets T$ \Comment{set discovery time and init low} \label{alg:find_cut_vertices:discover_time}
+  \ForAll{$v\in\Gamma(u)$}  \label{alg:find_cut_vertices:explore_edges}
+    \If{$\attrib{v}{color}=\white$} \Comment{\((u,v)\) is a tree edge}
+      \State $\attrib{v}{\pi}\gets u$ \Comment{\(v\)'s parent is \(u\)}
+      \State \Call{findCutVertices}{$v$} \label{alg:find_cut_vertices:recursive_call}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attrib{v}{low})$ \Comment{update \(\attrib{u}{low}\) (propagate \(\attrib{v}{low}\) up)} \label{alg:find_cut_vertices:update_low_tree}
+      \If{$\attrib{u}{\pi} = \nil$} \Comment{\(u\) is root: apply \autoref{lem:cut_vertex_root}}
+        \If{this is \(u\)'s second child} 
+          \State label \(u\) as a cut vertex 
+        \EndIf
+      \ElsIf{$\attrib{v}{low} \ge \attribnormal{u}{d}$} \Comment{\(u\) is internal: apply \autoref{lem:cut_vertex_internal}}
+        \State label \(u\) as a cut vertex
+      \EndIf
+    \ElsIf{$v \neq \attrib{u}{\pi}$} \Comment{\((u,v)\) is a back edge}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attribnormal{v}{d})$ \Comment{update \(\attrib{u}{low}\) (consider back edge to \(v\))} \label{alg:find_cut_vertices:update_low_back}
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Modification of \hyperref[alg:dfs:dfsvisit]{\textsc{DFSvisit}} to find bridges}\label{alg:find_bridges}
+\begin{algorithmic}[1]
+\Function{findBridges}{$u$}
+  \State $\attrib{u}{color}\gets\gray$
+  \State $T\gets T+1$
+  \State $\attrib{u}{low}\gets\attribnormal{u}{d}\gets T$  \Comment{discover $u$}
+  \ForAll{$v\in\Gamma(u)$}
+    \If{$\attrib{v}{color}=\white$} \Comment{\((u,v)\) is a tree edge}
+      \State $\attrib{v}{\pi}\gets u$
+      \State \Call{findBridges}{$v$}
+      \State $\attrib{u}{low}\gets \min(\attrib{u}{low},\attrib{v}{low})$
+      \If{$\attrib{v}{low}>\attribnormal{u}{d}$} \Comment{bridge test}
+        \State label edge \((u,v)\) as a bridge
+      \EndIf
+    \ElsIf{$v \neq \attrib{u}{\pi}$} \Comment{\((u,v)\) is a back edge}
+      \State $\attrib{u}{low}\gets \min(\attrib{u}{low},\attribnormal{v}{d})$
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+If we want to to find the \nameref{def:biconnected_component}s of \(G\), we can store the edges in a stack while performing \autoref{alg:find_cut_vertices}.
+Whenever we reach a cut vertex, edges in a biconnected component will be consecutive on the stack.
+
+
+
+\subsubsection{Strongly Connected Components}\label{sec:strongly_connected_components}
+\begin{definition}\label{def:strongly_connected_v2}
+A di-graph is \textcolor{red}{strongly connected} if every pair of nodes \(u, v\) is mutually reachable, i.e., there is a path from \(u\) to \(v\) and also a path from \(v\) to \(u\).
+\end{definition}
+
+mutual reachability relation between vertices is an equivalence relation.
+
+partitions \(V\) into equivalence classes: \emph{strongly connected components} of \(G\)
+
+if we collapse the vertices within each strong component into a single vertex, we get the \emph{component digraph}. it is a DAG.\\
+- if there is an edge (or path) from component \(C\) to component \(C'\), then there cannot be an edge (or path) from \(C'\) to \(C\) (or else \(C \cup C'\) would be one strong component).\\
+- thus, there is no cycle in the component digraph
+
+strong components can be computed in \(O(n + m)\) time using two \nameref{alg:dfs}\\
+- \hyperref[thm:strongly_connected_test]{recall} that we can answer if a digraph is strongly connected by 2 \nameref{alg:bfs}/\nameref{alg:dfs} 
+
+\medskip
+
+If we run our usual \nameref{alg:dfs} and record the finish times we make the following observations:
+
+\begin{observation}\label{obs:highest_finish_time_source_of_component_digraph}
+ Node of highest finish time must be a source (in-degree \(0\)) of the component digraph.
+\end{observation}
+
+\begin{observation}\label{obs:edge_between_strong_components_finish_times}
+ More generally, if \(C\) and \(C'\) are two strong components such that there is an edge from a vertex in \(C\) to a vertex in \(C'\), 
+ then 
+ \begin{equation}\label{eq:connected_components_finish_times}
+  \max_{u \in C} \attribnormal{u}{f} > \max_{v \in C'} \attribnormal{v}{f}
+ \end{equation}
+ i.e.\tikzmark{strong_components_mark} the \hl{highest finish time in \(C\) is greater than the highest finish time in \(C'\)}.
+\begin{tikzpicture}[remember picture,overlay, font=\footnotesize]
+\coordinate (strong_components) at (pic cs:strong_components_mark);
+\coordinate (first_component) at ($(strong_components)+(0.4,0.85)$);
+\node[draw, fill=gray!20, circle, minimum size=0.65cm, inner sep=0cm, densely dotted] (c) at (first_component) {\(C\)};
+\node[draw, fill=gray!20, circle, minimum size=0.65cm, inner sep=0cm, densely dotted] (cp) at ($(first_component)+(1.6,0)$) {\(C'\)};
+\draw[->] (c) -- (cp);
+\end{tikzpicture}
+\end{observation}
+
+\begin{proof}
+We distinguish two cases:
+\begin{itemize}
+\item 
+Suppose \nameref{alg:dfs} first encounters a vertex \(u\) in \(C\).
+Then it will visit all vertices in \(C'\) and \(C\) before \(u\) can finish.
+Thus, \(u\) will have higher finish time than every vertex in \(C \cup C'\).
+\item
+Suppose \nameref{alg:dfs} first encounters a vertex \(v\) in \(C'\).
+Then it will ``get stuck'' in \(C'\) (since there are no edges from \(C'\) to \(C\)).
+So, all vertices in \(C\) will have higher discovery times than those in \(C'\); so they will also have higher finish times.
+\qedhere
+\end{itemize}
+\end{proof}
+
+\begin{caution}\label{caution:lowest_finish_time_not_sink}
+It may be tempting at this point to try to conclude from \autoref{obs:highest_finish_time_source_of_component_digraph} and \autoref{obs:edge_between_strong_components_finish_times} that the node of lowest finish time must be in a sink (out-degree \(0\)) of the component digraph.
+However, this is \emph{not} true in general, as one can see from the following counterexample:
+\(V = \{a,b,c\}\), \(E = \{(a,b), (b,a), (a,c)\}\).
+If we run \nameref{alg:dfs} starting from \(a\), exploring neighbors in alphabetical order, we get \(\attribnormal{b}{f} < \attribnormal{c}{f} < \attribnormal{a}{f}\), even though \(b\) is not in a sink component.
+\end{caution}
+
+Using DFS we can identify the vertex of highest finish time.
+It is a vertex in a source node of the component DAG \(G^{\mathrm{SCC}}\).
+
+
+
+but we want to identify a vertex in a \hl[2]{sink of the component DAG}:
+\begin{itemize}
+  \item if we can do this, then we can start a \nameref{alg:dfs} at a vertex in the sink component, and identify all vertices of this component
+  \item (no other strong component will be visited at this DFS call, as there is no edge from the sink component to another one)
+  \item repeat (after ignoring the vertices of this component)
+\end{itemize}
+
+\hl[3]{trick}:
+\begin{itemize}
+  \item reverse the edges of \(G\) to get the transpose graph \(G^{\top}\)
+  \item strong component of \(G^{\top}\) are the same as those of \(G\)
+  \item the edges of the component DAG of \(G^{\top}\) are the reversed edges of the component DAG of \(G\)
+  \item the vertex of highest finish time in \(G^{\top}\) must be in the sink node of the original component DAG of \(G\) (by \autoref{obs:highest_finish_time_source_of_component_digraph})
+\end{itemize} 
+
+\begin{algorithm}[h]
+\caption{Strongly Connected Components}\label{alg:strongly_connected_components}
+\begin{algorithmic}[1]
+  \Function{StronglyConnectedComponents}{$G$}
+  \State create the transpose graph \(G^{\top}\)
+  \State call \Call{DFS}{$G^{\top}$} to compute the finish time \(\attribnormal{v}{f}\) for each \(v\in V\) \label{alg:strongly_connected_components:first_dfs}
+  \State as the vertices finish (Line~\ref{alg:dfs:finish}), push them on a stack % {thus, the vertices are automatically sorted by decreasing finish time}
+  \State call \Call{DFS}{$G$}, but in Line~\ref{alg:dfs:for_all_vertices}, consider the vertices in order of decreasing \(\attribnormal{u}{f}\) \label{alg:strongly_connected_components:second_dfs}
+  \State \Return the depth-first trees of \(G_\pi\) formed in Line~\ref{alg:strongly_connected_components:second_dfs}
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+By considering vertices in the \(2^{\text{nd}}\) \nameref{alg:dfs} in decreasing order of finish times from the \(1^{\text{st}}\) \nameref{alg:dfs}, we are visiting the vertices of the component DAG in topologically sorted (reverse) order.

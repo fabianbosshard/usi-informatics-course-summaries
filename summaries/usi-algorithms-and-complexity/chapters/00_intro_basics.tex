@@ -1,0 +1,50 @@
+
+\section{Introduction}
+
+typically,
+\begin{itemize}[nolistsep, noitemsep]
+\item numerical data \(\rightarrow\) numerical analysis 
+\item discrete data \(\rightarrow\) algorithm design and analysis
+\end{itemize} \medskip
+
+two fundamental issues to consider: \emph{correctness}, \emph{efficiency}
+
+
+
+
+\section{Asymptotic Notation and Recurrences}
+
+\begin{theorem}[Simplified Master Theorem]\label{thm:simpl_master_theorem}
+Let $a \geq 1, b>1$ be constants and let $T(n)$ be the recurrence
+\[
+T(n)=a T(n / b)+c n^k
+\]
+defined for $n \geq 0$.
+\begin{itemize}[nolistsep, noitemsep]
+\item Case 1: $a>b^k$ then $T(n)$ is $\Theta(n^{\log _b a})$
+\item Case 2: $a=b^k$ then $T(n)$ is $\Theta(n^k \log n)$
+\item Case 3: $a<b^k$ then $T(n)$ is $\Theta(n^k)$ \qedhere
+\end{itemize}
+\end{theorem}
+
+\medskip
+
+Summation with general bounds:
+\[
+\sum_{i=a}^b f(i)=\sum_{i=0}^b f(i)-\sum_{i=0}^{(a-1)} f(i)
+\]
+
+\medskip
+
+% Linearity of summation:
+% \[
+% \sum((f(i)+g(i)) h(i))=\sum(f(i) h(i))+\sum(g(i) h(i))
+% \]
+
+% \medskip
+
+Approximation using integrals:
+\[
+\int_0^n f(x) \dif x \leq \sum_{i=1}^n f(i) \leq \int_1^{n+1} f(x) \dif x
+\]
+(if $f(x)$ is monotonically increasing)
