@@ -18,7 +18,7 @@ Multiple sources/sinks can be modeled by adding a \emph{super-source} and \emph{
 If we have further restrictions, such as flow from certain sources can only go to certain sinks, we have the \emph{multi-commodity flow problem}, which is NP-hard.
 \end{caution}
 
-\subsection{Maximum Flow and Minimum Cut}\label{sec:max_flow_min_cut}
+\subsection{Flows and Cuts}\label{sec:flows_cuts}
 
 Two rich algorithmic problems with a beautiful duality. 
 Cornerstones in combinatorial optimization.
@@ -104,7 +104,7 @@ Let \(f\) be any flow and \((A,B)\) be any cut. Then
   = 
   v(f)
 \end{equation}
-i.e. the net flow across the cut equals the value of the flow.
+i.e. the \hl[2]{net flow across any cut equals the amount leaving \(s\)}. %value of the flow.
 \end{lemma}
 \begin{proof}
 \[
@@ -181,40 +181,46 @@ but if \(v(f) = c(A,B)\), all inequalities must be equalities, yielding \eqref{e
 
 
 \begin{caution}
-  \nameref{sec:dynamic_programming} (Section \ref{sec:dynamic_programming}) cannot be applied because the problem does not exhibit optimal substructure (\autoref{def:principle_of_optimality}).
+  \nameref{sec:dynamic_programming} (\autoref{sec:dynamic_programming}) cannot be applied because the problem does not exhibit optimal substructure (\autoref{def:principle_of_optimality}).
 \end{caution}
 
-A na\"ive greedy strategy (Section \ref{sec:greedy_algorithms}) will not work for \nameref{prob:max_flow} either, because local optimality does not imply global optimality.
+A na\"ive greedy strategy (\autoref{sec:greedy_algorithms}) will not work for \nameref{prob:max_flow} either, because local optimality does not imply global optimality.
 This happens, because once we send flow along an edge, we might later want to ``take it back'' to reroute it more efficiently, so in addition to increase flow along edges, we need the ability to \emph{reduce} it as well.
 
 We need the notion of a
 
-\subsection{Residual Network}
+
+
+
+\subsection{Residual Network}\label{sec:residual_network}
 
 Recall the transpose graph \(G^\top = (V, E^\top)\), where \(E^\top = \{(v,u) \mid (u,v) \in E\}\).
 
-In order to ``undo'' flow sent along edges, we consider original edges \(E\) as well as the reverse edges \(E^\top\), with capacities defined as follows.
-Given flow \(f\), the \emph{residual capacity} of any edge is
+In order to ``undo'' flow sent along edges, we consider original edges \(E\) (`forward arcs') as well as transpose edges \(E^\top\) (`backward arcs'), with capacities defined as follows.
+Given flow \(f\), the \emph{residual capacity} of any arc is
 \begin{equation}\label{eq:residual_capacity}
 c_f(e) =
 \begin{cases}
   c(e) - f(e) & e \in E \\
-  f(e) & e \in E^\top 
+  f(e^R) & e \in E^\top
 \end{cases}
 \end{equation}
-where \(E^\top\) is the edge set of the transpose graph \(G^\top\).
+% where \(e^{R} = (u,v)\) denotes the original (forward) arc for a given backward arc \(e = (v,u) \in E^\top\).
+where for any arc $a=(x,y)$ we define $a^R\coloneqq (y,x)$.
+Note that if $e\in E^\top$, then $e^R\in E$.
 
 \begin{definition}[Residual Network]\label{def:residual_network}
-The \emph{residual network} \(G_f = (V, E_f)\) with respect to flow \(f\) contains the same vertices as \(G\) with the edge set
+The \emph{residual network} \(G_f = (V, E_f)\) with respect to flow \(f\) contains the same vertices as \(G\) with the arc set
 \begin{equation}\label{eq:residual_edges}
-  E_f \coloneqq  \{ e \in E \cup E^\top \mid c_f(e) > 0 \}
+  E_f \coloneqq  \{ e \in E : f(e) < c(e) \} \cup \{ e \in E^\top: f(e^R) > 0 \}
 \end{equation}
-i.e., it contains all edges with positive residual capacity.
+i.e., it contains all (forward and backward) arcs with positive residual capacity.
 \end{definition}
 
-Each edge in \(G\) may result in the generation of at most two new edges in \(G_f\).
+Each edge in \(G\) may result in the generation of at most two arcs in \(G_f\).
 Thus, \(G_f\) is of the same asymptotic size as \(G\).
-Also note that when \(v(f) = 0\), we have \(G_f = G\).
+% Also note that when \(v(f) = 0\), we have \(G_f = G\). % only true if there is no cycle
+Note that when \(f \equiv 0\), we have \(G_f = G\).
 
 
 
@@ -222,13 +228,14 @@ Also note that when \(v(f) = 0\), we have \(G_f = G\).
 An \emph{augmenting path} is a simple \(s\)-\(t\) path \(P\) in the residual network \(G_f\).
 \end{definition}
 
-The \emph{bottleneck capacity} (also called {residual capacity}) of an augmenting path \(P\) is
+The \emph{bottleneck capacity} (also called {residual capacity}) of an \nameref{def:augmenting_path} \(P\) is
 \begin{equation}\label{eq:augmenting_path_capacity}
   {\color{Red}\boxed{\color{black}
-  c_f(P) \coloneqq \min_{e \in P} c_f(e) > 0
+  c_f(P) \coloneqq \min_{e \in P} c_f(e)
   }}
 \end{equation}
-where the minimum is taken over all edges on the path \(P\).
+where the minimum is taken over all arcs on the path \(P\).
+Since all arcs in \(P\) have positive residual capacity, \(c_f(P) > 0\).
 
 
 % ```
@@ -263,9 +270,9 @@ where the minimum is taken over all edges on the path \(P\).
 \State \(b \gets c_f(P)\) \Comment{bottleneck capacity \eqref{eq:augmenting_path_capacity}}
 \ForAll{\(e \in P\)}
   \If{\(e \in E\)}
-     \State \(f(e) \gets f(e) + b\) \Comment{forward edge: increase flow}
+     \State \(f(e) \gets f(e) + b\) \Comment{forward arc: increase flow}
   \Else  \Comment{\(e \in E^\top\)}
-     \State \(f(e^\top) \gets f(e^\top) - b\) \Comment{reverse edge: decrease flow}
+     \State \(f(e^R) \gets f(e^R) - b\) \Comment{backward arc: decrease flow along original edge}
   \EndIf
 \EndFor
 \State \Return \(f\)
@@ -280,8 +287,9 @@ where the minimum is taken over all edges on the path \(P\).
 \ForAll{\(e \in E\)} 
  \State \(f(e) \gets 0\) \Comment{initial flow}
 \EndFor
-\State \(G_f \gets G\) \Comment{initial residual network}
-\While{\(\exists P \subset G_f\)} \Comment{there is an \nameref{def:augmenting_path} in \nameref{def:residual_network}}
+\State \(G_f \gets G\) \Comment{since the initial flow $f\equiv 0$, the initial residual network equals $G$}
+% \While{\(\exists P \subset G_f\)} \Comment{there is an \nameref{def:augmenting_path} in \nameref{def:residual_network}}
+ \While{there exists an \nameref{def:augmenting_path} \(P\) in \nameref{def:residual_network} \(G_f\)}
   \State \(f \gets \Call{Augment}{f, c, P}\) \Comment{augment flow along \(P\)}
   \State Update \(G_f\) based on new flow \(f\)
 \EndWhile
@@ -303,7 +311,7 @@ At the end of the \autoref{alg:ford_fulkerson}, the \nameref{def:residual_networ
 
 
 
-
+\subsection{Max-Flow Min-Cut Theorem}\label{sec:max_flow_min_cut_theorem}
 
 
 \begin{theorem}[Augmenting Path]\label{thm:augmenting_path}
@@ -430,7 +438,7 @@ Deleting $v(f^*)-k$ unit augmenting paths from an integral \nameref{prob:max_flo
 
 Running time of generic \nameref{alg:ford_fulkerson} is \emph{pseudo-polynomial}, not polynomial in size of the input \(n, m\).
 
-Use care when selecting \nameref{def:augmenting_path}s:
+\textcolor{AccentBlue}{Use care when selecting \nameref{def:augmenting_path}s}:
 \begin{itemize}
   \item Some choices lead to exponential algorithms.
   \item Clever choices lead to polynomial algorithms (Edmonds-Karp).
@@ -629,11 +637,14 @@ Goal: Choose augmenting paths so that:
   \item result in few iterations
 \end{itemize}
 
+\medskip
+
 Strategies:
 \begin{itemize}
   \item max bottleneck capacity (dependency on \(C\))
-  \item sufficiently large bottleneck capacity (Dinitz 1970). reduce dependency on \(C\) to \(\log C\). Time \(O(m^2 \log C)\).
-  \item simple/stupid idea: don't do anything fancy with capacities, just choose the path with fewest number of edges (Edmonds-Karp 1972). Polynomial time algorithm. Time \(O(n m^2)\).
+  \item sufficiently large bottleneck capacity \textcolor{AccentGray}{[Dinitz 1970]}. reduce dependency on \(C\) to \(\log C\). Time \(O(m^2 \log C)\).
+  \item simple idea: \\
+  don't do anything fancy with capacities, just choose the path with fewest number of edges \textcolor{AccentGray}{[Edmonds-Karp 1972]}. Polynomial time algorithm. Time \(O(n m^2)\).
 \end{itemize}
 
 
@@ -648,14 +659,243 @@ Strategies:
 \end{itemize}
 
 
-\subsection{Bipartite Matching}\label{sec:bipartite_matching}
 
 
-\begin{theorem}[Marriage]\label{thm:hall-marriage}
-\textcolor{AccentGray}{[Frobenius 1917, Hall 1935]} 
+
+
+
+
+
+\subsection{Applications}
+\subsubsection{Bipartite Matching}\label{sec:bipartite_matching}
+
+\begin{definition}[Matching]\label{def:graph-matching}
+Given an undirected graph \(G = (V,E)\), \(M \subseteq E\) is a \emph{matching} if each node appears in at most one edge in \(M\).
+\end{definition}
+
+\begin{definition}[Bipartite Matching]\label{def:graph-bipartite-matching}
+A \emph{bipartite matching} is a \nameref{def:graph-matching} in an undirected, bipartite graph \(G = (L \cup R, E)\).
+\end{definition}
+
+\begin{problem}[Max Bipartite Matching]\label{prob:max_bipartite_matching}
+Find a \nameref{def:graph-bipartite-matching} of maximum cardinality.
+\end{problem}
+
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:max_bipartite_matching}}:
+\begin{itemize}
+  \item create digraph \(G' = (L \cup R \cup \{s,t\}, E')\)
+  \item direct all edges from \(L\) to \(R\) and assign infinite (or unit) capacitiy
+  \item add \textcolor{AccentRed}{unit capacity} edges from \(s\) to all nodes in \(L\)
+  \item add \textcolor{AccentRed}{unit capacity} edges from all nodes in \(R\) to \(t\)
+\end{itemize}
+
+\begin{theorem}\label{thm:matching_flow_equivalence}
+a bipartite graph \(G\) has a \nameref{def:graph-matching} of size \(k\) iff the network formulation \(G'\) has a flow of value \(k\).
+\end{theorem}
+or equivalently:
+\begin{theorem}\label{thm:max_matching_via_max_flow}
+max cardinality matching in \(G\) = value of \nameref{prob:max_flow} in \(G'\).
+\end{theorem}
+
+% \begin{proof}
+% `\(\leq\)' (\(|M|=k\), then \(G'\) has a flow of value \(k\)):
+% \begin{itemize}
+%   \item 
+%   given a max matching \(M\) of \(G\) with \(|M| = k\); 
+%   consider a flow \(f\) that sends 1 unit along each edge in \(M\): 
+%   \begin{itemize}
+%     \item for each \((u,v) \in M\), set \(f(s,u) = 1\), \(f(u,v) = 1\), \(f(v,t) = 1\)
+%     \item all other edges have flow \(f(e) = 0\)
+%   \end{itemize}
+%   \item \(f\) is a valid flow: consider a \(x \in L \cup R\):
+%   \begin{itemize}
+%     \item if \(x\) is incident to \(M\): \(f_{\text{in}}(x) = 1 = f_{\text{out}}(x)\) since \(M\) is a \nameref{def:graph-matching}
+%     \item if \(x\) is not incident to \(M\): \(f_{\text{in}}(x) = 0 = f_{\text{out}}(x)\)
+%   \end{itemize}
+%   \item value of flow \(f\): \(v(f) = |M| = k \leq v(f^*)\), where \(f^*\) is a \nameref{prob:max_flow}
+%   \qedhere
+% \end{itemize}
+% \end{proof}
+
+% \begin{proof}
+% `\(\geq\)' (\(v(f^*) \leq k = |M|\), where \(M\) is a max matching):
+% \begin{itemize}
+%   \item 
+%   let \(f\) be a \nameref{prob:max_flow} in \(G'\) with value \(r = v(f) = v(f^*)\)
+%   \item 
+%   apply \nameref{thm:integrality} theorem:
+%   \(r\) is integral, thus can assume \(f\) is \(\{0,1\}\)-valued
+%   \item 
+%   let \(M\) be the set of edges from \(L\) to \(R\) with \(f(e) = 1\).
+%   \item 
+%   \(v(f^*) = r\), thus \(r\) edges out of \(s\) carry flow 1; thus, \(r\) nodes in \(L\) are picked for \(M\); by conservation constraint, \(r\) incident \(L\)-\(R\) edges are picked. 
+%   Thus, \(r \leq |M|\).
+%   \item 
+%   By the conservation constraint, no two edges out of one node \(x \in L\) can be picked in \(M\); thus, \(M\) is a \nameref{def:graph-matching}.
+%   \qedhere
+% \end{itemize}
+% \end{proof}
+
+\begin{proof}[``$\le$'']
+Let $M$ be a max matching in $G$ with $|M|=k$. 
+Define a flow $f$ in $G'$ by
+\(f(s,u)=1\), \(f(u,v)=1\), \(f(v,t)=1\) 
+for each \((u,v)\in M\),
+and $f(e)=0$ for all other edges. 
+Capacity constraints \eqref{eq:capacity_constraints} hold since all used edges have capacity at least \(1\).
+For any vertex $x\in L\cup R$, 
+either $x$ is incident to no edge of $M$ (then $f_{\mathrm{in}}(x) = f_{\mathrm{out}}(x)=0$), 
+or to exactly one edge of $M$ (then $f_{\mathrm{in}}(x) = f_{\mathrm{out}}(x)=1$);
+hence flow conservation \eqref{eq:flow_conservation} holds. 
+Thus $f$ is a feasible flow in $G'$ and
+\(
+v(f)=\sum_{u\in L} f(s,u) = |M| = k
+\).
+In particular, if $f^*$ is a max flow in $G'$, then $v(f^*) \ge v(f) = k$.
+\end{proof}
+
+\begin{proof}[``$\ge$'']
+Let $f$ be a max flow in $G'$ with $v(f) = r$. 
+By integrality (\autoref{thm:integrality}), we may assume $f$ is integral, 
+hence $f(e) \in \{0,1\}$ by capacity constraints \eqref{eq:capacity_constraints}.
+Define
+\(
+M \coloneqq \{(u,v)\in E \mid u\in L, v\in R, f(u,v) = 1\}
+\).
+For each $u \in L$ we have $\sum_{v \in R} f(u,v) = f(s,u) \le 1$ by flow conservation \eqref{eq:flow_conservation} at $u$, 
+so at most one edge of $M$ is incident to $u$.
+Similarly, 
+for each $v \in R$ we have $\sum_{u \in L} f(u,v) = f(v,t) \le 1$, so at most one edge of $M$ is incident to $v$.
+Thus $M$ is a matching in $G$ and
+\(
+|M| = \sum_{u \in L} \sum_{v \in R} f(u,v) = \sum_{u \in L} f(s,u) = v(f) = r
+\).
+In particular, if $M^*$ is a max matching in $G$, then $|M^*| \ge |M| = r$.
+\end{proof}
+
+The edges of the matching are the ones that carry flow from \(L\) to \(R\).
+
+
+\medskip
+
+
+We reduced the problem `\nameref{prob:max_bipartite_matching}' to the known problem `\nameref{prob:max_flow}'.
+
+
+
+
+\begin{definition}[Perfect Matching]\label{def:perfect_matching}
+A matching \(M \subseteq E\) is perfect if each node appears in exactly one edge in \(M\).  
+\end{definition}
+
+A necessary condition for a \nameref{def:perfect_matching} in a bipartite graph is \(|L| = |R|\).
+
+\medskip
+
+\textcolor{AccentBlue}{To compute a perfect matching (if one exists), compute a max cardinality matching}:
+\begin{itemize}
+  \item if cardinality \( = n = |L| = |R|\), then the matching is perfect
+  \item if cardinality \(< n\), then no perfect matching exists
+\end{itemize}
+
+\medskip
+
+\hl{A cut with capacity \(< n\) provides a \emph{certificate} that no perfect matching exists!}
+
+\begin{notation}[Neighborhood]\label{not:neighborhood}
+For a subset \(S \subseteq G\) of nodes in a graph, we write 
+\begin{equation}
+  N(S) \coloneqq \bigcup_{u \in S} \Gamma(u) %= \{ v \in V : \exists u \in S \text{ with } (u,v) \in E \}
+\end{equation}
+for the set of nodes adjacent to at least one node in \(S\).
+\end{notation}
+
+
+\begin{observation}\label{obs:hall-necessity}
+If a bipartite graph \(G = (L \cup R, E)\) has a \nameref{def:perfect_matching}, then \(|N(S)| \ge |S|\) for all subsets \(S \subseteq L\).
+\end{observation}
+\begin{proof}
+Suppose \(G\) has a perfect matching.
+Then each node in any \(S \subseteq L\) is matched to a different node in \(N(S)\).
+Thus, \(|S| \le |N(S)|\).
+\end{proof}
+
+\begin{theorem}[Marriage \textcolor{AccentGray}{[Frobenius 1917, Hall 1935]}]\label{thm:hall-marriage}
 Let \(G = (L \cup R, E)\) be a bipartite graph with \(|L| = |R|\).
 Then, \(G\) has a perfect matching iff \(|N(S)| \ge |S|\) for all subsets \(S \subseteq L\).
 \end{theorem}
+
+\begin{proof}[`$\Rightarrow$']
+\autoref{obs:hall-necessity}.
+\end{proof}
+
+% \begin{proof}[`$\Leftarrow$']
+% Suppose G does not have a perfect matching 
+% \begin{itemize}
+% \item Formulate $\mathrm{G}^{\prime}$ as max flow problem and let $({A}, {B})$ be min cut in ${G}^{\prime}$.
+% \item Since no perfect matching, $v\left(f^*\right)<n$ and $\operatorname{cap}({A}, {B})<{n}(|L|=n)$
+% \item Define $L_A=L \cap A, L_B=L \cap B, R_A=R \cap A$.
+% \item Since min cut can't use $\infty$ edges, no edge from $L$ to $R$ can be in cut; only edges from $s$ to $B\left(L_B\right)+$ edges from $A$ to $t\left(R_A\right)$
+% \item Thus, $\operatorname{cap}(A, B)=\left|L_B\right|+\left|R_A\right|$. Similarly, $N\left(L_A\right) \subseteq R_A$.
+% \item $\left|N\left(L_A\right)\right| \leq\left|R_A\right|=\operatorname{cap}(A, B)-\left|L_B\right|<|L|-\left|L_B\right|=\left|L_A\right|$.
+% \item $\left|N\left(L_A\right)\right|<\left|L_A\right|$. Chose $S=L_A$.
+% \qedhere
+% \end{itemize}
+% \end{proof}
+\begin{proof}[`$\Leftarrow$']
+We prove the contrapositive, i.e.
+\[
+\text{\(G\) has no perfect matching} \; \implies \; \exists S \subseteq L: |N(S)| < |S|
+\]
+
+Suppose \(G\) does not have a perfect matching 
+\begin{itemize}
+\item 
+Formulate ${G}^{\prime}$ as \nameref{prob:max_flow} problem and let $({A}, {B})$ be \nameref{prob:min_cut} in ${G}^{\prime}$.
+\item 
+Since no perfect matching, 
+value of \nameref{prob:max_flow} $v\left(f^*\right)<n$ (\autoref{thm:max_matching_via_max_flow})
+and therefore (by \autoref{thm:max-flow-min-cut}),
+capacity of the \nameref{prob:min_cut} $\operatorname{cap}({A}, {B})<{n}=|L|$.
+\item 
+Define $L_A=L \cap A$,  $L_B=L \cap B$, $R_A=R \cap A$, $R_B=R \cap B$.
+\item 
+Since \nameref{prob:min_cut} can't use $\infty$ edges (otherwise the cut capacity would be \(\infty\)), no edge from $L$ to $R$ can be in cut; 
+only edges from $s$ to $B$ ($L_B$) and edges from $A$ to $t$ ($R_A$).
+\item 
+Since all these edges have unit capacity, $\operatorname{cap}(A, B)=\left|L_B\right|+\left|R_A\right|$. 
+Furthermore, no edge from $L_A$ to $R_B$ implies $N\left(L_A\right) \subseteq R_A$.
+\item 
+$\left|N\left(L_A\right)\right| \leq\left|R_A\right|=\operatorname{cap}(A, B)-\left|L_B\right|<|L|-\left|L_B\right|=\left|L_A\right|$.
+\item 
+$\left|N\left(L_A\right)\right|<\left|L_A\right|$. 
+Choose $S=L_A$.
+\qedhere
+\end{itemize}
+\end{proof}
+
+\bigskip
+
+\textcolor{AccentBlue}{Which max flow algorithm to use for \nameref{def:graph-bipartite-matching}?}
+\begin{itemize}
+  \item Generic augmenting path: \(O(m \cdot \text{val}(f^*)) = O(mn)\), since \(\text{val}(f^*) \leq n\)
+  \item \textcolor{gray}{Capacity scaling: \(O(m^2 \log C) = O(m^2)\)}
+  \item Shortest augmenting path: \(O(m \sqrt{n})\)
+\end{itemize}
+
+\medskip
+
+\textcolor{AccentBlue}{Non-bipartite \nameref{def:graph-matching}}:
+\begin{itemize}
+  \item Structure of non-bipartite graphs is more complicated, but well-understood \textcolor{AccentGray}{[Tutte-Berge, Edmonds-Galai]}
+  \item Blossom algorithm: \(O(n^4)\) \textcolor{AccentGray}{[Edmonds 1965]}
+  \item Best known: \(O(m \sqrt{n})\) \textcolor{AccentGray}{[Micali-Vazirani 1980]}
+\end{itemize}
+
+
+
+
+
 
 
 

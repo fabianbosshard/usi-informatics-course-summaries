@@ -110,7 +110,7 @@ An acyclic digraph is called a directed acyclic graph; a DAG.
 \begin{definition}[Rooted tree]
   Given a tree \(T\), choose a root node \(r\) and orient each edge away from \(r\).
   Can be used to model hierarchical structure.
-  \begin{itemize}[nolistsep, noitemsep]
+  \begin{itemize}%[nolistsep, noitemsep]
     \item \emph{depth} of a node: \(\#\) edges from the root to the node
     \item \emph{height} of a node: \(\#\) edges from the node to the deepest leaf
     \item \emph{height} of a tree: height of the root \qedhere
@@ -178,12 +178,13 @@ Layer \(L_i\) consists of all nodes \(v\) at distance exactly \(i\) from \(s\): 
 
 the number of layers is \(l_s = \max_{v \in V} \delta(s,v)\) and depends on \(s\)
 
-to implement \nameref{alg:bfs}, we need to know which vertices have been visited and which haven't\\
-- keep a ``frontier'' of verices that have been discovered but not yet processed (a FIFO queue)\\
-- initially all vertices (except \(s\)) are marked as undiscovered (\(\white\))\\
-- when a vertex is discovered, it is marked as discovered (\(\gray\)) and added to the frontier\\
-- after processing a discovered vertex, it is marked as finished (\(\black\))
-
+to implement \nameref{alg:bfs}, we need to know which vertices have been visited and which haven't
+\begin{itemize}
+\item keep a ``frontier'' of verices that have been discovered but not yet processed (a FIFO queue)
+\item initially all vertices (except \(s\)) are marked as undiscovered (\(\white\))
+\item when a vertex is discovered, it is marked as discovered (\(\gray\)) and added to the frontier
+\item after processing a discovered vertex, it is marked as finished (\(\black\))
+\end{itemize}
 
 
 
@@ -240,9 +241,12 @@ Then \hl{the level of \(x\) and \(y\) differ by at most \(1\)} (same layer or on
 \]
 \end{property}
 
-Running time of \nameref{alg:bfs}:\\
-We enqueue a vertex only if is $\white$, and we immediately color it $\gray$; thus, we enqueue every vertex at most once.\\
-So the \emph{outer loop} at Line \ref{alg:bfs:dequeue-while} executes at most \(n\) times (once for each vertex).\\
+\textcolor{AccentBlue}{Running time of \nameref{alg:bfs}}:
+
+We enqueue a vertex only if is $\white$, and we immediately color it $\gray$; thus, we enqueue every vertex at most once.
+
+So the \emph{outer loop} at Line \ref{alg:bfs:dequeue-while} executes at most \(n\) times (once for each vertex).
+
 For each vertex \(u\), the \emph{inner loop} at Line \ref{alg:bfs:inner-loop} executes \(1 + \deg(u)\) times.
 
 Total time:
@@ -261,19 +265,71 @@ They connect nodes on the same layer or in neighboring layers.
 \subsection{Bipartite Graphs}
 
 \begin{definition}[Bipartite]\label{def:bipartite}
-An undirected graph \(G=(V,E)\) is bipartite if the nodes can be colored red or blue such that every edge has one red and one blue end.\\
-\indent - a bipartite graph is \(2\)-colorable \\
-\indent - a \(2\)-colorable graph is bipartite \\
-\indent \(\Rightarrow\) a bipartite graph is a \(2\)-colorable graph
+An undirected graph \(G=(V,E)\) is bipartite if the nodes can be colored red or blue such that every edge has one red and one blue end.
+\begin{itemize}
+\item a bipartite graph is \(2\)-colorable 
+\item a \(2\)-colorable graph is bipartite 
+\item \(\Rightarrow\) a bipartite graph is a \(2\)-colorable graph
+\qedhere
+\end{itemize}
 \end{definition}
 
-many graph problems become:\\
-\indent - easier if the underlying graph is bipartite (matching)\\
-\indent - tractable if the underlying graph is bipartite (independent set)
+many graph problems become:
+\begin{itemize}
+\item easier if the underlying graph is bipartite (matching)
+\item tractable if the underlying graph is bipartite (independent set)
+\end{itemize}
 
 \begin{theorem}\label{thm:bipartite_odd_cycle}
   a graph \(G\) is bipartite iff it contains no odd length cycle.
 \end{theorem}
+
+
+\begin{algorithm}[h]
+\caption{Find cross edges and odd cycles in an undirected graph using \nameref{alg:bfs}}\label{alg:bfs_detect_cross_edges_odd_cycles}
+\label{alg:bfs_detect_cross_edges_odd_cycles}
+\begin{algorithmic}[1]
+\Function{BFS}{$G,\,s$} \Comment{\(s\) is the source}
+  \ForAll{$u\in V \setminus \{s\}$}
+    \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$ \Comment{initialization}
+  \EndFor
+  % \State Initialize $\attrib{v}{color}\gets\white$, $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+  \State $\attrib{s}{color},\attribnormal{s}{\delta},\attrib{s}{\pi}\gets \gray,0,\nil$ \Comment{initialize source \(s\)}
+  \State $Q\gets\emptyset$ \Comment{initialize empty queue for vertices to visit}
+  \State \Call{Enqueue}{$Q,s$}
+  \While{$Q\neq\emptyset$} 
+    \State $u\gets$ \Call{Dequeue}{$Q$} \Comment{get next vertex from the frontier}
+    \ForAll{$v\in\Gamma(u)$} 
+      \If{$\attrib{v}{color}=\white$} \Comment{first time we have seen \(v\)?}
+        \State $\attrib{v}{color}\gets\gray$ \Comment{mark it discovered}
+        \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+1$ \Comment{set its distance from \(s\)}
+        \State $\attrib{v}{\pi}\gets u$ \Comment{set its parent}
+        \State \Call{Enqueue}{$Q,v$}
+      \BeginBox[draw=red]
+      \Else
+        \If{$\attrib{v}{color} = \black \AND v \neq \attrib{u}{\pi}$} \label{line:detect_cross_edge} \Comment{\(2^\text{nd}\) time we see \((u, v)\)}
+          \State add \((u,v)\) to the list of cross edges
+        \EndIf
+        \If{$\attribnormal{v}{\delta} = \attribnormal{u}{\delta}$} \Comment{\(u\) and \(v\) are in the same layer}
+          \State odd cycle detected!
+        \EndIf
+      \EndIf
+      \EndBox
+    \EndFor
+    \State $\attrib{u}{color}\gets\black$ \Comment{we are done with \(u\)}
+  \EndWhile
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\autoref{alg:bfs_detect_cross_edges_odd_cycles} shows how to detect cross edges and odd cycles using \nameref{alg:bfs}, with only a few lines added (highlighted in red).
+
+The reason we check only for \(\attrib{v}{color} = \black\) at Line~\ref{line:detect_cross_edge} is that if \((u,v)\) is a cross edge, we will encounter it twice: once from \(u\) to \(v\) and once from \(v\) to \(u\).
+When we first encounter it (say, wlog, from \(u\)), both vertices will be \(\gray\), so we do not count it yet.
+When we encounter it the second time (from \(v\)), \(u\) will already be \(\black\), so we count it then.
+This way, we ensure that each cross edge is counted exactly once.
+
+
 
 \begin{proof}[`\(\Rightarrow\)' of \autoref{thm:bipartite_odd_cycle}]
 not possible to \(2\)-color an odd cycle, let alone \(G\).
@@ -337,8 +393,8 @@ be the lowest level common ancestor in the \nameref{alg:bfs} tree and let \(L_i\
 
   % Edges
   \draw[rounded corners=2pt] (s) 
-    -- ($($(s)!0.42!(z)$) + ($(s)!0.05!90:(z)$) - (s)$)
-    -- ($($(s)!0.58!(z)$) + ($(s)!0.05!270:(z)$)  - (s)$)
+    -- ($($(s)!0.45!(z)$) + ($(s)!0.05!90:(z)$) - (s)$)
+    -- ($($(s)!0.55!(z)$) + ($(s)!0.05!270:(z)$)  - (s)$)
     -- (z);
   \draw (s)  -- ++(-0.1,-0.8);
   \draw (s)  -- ++(-1,-0.7);
@@ -357,6 +413,7 @@ be the lowest level common ancestor in the \nameref{alg:bfs} tree and let \(L_i\
   \node[draw=none,fill=none,left=8mm of Lj] {$L_j$};
 \end{tikzpicture}
 \]
+
 Consider a cycle that takes edge \((x, y)\), then the path in the \nameref{alg:bfs} tree from \(y\) to \(z\), and then the path in the \nameref{alg:bfs} tree from \(z\) to \(x\).
 The length of this cycle is
 \[
@@ -376,6 +433,8 @@ So \ref{lem:layers_bipartite}.\ref{item:edge_same_layer_odd_cycle} holds.
 
 % \clearpage
 
+\pagebreak[3]
+
 \subsection{Depth-First Search}
 \label{sec:dfs}
 
@@ -389,7 +448,31 @@ we maintain four auxiliary arrays:
 \item \(\attribnormal{u}{\pi}\) (predecessor pointer): vertex which discovered \(u\). the edge \((\attribnormal{u}{\pi}, u)\) is a tree edge in the \nameref{alg:dfs} recursion tree.
 \end{itemize}
 
-\begin{algorithm}
+% \medskip
+
+\textcolor{AccentBlue}{Running time of \nameref{alg:dfs}}:
+
+the call \Call{DFSvisit}{} is made exactly once for each vertex
+
+ignoring time for recursive calls, each vertex \(u\) is processed in \(O(1 + \deg(u))\) time
+
+Total time:
+\[
+\begin{aligned}
+  T(n) &= n + \sum_{u \in V} (\deg(u) + 1) = n + \underbrace{\sum_{u \in V} \deg(u)}_{=2m} + \underbrace{\sum_{u \in V} 1}_{=n} \\[-12pt]
+  &= 2n + 2m \in O(n + m)
+\end{aligned}
+\]
+
+
+Since \nameref{alg:dfs} always explores all vertices, we define the predecessor subgraph as \(G_\pi=(V,E_\pi)\), where
+\[
+E_\pi = \{(v.\pi,v)\mid v\in V \AND v.\pi \neq \nil\}
+\]
+It is a \nameref{alg:dfs} \emph{forest}, comprising several {\nameref{alg:dfs} trees}.
+
+
+\begin{algorithm}[h]
 \caption{DFS}\label{alg:dfs}
 \begin{algorithmic}[1]
 \Function{DFS}{$G$}
@@ -421,25 +504,6 @@ we maintain four auxiliary arrays:
 \end{algorithmic}
 \end{algorithm}
 
-
-Running time of \nameref{alg:dfs}:\\
-- the call \Call{DFSvisit}{} is made exactly once for each vertex\\
-- ignoring time for recursive calls, each vertex \(u\) is processed in \(O(1 + \deg(u))\) time
-
-Total time:
-\[
-\begin{aligned}
-  T(n) &= n + \sum_{u \in V} (\deg(u) + 1) = n + \underbrace{\sum_{u \in V} \deg(u)}_{=2m} + \underbrace{\sum_{u \in V} 1}_{=n} \\[-12pt]
-  &= 2n + 2m \in O(n + m)
-\end{aligned}
-\]
-
-
-Since \nameref{alg:dfs} always explores all vertices, we define the predecessor subgraph as \(G_\pi=(V,E_\pi)\), where
-\[
-E_\pi = \{(v.\pi,v)\mid v\in V \AND v.\pi \neq \nil\}
-\]
-It is a \nameref{alg:dfs} \emph{forest}, comprising several {\nameref{alg:dfs} trees}.
 
 \subsubsection{Edge Classification}
 
@@ -558,6 +622,7 @@ Observe that the gray vertices always form a linear chain of descendants corresp
 \end{scope}
 
 \end{tikzpicture}
+\qedhere
 \]
 \end{example}
 
@@ -848,34 +913,7 @@ Observe: discovery times decrease as we go up the tree.
 
 Idea: keep track of back edge \((x, w)\) with smallest discovery time \(\attribnormal{w}{d}\)
 
-\begin{definition}[low value]\label{def:low_value}
-highest up we can reach from the subtree rooted at \(v\) (via back edges):
-\vspace{-1em}
-\[
-  % {\color{Red}
-  % % \setlength{\fboxrule}{1pt}
-  % \boxed{ 
-  % \color{black}
-\begin{verticalhack}
-\attrib{v}{low}
-:= \min\biggl(
-\{\attribnormal{v}{d}\} \cup
-\Bigl\{\attribnormal{w}{d} \ \Bigm|\ 
-\begin{aligned}
-& (x,w)\ \text{is a back edge for some}\\[-4pt]
-& \text{(nonproper) descendant } x \text{ of } v
-\end{aligned}
-\Bigr\}
-\biggr)
-\end{verticalhack}
-\qedhere
-% }}
-\]
-\end{definition}
 
-Once \(\attrib{v}{low}\) is computed for all vertices \(v\), we can test wether a given non-root vertex \(u\) is a cut vertex by \autoref{lem:cut_vertex_internal} as follows:
-\(u\) is a \hl{cut vertex} iff it has a child \(v\) in the \nameref{alg:dfs} tree such that \(\attrib{v}{low} \ge \attribnormal{u}{d}\).
-Moreover, \((u,v)\) is a \hl{bridge} iff it is a tree edge (i.e. \(u = \attrib{v}{\pi}\)) and \(\attrib{v}{low} > \attribnormal{u}{d}\).
 \[
 \begin{tikzpicture}[
   % line cap=round,
@@ -976,6 +1014,36 @@ Moreover, \((u,v)\) is a \hl{bridge} iff it is a tree edge (i.e. \(u = \attrib{v
 \end{scope}
 \end{tikzpicture}
 \]
+
+\begin{definition}[low value]\label{def:low_value}
+highest up we can reach from the subtree rooted at \(v\) (via back edges):
+\vspace{-1em}
+\[
+  % {\color{Red}
+  % % \setlength{\fboxrule}{1pt}
+  % \boxed{ 
+  % \color{black}
+\begin{verticalhack}
+\attrib{v}{low}
+:= \min\biggl(
+\{\attribnormal{v}{d}\} \cup
+\Bigl\{\attribnormal{w}{d} \ \Bigm|\ 
+\begin{aligned}
+& (x,w)\ \text{is a back edge for some}\\[-4pt]
+& \text{(nonproper) descendant } x \text{ of } v
+\end{aligned}
+\Bigr\}
+\biggr)
+\end{verticalhack}
+\qedhere
+% }}
+\]
+\end{definition}
+
+Once \(\attrib{v}{low}\) is computed for all vertices \(v\), we can test wether a given non-root vertex \(u\) is a cut vertex by \autoref{lem:cut_vertex_internal} as follows:
+\(u\) is a \hl{cut vertex} iff it has a child \(v\) in the \nameref{alg:dfs} tree such that \(\attrib{v}{low} \ge \attribnormal{u}{d}\).
+Moreover, \((u,v)\) is a \hl{bridge} iff it is a tree edge (i.e. \(u = \attrib{v}{\pi}\)) and \(\attrib{v}{low} > \attribnormal{u}{d}\).
+
 
 \begin{algorithm}
 \caption{Modification of \hyperref[alg:dfs:dfsvisit]{\textsc{DFSvisit}} for \attribute{low} computation}\label{alg:low_computation}

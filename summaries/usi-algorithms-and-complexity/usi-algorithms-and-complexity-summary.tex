@@ -156,6 +156,7 @@
 \setcounter{totalnumber}{20}
 \renewcommand{\textfraction}{0.0}
 \renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
 \renewcommand{\floatpagefraction}{1.0}
 \renewcommand{\dblfloatpagefraction}{1.0}
 
@@ -269,6 +270,8 @@
 \declaretheorem[style=definitionstyle,name=Definition, numberwithin=section]{definition}
 \declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
 \declaretheorem[style=definitionstyle, name=Problem, sibling=definition]{problem}
+\declaretheorem[style=definitionstyle, name=Notation, sibling=definition]{notation}
+
 
 \declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
 \declaretheorem[style=examplestyle,name=Example, numberwithin=section]{example}
@@ -340,35 +343,6 @@
 
 
 
-
-% after declaring theorem environments:
-\renewcommand{\definitionautorefname}{Definition}
-\renewcommand{\lemmaautorefname}{Lemma}
-\renewcommand{\theoremautorefname}{Theorem}
-\renewcommand{\corollaryautorefname}{Corollary}
-\renewcommand{\propositionautorefname}{Proposition}
-\renewcommand{\conjectureautorefname}{Conjecture}
-\renewcommand{\claimautorefname}{Claim}
-\renewcommand{\exampleautorefname}{Example}
-\renewcommand{\remarkautorefname}{Remark}
-\renewcommand{\invariantautorefname}{Invariant}
-\renewcommand{\assumptionautorefname}{Assumption}
-\renewcommand{\observationautorefname}{Observation}
-\renewcommand{\cautionautorefname}{Caution}
-\renewcommand{\digressionautorefname}{Digression}
-
-\renewcommand{\questionautorefname}{Question}
-\renewcommand{\openquestionautorefname}{Open Question}
-\renewcommand{\openproblemautorefname}{Open Problem}
-\renewcommand{\challengeautorefname}{Challenge}
-\renewcommand{\researchdirectionautorefname}{Research Direction}
-\renewcommand{\fundamentalquestionautorefname}{Fundamental Question}
-
-\makeatletter
-\def\thmt@dummyctrautorefname~#1\null{Proof\null}
-\makeatother
-
-\newcommand{\algorithmautorefname}{Algorithm}
 
 \usepackage{algorithm}
 \usepackage[italicComments=false]{algpseudocodex}
@@ -512,6 +486,48 @@
 
 
 
+
+
+% autoref names ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\renewcommand{\definitionautorefname}{Definition}
+\renewcommand{\notationautorefname}{Notation}
+\renewcommand{\lemmaautorefname}{Lemma}
+\renewcommand{\theoremautorefname}{Theorem}
+\renewcommand{\corollaryautorefname}{Corollary}
+\renewcommand{\propositionautorefname}{Proposition}
+\renewcommand{\conjectureautorefname}{Conjecture}
+\renewcommand{\claimautorefname}{Claim}
+\renewcommand{\exampleautorefname}{Example}
+\renewcommand{\remarkautorefname}{Remark}
+\renewcommand{\invariantautorefname}{Invariant}
+\renewcommand{\assumptionautorefname}{Assumption}
+\renewcommand{\observationautorefname}{Observation}
+\renewcommand{\cautionautorefname}{Caution}
+\renewcommand{\digressionautorefname}{Digression}
+
+\renewcommand{\questionautorefname}{Question}
+\renewcommand{\openquestionautorefname}{Open Question}
+\renewcommand{\openproblemautorefname}{Open Problem}
+\renewcommand{\challengeautorefname}{Challenge}
+\renewcommand{\researchdirectionautorefname}{Research Direction}
+\renewcommand{\fundamentalquestionautorefname}{Fundamental Question}
+
+\makeatletter
+\def\thmt@dummyctrautorefname~#1\null{Proof\null}
+\makeatother
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
+
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\renewcommand{\subsubsectionautorefname}{Section}
+
+
+
+
+
 \makeatletter
 
 % --------------------
@@ -541,6 +557,7 @@
 \renewcommand*{\theHdefinition}{\thesection.\arabic{definition}}
 \renewcommand*{\theHaxiom}{\thesection.\arabic{axiom}}
 \renewcommand*{\theHproblem}{\thesection.\arabic{problem}}
+\renewcommand*{\theHnotation}{\thesection.\arabic{notation}}
 
 % --------------------
 % theorem-like: other families
