@@ -6,7 +6,7 @@ restricted version of a more general optimization problem, called linear program
 
 \begin{definition}[Flow Network]\label{def:flow_network}
 Abstraction for stuff \emph{flowing} through the edges of a network.
-A flow network is a directed graph \(G = (V, E)\) with a \emph{source} and a \emph{sink} node \(s, t \in V\) (where flow originates and is consumed, respectively),
+A flow network is a directed graph \(G = (V, E)\) with a \emph{source} and a \emph{sink} node \(s, t \in V\) (where flow originates and is consumed, respectively).
 Each edge \((u,v) \in E\) has a capacity \(c(u,v) \in \N_0\), where \(c(u,v) = 0\) if \((u,v) \notin E\).
 \end{definition}
 
@@ -978,5 +978,259 @@ Special case of \nameref{thm:max-flow-min-cut} (\autoref{thm:max-flow-min-cut}):
   \item min number of edges whose removal disconnects \(t\) from \(s\) = \nameref{prob:max_flow}
   \item max number of edge disjoint \(s\)-\(t\) paths = \nameref{prob:max_flow}
 \end{itemize}
+
+
+
+
+
+\subsection{Extensions}\label{sec:extensions-max-flow}
+
+\subsubsection{Circulation with Demands}\label{sec:circulation_with_demands}
+
+\begin{definition}[Circulation with Demands]\label{def:circulation_with_demands}
+directed graph \(G = (V,E)\) with 
+\begin{itemize}
+\item edge capacities \(c(e)\), \(e \in E\)
+\item node supply and demands \(d(v)\), \(v \in V\)
+\end{itemize}
+where demand if \(d(v) > 0\), supply if \(d(v) < 0\), and transshipment node if \(d(v) = 0\).
+\end{definition}
+
+\begin{definition}[Circulation]\label{def:circulation}
+A \emph{circulation} is a function \(f\) that satisfies
+\begin{itemize}
+  \item \emph{Capacity}: For each \(e \in E\):
+  \begin{equation}\label{eq:capacity_constraints_circulation}
+    0 \le f(e) \le c(e)
+  \end{equation}
+  \item `\emph{Conservation}': For each \(v \in V\):
+  \begin{equation}\label{eq:flow_conservation_circulation}
+    \sum_{(u, v) \in E} f(u,v) - \sum_{(v, w) \in E} f(v,w) = d(v)
+    \qedhere
+  \end{equation}
+\end{itemize}
+\end{definition}
+
+\begin{problem}[Circulation]\label{prob:circulation}
+Given \(V, E, c, d\), does there exist a circulation \(f\)?  
+\end{problem}
+\autoref{prob:circulation} is a feasibility (decision) problem (not an optimization one).
+
+
+\begin{observation}\label{obs:circulation_necessary_condition}
+A \textcolor{AccentBlue}{necessary condition} for the existence of a \nameref{def:circulation} is
+\begin{equation}\label{eq:circulation_necessary_condition}
+\sum_{v \in T} d(v) = \sum_{v \colon d(v) > 0} d(v) = - \sum_{v \colon d(v) < 0} d(v) = -\sum_{v \in S} d(v) =: D
+\end{equation}
+or
+\begin{equation}\label{eq:circulation_necessary_condition_allnodes}
+\sum_{v \in V} d(v) = 0
+\end{equation}
+where \(S\) denotes the supply nodes and \(T\) the demand nodes.
+\end{observation}
+
+
+
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:circulation}}:
+\begin{itemize}
+  \item can assume \eqref{eq:circulation_necessary_condition} holds; otherwise answer \texttt{no} immediately
+  \item add a new source \(s\) and sink \(t\)
+  \item for each \(v\) with \(d(v) < 0\), add edge \((s,v)\) with capacity \(-d(v)\) (supply)
+  \item for each \(v\) with \(d(v) > 0\), add edge \((v,t)\) with capacity \(d(v)\) (demand)
+\end{itemize}
+
+\begin{claim}\label{clm:circulation_max_flow_equivalence}
+\(G\) has a \nameref{prob:circulation} iff \(G'\) has \nameref{prob:max_flow} of value \(D\).
+\end{claim}
+
+% \begin{proof}[`$\Rightarrow$']
+% Suppose \(G\) has a circulation \(f\) with value \(D\).
+% \begin{itemize}
+% \item create a flow \(f'\) in \(G'\) of value \(D\):
+% \begin{itemize}
+% \item saturate all edges coming out of \(s\) and going into \(t\): \(f'(e) = c(e)\) for all \(e\) incident to \(s\) or \(t\)
+% \item \(f'(e) = f(e)\) for every other edge of \(G'\)
+% \end{itemize}
+% \item \(f'\) is a valid flow:
+% \begin{itemize}
+% \item satisfies capacity constraints \eqref{eq:capacity_constraints} 
+% \item satisfies conservation constraints \eqref{eq:flow_conservation} at each node \(v\):
+% \begin{itemize}
+% \item 
+% \(v \in S\): 
+% \begin{itemize}
+%   \item \(\text{in-flow}(v) = \text{in-circ}(v) + \text{in-source}(v) = \text{in-circ}(v) + |d(v)|\) (by construction, \(\text{in-source}(v) = |d(v)|\))
+%   \item \(\text{out-flow}(v) = \text{out-circ}(v) = \text{in-circ}(v) + |d(v)|\) (by circulation conservation \eqref{eq:flow_conservation_circulation})
+% \end{itemize}
+% \item 
+% \(v \in T\):
+% \begin{itemize}
+%   \item \(\text{out-flow}(v) = \text{out-circ}(v) + \text{out-sink}(v) = \text{out-circ}(v) + d(v)\)
+%   \item \(\text{in-flow}(v) = \text{in-circ}(v) = \text{out-circ}(v) + d(v)\)
+% \end{itemize}
+% \item 
+% \(v \in V \setminus (S \cup T)\): \(d(v) = 0\): \(f' = f\) for every incident edge, thus, \(\text{in-flow} = \text{out-flow}\) (by circulation conservation \eqref{eq:flow_conservation_circulation})
+% \qedhere
+% \end{itemize}
+% \end{itemize}
+% \end{itemize}
+% \end{proof}
+
+% \begin{proof}[`$\Leftarrow$']
+% Suppose \(G'\) has a flow \(f'\) of value \(D\).
+% \begin{itemize}
+% \item 
+% since \(v(f') = D\), all edges leaving \(s\) and all edges entering \(t\) are saturated.
+% \item
+% by flow conservation \eqref{eq:flow_conservation}, all demand and supply nodes achieve their supply/demand quotas in \(f\).
+% \item
+% by flow conservation \eqref{eq:flow_conservation} at every node of \(G\), we have a feasible circulation (ignore the flows along edges incident to \(s\) and \(t\)).
+% \qedhere
+% \end{itemize}
+% \end{proof}
+
+
+\begin{proof}[`$\Rightarrow$']
+Assume $G$ has a circulation $f$%
+% , i.e. $0 \le f(e) \le c(e)$ and $\sum_{(u,v)\in E} f(u,v)-\sum_{(v,w)\in E} f(v,w)=d(v)$ for all $v$%
+.
+Define an $s$-$t$ flow $f'$ in $G'$ by setting $f'(e)\coloneqq f(e)$ for all original edges $e\in E$, and by saturating the new edges:
+$f'(s,v)\coloneqq -d(v)$ for $v\in S$ and $f'(v,t)\coloneqq d(v)$ for $v\in T$.
+Capacities are satisfied by construction, and flow conservation in $G'$ holds at every $v\in V$ because 
+the extra inflow $-d(v)$ (resp. extra outflow $d(v)$) exactly cancels the imbalance $f_{\text{in}}(v)-f_{\text{out}}(v)=d(v)$.
+Finally,
+\(
+v(f')=\sum_{v\in V} f'(s,v)=\sum_{v\in S}(-d(v))=D
+\).
+\end{proof}
+
+\begin{proof}[`$\Leftarrow$']
+Assume $G'$ has an $s$-$t$ flow $f'$ with $v(f')=D$.
+Since $\sum_{v\in S} c(s,v)=\sum_{v\in S}(-d(v))=D$, the value bound $v(f')\le \sum_{v\in S} c(s,v)$ forces every edge $(s,v)$ to be saturated, 
+i.e.\ $f'(s,v)=-d(v)$ for all $v\in S$; similarly $f'(v,t)=d(v)$ for all $v\in T$.
+Now restrict $f'$ to the original edges $E$ and call this restriction $f$.
+Then $f$ satisfies $0\le f(e)\le c(e)$, and for each $v\in V$ the flow-conservation equation in $G'$, 
+after subtracting the (now fixed) contribution from $(s,v)$ or $(v,t)$, 
+becomes exactly $f_{\text{in}}(v)-f_{\text{out}}(v)=d(v)$, so $f$ is a feasible circulation in $G$.
+\qedhere
+\end{proof}
+
+
+We reduced the problem `\nameref{prob:circulation}' to the known problem `\nameref{prob:max_flow}'.
+
+\begin{theorem}[Integrality for Circulations]\label{thm:integrality_circulation}
+If all capacities \(c(e)\) and demands \(d(v)\) are integers and there exists a \nameref{def:circulation}, then there exists one that is integer-valued.  
+\end{theorem}
+\begin{proof}
+Follows from \nameref{prob:max_flow} formulation and standard \nameref{thm:integrality} theorem.
+\end{proof}
+
+
+
+
+\subsubsection{Circulation with Demands and Lower Bounds}\label{sec:circulation_with_demands_and_lower_bounds}
+
+\begin{definition}[Circulation with Demands and Lower Bounds]\label{def:circulation_with_demands_and_lower_bounds}
+directed graph \(G = (V,E)\) with 
+\begin{itemize}
+\item edge capacities \(c(e)\) \textcolor{red}{and lower bounds \(\ell(e)\)}, \(e \in E\)
+\item node supply and demands \(d(v)\), \(v \in V\)
+\end{itemize}
+where demand if \(d(v) > 0\), supply if \(d(v) < 0\), and transshipment node if \(d(v) = 0\).
+\end{definition}
+
+\begin{definition}[Circulation]\label{def:circulation_with_lower_bounds}
+A \emph{circulation} is a function \(f\) that satisfies
+\begin{itemize}
+  \item \emph{Capacity}: For each \(e \in E\):
+  \begin{equation}\label{eq:capacity_constraints_circulation_with_lower_bounds}
+    \textcolor{red}{\ell(e)} \le f(e) \le c(e)
+  \end{equation}
+  \item `\emph{Conservation}': For each \(v \in V\):
+  \begin{equation}\label{eq:flow_conservation_circulation_with_lower_bounds}
+    \sum_{(u, v) \in E} f(u,v) - \sum_{(v, w) \in E} f(v,w) = d(v)
+    \qedhere
+  \end{equation}
+\end{itemize}
+\end{definition}
+
+\begin{problem}[Circulation with Lower Bounds]\label{prob:circulation_with_lower_bounds}
+Given \(V, E, \ell, c, d\), does there exist a circulation \(f\)?  
+\end{problem}
+
+\textcolor{AccentBlue}{Idea} is to reduce \autoref{prob:circulation_with_lower_bounds} to \autoref{prob:circulation} (with no lower bounds)
+% \begin{itemize}
+%   \item model lower bounds as node demands (add to original demands)
+%   \item send \(\ell(e)\) units of flow along edge \(e\) 
+%   \item convert lower bounds to node demands. \(L(v) = \ell_{\text{in}}(v) - \ell_{\text{out}}(v)\)% = \sum_{(u,v) \in E} \ell(u,v) - \sum_{(v,w) \in E} \ell(v,w)\)
+%   \item \(f_0\): initial (invalid) flow based on lower bounds (to add at the end)
+%   \item build a residual circulation problem \(G'\) (use \(L(v)\))
+%   \item compute the circulation \(f_1\) on \(G'\)
+%   \item let the final circulation on \(G\) be: \(f_0 + f_1\)
+% \end{itemize}
+\begin{itemize}
+  \item generate an initial (invalid) circulation \(f_0\) based on \(\ell(e)\): 
+  
+  \indent \(f_0(u,v) = \ell(u,v)\) 
+
+  \item compute \(L(v)\) for each node \(v\) (\(L(v)\) is the excess flow coming into \(v\) (because of lower bounds), it may be negative (flow deficit)):
+
+  \indent \(L(v) = f_{0,\text{in}}(v) - f_{0,\text{out}}(v) = \sum_{(u,v) \in E} \ell(u,v) - \sum_{(v,w) \in E} \ell(v,w)\)
+
+  \item build residual circulation network \(G'\):
+  \begin{itemize}
+    \item same vertices as \(G\)
+    \item capacity for edges: \(c'(u,v) = c(u,v) - \ell(u,v)\)
+    \item demands for nodes: \(d'(v) = d(v) - L(v)\) (remainder demand)
+  \end{itemize}
+  \item compute a feasible circulation \(f_1\) on \(G'\)
+  \item final circulation on \(G\) is: \(f = f_0 + f_1\)
+\end{itemize}
+
+\begin{theorem}\label{thm:circulation_with_lower_bounds_equivalence}
+There exists a circulation in \(G\) iff there exists a circulation in \(G'\).
+And if all demands, capacities, and lower bounds are integers, then there is an integer-valued circulation.
+\end{theorem}
+\begin{proof}
+ \(f\) is a circulation in \(G\) iff \(f'\), where \(f'(e) = f(e) - \ell(e)\) for every \(e \in E\), is a circulation in \(G'\).
+
+ `$\Rightarrow$':
+ \begin{itemize}
+\item suppose there is a circulation \(f\) in \(G\)
+\item define \(f'\) in \(G'\) by \(f'(e) = f(e) - \ell(e)\)
+\item \(f'\) satisfies capacity \eqref{eq:capacity_constraints_circulation_with_lower_bounds} and conservation \eqref{eq:flow_conservation_circulation_with_lower_bounds} in \(G'\)
+\end{itemize}
+
+ `$\Leftarrow$':
+ \begin{itemize}
+\item suppose there is a circulation \(f'\) in \(G'\)
+\item define \(f\) in \(G\) by \(f(e) = f'(e) + \ell(e)\)
+\item \(f\) satisfies capacity \eqref{eq:capacity_constraints_circulation} and conservation \eqref{eq:flow_conservation_circulation} in \(G\)
+\qedhere
+\end{itemize}
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
