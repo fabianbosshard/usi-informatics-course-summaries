@@ -12,10 +12,12 @@ combine the two sub-problem solutions to form solution to original problem.
 
 \textcolor{AccentRed}{Dynamic programming}. 
 Break up a problem into many overlapping sub-problems; 
-combine solutions to small subproblems to build up solutions to larger and larger sub-problems.\\
-• overlapping sub-problem = a sub-problem whose results can be reused many times\\
-• Hint: express your optimal solution by a recursive formula
-
+combine solutions to small subproblems to build up solutions to larger and larger sub-problems.
+\begin{itemize}
+\item overlapping sub-problem = a sub-problem whose results can be reused many times
+\item Hint: express your optimal solution by a recursive formula
+\end{itemize}
+\medskip
 
 
 Powerful technique for solving optimization problems, which have certain well-defined clean structural properties.
@@ -26,10 +28,13 @@ this principle must hold to apply DP
 
 The global optimal solution consists of optimal solutions to subproblems.
 
-Polynomial time DP:\\
-- Polynomially-many distinct overlapping subproblems (polynomial in input size).\\
-- DP does not necessarily lead to a polynomial time algorithm
-
+\medskip
+Polynomial time DP:
+\begin{itemize}
+\item Polynomially-many distinct overlapping subproblems (polynomial in input size).
+\item DP does not necessarily lead to a polynomial time algorithm
+\end{itemize}
+\medskip
 
 DP selection principle: \hl{When given a set of feasible options to choose from, try them all and take the best}
 
@@ -206,7 +211,7 @@ Given \(n\) items, each with a weight \(w_i \in \N\) and a value \(v_i \in \N\),
 fill the knapsack (respecting its capacity) to maximize the total value.
 \end{problem}
 \[
-\begin{tikzpicture}[line join=round, line cap=round, font=\sffamily\footnotesize, scale=0.5]
+\begin{tikzpicture}[line join=round, line cap=round, font=\sffamily\footnotesize, scale=0.4]
 
 % ---------- helpers ----------
 \definecolor{bagyellow}{RGB}{248,188,46}

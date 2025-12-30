@@ -894,8 +894,89 @@ Choose $S=L_A$.
 
 
 
+\subsubsection{Edge Disjoint Paths}\label{sec:edge_disjoint_paths}
+
+\begin{definition}[Edge Disjoint Paths]\label{def:edge_disjoint_paths}
+Two paths are \textcolor{AccentRed}{edge disjoint} if they have no edge in common.
+\end{definition}
+
+\begin{problem}[Max Edge Disjoint Paths]\label{prob:max_edge_disjoint_paths}
+Given a directed graph \(G = (V,E)\) and two nodes \(s,t \in V\), find the maximum number of edge disjoint \(s\)-\(t\) paths.
+\end{problem}
+
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:max_edge_disjoint_paths}}:
+assign unit capacity to each edge in \(G\).
+
+
+\begin{theorem}\label{thm:max_edge_disjoint_paths_max_flow_equivalence}
+\(G\) has \(k\) edge-disjoint \(s\)-\(t\) paths iff \(G'\) has a flow of value \(k\).
+\end{theorem}
+
+\begin{theorem}\label{thm:k_edge_disjoint_paths_k_flow_equivalence}
+Max number of edge-disjoint \(s\)-\(t\) paths equals value of \nameref{prob:max_flow}.
+\end{theorem}
+
+
+\begin{proof}[``$\le$'']
+Let \(P_1, \ldots, P_k\) be \(k\) edge disjoint \(s\)-\(t\) paths.
+Create a flow \(f\) as follows:
+Make each path \(P_i\) carry 1 unit of flow from \(s\) to \(t\),
+i.e. set \(f(e) = 1\) if \(e\) participates in some path \(P_i\), and \(f(e) = 0\) otherwise.
+Since the paths are edge disjoint, no edge carries more than 1 unit of flow,
+so capacity constraints \eqref{eq:capacity_constraints} are satisfied.
+Flow conservation \eqref{eq:flow_conservation} is satisfied since at an internal node, each path has exactly one incoming and one outgoing edge.
+The value of the flow is \(v(f) = k\) (\(k\) edges out of \(s\) carry flow one unit of flow).
+\end{proof}
+
+\begin{proof}[``$\ge$'']
+Let \(f\) be a flow of value \(k\).
+By \nameref{thm:integrality}, there exists a 0-1 flow \(f\) of value \(k\).
+Consider an edge \((s,u)\) with \(f(s,u) = 1\).
+By flow conservation \eqref{eq:flow_conservation}, there exists an edge \((u,v)\) with \(f(u,v) = 1\).
+Continue until reaching \(t\), always choosing a new edge with flow 1.
+Once reaching \(t\) we found one path.
+Remove all edges of this path from the graph and repeat \(k\) times.
+We obtain \(k\) (not necessarily sim\tikzmark{simple}ple) edge disjoint \(s\)-\(t\) paths (one for each edge our of \(s\) with flow 1).
+\end{proof}
+\newcommand{\annotdropcycle}{0.5cm}  % how far below the text the note sits
+\newcommand{\arrowpadcycle}{0.1cm}   % small offset between mark and arrow target
+\begin{tikzpicture}[remember picture,overlay, font=\scriptsize]
+
+  \node[anchor = north west] (note1) at ($(pic cs:simple)+(0.4,-\annotdropcycle)$) {can eliminate cycles to get simple paths if desired}; % depth arrow
+  \draw[->, outer sep=0cm, inner sep=0cm] (note1.west) -- ($(pic cs:simple)+(0,-\arrowpadcycle)$);  % offset label
+
+\end{tikzpicture}
+% \vspace{\dimexpr\annotdrop-0.1cm\relax}
+
+
+We reduced the problem `\nameref{prob:max_edge_disjoint_paths}' to the known problem `\nameref{prob:max_flow}'.
 
 
 
+
+
+\subsubsection{Network Connectivity}\label{sec:network_connectivity}
+
+\begin{definition}
+A set of edges \(F \subseteq E\) \textcolor{AccentRed}{disconnects \(t\) from \(s\)} if all \(s\)-\(t\) paths use at least one edge in \(F\).
+\end{definition}
+
+\begin{problem}[Network Connectivity]\label{prob:network_connectivity}
+Given a directed graph \(G = (V,E)\) and two nodes \(s,t \in V\), 
+find the minimum number of edges whose removal disconnects \(t\) from \(s\).
+\end{problem}
+
+We can solve \autoref{prob:network_connectivity} by finding a \nameref{prob:min_cut} in a network with unit capacities on all edges.
+
+\begin{theorem}[\textcolor{AccentGray}{[Menger, 1927]}]\label{thm:network_connectivity_max_edge_disjoint_paths_equivalence}
+The max number of edge disjoint \(s\)-\(t\) paths is equal to the min number of edges whose removal disconnects \(t\) from \(s\).
+\end{theorem}
+
+Special case of \nameref{thm:max-flow-min-cut} (\autoref{thm:max-flow-min-cut}):
+\begin{itemize}
+  \item derive a \nameref{def:flow_network} with unit capacities
+  \item min number of edges whose removal disconnects \(t\) from \(s\) = \nameref{prob:max_flow}
+  \item max number of edge disjoint \(s\)-\(t\) paths = \nameref{prob:max_flow}
+\end{itemize}
 
 
