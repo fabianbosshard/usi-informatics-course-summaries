@@ -5,10 +5,14 @@
 \textcolor{AccentBlue}{Greedy}. 
 Build up a solution incrementally, myopically optimizing some local criterion.
 
+\medskip
+
 \textcolor{AccentBlue}{Divide-and-conquer}. 
 Break up a problem into two sub-problems of roughly equal size; 
 solve each sub-problem independently; 
 combine the two sub-problem solutions to form solution to original problem.
+
+\medskip
 
 \textcolor{AccentRed}{Dynamic programming}. 
 Break up a problem into many overlapping sub-problems; 
@@ -17,14 +21,33 @@ combine solutions to small subproblems to build up solutions to larger and large
 \item overlapping sub-problem = a sub-problem whose results can be reused many times
 \item Hint: express your optimal solution by a recursive formula
 \end{itemize}
+
 \medskip
+
+\textcolor{AccentBlue}{Some famous dynamic programming algorithms}:
+\begin{itemize}
+  \item Viterbi for Hidden Markov Models
+  \item Unix diff for comparing two files
+  \item Smith-Waterman for sequence alignment
+  \item \nameref{alg:bellmanford} for shortest path routing in networks
+  \item Cocke-Kasami-Younger for parsing context-free grammars
+\end{itemize}
+
+
+\bigskip
 
 
 Powerful technique for solving optimization problems, which have certain well-defined clean structural properties.
+
+\bigskip
+
 \begin{definition}[Principle of optimality]\label{def:principle_of_optimality}
 \hl[5]{For the global problem to be solved optimally, each subproblem must be solved optimally.}
 \end{definition}
-this principle must hold to apply DP
+\indent \(\rightarrow\) this principle must hold to apply DP
+
+\bigskip
+\smallskip
 
 The global optimal solution consists of optimal solutions to subproblems.
 
@@ -38,7 +61,26 @@ Polynomial time DP:
 
 DP selection principle: \hl{When given a set of feasible options to choose from, try them all and take the best}
 
+
+
+
+
+
+
+
+
+
+
+
 \subsection{Weighted Interval Scheduling}
+
+
+
+
+
+
+
+
 We denote by \(p(j)\) the largest index \(i\) with \(i < j\) and such that job \(i\) is compatible with \(j\), i.e.
 \begin{equation}\label{eq:interval_scheduling_pj}
   p(j)
