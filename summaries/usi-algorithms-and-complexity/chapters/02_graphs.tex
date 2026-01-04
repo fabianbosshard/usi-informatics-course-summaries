@@ -1128,14 +1128,24 @@ A di-graph is \textcolor{red}{strongly connected} if every pair of nodes \(u, v\
 
 mutual reachability relation between vertices is an equivalence relation.
 
+\medskip
+
 partitions \(V\) into equivalence classes: \emph{strongly connected components} of \(G\)
 
-if we collapse the vertices within each strong component into a single vertex, we get the \emph{component digraph}. it is a DAG.\\
-- if there is an edge (or path) from component \(C\) to component \(C'\), then there cannot be an edge (or path) from \(C'\) to \(C\) (or else \(C \cup C'\) would be one strong component).\\
-- thus, there is no cycle in the component digraph
+\medskip
 
-strong components can be computed in \(O(n + m)\) time using two \nameref{alg:dfs}\\
-- \hyperref[thm:strongly_connected_test]{recall} that we can answer if a digraph is strongly connected by 2 \nameref{alg:bfs}/\nameref{alg:dfs} 
+if we collapse the vertices within each strong component into a single vertex, we get the \emph{component digraph}. it is a DAG.
+\begin{itemize}
+\item if there is an edge (or path) from component \(C\) to component \(C'\), then there cannot be an edge (or path) from \(C'\) to \(C\) (or else \(C \cup C'\) would be one strong component).
+\item thus, there is no cycle in the component digraph
+\end{itemize}
+
+\medskip
+
+strong components can be computed in \(O(n + m)\) time using two \nameref{alg:dfs}:
+\begin{itemize}
+\item \hyperref[thm:strongly_connected_test]{recall} that we can answer if a digraph is strongly connected by 2 \nameref{alg:bfs}/\nameref{alg:dfs} 
+\end{itemize}
 
 \medskip
 

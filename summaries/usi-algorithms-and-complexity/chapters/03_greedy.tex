@@ -254,6 +254,8 @@ Implementation. \(O(n\log n)\)
 \item interact with the heap in \(O(\log d)\) time per job: get-min, del-min, insert
 \end{itemize}
 
+\medskip
+
 But actually, we can do better (for the part after sorting): 
 \begin{itemize}
 \item maintain a stack/queue \(Q\) of available resources 
@@ -741,6 +743,9 @@ From Cayley's theorem we know that we do not want to find an MST by brute force.
 
 \begin{remark} All three algorithms produce an MST.\end{remark}
 
+
+
+\subsubsection{Properties of MSTs}
 \textcolor[HTML]{013399}{Simplifying assumption}. All edge costs \(c_e\) are distinct. (unique MST)
 
 \begin{property}[Cut]\label{property:cut}
@@ -757,6 +762,22 @@ Then the MST contains \(e\).
   But \(\operatorname{cost}(T') < \operatorname{cost}(T^*)\), which is a contradiction. \textcolor{red}{\Lightning}
 \end{proof}
 
+\begin{caution}
+\autoref{property:cut} is an implication,
+% \[
+% (\text{\(e\) is lightest across some cut}) \;\Rightarrow\; (\text{\(e\) is in an MST})
+% \]
+not a biconditional. The reverse direction is false:
+\[
+(\text{\(e\) is in an MST}) \not\Rightarrow (\text{\(e\) is lightest across some given cut})
+\]
+and also
+\[
+(\text{\(e\) is not lightest across some given cut}) \not\Rightarrow (\text{\(e\) is not in an MST})
+\qedhere
+\]
+\end{caution}
+
 \begin{property}[Cycle]\label{property:cycle}
 Let \(C\) be any cycle, and let \(f\) be the max cost edge belonging to \(C\).
 Then the MST does not contain \(f\).  
@@ -764,15 +785,107 @@ Then the MST does not contain \(f\).
 \begin{proof}[Exchange argument]
   Suppose \(f\) does belong to the MST \(T^*\).
   Deleting \(f\) from \(T^*\) disconnects \(S\) and \(V \setminus S\) in \(T^*\).
-  Since \(C\) is a cycle there is another edge \(e\) incident to \(S\) and \(V \smallsetminus S\) and \(c_e < c_f\).
+  Since \(C\) is a cycle there is another edge \(e\) incident to \(S\) and \(V \setminus S\) and \(c_e < c_f\).
   Now let \(T' = T^* \cup \{e\} \setminus \{f\}\). 
   It is also a spanning tree.
   But \(\operatorname{cost}(T') < \operatorname{cost}(T^*)\), which is a contradiction. \textcolor{red}{\Lightning}
 \end{proof}
 
+\medskip
+
+\begin{theorem}\label{thm:adding_edge_to_G_mst_changes}
+Let \(T_0 = (V, E_{T_0})\) be an \nameref{def:mst} on \(G_0 = (V, E)\).
+If a new edge \(e' = (a, b)\) is added to \(G_0\), we obtain a new graph \(G_1 = (V, E \cup \{e'\})\).
+The \nameref{def:mst} changes if and only if \(e'\) is cheaper than the most expensive edge \(f \coloneq \argmax_{e \in P} c_e\) on the unique path \(P\) from \(a\) to \(b\) in \(T_0\).
+Moreover, in that case the new \nameref{def:mst} is \(T_1 = T_0 \cup \{e'\} \setminus \{f\}\).
+\end{theorem}
 
 
-\subsubsection*{\nameref{alg:prim}'s algorithm}
+\begin{proof}
+Adding $e'$ to $T_0$ creates exactly one cycle
+\(
+C := P \cup \{e'\}
+\).
+% Let $f$ be the maximum cost edge on $P$ (equivalently, on $C\setminus\{e'\}$).
+
+\medskip
+\underline{`$\Rightarrow$' (change implies $c_{e'}<c_f$):}
+
+Assume $c_{e'}>c_f$. 
+Then $e'$ is the maximum cost edge on the cycle $C$.
+By \autoref{property:cycle}, no MST of $G_1$ contains $e'$.
+% Hence it uses only edges from $E$, i.e. it is also an MST of $G_0$.
+% By uniqueness, it is equal to $T_0$, so the MST does \emph{not} change.
+Let $T^*$ be the MST of $G_1$. Since $e'\notin T^*$,  $T^*$ uses only edges from $E$, so $T^*$ is a spanning tree of $G_0$.
+Thus $\operatorname{cost}(T_0)\le \operatorname{cost}(T^*)$.
+On the other hand, $T_0$ is also a spanning tree of $G_1$, hence $\operatorname{cost}(T^*)\le \operatorname{cost}(T_0)$.
+Therefore $\operatorname{cost}(T^*)=\operatorname{cost}(T_0)$, and by uniqueness $T^*=T_0$.
+Taking the contrapositive shows: if the MST changes, then $c_{e'}<c_f$.
+
+\medskip
+\underline{`$\Leftarrow$' ($c_{e'}<c_f$ implies change and gives $T_1$):}
+
+Assume $c_{e'}<c_f$ and define
+\[
+T_1 := T_0 \cup \{e'\} \setminus \{f\}.
+\]
+Then $T_1$ is a spanning tree of $G_1$ and
+\[
+\operatorname{cost}(T_1)
+=
+\operatorname{cost}(T_0) + c_{e'} - c_f
+<
+\operatorname{cost}(T_0)
+\]
+so $T_0$ cannot remain an MST of $G_1$ (hence the MST changes).
+
+
+It remains to show $T_1$ is optimal in $G_1$.
+Let $S$ be any spanning tree of $G_1$.
+Now distinguish two cases:
+\begin{itemize}
+\item \underline{$e'\in S$:}
+
+Removing $e'$ disconnects $S$ into components with vertex sets $A, B$ where $a \in A$ and $b \in B$.
+Along the (previously defined) path $P$ there exists an edge $h \in P$ crossing the cut $(A, B)$.
+Then $S \setminus \{e'\} \cup \{h\}$ is a spanning tree of $G_0$, so by minimality of $T_0$ on $G_0$,
+\[
+\operatorname{cost}(T_0)
+\le
+\operatorname{cost}(S \setminus \{e'\} \cup \{h\})
+=
+\operatorname{cost}(S) - c_{e'} + c_h
+\]
+hence
+\[
+\operatorname{cost}(S)
+\ge 
+\operatorname{cost}(T_0) + c_{e'} - c_h
+\ge
+\operatorname{cost}(T_0) + c_{e'} - c_f
+= 
+\operatorname{cost}(T_1)
+\]
+where we used $c_h \le c_f$ since $h\in P$ and $f$ is the maximum edge on $P$.
+Thus among all spanning trees containing $e'$, $T_1$ has minimum cost.
+
+\item \underline{$e'\notin S$:}
+
+Any spanning tree of $G_1$ not containing $e'$ is already a spanning tree of $G_0$ and therefore has cost at least that of $T_0$, i.e.
+$
+\operatorname{cost}(S)
+\ge
+\operatorname{cost}(T_0)
+>
+\operatorname{cost}(T_1)
+$.
+\end{itemize}
+
+Consequently $T_1$ is the (unique) MST of $G_1$.
+\end{proof}
+
+
+\subsubsection{\nameref{alg:prim}'s algorithm}
 
 \begin{algorithm}[h]
 \caption{Prim}\label{alg:prim}
@@ -802,13 +915,13 @@ Then the MST does not contain \(f\).
 \end{algorithm}
 
 
-\pagebreak[3]
+% \pagebreak[3]
 Correctness:
-\vspace{-\parskip}
-\begin{itemize}[nosep]
+%\vspace{-\parskip}
+\begin{itemize}%[nosep]
   \item initialize \(S = \{\text{any node}\}\), \(T = \emptyset\)
   \item apply \hyperref[property:cut]{\hl{cut property}} to \(S\) (and repeat)
-  \begin{itemize}[nosep]
+  \begin{itemize}%[nosep]
     \item choose cheapest edge out of \(S\)
     \item add it to \(T\)
     \item update \(S\) (add one new explored node \(u\) to \(S\))
@@ -862,7 +975,8 @@ The runtime analysis of \autoref{alg:prim} is exactly the same as that of \autor
 
 
 
-\subsubsection*{\nameref{alg:kruskal}'s algorithm}
+\subsubsection{\nameref{alg:kruskal}'s algorithm}
+
 
 \begin{algorithm}[h]
 \caption{Kruskal}\label{alg:kruskal}
@@ -886,8 +1000,8 @@ The runtime analysis of \autoref{alg:prim} is exactly the same as that of \autor
 
 
 Correctness:
-\vspace{-\parskip}
-\begin{itemize}[nosep]
+%\vspace{-\parskip}
+\begin{itemize}%[nosep]
   \item consider edges in ascending order of weight
   \item initialize \(T = \emptyset\)
   \item Case 1: if adding \(e\) to \(T\) creates a cycle, discard \(e\) (according to \hyperref[property:cycle]{\hl{cycle property}})
@@ -946,7 +1060,7 @@ Use the \textcolor{alizarincrimsonred}{union-find} data structure.
 \end{tikzpicture}
 \vspace{\dimexpr\annotdrop-0.1cm\relax}
 
-\clearpage
+
 
 Ties in line \ref{alg:kruskal:sort} can be broken by small perturbations to the weights or implicitly the index, i.e.,:
 \begin{algorithm}[h]
@@ -1154,9 +1268,9 @@ For (discrete) \autoref{problem:k_center} centers must be in \(P\) \(\Rightarrow
 \end{remark}
 
 both \nameref{problem:k_center} and \nameref{problem:k_selection} problem is NP-hard, so we look for a greedy approximation algorithm\\
-\(\rightarrow\) approximation to \nameref{problem:k_center} also useful for the \nameref{problem:k_selection} problem
+\indent \(\rightarrow\) approximation to \nameref{problem:k_center} also useful for the \nameref{problem:k_selection} problem
 
-
+\medskip
 
 
 \textcolor[HTML]{660066}{Naive greedy: a false start}
