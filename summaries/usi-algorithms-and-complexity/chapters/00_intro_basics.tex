@@ -2,10 +2,12 @@
 \section{Introduction}
 
 typically,
-\begin{itemize}[nolistsep, noitemsep]
+\begin{itemize}%[nolistsep, noitemsep]
 \item numerical data \(\rightarrow\) numerical analysis 
 \item discrete data \(\rightarrow\) algorithm design and analysis
-\end{itemize} \medskip
+\end{itemize} 
+
+\medskip
 
 two fundamental issues to consider: \emph{correctness}, \emph{efficiency}
 
@@ -16,18 +18,19 @@ two fundamental issues to consider: \emph{correctness}, \emph{efficiency}
 
 \begin{theorem}[Simplified Master Theorem]\label{thm:simpl_master_theorem}
 Let $a \geq 1, b>1$ be constants and let $T(n)$ be the recurrence
-\[
+\begin{equation}\label{eq:master_theorem}
 T(n)=a T(n / b)+c n^k
-\]
+\end{equation}
 defined for $n \geq 0$.
-\begin{itemize}[nolistsep, noitemsep]
+\begin{itemize}%[nolistsep, noitemsep]
 \item Case 1: $a>b^k$ then $T(n)$ is $\Theta(n^{\log _b a})$
 \item Case 2: $a=b^k$ then $T(n)$ is $\Theta(n^k \log n)$
-\item Case 3: $a<b^k$ then $T(n)$ is $\Theta(n^k)$ \qedhere
+\item Case 3: $a<b^k$ then $T(n)$ is $\Theta(n^k)$
+\qedhere
 \end{itemize}
 \end{theorem}
 
-\medskip
+\bigskip
 
 Summation with general bounds:
 \[

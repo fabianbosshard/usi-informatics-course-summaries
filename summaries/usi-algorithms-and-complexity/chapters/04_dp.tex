@@ -533,7 +533,7 @@ Otherwise we have three choices:
 
 
 We get the recurrence:
-\[
+\begin{equation}\label{eq:sequence_alignment_recurrence}
 \operatorname{OPT}(i,j)
 =
 \begin{cases}
@@ -547,7 +547,7 @@ i \cdot \delta & \text{if \(j = 0\)}\\
 \end{cases}
 & \text{otherwise}
 \end{cases}
-\]
+\end{equation}
 
 \medskip
 To compute \(\operatorname{OPT}(m,n)\):
@@ -615,7 +615,7 @@ keep a hint of where we came from.
 
 
 
-\subsection{Longest Common Subsequence}
+\subsection{Longest Common Subsequence} \label{sec:lcs}
 Let us think of character strings as sequences of characters. 
 Given $X=\left\langle x_1, \ldots, x_l\right\rangle$, we say that $Z=\left\langle z_1, \ldots, z_k\right\rangle$ is a subsequence of $X$ if there is a strictly increasing sequence of $k$ indices $\left\langle i_1, \ldots, i_k\right\rangle$ such that $Z=\left\langle x_{i_1}, \ldots, x_{i_k}\right\rangle$. 
 
@@ -971,568 +971,10 @@ Because to compute \(L[i,j]\) we only need \(L[i-1,j-1]\), \(L[i-1,j]\), and \(L
 
 
 
-
-
-
-
-
-
-
-% Sequence Alignment in Linear Space
-
-% Combine Dynamic Programming with Divide and Conquer Sequence Alignment: Linear Space
-
-% Q. Can we avoid using quadratic space?
-
-% Easy: Optimal value in O(m + n) space and O(mn) time.
-
-% – Use a 2xn matrix. Compute OPT(i, •) from OPT(i-1, •).
-
-% – But no longer a simple way to recover the alignment itself.
-
-% Theorem. [Hirschberg 1975]
-
-% 
-
-% 
-
-% Optimal alignment in O(m + n) space and O(mn) time. Clever combination of divide-and-conquer and dynamic programming.
-
-% Any DP matrix can be seen as a graph (a DAG)
-
-% 
-
-% Optimal alignment – shortest path in the DAG from node-(0,0) to (m,n)
-
-% 87 Sequence Alignment: Linear Space
-
-% Edit distance graph.
-
-% 
-
-% 
-
-% 
-
-% 
-
-% A node for every M[i,j] An edge from M[i-1,j-1], M[i-1,j], M([i.j-1] to M[I,j] with weights
-
-% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Observation: f(i, j) = M[i,j]= OPT(i, j).
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% α x i y j d
-
-% x2 
-
-% x3 
-
-% d
-
-% i-j
-
-% €
-
-% m-n
-
-% 88 Sequence Alignment: Linear Space
-
-% Edit distance graph.
-
-% OPT(m,n): length of shortest path P from (0,0) to (m,n). OPT(i, j) = f(i,j);
-
-% 
-
-% 
-
-% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Let g(i, j) be (length of) shortest path from (i, j) to (m,n).
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% α x i y j d
-
-% x2 
-
-% x3 
-
-% d
-
-% i-j
-
-% €
-
-% m-n
-
-% 89 Sequence Alignment: Linear Space
-
-% Edit distance graph.
-
-% 
-
-% 
-
-% 
-
-% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Let g(i, j) be (length of) shortest path from (i, j) to (m,n).
-
-% Observation: OPT(m,n) = f(i, j) + g(i, j) for any node (i,j) on P, P= shortest path from (0,0) to (m,n).
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% i-j
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% m-n
-
-% 91 Computing f (•, j)
-
-% 
-
-% Given a column j, we can compute the value of f (•, j) = OPT[•, j] in O(mn) time and O(m + n) space.
-
-% – Run space efficient sequence alignment to compute OPT(m,n) and keep the entries of column j in a separate array
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% j y4 
-
-% i-j
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% m-n
-
-% 94 Computing g(i, j)
-
-% 
-
-% We can compute g(i, j) by reversing the edge orientations (formula indices) and inverting the roles of (0, 0) and (m, n)
-
-% – We start with g(m, n) = 0 and reverse indices in the recursive formula for OPT(i,j) = min{…}
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% i-j
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% d
-
-% αx i y j 
-
-% d
-
-% €
-
-% m-n
-
-% 96 Computing g(i, j)
-
-% The backward function g(i,j)
-
-%  g(m,n) = 0;
-
-% 
-
-% 
-
-% 
-
-% g(m,j) = (n-j)δ ; g(i,n)= (m-i)δ ;
-
-% Substitute i-1 by i+1 in the recursive formula for OPT(i,j) Substitute j-1 by j+1 in the recursive formula for OPT(i,j)
-
-% ! # #
-
-% OPT(i, j) = "
-
-% # # $
-
-% jδ
-
-% if
-
-% i
-
-% =
-
-% 0
-
-% ! α x i y j +OPT(i −1, j −1) # min "
-
-% δ
-
-% +OPT(i
-
-% −1,
-
-% j)
-
-% # δ +OPT(i, j −1) $
-
-% iδ
-
-% otherwise
-
-% if
-
-% j=
-
-% 0
-
-% 97 Computing g(•, j)
-
-% 
-
-% 
-
-% 
-
-% Given a column j, we can compute the values of g (•, j) in O(mn) time and O(m + n) space.
-
-% Run space efficient sequence alignment to compute OPT(0,0), (reversing the role of nodes (m,n) and (0,0) and reversing indices
-
-% j Keep the entries of column j in a separate array) e y 1 y 2 y 3 y4 
-
-% e
-
-% 0-0
-
-% x1 
-
-% i-j
-
-% x2 
-
-% x3 
-
-% y5 
-
-% y6 
-
-% m-n
-
-% 98 Computing an alignment pair
-
-% 
-
-% 
-
-% 
-
-% Given a column j, compute f(•, j) + g (•, j) in a separate array Let q be the index of the minimum; then f(q.j) + g(q,j) = OPT(m,n)
-
-% We have found one pair x q - y j (alignment x q - y j / xq -gap /yj - gap) in O(mn) time and O(m + n) space.
-
-% e
-
-% y1 
-
-% y2 
-
-% n/2 y3 
-
-% i-j
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% q
-
-% m-n
-
-% 99 Sequence Alignment: Linear Space
-
-% 
-
-% 
-
-% 
-
-% 
-
-% 
-
-% Divide & Conquer: chose column j=n/2 Compute f(•,n/2). Compute g (•,n/2). Compute f(•, n/2) + g (•, n/2) Let q be an index that minimizes f(i,n/2) + g(i,n/2) Store the pair x q - y n/2 (possible alignment x q - y n/2 / xq -gap /yn/2 - gap) Recurse for X[1..q],Y[1../n/2] and X[q..m] ,Y[n/2…n]
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% i-j
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% q
-
-% m-n
-
-% 102 Sequence Alignment: Linear Space
-
-% Divide: Compute the value of f(i,n/2) and g(i,n/2), for all i, using two space-efficient DP algorithms (time O(mn), space O(m+n)).
-
-% 
-
-% Find the index q that minimizes f(i, n/2) + g(i, n/2).
-
-% Store pair x q - y n/2 (align x q - y n/2 or xq -gap or yn/2 - gap). Conquer: recursively compute optimal alignment in blue and yellow n/2 pieces.
-
-% 
-
-% e
-
-% y1 
-
-% y2 
-
-% y3 
-
-% i-j
-
-% y4 
-
-% y5 
-
-% y6 
-
-% e
-
-% 0-0
-
-% x1 
-
-% x2 
-
-% x3 
-
-% m-n
-
-% q
-
-% 103 an be easily avoided.
-
-% Divide-and-Conquer-Alignment (X ,Y )
-
-% Divide-and-Conquer-Alignment(X ,Y )
-
-% Let m be the number of symbols in X Let n be the number of symbols in Y
-
-% If m ≤ 2 or n ≤ 2 then
-
-% Compute optimal alignment using Alignment(X ,Y ) Call Space-Efficient-Alignment(X ,Y[1 : n/2]) Call Backward-Space-Efficient-Alignment(X ,Y[n/2 + 1 : n]) Let q be the index minimizing f(q, n/2) + g(q, n/2) Add (q, n/2) to global list P Divide-and-Conquer-Alignment(X[1 : q],Y[1 : n/2]) Divide-and-Conquer-Alignment(X[q + 1 : n],Y[n/2 + 1 : n]) Return P
-
-% At the end, given the global list P, retrieve the alignment
-
-% 104 Sequence Alignment: Running Time Analysis Warmup
-
-% How long does the algorithm take?
-
-% T(m, n) = max running time on strings of length at most m and n
-
-% We increase time by T(m, n) was O(mn). Now? only a constant
-
-% T(m, n) = T(q,n / 2)+T(m − q,n / 2)+O(mn)
-
-% factor. But we reuse space during recursive calls.
-
-% At first glance one can think : T(m, n) = O(mn log n).
-
-% T(m, n) ≤ 2T(m, n / 2) + O(mn) ⇒ T(m, n) = O(mn logn)
-
-% But this analysis is not tight, T(m, n) = O(mn)
-
-% 106 Sequence Alignment: Running Time Analysis
-
-% Theorem. Let T(m, n) = max running time of algorithm on strings of length m and n. T(m, n) = O(mn).
-
-% T(m, n) = T(q,n / 2)+T(m − q,n / 2)+O(mn)
-
-% Pf. (by induction on n, skip.)
-
-% 
-
-% 
-
-% 
-
-% O(mn) time to compute f( •, n/2) and g( •, n/2) and find index q. T(q, n/2) + T(m - q, n/2) time for two recursive calls.
-
-% Choose constant c so that:
-
-% T(m, 2) T(2, n) T(m, n)
-
-% ≤
-
-% ≤
-
-% ≤
-
-% cm cn cmn + T(q, n/2) + T(m− q, n/2)
-
-%  Base cases: m = 2 or n = 2.
-
-% 
-
-% Inductive hypothesis: T(k,l) £ 2ckl, k≤m , l<n.
-
-% €
-
-% T (m, n)
-
-% ≤ ≤ = =
-
-% T (q, n / 2) + T (m − q, n / 2) + cmn 2cqn / 2 + 2c(m − q )n / 2 + cmn cqn + cmn − cqn + cmn 2cmn
-
-% 108 Longest Common subsequence
-
-% You can do the same trick as with the sequence alignment on min cost (Combine DP and D&C )
-
-% 
-
-% 
-
-% 
-
-% 
-
-% 
-
-% Compute the longest common subsequence in time O(mn) using O(m+n) space Compute the value of LCS(i,n/2) and LCS-reverse(i,n/2), for every i, using two space-efficient DP algorithms.
-
-% Find the index q that maximizes the appropriate combination of LCS(q,n/2) and LCS-reverse(q,n/2) Recursively compute the longest common subsequence in the two subproblems: one for X[1…q] Y[1…n/2] and one for X[q+1,…m] Y[n/2+1 …n]
-
-% Concatenate the two subsequences found by the two recursive calls
-
 \subsection{Sequence Alignment in linear space}\label{sec:seqalign_lcs_linear_space}
 There is a cool trick that allows linear space without compromising the time complexity asymptotically.
 It combines Dynamic Programming with Divide and Conquer.
+The same trick can be used for \nameref{sec:lcs}.
 
 Can we avoid using quadratic space?
 
@@ -1549,12 +991,8 @@ Optimal alignment in \(O(m + n)\) space and \(O(mn)\) time. Clever combination o
 A DP matrix can be seen as a directed acyclic graph (DAG).
 The optimal alignment corresponds to the shortest path in the DAG from node \((0,0)\) to \((m,n)\).
 
-\textcolor{AccentBlue}{Edit distance graph}
-\begin{itemize}
-  \item a node for every entry \(M[i,j]\)
-  \item an edge from \(M[i-1,j-1]\), \(M[i-1,j]\), \(M[i,j-1]\) to \(M[i,j]\) with weights according the \nameref{def:cost_model}
-\end{itemize}
-
+\textcolor{AccentBlue}{Edit distance graph}:
+Add a node for every entry \(M[i,j]\) and an edge from \(M[i-1,j-1]\), \(M[i-1,j]\), \(M[i,j-1]\) to \(M[i,j]\) with weights according the \nameref{def:cost_model}:
 \[
 \begin{tikzpicture}[
   scale=1.5,
@@ -1688,6 +1126,196 @@ The optimal alignment corresponds to the shortest path in the DAG from node \((0
 \]
 
 
+Let \(f(i,j)\) be the (length of) shortest path from \((0,0)\) to \((i,j)\) and \(g(i,j)\) be the (length of) shortest path from \((i,j)\) to \((m,n)\).
+\begin{observation}\label{obs:length_shortest_path_equals_opt}
+ \(f(i,j) = M[i,j] = \operatorname{OPT}(i,j)\). 
+\end{observation}
+\begin{observation}\label{obs:opt_decomposition_node_on_shortest_path}
+Let \(P\) be the shortest path from \((0,0)\) to \((m,n)\).
+Then 
+\begin{equation}\label{eq:opt_decomposition_node_on_shortest_path}
+\operatorname{OPT}(m,n) = f(i,j) + g(i,j)
+\end{equation}
+for any node \((i,j)\) that lies on the path \(P\).
+\end{observation}
+
+
+\begin{observation}[Computing \(f(\cdot, j)\)]\label{obs:compute_f}
+Given a column \(j\), we can compute the value of \(f(\cdot, j)\) = \(\operatorname{OPT}[\cdot, j]\) in \(O(mn)\) time and \(O(m + n)\) space.
+\begin{itemize}
+  \item[-] run space efficient sequence alignment to compute \(\operatorname{OPT}(m,n)\)
+  \item[-] keep the entries of column \(j\) in a separate array
+  \qedhere
+\end{itemize}
+\end{observation}
+
+We can compute \(g(i,j)\) by reversing the edge orientations (formula indices) and inverting the roles of \((0,0)\) and \((m,n)\).
+\begin{itemize}
+  \item[-] we start with \(g(m,n) = 0\) and reverse indices in the recursive formula \eqref{eq:sequence_alignment_recurrence} for \(\operatorname{OPT}(i,j)\)
+\end{itemize}
+
+\medskip
+
+The backward function \(g(i,j)\):
+\begin{itemize}
+  \item \(g(m,n) = 0\)
+  \item \(g(m,j) = (n-j) \cdot \delta\); \(g(i,n) = (m-i) \cdot \delta\)
+  \item substitute \(i-1\) by \(i+1\) and \(j-1\) by \(j+1\) in \eqref{eq:sequence_alignment_recurrence} for \(\operatorname{OPT}(i,j)\)
+\end{itemize}
+
+\begin{observation}[Computing \(g(\cdot, j)\)]\label{obs:compute_g}
+Given a column \(j\), we can compute the values of \(g(\cdot, j)\) in \(O(mn)\) time and \(O(m + n)\) space.
+\begin{itemize}
+  \item[-] run space efficient sequence alignment to compute \(\operatorname{OPT}(0,0)\), (reversing the role of nodes \((m,n)\) and \((0,0)\) and reversing indices) 
+  \item[-] keep the entries of column \(j\) in a separate array
+  \qedhere
+\end{itemize}
+\end{observation}
+
+
+Given a column \(j\), compute \(f(\cdot, j) + g(\cdot, j)\) in a separate array for all \(i\) (i.e. the entire column).
+Let \(q\) be the index of the minimum
+\begin{equation}\label{eq:q_minimizing_f_plus_g}
+{\color{Red}\boxed{\color{black}
+q \coloneq \argmin_{i \in [1 \ldots m]} \bigl(f(i,j) + g(i,j)\bigr)
+}}
+\end{equation}
+then 
+\begin{equation}\label{eq:f_plus_g_equals_opt}
+{\color{Red}\boxed{\color{black}
+f(q,j) + g(q,j) = \operatorname{OPT}(m,n)
+}}
+\end{equation}
+i.e. we have found one pair $x_q$-$y_j$ (alignment \(x_q\)-\(y_j\) / \(x_q\)-gap / \(y_j\)-gap) in \(O(mn)\) time and \(O(m + n)\) space! :-)
+
+\medskip
+
+Now we just need to put everything together using divide and conquer principle:
+\begin{itemize}
+  \item Divide \& Conquer: choose column \(j = n/2\)
+  \item Compute \(f(\cdot, n/2)\). Compute \(g(\cdot, n/2)\). Compute \(f(\cdot, n/2) + g(\cdot, n/2)\)
+  \item Let \(q\) be an index that minimizes \(f(i,n/2) + g(i,n/2)\)
+  \item Store the pair \(x_q\)-\(y_{n/2}\) (possible alignment \(x_q\)-\(y_{n/2}\) / \(x_q\)-gap / \(y_{n/2}\)-gap)
+  \item Recurse for \(X[1\ldots q]\), \(Y[1\ldots n/2]\) (top left subproblem) and \(X[q \ldots m]\), \(Y[n/2 \ldots n]\) (bottom right subproblem)
+\end{itemize}
+
+\medskip
+
+
+\textcolor{AccentBlue}{Divide}:
+Compute \(f(i,n/2)\) and \(g(i,n/2)\), for all \(i\), using two space-efficient DP algorithms (\autoref{obs:compute_f} and \autoref{obs:compute_g}) in \(O(mn)\) time and \(O(m+n)\) space.
+\begin{itemize}
+  \item find the index \(q\) that minimizes \(f(i, n/2) + g(i, n/2)\)
+  \item store pair \(x_q\)-\(y_{n/2}\) (align \(x_q\)-\(y_{n/2}\) or \(x_q\)-gap or \(y_{n/2}\)-gap)
+\end{itemize}
+
+\smallskip
+\textcolor{AccentBlue}{Conquer}:
+recursively compute optimal alignment in top left and bottom right pieces.
+
+
+
+\begin{algorithm}[h]
+\caption{Divide-and-Conquer-Alignment (linear space)}
+\label{alg:divide_and_conquer_alignment}
+\begin{algorithmic}[1]
+\Function{Divide-and-Conquer-Alignment}{$X,Y$}
+  \State \(m \gets |X|\) \Comment{number of symbols in \(X\)}
+  \State \(n \gets |Y|\) \Comment{number of symbols in \(Y\)}
+  \If{\(m \le 2 \OR n \le 2\)}
+    \State compute optimal alignment using \textsc{Alignment}(\(X,Y\))
+  \EndIf
+  \State \Call{Forward-Space-Efficient-Alignment}{\(X,Y[1:n/2]\)} \Comment{array \(f(\cdot,n/2)\)} \label{line:forward_alignment}
+  \State \Call{Backward-Space-Efficient-Alignment}{\(X,Y[n/2 : n]\)} \Comment{array \(g(\cdot,n/2)\)} \label{line:backward_alignment}
+  \State \(q \gets \argmin_{i \in [1 \ldots m]} \bigl(f(i,n/2) + g(i,n/2)\bigr)\) \Comment{applying \eqref{eq:q_minimizing_f_plus_g}}
+  \State add pair \((q,n/2)\) to global list \(P\)
+  \State \Call{Divide-and-Conquer-Alignment}{\(X[1:q],Y[1:n/2]\)} \label{line:recurse_top_left}
+  \State \Call{Divide-and-Conquer-Alignment}{\(X[q:m],Y[n/2:n]\)} \label{line:recurse_bottom_right}
+  \State \Return \(P\)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+What is the running time of \autoref{alg:divide_and_conquer_alignment}?
+For sure it takes at least as long as \autoref{alg:sequence_alignment} because we need to compute \(f(\cdot, n/2)\) and \(g(\cdot, n/2)\) at each level of recursion.
+
+
+Let \(T(m,n)\) be the maximum running time of \autoref{alg:divide_and_conquer_alignment} on strings \(X\) and \(Y\) of length \(m\) and \(n\).
+Then
+\[
+T(m,n) = \underbrace{T(q,n/2)}_{\text{Line~\ref{line:recurse_top_left}}} + \underbrace{T(m-q,n/2)}_{\text{Line~\ref{line:recurse_bottom_right}}} + \underbrace{O(mn)}_{\text{Lines~\ref{line:forward_alignment},\ref{line:backward_alignment}}}
+\]
+for some \(q \in [1 \ldots m]\) (see \autoref{eq:q_minimizing_f_plus_g}). 
+We can also upper bound \(T(m,n)\) as
+\[
+T(m,n) \le 2 T(m,n/2) + O(mn) \overset{\text{\eqref{eq:master_theorem}}}\implies T(m,n) = O(mn \log n) 
+\]
+but this analysis is not tight, actually \(T(m,n) = O(mn)\).
+We increase time by only a constant factor.
+But we reuse space during recursive calls.
+
+
+
+\begin{theorem}
+\(T(m,n) = O(mn)\).
+\end{theorem}
+\begin{proof}[Induction on \(n\)]
+Choose a constant \(c > 0\) such that
+\begin{align}
+T(m, 2) &\le cm \label{eq:DaC_base_case_m}\\
+T(2, n) &\le cn \label{eq:DaC_base_case_n}\\
+T(m, n) &\le cmn + T(q, n/2) + T(m-q, n/2) \label{eq:DaC_recurrence}
+\end{align}
+for all \(m,n \ge 1\) and all \(q \in [1 \ldots m]\).
+
+\medskip
+
+We prove by induction on \(n\) the statement
+\[
+P(n): \quad T(m,n) \le 2cmn \quad \forall m \ge 1
+\]
+
+\begin{enumerate}[label=(\roman*)]\label{proof:time_complexity_divide_and_conquer_alignment}
+\item \textbf{Base cases:}
+If \(m = 2\) or \(n = 2\), then by \eqref{eq:DaC_base_case_m} and \eqref{eq:DaC_base_case_n} we have
+\[
+T(m,n) \le \max\{cm,cn\} \le 2cmn
+\quad
+\text{\textcolor{Green}{\ding{52}}}
+\]
+
+\item \textbf{Induction hypothesis:}
+Assume \(P(\tilde n)\) holds for all \(\tilde n < n\), i.e.
+\[
+T(\tilde m, \tilde n) \le 2 c \tilde m \tilde n
+\]
+for all \(\tilde m \ge 1\) and all \(\tilde n < n\).
+\label{proof:time_complexity_divide_and_conquer_alignment:induction_hypothesis}
+
+\item \textbf{Induction step:}
+Fix any \(m \ge 1\). Then
+\[
+\begin{aligned}
+T(m,n)
+&\overset{\text{\eqref{eq:DaC_recurrence}}}\le cmn + T(q,n/2) + T(m-q,n/2)\\
+&\overset{\text{\ref{proof:time_complexity_divide_and_conquer_alignment:induction_hypothesis}}}{%
+\le}
+cmn +
+2c\cdot q\cdot \frac n2 + 2c\cdot (m-q)\cdot \frac n2\\
+&= 
+cmn +
+cqn + c(m-q)n\\
+&=
+cmn +
+cmn\\
+&= 2cmn \quad \text{\textcolor{Green}{\ding{52}}}
+\end{aligned}
+\]
+Since \(m\) was arbitrary, this proves \(P(n)\).
+\end{enumerate}
+
+Hence \(T(m,n) = O(mn)\).
+\end{proof}
 
 
 
@@ -1704,6 +1332,16 @@ The optimal alignment corresponds to the shortest path in the DAG from node \((0
 
 
 
+
+
+
+
+
+
+
+
+
+\pagebreak[3]
 \subsection{Shortest Paths with Negative Weights}
 
 % \nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that supports arbitrary (i.e. including negative) weights and detects negative-weight cycles.  
