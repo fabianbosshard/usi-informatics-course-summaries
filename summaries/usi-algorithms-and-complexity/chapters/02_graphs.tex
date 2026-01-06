@@ -945,10 +945,10 @@ Idea: keep track of back edge \((x, w)\) with smallest discovery time \(\attribn
   \draw[thick] ($(u)!0.65!0:(w)$)--(w);
 
   % dotted back edges
-  \draw[thick, densely dotted] (-0.3,1.5) to[bend left=40] (u);
-  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
-  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
-  \draw[thick, densely dotted] (-0.5,1.0) to[bend left=45] (w);
+  \draw[thick, densely dotted, blue] (-0.3,1.5) to[bend left=40] (u);
+  \draw[thick, densely dotted, blue] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted, blue] (0.7, 0.25) to[bend right=55] (v);
+  \draw[thick, densely dotted, blue] (-0.5,1.0) to[bend left=45] (w);
 
   % annotations
   \node[right=0.1 of u] {$u$ is \textbf{not} a cut vertex};
@@ -975,9 +975,9 @@ Idea: keep track of back edge \((x, w)\) with smallest discovery time \(\attribn
   \draw[thick,densely dotted] ($(u)!0.6!180:(v)$)--($(u)!1.2!180:(v)$);
 
   % dotted back edges / paths 
-  \draw[thick, densely dotted] (-0.3,1.5) to[bend left=45] (u);
-  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
-  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
+  \draw[thick, densely dotted, blue] (-0.3,1.5) to[bend left=45] (u);
+  \draw[thick, densely dotted, blue] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted, blue] (0.7, 0.25) to[bend right=55] (v);
 
   % annotations
   \node[right=0.1 of u] {$u$ is a cut vertex};
@@ -1004,9 +1004,9 @@ Idea: keep track of back edge \((x, w)\) with smallest discovery time \(\attribn
   \draw[thick,densely dotted] ($(u)!0.6!180:(v)$)--($(u)!1.2!180:(v)$);
 
   % dotted back edges / paths 
-  \draw[thick, densely dotted] (-0.5,1.0) to[bend left=45] (v);
-  \draw[thick, densely dotted] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
-  \draw[thick, densely dotted] (0.7, 0.25) to[bend right=55] (v);
+  \draw[thick, densely dotted, blue] (-0.5,1.0) to[bend left=45] (v);
+  \draw[thick, densely dotted, blue] (-0.7,0.25) to[bend left=55] (-0.35,1.3);
+  \draw[thick, densely dotted, blue] (0.7, 0.25) to[bend right=55] (v);
 
   % annotations
   \node[right=0.1 of u] {$(u,v)$ is a bridge};
@@ -1029,7 +1029,7 @@ highest up we can reach from the subtree rooted at \(v\) (via back edges):
 \{\attribnormal{v}{d}\} \cup
 \Bigl\{\attribnormal{w}{d} \ \Bigm|\ 
 \begin{aligned}
-& (x,w)\ \text{is a back edge for some}\\[-4pt]
+& (x,w)\ \text{is a \textcolor{blue}{back edge} for some}\\[-4pt]
 & \text{(nonproper) descendant } x \text{ of } v
 \end{aligned}
 \Bigr\}
@@ -1118,6 +1118,56 @@ Moreover, \((u,v)\) is a \hl{bridge} iff it is a tree edge (i.e. \(u = \attrib{v
 
 If we want to to find the \nameref{def:biconnected_component}s of \(G\), we can store the edges in a stack while performing \autoref{alg:find_cut_vertices}.
 Whenever we reach a cut vertex, edges in a biconnected component will be consecutive on the stack.
+See \autoref{alg:find_bicc}.
+
+\begin{algorithm}
+\caption{Modification of \hyperref[alg:dfs:dfsvisit]{\textsc{DFSvisit}} to find biconnected components (edge stack)}\label{alg:find_bicc}
+\begin{algorithmic}[1]
+\Function{findBiCC}{$u$}
+  \State $\attrib{u}{color}\gets\gray$ \Comment{\(u\) has been discovered} \label{alg:find_bicc:discover}
+  \State $T\gets T+1$
+  \State $\attrib{u}{low}\gets \attribnormal{u}{d}\gets T$ \Comment{set discovery time and init low} \label{alg:find_bicc:discover_time}
+  \ForAll{$v\in\Gamma(u)$} \label{alg:find_bicc:explore_edges}
+    \If{$\attrib{v}{color}=\white$} \Comment{\((u,v)\) is a tree edge} \label{alg:find_bicc:tree_edge}
+      \State $\attrib{v}{\pi}\gets u$ \Comment{\(v\)'s parent is \(u\)}
+      \State push $(u,v)$ onto $\mathcal{S}$ \Comment{store tree edge on the edge stack} \label{alg:find_bicc:push_tree}
+      \State \Call{findBiCC}{$v$} \label{alg:find_bicc:recursive_call}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attrib{v}{low})$ \Comment{propagate \(\attrib{v}{low}\) up} \label{alg:find_bicc:update_low_tree}
+      \If{$\attrib{v}{low}\ge \attribnormal{u}{d}$} \Comment{biconnected-component boundary at \((u,v)\)} \label{alg:find_bicc:boundary}
+        % \State $C\gets\emptyset$
+        % \Repeat
+        %   \State $e\gets \mathcal{S}.\text{pop}()$
+        %   \State $C\gets C\cup\{e\}$
+        % \Until{$e=(u,v)$} \Comment{pop until the tree edge \((u,v)\)} \label{alg:find_bicc:pop_until}
+        % \State output \(C\) as a biconnected component \label{alg:find_bicc:output}
+        \State pop from \(\mathcal{S}\) until tree edge \((u,v)\) is popped and output them as a BiCC
+      \EndIf
+    \ElsIf{$v\neq \attrib{u}{\pi}\ \textbf{and}\ \attribnormal{v}{d}<\attribnormal{u}{d}$} \Comment{\((u,v)\) is a back edge to an ancestor} \label{alg:find_bicc:back_edge}
+      \State push $(u,v)$ onto $\mathcal{S}$ \Comment{store back edge on the edge stack} \label{alg:find_bicc:push_back}
+      \State $\attrib{u}{low} \gets \min(\attrib{u}{low}, \attribnormal{v}{d})$ \Comment{consider back edge to \(v\)} \label{alg:find_bicc:update_low_back}
+    \EndIf
+  \EndFor
+  % \State $\attrib{u}{color}\gets\black$ \Comment{\(u\) is finished}
+  % \State $T\gets T+1$
+  % \State $\attribnormal{u}{f}\gets T$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+{When do we output a biconnected component?}
+We do \emph{not} only output components ``when we reach a cut vertex''.
+Instead, we output a component \emph{after returning from a recursive call} at a child \(v\) of \(u\), precisely when
+\(
+  \attrib{v}{low} \ge \attribnormal{u}{d}
+\).
+This condition means that the subtree rooted at \(v\) has no back edge to a \emph{proper} ancestor of \(u\).
+Consequently, all edges pushed onto the edge stack \(\mathcal{S}\) since traversing the tree edge \((u,v)\) belong to a single biconnected component, and they appear \emph{consecutively} on \(\mathcal{S}\).
+Hence we can pop edges until \((u,v)\) to obtain exactly that component.
+
+For internal vertices \(u\), the same inequality \(\attrib{v}{low}\ge \attribnormal{u}{d}\) is also the cut-vertex test.
+The root requires a separate cut-vertex criterion (\autoref{lem:cut_vertex_root}), while biconnected components must still be output even if the root is \emph{not} a cut vertex (e.g. when the entire graph is biconnected).
+
+
 
 
 

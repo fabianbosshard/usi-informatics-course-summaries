@@ -252,6 +252,9 @@ Backtracking through the choices of \(i\) at each \(j\) yields the optimal segme
 Given \(n\) items, each with a weight \(w_i \in \N\) and a value \(v_i \in \N\), and a ``knapsack'' with capacity \(W \in \N\),
 fill the knapsack (respecting its capacity) to maximize the total value.
 \end{problem}
+
+0/1 refers to the fact that the items are not divisible, i.e. each item can either be included (1) or excluded (0) from the knapsack, but not fractionally included (otherwise it would be the fractional knapsack problem, which can be solved greedily by taking items in descending order of value-to-weight ratio).
+
 \[
 \begin{tikzpicture}[line join=round, line cap=round, font=\sffamily\footnotesize, scale=0.4]
 
@@ -426,6 +429,9 @@ denotes the maximum value achievable using items \(1,\ldots,i\) with capacity \(
 \For{$w = 0 \TO W$}
   \State \(\operatorname{OPT}[0,w] \gets 0\) \Comment{no items}
 \EndFor
+% \For{$i = 0 \TO n$}
+%   \State \(\operatorname{OPT}[i,0] \gets 0\) \Comment{zero capacity}
+% \EndFor
 \For{$i = 1 \TO n$}
   \For{$w = 0 \TO W$}
     \If{$w_i > w$}
@@ -455,11 +461,147 @@ because \(W\) is exponential in the number of bits needed to represent it (i.e. 
 \end{remark}
 
 
+\textcolor{AccentBlue}{Approximation algorithm}.
+There exists a polynomial algorithm that produces a feasible solution that has value within 0.01\% of the optimum.
 
 
 
 
 
+
+\subsection{Sequence Alignment}
+
+\textcolor{AccentBlue}{Goal}.
+Given two strings \(X = x_1x_2\cdots x_m\) and \(Y = y_1y_2\cdots y_n\),
+find an {alignment of minimum total cost}.
+
+
+\begin{definition}[Alignment]\label{def:alignment}
+An \textcolor{AccentRed}{alignment} \(M\) between two strings \(X\) and \(Y\) is a set of ordered pairs \((x_i, y_j)\) such that each item occurs in at most one pair and no two pairs cross.
+\end{definition}
+
+\begin{definition}\label{def:cross}
+Two pairs \((x_i, y_j)\) and \((x_{i'}, y_{j'})\) \textcolor{AccentRed}{cross} if \(i < i'\) but \(j > j'\).
+\end{definition}
+
+\begin{definition}[Cost Model]\label{def:cost_model}
+% \textcolor{AccentBlue}{Cost model}.
+Aligning \(x_i\) with \(y_j\) incurs a \emph{mismatch} penalty \(\alpha_{x_i y_j}\).
+Leaving a character unmatched (aligning it with a gap ``\(-\)'') incurs a \emph{gap} penalty \(\delta > 0\).
+\end{definition}
+  % The \hl{edit distance} between \(X\) and \(Y\) is the minimum cost over all alignments.
+
+\begin{definition}[Cost]\label{def:alignment_cost}
+The \textcolor{AccentRed}{cost} of an alignment \(M\) is
+\[
+  \operatorname{cost}(M)
+  =
+  \underbrace{\sum_{(x_i, y_j) \in M} \alpha_{x_i y_j}}_{\text{mismatch}} 
+  + 
+  \underbrace{\sum_{i \colon \text{\(x_i\) unmatched}} \delta+\sum_{j \colon \text{\(y_j\) unmatched}} \delta}_{\text {gap }}
+\]
+i.e. it is the sum of all gap and mismatch penalties.
+\end{definition}
+
+\begin{definition}[Edit distance]\label{def:edit_distance}
+The \textcolor{AccentRed}{edit distance} between strings \(X\) and \(Y\) is the minimum \nameref{def:alignment_cost} over all \nameref{def:alignment}s  
+\end{definition}
+
+\textcolor{AccentBlue}{DP formulation}.
+Let
+\(
+\operatorname{OPT}(i,j)
+\) 
+denote the minimum cost of aligning the prefixes \(x_1\cdots x_i\) and \(y_1\cdots y_j\).
+If either of the prefixes is empty and the other has length \(k\), the only option is to align all characters of the other prefix with gaps, incurring a cost of \(\delta\) per gap, i.e.
+\(\operatorname{OPT}(k,0) = \operatorname{OPT}(0,k) = k \cdot \delta\).
+Otherwise we have three choices:
+\begin{itemize}
+  \item Case 1: match \(x_i\) with \(y_j\): \(\alpha_{x_i y_j} + \operatorname{OPT}(i-1,j-1)\)
+  \begin{itemize}
+    \item[-] pay mismatch cost \(\alpha_{x_i y_j}\) plus whatever the minimum cost is for aligning the prefixes \(x_1\cdots x_{i-1}\) and \(y_1\cdots y_{j-1}\)
+  \end{itemize}
+  \item Case 2a: leave \(x_i\) unmatched (align with gap): \(\delta + \operatorname{OPT}(i-1,j)\)
+  \begin{itemize}
+    \item[-] pay gap cost \(\delta\) for \(x_i\) plus min cost for aligning \(x_1\cdots x_{i-1}\) and \(y_1\cdots y_{j}\)
+  \end{itemize}
+  \item Case 2b: leave \(y_j\) unmatched (align with gap): \(\delta + \operatorname{OPT}(i,j-1)\)
+  \begin{itemize}
+    \item[-] pay gap cost \(\delta\) for \(y_j\) plus min cost for aligning \(x_1\cdots x_{i}\) and \(y_1\cdots y_{j-1}\)
+  \end{itemize}
+\end{itemize}
+
+
+We get the recurrence:
+\[
+\operatorname{OPT}(i,j)
+=
+\begin{cases}
+j \cdot \delta & \text{if \(i = 0\)}\\
+i \cdot \delta & \text{if \(j = 0\)}\\
+\min
+\begin{cases}
+\alpha_{x_i y_j} + \operatorname{OPT}(i-1,j-1)\\
+\delta + \operatorname{OPT}(i-1,j)\\
+\delta + \operatorname{OPT}(i,j-1)
+\end{cases}
+& \text{otherwise}
+\end{cases}
+\]
+
+\medskip
+To compute \(\operatorname{OPT}(m,n)\):
+\begin{itemize}
+\item build up the values of \(\operatorname{OPT}(i,j)\) using the recurrence -- fill an \(m \times n\) table
+\item \(O(mn)\) subproblems
+\item to compute \(\operatorname{OPT}(i,j)\) we need: \(\operatorname{OPT}(i-1,j)\), \(\operatorname{OPT}(i-1,j-1)\), \(\operatorname{OPT}(i,j-1)\)
+\item can fill table \emph{row by row} or \emph{column by column}
+\item cost we are looking for will be in bottom-right cell \(\operatorname{OPT}(m,n)\)
+\end{itemize}
+
+
+\begin{algorithm}[h]
+\caption{Sequence Alignment}\label{alg:sequence_alignment}
+\begin{algorithmic}[1]
+\Require strings \(X=x_1\cdots x_m\), \(Y=y_1\cdots y_n\); gap penalty \(\delta\); mismatch costs \(\alpha_{pq}\)
+\For{$i = 0 \TO m$}
+  \State \(M[i,0] \gets i\delta\)
+\EndFor
+\For{$j = 0 \TO n$}
+  \State \(M[0,j] \gets j\delta\)
+\EndFor
+\For{$i = 1 \TO m$}
+  \For{$j = 1 \TO n$}
+    \State \(M[i,j] \gets \min\bigl\{\alpha_{x_i y_j}+M[i-1,j-1], \delta+M[i-1,j], \delta+M[i,j-1]\bigr\}\) \label{line:seqalign_dp_decision}
+  \EndFor
+\EndFor
+\State \Return \(M[m,n]\)
+\end{algorithmic}
+\end{algorithm}
+
+\textcolor{AccentBlue}{Running time}.
+The table has \((m+1)(n+1) = O(mn)\) entries and each entry is computed in \(O(1)\),
+so the running time is \(O(mn)\) and the space usage is \(O(mn)\).
+
+
+\begin{remark}
+We can reduce the space to \(O(\min\{m,n\})\) if only the optimal cost is needed by keeping only two rows/columns in memory at a time while ``filling the table''.
+Because to compute \(M[i,j]\) we only need \(M[i-1,j-1]\), \(M[i-1,j]\), and \(M[i,j-1]\).
+\end{remark}
+
+
+\textcolor{AccentBlue}{Recovering an optimal alignment}.
+Two options:
+\begin{itemize}
+\item Do a postprocessing step after filling the table:
+Starting at \((m,n)\), backtrack to \((0,0)\) by comparing \(M[i,j]\) with the three candidate predecessors:
+\((i-1,j-1)\), \((i-1,j)\), \((i,j-1)\).
+Record the corresponding aligned characters (\(x_i\) vs. \(y_j\), \(x_i\) vs. ``\(-\)'', or ``\(-\)'' vs. \(y_j\)).
+Ties correspond to multiple optimal alignments.
+\item Store another array (hint table):
+Every time we make a decision in \autoref{line:seqalign_dp_decision} of \autoref{alg:sequence_alignment}, 
+keep a hint of where we came from.
+\end{itemize}
 
 
 % \clearpage
@@ -479,9 +621,18 @@ Given $X=\left\langle x_1, \ldots, x_l\right\rangle$, we say that $Z=\left\langl
 
 Given two strings \(X=\left\langle x_1, \ldots, x_m\right\rangle\) and \(Y = \left\langle y_1, \ldots, y_n \right\rangle\), the longest common subsequence of $X$ and $Y$ is a longest sequence $Z$ that is a subsequence of both $X$ and $Y$. 
 
+\subsubsection{Brute force}
+A brute force approach would be to enumerate all subsequences of $X$ and check for each whether it is also a subsequence of $Y$. 
+There are $2^m$ subsequences of \(X\) and checking wether it is a subsequence of \(Y\) takes \(O(n)\) time:
+Scan \(Y\) for first occurence, from there scan for second, and so on.
+In total this takes \(\Theta(n 2^m)\) time.
+
+
+\subsubsection{Dynamic programming formulation}
 A prefix \(X_i\) of a sequence \(X\) is just an initial string of values, \(X_i = \langle x_1, \ldots, x_i \rangle\).
 \(X_0\) is the empty sequence.
-The idea will be to compute the longest common subsequence for every possible pair of prefixes. 
+The idea is to compute the longest common subsequence for every possible pair of prefixes (there are \(O(mn)\) such pairs).
+
 Let $\operatorname{lcs}(i, j)$ denote the length of the longest common subsequence of $X_i$ and $Y_j$.
 We have the following recursive relation:
 \[
@@ -634,21 +785,43 @@ Last characters do not match:
 \textcolor{AccentBlue}{DP table.}
 We store values in a table \(L[0\ldots m, 0\ldots n]\) where
 \(L[i,j] = \operatorname{lcs}(i,j)\).
+We can go recursive/top-down with memoization (\autoref{alg:lcs_topdown}) or iterative/bottom-up (\autoref{alg:lcs}).
+
+
+\begin{algorithm}[h]
+\caption{Longest Common Subsequence (top-down DP)} \label{alg:lcs_topdown}
+\begin{algorithmic}[1]
+\Function{LCS}{$i, j$}
+  \If{\(L[i,j] = \nil\)}
+    \If{\(i = 0 \OR j = 0\)} \Comment{base case}
+      \State \(L[i,j] \gets 0\)
+    \ElsIf{\(x_i = y_j\)} \Comment{last characters match}
+      \State \(L[i,j] \gets \Call{LCS}{i-1, j-1} + 1\)
+    \Else \Comment{last characters do not match}
+      \State \(L[i,j] \gets \max\{\Call{LCS}{i-1, j}, \Call{LCS}{i, j-1}\}\)
+    \EndIf
+  \EndIf
+  \State \Return \(L[i,j]\) \Comment{return stored value}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 
 \begin{algorithm}[h]
 \caption{Longest Common Subsequence (bottom-up DP)}\label{alg:lcs}
 \begin{algorithmic}[1]
 \Require strings \(X = x_1\cdots x_m\), \(Y = y_1\cdots y_n\)
+\State \(L \gets \text{new array \([0 \ldots m, 0 \ldots n]\)}\)
 \For{$i = 0 \TO m$}
   \State \(L[i,0] \gets 0\)
 \EndFor
 \For{$j = 0 \TO n$}
   \State \(L[0,j] \gets 0\)
 \EndFor
-\For{$i = 1 \TO m$}
-  \For{$j = 1 \TO n$}
-    \If{$x_i = y_j$}
-      \State \(L[i,j] \gets L[i-1,j-1] + 1\)
+\For{$i = 1 \TO m$} \Comment{iterate over rows}
+  \For{$j = 1 \TO n$} \Comment{iterate over columns}
+    \If{$x_i = y_j$} 
+      \State \(L[i,j] \gets L[i-1,j-1] + 1\) \Comment{take \(x_i = y_j\) for LCS}
     \Else
       \State \(L[i,j] \gets \max\{L[i-1,j], L[i,j-1]\}\)
     \EndIf
@@ -658,13 +831,870 @@ We store values in a table \(L[0\ldots m, 0\ldots n]\) where
 \end{algorithmic}
 \end{algorithm}
 
-To reconstruct an actual LCS (not just its length), we can backtrack from \((m,n)\) towards \((0,0)\):
-If \(x_i = y_j\) and \(L[i,j] = L[i-1,j-1]+1\), then \(x_i\) is part of some LCS and we move to \((i-1,j-1)\); 
-otherwise, if \(L[i-1,j] \ge L[i,j-1]\) move to \((i-1,j)\), else move to \((i,j-1)\).
 
-\textcolor{AccentBlue}{Running time.}
+
+
+\textcolor{AccentBlue}{Running time} of \autoref{alg:lcs}.
 The table has \((m+1)(n+1) = O(mn)\) entries, each filled in \(O(1)\) time,
-so the running time is \(O(mn)\) and the space is \(O(mn)\) (or \(O(\min\{m,n\})\) if we only need the length).
+so the running time is \(O(mn)\) and the space is \(O(mn)\).
+
+
+
+
+\subsubsection{Reconstructing the actual subsequence}
+
+To retrieve the actual subsequence, we can use another table, a ``hint'' table \(h[0\ldots m, 0\ldots n]\) that records which of the three cases was used to compute each \(L[i,j]\) (\autoref{alg:lcs_with_hints}).
+
+\begin{algorithm}[h]
+\caption{LCS (bottom-up) with hints}\label{alg:lcs_with_hints}
+\begin{algorithmic}[1]
+\Require strings \(X = x_1\cdots x_m\), \(Y = y_1\cdots y_n\)
+\State \(L \gets \text{new array \([0 \ldots m, 0 \ldots n]\)}\) \Comment{stores lcs lengths}
+\State \(h \gets \text{new array \([0 \ldots m, 0 \ldots n]\)}\) \Comment{hint table}
+\For{$i = 0 \TO m$} \Comment{initialize column 0}
+  \State \(L[i,0] \gets 0\)
+  \State \(h[i,0] \gets \text{skipX}\)
+\EndFor
+\For{$j = 0 \TO n$} \Comment{initialize row 0}
+  \State \(L[0,j] \gets 0\)
+  \State \(h[0,j] \gets \text{skipY}\)
+\EndFor
+\For{$i = 1 \TO m$}
+  \For{$j = 1 \TO n$}
+    \If{$x_i = y_j$}
+      \State \(L[i,j] \gets L[i-1,j-1] + 1\)
+      \State \(h[i,j] \gets \text{addXY}\)
+    \Else
+      \If{$L[i-1,j] \ge L[i,j-1]$}
+        \State \(L[i,j] \gets L[i-1,j]\)
+        \State \(h[i,j] \gets \text{skipX}\)
+      \Else
+        \State \(L[i,j] \gets L[i,j-1]\)
+        \State \(h[i,j] \gets \text{skipY}\)
+      \EndIf
+    \EndIf
+  \EndFor
+\EndFor
+\State \Return \(L[m,n]\), \(h\)
+\end{algorithmic}
+\end{algorithm}
+
+
+Now we can use the hints to reconstruct the LCS:
+\begin{itemize}
+  \item start at the last entry of the table, \([m,n]\)
+  \item if \(h[i,j] = \text{addXY}\) (\(\nwarrow\)), then \(x_i = y_j\) is appended to LCS, continue with \([i-1,j-1]\)
+  \item if \(h[i,j] = \text{skipX}\) (\(\uparrow\)), then \(x_i\) is not in LCS, continue with \([i-1,j]\)
+  \item if \(h[i,j] = \text{skipY}\) (\(\leftarrow\)), then \(y_j\) is not in LCS, continue with \([i,j-1]\)
+  \item stop when reaching \([0,0]\)
+\end{itemize}
+
+Because the characters are generated in revers order, prepend them to a sequence, so that when we are done, the sequence is in correct order.
+Or use recursion to print them in correct order directly (\autoref{alg:print_lcs}).
+
+\begin{algorithm}[h]
+\caption{recursive LCS printing using hints}\label{alg:print_lcs}
+\begin{algorithmic}[1]
+\Function{Print-LCS}{$h, X, i, j$}
+  \If{\(i = 0 \OR j = 0\)}
+    \State \Return
+  \EndIf
+  \If{\(h[i,j] = \text{addXY}\)}
+    \State \Call{Print-LCS}{$h, X, i-1, j-1$}
+    \State {print} \(x_i\)
+  \ElsIf{\(h[i,j] = \text{skipX}\)}
+    \State \Call{Print-LCS}{$h, X, i-1, j$}
+  \Else
+    \State \Call{Print-LCS}{$h, X, i, j-1$}
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+Alternatively, the hints can be discovered based on the filled \(L\) table (\autoref{alg:print_lcs_discovered}, \autoref{alg:print_lcs_discovered_alt}).
+If \(x_i = y_j\) and \(L[i,j] = L[i-1,j-1]+1\), then \(x_i\) is part of some LCS and we move to \([i-1,j-1]\); 
+otherwise, if \(L[i-1,j] \ge L[i,j-1]\) move to \([i-1,j]\), else move to \([i,j-1]\).
+
+
+\begin{algorithm}[h]
+\caption{recursive LCS printing discovering hints}\label{alg:print_lcs_discovered}
+\begin{algorithmic}[1]
+\Function{Print-LCS}{$L, X, Y, i, j$}
+  \If{\(i = 0 \OR j = 0\)}
+    \State \Return
+  \EndIf
+  \If{\(x_i = y_j \AND L[i,j] = L[i-1,j-1]+1\)}
+    \State \Call{Print-LCS}{$L, X, Y, i-1, j-1$} \Comment{take \(x_i = y_j\)}
+    \State {print} \(x_i\)
+  \ElsIf{\(L[i-1,j] \ge L[i,j-1]\)}
+    \State \Call{Print-LCS}{$L, X, Y, i-1, j$} \Comment{skip \(x_i\)}
+  \Else
+    \State \Call{Print-LCS}{$L, X, Y, i, j-1$} \Comment{skip \(y_j\)}
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[h]
+\caption{recursive LCS printing discovering hints (alternative condition)}\label{alg:print_lcs_discovered_alt}
+\begin{algorithmic}[1]
+\Function{Print-LCS}{$L, X, i, j$}
+  \If{\(i = 0 \OR j = 0\)}
+    \State \Return
+  \EndIf
+  \If{\(L[i,j] = L[i-1,j]\)}
+    \State \Call{Print-LCS}{$L, X, i-1, j$} \Comment{move up i.e. skip \(x_i\)}
+  \ElsIf{\(L[i,j] = L[i,j-1]\)}
+    \State \Call{Print-LCS}{$L, X, i, j-1$} \Comment{move left i.e. skip \(y_j\)}
+  \Else \Comment{\(L[i,j]\) must be different from all 3 neighbors, so \(x_i = y_j\)}
+    \State \Call{Print-LCS}{$L, X, i-1, j-1$} \Comment{move diagonally, take \(x_i = y_j\)}
+    \State {print} \(x_i\)
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+ \autoref{alg:print_lcs}, \autoref{alg:print_lcs_discovered} and \autoref{alg:print_lcs_discovered_alt} are called with initial parameters \(i = m\) and \(j = n\).
+
+
+
+
+\begin{remark}
+Again, we can reduce the space to \(O(\min\{m,n\})\) if only the length of the LCS is needed by keeping only two rows/columns in memory at a time while ``filling the table''.
+Because to compute \(L[i,j]\) we only need \(L[i-1,j-1]\), \(L[i-1,j]\), and \(L[i,j-1]\).
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+% Sequence Alignment in Linear Space
+
+% Combine Dynamic Programming with Divide and Conquer Sequence Alignment: Linear Space
+
+% Q. Can we avoid using quadratic space?
+
+% Easy: Optimal value in O(m + n) space and O(mn) time.
+
+% – Use a 2xn matrix. Compute OPT(i, •) from OPT(i-1, •).
+
+% – But no longer a simple way to recover the alignment itself.
+
+% Theorem. [Hirschberg 1975]
+
+% 
+
+% 
+
+% Optimal alignment in O(m + n) space and O(mn) time. Clever combination of divide-and-conquer and dynamic programming.
+
+% Any DP matrix can be seen as a graph (a DAG)
+
+% 
+
+% Optimal alignment – shortest path in the DAG from node-(0,0) to (m,n)
+
+% 87 Sequence Alignment: Linear Space
+
+% Edit distance graph.
+
+% 
+
+% 
+
+% 
+
+% 
+
+% A node for every M[i,j] An edge from M[i-1,j-1], M[i-1,j], M([i.j-1] to M[I,j] with weights
+
+% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Observation: f(i, j) = M[i,j]= OPT(i, j).
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% α x i y j d
+
+% x2 
+
+% x3 
+
+% d
+
+% i-j
+
+% €
+
+% m-n
+
+% 88 Sequence Alignment: Linear Space
+
+% Edit distance graph.
+
+% OPT(m,n): length of shortest path P from (0,0) to (m,n). OPT(i, j) = f(i,j);
+
+% 
+
+% 
+
+% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Let g(i, j) be (length of) shortest path from (i, j) to (m,n).
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% α x i y j d
+
+% x2 
+
+% x3 
+
+% d
+
+% i-j
+
+% €
+
+% m-n
+
+% 89 Sequence Alignment: Linear Space
+
+% Edit distance graph.
+
+% 
+
+% 
+
+% 
+
+% Let f(i, j) be (length of) shortest path from (0,0) to (i, j). Let g(i, j) be (length of) shortest path from (i, j) to (m,n).
+
+% Observation: OPT(m,n) = f(i, j) + g(i, j) for any node (i,j) on P, P= shortest path from (0,0) to (m,n).
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% i-j
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% m-n
+
+% 91 Computing f (•, j)
+
+% 
+
+% Given a column j, we can compute the value of f (•, j) = OPT[•, j] in O(mn) time and O(m + n) space.
+
+% – Run space efficient sequence alignment to compute OPT(m,n) and keep the entries of column j in a separate array
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% j y4 
+
+% i-j
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% m-n
+
+% 94 Computing g(i, j)
+
+% 
+
+% We can compute g(i, j) by reversing the edge orientations (formula indices) and inverting the roles of (0, 0) and (m, n)
+
+% – We start with g(m, n) = 0 and reverse indices in the recursive formula for OPT(i,j) = min{…}
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% i-j
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% d
+
+% αx i y j 
+
+% d
+
+% €
+
+% m-n
+
+% 96 Computing g(i, j)
+
+% The backward function g(i,j)
+
+%  g(m,n) = 0;
+
+% 
+
+% 
+
+% 
+
+% g(m,j) = (n-j)δ ; g(i,n)= (m-i)δ ;
+
+% Substitute i-1 by i+1 in the recursive formula for OPT(i,j) Substitute j-1 by j+1 in the recursive formula for OPT(i,j)
+
+% ! # #
+
+% OPT(i, j) = "
+
+% # # $
+
+% jδ
+
+% if
+
+% i
+
+% =
+
+% 0
+
+% ! α x i y j +OPT(i −1, j −1) # min "
+
+% δ
+
+% +OPT(i
+
+% −1,
+
+% j)
+
+% # δ +OPT(i, j −1) $
+
+% iδ
+
+% otherwise
+
+% if
+
+% j=
+
+% 0
+
+% 97 Computing g(•, j)
+
+% 
+
+% 
+
+% 
+
+% Given a column j, we can compute the values of g (•, j) in O(mn) time and O(m + n) space.
+
+% Run space efficient sequence alignment to compute OPT(0,0), (reversing the role of nodes (m,n) and (0,0) and reversing indices
+
+% j Keep the entries of column j in a separate array) e y 1 y 2 y 3 y4 
+
+% e
+
+% 0-0
+
+% x1 
+
+% i-j
+
+% x2 
+
+% x3 
+
+% y5 
+
+% y6 
+
+% m-n
+
+% 98 Computing an alignment pair
+
+% 
+
+% 
+
+% 
+
+% Given a column j, compute f(•, j) + g (•, j) in a separate array Let q be the index of the minimum; then f(q.j) + g(q,j) = OPT(m,n)
+
+% We have found one pair x q - y j (alignment x q - y j / xq -gap /yj - gap) in O(mn) time and O(m + n) space.
+
+% e
+
+% y1 
+
+% y2 
+
+% n/2 y3 
+
+% i-j
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% q
+
+% m-n
+
+% 99 Sequence Alignment: Linear Space
+
+% 
+
+% 
+
+% 
+
+% 
+
+% 
+
+% Divide & Conquer: chose column j=n/2 Compute f(•,n/2). Compute g (•,n/2). Compute f(•, n/2) + g (•, n/2) Let q be an index that minimizes f(i,n/2) + g(i,n/2) Store the pair x q - y n/2 (possible alignment x q - y n/2 / xq -gap /yn/2 - gap) Recurse for X[1..q],Y[1../n/2] and X[q..m] ,Y[n/2…n]
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% i-j
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% q
+
+% m-n
+
+% 102 Sequence Alignment: Linear Space
+
+% Divide: Compute the value of f(i,n/2) and g(i,n/2), for all i, using two space-efficient DP algorithms (time O(mn), space O(m+n)).
+
+% 
+
+% Find the index q that minimizes f(i, n/2) + g(i, n/2).
+
+% Store pair x q - y n/2 (align x q - y n/2 or xq -gap or yn/2 - gap). Conquer: recursively compute optimal alignment in blue and yellow n/2 pieces.
+
+% 
+
+% e
+
+% y1 
+
+% y2 
+
+% y3 
+
+% i-j
+
+% y4 
+
+% y5 
+
+% y6 
+
+% e
+
+% 0-0
+
+% x1 
+
+% x2 
+
+% x3 
+
+% m-n
+
+% q
+
+% 103 an be easily avoided.
+
+% Divide-and-Conquer-Alignment (X ,Y )
+
+% Divide-and-Conquer-Alignment(X ,Y )
+
+% Let m be the number of symbols in X Let n be the number of symbols in Y
+
+% If m ≤ 2 or n ≤ 2 then
+
+% Compute optimal alignment using Alignment(X ,Y ) Call Space-Efficient-Alignment(X ,Y[1 : n/2]) Call Backward-Space-Efficient-Alignment(X ,Y[n/2 + 1 : n]) Let q be the index minimizing f(q, n/2) + g(q, n/2) Add (q, n/2) to global list P Divide-and-Conquer-Alignment(X[1 : q],Y[1 : n/2]) Divide-and-Conquer-Alignment(X[q + 1 : n],Y[n/2 + 1 : n]) Return P
+
+% At the end, given the global list P, retrieve the alignment
+
+% 104 Sequence Alignment: Running Time Analysis Warmup
+
+% How long does the algorithm take?
+
+% T(m, n) = max running time on strings of length at most m and n
+
+% We increase time by T(m, n) was O(mn). Now? only a constant
+
+% T(m, n) = T(q,n / 2)+T(m − q,n / 2)+O(mn)
+
+% factor. But we reuse space during recursive calls.
+
+% At first glance one can think : T(m, n) = O(mn log n).
+
+% T(m, n) ≤ 2T(m, n / 2) + O(mn) ⇒ T(m, n) = O(mn logn)
+
+% But this analysis is not tight, T(m, n) = O(mn)
+
+% 106 Sequence Alignment: Running Time Analysis
+
+% Theorem. Let T(m, n) = max running time of algorithm on strings of length m and n. T(m, n) = O(mn).
+
+% T(m, n) = T(q,n / 2)+T(m − q,n / 2)+O(mn)
+
+% Pf. (by induction on n, skip.)
+
+% 
+
+% 
+
+% 
+
+% O(mn) time to compute f( •, n/2) and g( •, n/2) and find index q. T(q, n/2) + T(m - q, n/2) time for two recursive calls.
+
+% Choose constant c so that:
+
+% T(m, 2) T(2, n) T(m, n)
+
+% ≤
+
+% ≤
+
+% ≤
+
+% cm cn cmn + T(q, n/2) + T(m− q, n/2)
+
+%  Base cases: m = 2 or n = 2.
+
+% 
+
+% Inductive hypothesis: T(k,l) £ 2ckl, k≤m , l<n.
+
+% €
+
+% T (m, n)
+
+% ≤ ≤ = =
+
+% T (q, n / 2) + T (m − q, n / 2) + cmn 2cqn / 2 + 2c(m − q )n / 2 + cmn cqn + cmn − cqn + cmn 2cmn
+
+% 108 Longest Common subsequence
+
+% You can do the same trick as with the sequence alignment on min cost (Combine DP and D&C )
+
+% 
+
+% 
+
+% 
+
+% 
+
+% 
+
+% Compute the longest common subsequence in time O(mn) using O(m+n) space Compute the value of LCS(i,n/2) and LCS-reverse(i,n/2), for every i, using two space-efficient DP algorithms.
+
+% Find the index q that maximizes the appropriate combination of LCS(q,n/2) and LCS-reverse(q,n/2) Recursively compute the longest common subsequence in the two subproblems: one for X[1…q] Y[1…n/2] and one for X[q+1,…m] Y[n/2+1 …n]
+
+% Concatenate the two subsequences found by the two recursive calls
+
+\subsection{Sequence Alignment in linear space}\label{sec:seqalign_lcs_linear_space}
+There is a cool trick that allows linear space without compromising the time complexity asymptotically.
+It combines Dynamic Programming with Divide and Conquer.
+
+Can we avoid using quadratic space?
+
+\textcolor{AccentBlue}{easy:} \textcolor{AccentRed}{optimal value}: \(O(m + n)\) space and \(O(mn)\) time.
+\begin{itemize}
+  \item use a \(2 \times n\) matrix. compute \(\operatorname{OPT}(i, \cdot)\) from \(\operatorname{OPT}(i-1, \cdot)\)
+  \item but no longer a simple way to recover the alignment itself
+\end{itemize}
+
+\begin{theorem}[Hirschberg 1975]\label{thm:hirschberg}
+Optimal alignment in \(O(m + n)\) space and \(O(mn)\) time. Clever combination of divide-and-conquer and dynamic programming.
+\end{theorem}
+
+A DP matrix can be seen as a directed acyclic graph (DAG).
+The optimal alignment corresponds to the shortest path in the DAG from node \((0,0)\) to \((m,n)\).
+
+\textcolor{AccentBlue}{Edit distance graph}
+\begin{itemize}
+  \item a node for every entry \(M[i,j]\)
+  \item an edge from \(M[i-1,j-1]\), \(M[i-1,j]\), \(M[i,j-1]\) to \(M[i,j]\) with weights according the \nameref{def:cost_model}
+\end{itemize}
+
+\[
+\begin{tikzpicture}[
+  scale=1.5,
+  font=\footnotesize,
+  dpnode/.style={circle, minimum size=3mm, inner sep=0pt, draw=gray!60, fill=gray!20},
+  startend/.style={dpnode, minimum size=6mm, draw=black, fill=none},
+  focus/.style={dpnode, minimum size=6mm, draw=black, fill=red!20},
+  ed/.style={-Latex, draw=gray!55, line width=0.6pt},
+  edD/.style={ed, densely dotted}, % dashed "collapsed" connections
+  edF/.style={ed, color=black}
+]
+
+% --- nodes (create ALL nodes once, with correct style/label)
+\foreach \r in {0,1,2,3,4,5}{
+  \foreach \c in {0,1,2,3,4,5,6,7}{
+    \def\nodestyle{dpnode}
+    \def\nodelabel{}%
+
+    % special nodes (same names!)
+    \ifnum\r=0 \ifnum\c=0 \def\nodestyle{startend}\def\nodelabel{$0$-$0$}\fi\fi
+    \ifnum\r=3 \ifnum\c=4 \def\nodestyle{focus}\def\nodelabel{$i$-$j$}\fi\fi
+    \ifnum\r=5 \ifnum\c=7 \def\nodestyle{startend}\def\nodelabel{$m$-$n$}\fi\fi
+
+    \node[\nodestyle] (n\r\c) at (\c,-\r) {\nodelabel};
+  }
+}
+
+% ---- horizontal edges (skip n33 -> n34)
+\foreach \r in {0,1,2,3,4,5}{
+  \foreach \c in {0,1,2,3,4,5,6}{
+    \pgfmathtruncatemacro{\cp}{\c+1}
+
+    % choose style
+    \def\estyle{ed}
+    \ifnum\c=2 \def\estyle{edD}\fi
+    \ifnum\c=4 \def\estyle{edD}\fi
+
+    % skip only if (r,c)=(3,3)
+    \ifnum\r=3
+      \ifnum\c=3
+        % skip
+      \else
+        \draw[\estyle] (n\r\c) -- (n\r\cp);
+      \fi
+    \else
+      \draw[\estyle] (n\r\c) -- (n\r\cp);
+    \fi
+  }
+}
+
+% ---- vertical edges (skip n24 -> n34)
+\foreach \r in {0,1,2,3,4}{
+  \pgfmathtruncatemacro{\rp}{\r+1}
+  \foreach \c in {0,1,2,3,4,5,6,7}{
+
+    % choose style
+    \def\estyle{ed}
+    \ifnum\r=1 \def\estyle{edD}\fi
+    \ifnum\r=3 \def\estyle{edD}\fi
+
+    % skip only if (r,c)=(2,4)
+    \ifnum\r=2
+      \ifnum\c=4
+        % skip
+      \else
+        \draw[\estyle] (n\r\c) -- (n\rp\c);
+      \fi
+    \else
+      \draw[\estyle] (n\r\c) -- (n\rp\c);
+    \fi
+  }
+}
+
+% ---- diagonal edges (skip n23 -> n34)
+\foreach \r in {0,1,2,3,4}{
+  \pgfmathtruncatemacro{\rp}{\r+1}
+  \foreach \c in {0,1,2,3,4,5,6}{
+    \pgfmathtruncatemacro{\cp}{\c+1}
+
+    % choose style
+    \def\estyle{ed}
+    \ifnum\r=1 \def\estyle{edD}\fi
+    \ifnum\r=3 \def\estyle{edD}\fi
+    \ifnum\c=2 \def\estyle{edD}\fi
+    \ifnum\c=4 \def\estyle{edD}\fi
+
+    % skip only if (r,c)=(2,3)
+    \ifnum\r=2
+      \ifnum\c=3
+        % skip
+      \else
+        \draw[\estyle] (n\r\c) -- (n\rp\cp);
+      \fi
+    \else
+      \draw[\estyle] (n\r\c) -- (n\rp\cp);
+    \fi
+  }
+}
+
+% ---- highlighted incoming edges into (i,j) = n34
+\draw[edF] (n24) -- node[midway, right] {$\delta$} (n34);                 % (i-1,j)
+\draw[edF] (n33) -- node[midway, above] {$\delta$} (n34);                 % (i,j-1)
+\draw[edF] (n23) -- node[pos=0.42, above, inner sep=0pt, outer sep=0pt, anchor=south west] {$\alpha_{x_i y_j}$} (n34); % (i-1,j-1)
+
+
+\node[above=2.5mm] at (n00) {$\varepsilon$};
+\node[left=2.5mm]  at (n00)  {$\varepsilon$};
+
+\node[above=2.5mm] at (n01) {$ y_1$};
+\node[above=2.5mm] at (n02) {$ y_2$};
+\node[above=2.5mm] at (n03) {$ y_{j-1}$};
+\node[above=2.5mm] at (n04) {$ y_j$};
+\node[above=2.5mm] at (n05) {$ y_{n-2}$};
+\node[above=2.5mm] at (n06) {$ y_{n-1}$};
+\node[above=2.5mm] at (n07) {$ y_n$};
+
+\node[left=2.5mm] at (n10) {$ x_1$};
+\node[left=2.5mm] at (n20) {$ x_{i-1}$};
+\node[left=2.5mm] at (n30) {$ x_i$};
+\node[left=2.5mm] at (n40) {$ x_{m-1}$};
+\node[left=2.5mm] at (n50) {$ x_m$};
+
+% ---- pünktchen on axes at the collapsed gaps
+\node[above=2.5mm] at ($(n02)!0.5!(n03)$) {$\cdots$};
+\node[above=2.5mm] at ($(n04)!0.5!(n05)$) {$\cdots$};
+
+\node[left=2.5mm]  at ($(n10)!0.5!(n20)$) {$\vdots$};
+\node[left=2.5mm]  at ($(n30)!0.5!(n40)$) {$\vdots$};
+
+\end{tikzpicture}
+\]
+
+
+
+
+
+
+
+
+
 
 
 

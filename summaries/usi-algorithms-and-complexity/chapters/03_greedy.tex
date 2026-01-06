@@ -791,15 +791,14 @@ Then the MST does not contain \(f\).
   But \(\operatorname{cost}(T') < \operatorname{cost}(T^*)\), which is a contradiction. \textcolor{red}{\Lightning}
 \end{proof}
 
-\medskip
+
 
 \begin{theorem}\label{thm:adding_edge_to_G_mst_changes}
-Let \(T_0 = (V, E_{T_0})\) be an \nameref{def:mst} on \(G_0 = (V, E)\).
+Let \(T_0\) be an \nameref{def:mst} on \(G_0 = (V, E)\).
 If a new edge \(e' = (a, b)\) is added to \(G_0\), we obtain a new graph \(G_1 = (V, E \cup \{e'\})\).
 The \nameref{def:mst} changes if and only if \(e'\) is cheaper than the most expensive edge \(f \coloneq \argmax_{e \in P} c_e\) on the unique path \(P\) from \(a\) to \(b\) in \(T_0\).
-Moreover, in that case the new \nameref{def:mst} is \(T_1 = T_0 \cup \{e'\} \setminus \{f\}\).
+Moreover, in that case the new \nameref{def:mst} is \(T_1 \coloneq T_0 \cup \{e'\} \setminus \{f\}\).
 \end{theorem}
-
 
 \begin{proof}
 Adding $e'$ to $T_0$ creates exactly one cycle
@@ -820,15 +819,14 @@ Let $T^*$ be the MST of $G_1$. Since $e'\notin T^*$,  $T^*$ uses only edges from
 Thus $\operatorname{cost}(T_0)\le \operatorname{cost}(T^*)$.
 On the other hand, $T_0$ is also a spanning tree of $G_1$, hence $\operatorname{cost}(T^*)\le \operatorname{cost}(T_0)$.
 Therefore $\operatorname{cost}(T^*)=\operatorname{cost}(T_0)$, and by uniqueness $T^*=T_0$.
-Taking the contrapositive shows: if the MST changes, then $c_{e'}<c_f$.
+Taking the contrapositive yields the desired result.
 
 \medskip
-\underline{`$\Leftarrow$' ($c_{e'}<c_f$ implies change and gives $T_1$):}
 
-Assume $c_{e'}<c_f$ and define
-\[
-T_1 := T_0 \cup \{e'\} \setminus \{f\}.
-\]
+\underline{`$\Leftarrow$' ($c_{e'}<c_f$ implies change and gives $T_1$):}
+\nopagebreak
+
+Assume $c_{e'}<c_f$.
 Then $T_1$ is a spanning tree of $G_1$ and
 \[
 \operatorname{cost}(T_1)
@@ -883,6 +881,100 @@ $.
 
 Consequently $T_1$ is the (unique) MST of $G_1$.
 \end{proof}
+
+
+% \begin{theorem}\label{thm:adding_edge_to_G_mst_changes}
+% Let \(T_0 = (V, E_{T_0})\) be an \nameref{def:mst} on \(G_0 = (V, E)\).
+% If a new edge \(e' = (a, b)\) is added to \(G_0\), we obtain a new graph \(G_1 = (V, E \cup \{e'\})\).
+% The \nameref{def:mst} changes if and only if \(e'\) is cheaper than the most expensive edge \(f \coloneq \argmax_{e \in E_P} c_e\) on the unique path \(P\) from \(a\) to \(b\) in \(T_0\).
+% Moreover, in that case the new \nameref{def:mst} \(T_1\) is obtained by adding \(e'\) to \(T_0\) and removing \(f\), i.e. \(T_1 = (V, E_{T_0} \cup \{e'\} \setminus \{f\})\).
+% \end{theorem}
+
+% \begin{proof}
+% Adding $e'$ to $T_0$ creates exactly one cycle \(C \) with edges \(E_C := E_P \cup \{e'\}\).
+% % Let $f$ be the maximum cost edge on $P$ (equivalently, on $C\setminus\{e'\}$).
+
+% \medskip
+% \underline{`$\Rightarrow$' (change implies $c_{e'}<c_f$):}
+
+% Assume $c_{e'}>c_f$. 
+% Then $e'$ is the maximum cost edge on the cycle $C$.
+% By \autoref{property:cycle}, no MST of $G_1$ contains $e'$.
+% % Hence it uses only edges from $E$, i.e. it is also an MST of $G_0$.
+% % By uniqueness, it is equal to $T_0$, so the MST does \emph{not} change.
+% Let $T^*$ be the MST of $G_1$. Since $e'\notin T^*$,  $T^*$ uses only edges from $E$, so $T^*$ is a spanning tree of $G_0$.
+% Thus $\operatorname{cost}(T_0)\le \operatorname{cost}(T^*)$.
+% On the other hand, $T_0$ is also a spanning tree of $G_1$, hence $\operatorname{cost}(T^*)\le \operatorname{cost}(T_0)$.
+% Therefore $\operatorname{cost}(T^*)=\operatorname{cost}(T_0)$, and by uniqueness $T^*=T_0$.
+% Taking the contrapositive yields the desired implication.
+
+% \medskip
+% \underline{`$\Leftarrow$' ($c_{e'}<c_f$ implies change and gives $T_1$):}
+
+% % Assume $c_{e'}<c_f$ and define \(T_1\) by
+% % \(
+% % E_{T_1} := E_{T_0} \cup \{e'\} \setminus \{f\}
+% % \).
+% Assume $c_{e'}<c_f$.
+% Then $T_1$ is a spanning tree of $G_1$ and
+% \[
+% \operatorname{cost}(T_1)
+% =
+% \operatorname{cost}(T_0) + c_{e'} - c_f
+% <
+% \operatorname{cost}(T_0)
+% \]
+% so $T_0$ cannot remain an MST of $G_1$ (hence the MST changes).
+
+
+% It remains to show $T_1$ is optimal in $G_1$.
+% Let $S$ be any spanning tree of $G_1$.
+% Now distinguish two cases:
+% \begin{itemize}
+% \item \underline{$e'\in E_S$:}
+
+% Removing $e'$ disconnects $S$ into components with vertex sets $A, B$ where $a \in A$ and $b \in B$.
+% Along the (previously defined) path $P$ there exists an edge $h \in E_P$ crossing the cut $(A, B)$.
+% Then $(V, E_S \setminus \{e'\} \cup \{h\})$ is a spanning tree of $G_0$, so by minimality of $T_0$ on $G_0$,
+% \[
+% \operatorname{cost}(T_0)
+% \le
+% \operatorname{cost}((V, E_S \setminus \{e'\} \cup \{h\}))
+% =
+% \operatorname{cost}(S) - c_{e'} + c_h
+% \]
+% hence
+% \[
+% \operatorname{cost}(S)
+% \ge 
+% \operatorname{cost}(T_0) + c_{e'} - c_h
+% \ge
+% \operatorname{cost}(T_0) + c_{e'} - c_f
+% = 
+% \operatorname{cost}(T_1)
+% \]
+% where we used $c_h \le c_f$ since $h\in P$ and $f$ is the maximum edge on $P$.
+% Thus among all spanning trees containing $e'$, $T_1$ has minimum cost.
+
+% \item \underline{$e'\notin E_S$:}
+
+% Any spanning tree of $G_1$ not containing $e'$ is already a spanning tree of $G_0$ and therefore has cost at least that of $T_0$, i.e.
+% $
+% \operatorname{cost}(S)
+% \ge
+% \operatorname{cost}(T_0)
+% >
+% \operatorname{cost}(T_1)
+% $.
+% \end{itemize}
+
+% Consequently $T_1$ is the (unique) MST of $G_1$.
+% \end{proof}
+
+
+
+
+
 
 
 \subsubsection{\nameref{alg:prim}'s algorithm}
@@ -1153,18 +1245,6 @@ to call \(\delta(\cdot, \cdot)\) a distance function, we require:
 \end{itemize}
 
 
-
-\begin{definition}[Covering radius]\label{def:covering_radius}
-Given a set of sites/points \(P = \{s_1, \ldots, s_n\}\) and a distance function \(\delta\), for a set of centers \(C\) define:
-\begin{itemize}
-  \item \(\delta(s_i, C) := \min_{c \in C} \delta(s_i, c)\): distance of site \(s_i\) to nearest center in \(C\)
-  \item \(r(C) 
-  := \max_{i} \delta(s_i, C)
-  = \max_{i} \min_{c \in C} \delta(s_i, c)
-  \): \hl[2]{covering radius}
-  \qedhere
-\end{itemize}
-\end{definition}
 \[
 \begin{tikzpicture}[scale=0.38,font=\footnotesize]
 
@@ -1259,6 +1339,18 @@ Given a set of sites/points \(P = \{s_1, \ldots, s_n\}\) and a distance function
 \node[right=0.05cm of ss] {site};
 \end{tikzpicture}
 \]
+
+\begin{definition}[Covering radius]\label{def:covering_radius}
+Given a set of sites/points \(P = \{s_1, \ldots, s_n\}\) and a distance function \(\delta\), for a set of centers \(C\) define:
+\begin{itemize}
+  \item \(\delta(s_i, C) := \min_{c \in C} \delta(s_i, c)\): distance of site \(s_i\) to nearest center in \(C\)
+  \item \(r(C) 
+  := \max_{i} \delta(s_i, C)
+  = \max_{i} \min_{c \in C} \delta(s_i, c)
+  \): \hl[2]{covering radius}
+  \qedhere
+\end{itemize}
+\end{definition}
 
 
 \begin{remark}

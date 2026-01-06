@@ -518,7 +518,13 @@
 \def\thmt@dummyctrautorefname~#1\null{Proof\null}
 \makeatother
 
+
+\makeatletter
+\patchcmd{\ALG@step}{\addtocounter{ALG@line}{1}}{\refstepcounter{ALG@line}}{}{}
+\newcommand{\ALG@lineautorefname}{Line}
+\makeatother
 \newcommand{\algorithmautorefname}{Algorithm}
+
 
 
 \renewcommand{\sectionautorefname}{Section}
@@ -538,7 +544,21 @@
 
 \renewcommand*{\theHfigure}{\thesection.\arabic{figure}}
 \renewcommand*{\theHtable}{\thesection.\arabic{table}}
+
+
+
+
+% --------------------
+% algorithms
+% --------------------
 \renewcommand*{\theHalgorithm}{\thesection.\arabic{algorithm}}
+
+% Make hyperref anchor for algorithmic line numbers unique:
+% include the current algorithm anchor (\theHalgorithm) + the line number.
+\providecommand*{\theHALG@line}{\theHalgorithm.\arabic{ALG@line}}
+\renewcommand*{\theHALG@line}{\theHalgorithm.\arabic{ALG@line}}
+
+
 
 % --------------------
 % theorem-like: assertion family
