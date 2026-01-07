@@ -469,7 +469,7 @@ There exists a polynomial algorithm that produces a feasible solution that has v
 
 
 
-\subsection{Sequence Alignment}
+\subsection{Sequence Alignment}\label{sec:sequence_alignment}
 
 \textcolor{AccentBlue}{Goal}.
 Given two strings \(X = x_1x_2\cdots x_m\) and \(Y = y_1y_2\cdots y_n\),
@@ -1186,7 +1186,7 @@ then
 f(q,j) + g(q,j) = \operatorname{OPT}(m,n)
 }}
 \end{equation}
-i.e. we have found one pair $x_q$-$y_j$ (alignment \(x_q\)-\(y_j\) / \(x_q\)-gap / \(y_j\)-gap) in \(O(mn)\) time and \(O(m + n)\) space! :-)
+i.e. we have found one pair $x_q$-$y_j$ (alignment \(x_q\)-\(y_j\) / \(x_q\)-gap / \(y_j\)-gap) in \(O(mn)\) time and \(O(m + n)\) space! % :-)
 
 \medskip
 
@@ -1344,113 +1344,476 @@ Hence \(T(m,n) = O(mn)\).
 \pagebreak[3]
 \subsection{Shortest Paths with Negative Weights}
 
-% \nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that supports arbitrary (i.e. including negative) weights and detects negative-weight cycles.  
-% It relaxes all edges in up to \( n-1\) passes for \(O( n\times m)\) time and uses one extra pass to check for cycles.
-
-% The Bellman-Ford equation:
-% \begin{equation}\label{eq:bellmanford}
-% \delta(s, v) = \min_{(u,v)\in E} \left(\delta(s, u) + w(u, v)\right)
-% \end{equation}
-
-% \begin{algorithm}[h]
-% \caption{Bellman-Ford}\label{alg:bellmanford}
-% \begin{algorithmic}[1]
-% \Function{BellmanFord}{$G, w:E\to\R, s$}
-%   \ForAll{$v\in V(G)$}
-%     \State $\attrib{v}{\delta}\gets\infty$
-%     \State $\attrib{v}{\pi}\gets\nil$
-%   \EndFor
-%   \State $\attrib{s}{\delta}\gets 0$
-%   \For{$i=1$ to $|V(G)|-1$} 
-%     \ForAll{$(u,v)\in E(G)$}
-%       \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$} 
-%         \State $\attrib{v}{\delta}\gets \attrib{u}{\delta}+w(u,v)$ \Comment{applying Equation~\eqref{eq:bellmanford}}
-%         \State $\attrib{v}{\pi}\gets u$
-%       \EndIf
-%     \EndFor
-%   \EndFor
-%   \ForAll{$(u,v)\in E(G)$}
-%     \If{$\attrib{u}{\delta}+w(u,v)<\attrib{v}{\delta}$}
-%       \State \Return \fals \Comment{negative-weight cycle detected}
-%     \EndIf
-%   \EndFor
-%   \State \Return \tru
-% \EndFunction
-% \end{algorithmic}
-% \end{algorithm}
-
 
 
 For graphs with possibly negative edge weights (but no negative-weight cycles reachable from the source),
 \nameref{alg:dijkstra}'s greedy algorithm no longer works.
-The \nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that works for arbitrary real edge weights and detects negative-weight cycles.
+% The \nameref{alg:bellmanford} algorithm is a dynamic-programming, label-correcting method that works for arbitrary real edge weights and detects negative-weight cycles.
 
 
-\textcolor{AccentBlue}{DP viewpoint.}
-Let \(G = (V,E)\) be a directed graph with edge weights \(w:E\to\R\), and let \(s\) be the source.
-Define
-\(
-\operatorname{OPT}(i,v)
-\)
-to be the \hl{length of the shortest \(s\)-\(v\) path that uses \emph{at most} \(i\) edges}.
+
+
+
+
+\begin{caution}
+It may be tempting to use \nameref{alg:dijkstra} with negative weights by adding a constant to all edge weights to make them non-negative.
+However, this approach does not preserve shortest paths (the new shortest paths may differ from the original ones).
+\end{caution}
+
+
+\begin{observation}\label{obs:negative_cost_cycle}
+If some path from \(s\) to \(t\) contains a negative cost cycle,
+then there does not exist a well-defined shortest \(s\)-\(t\) path (cost can be made arbitrarily small by traversing the negative cycle multiple times).
+If there is no negative cost cycle, the shortest path is simple (no cycle) and has at most \(n-1\) edges
+(otherwise some vertex would be repeated, forming a cycle that could be removed to yield a shorter path).
+\end{observation}
+
+
+% We want to find a recursive DP formulation for the cost of shortest path from a node \(v\) to the target \(t\) (equiv. from the source \(s\) to a node \(v\)).
+
+Recursively formulate \(\operatorname{OPT}(v, ?)\): length of shortest \(v\)-\(t\) path.
 \begin{itemize}
-  \item Base cases (\(i=0\)):
-  \(
-  \operatorname{OPT}(0,s) = 0
-  \), 
-  \(
-  \operatorname{OPT}(0,v) = \infty
-  \) for \(v \neq s\)
-  \item For \(i \ge 1\) and any \(v \in V\),
-  \[
-  \operatorname{OPT}(i,v)
-  =
-  \min\Bigl\{
-    \operatorname{OPT}(i-1,v),\;
-    \min_{(u,v)\in E}\bigl(\operatorname{OPT}(i-1,u) + w(u,v)\bigr)
-  \Bigr\}
-  \]
+  \item Think of a parameter to facilitate the recursive formulation of a shortest path.
+  \item Idea: use number of edges \(i\).
 \end{itemize}
+\begin{notation}
+\(\operatorname{OPT}(i, v)
+\coloneq
+\text{length of shortest \(v\)-\(t\) path \(P\) using \emph{at most} \(i\) edges}\).
+\end{notation}
 
-\hl[2]{Any simple path in a graph on \(n\) vertices has at most \(n - 1\) edges}.
-If there is no negative-weight cycle reachable from \(s\), the shortest paths are simple,
-so the true shortest-path distances are given by \(\operatorname{OPT}(n-1,v)\).
 
+compute \(\operatorname{OPT}(n-1,v)\) for every node \(v\).
 
-Instead of explicitly storing the 2D table \(\operatorname{OPT}(i,v)\),
-Bellman-Ford iteratively relaxes all edges in the graph.
+\textcolor{AccentBlue}{Goal}: \(\operatorname{OPT}(n-1,s)\)
+
+\medskip
+
+We need to distinguish the following cases:
+\begin{itemize}
+  \item Case 1: \(P\) uses \(< i\) (\(\le i-1\)) edges: \(\operatorname{OPT}(i, v) = \operatorname{OPT}(i-1, v)\)
+  \item Case 2: \(P\) uses exactly \(i\) edges.
+  \begin{itemize}
+  \item[-] 
+  Let \((v, w)\) be the first edge out of \(v\).
+  \(\operatorname{OPT}\) uses \((v, w)\) and selects best \(w\)-\(t\) path using at most \(i-1\) edges: \(\operatorname{OPT}(i-1, w)\).
+  \item[-] 
+  Choose minimum among all possibilities of edges incident to \(v\).
+  \end{itemize}
+  \item Base case (\(i=0\)): \(\operatorname{OPT}(0,v) = \{\infty \text{ if } v \neq t; 0 \text{ if } v = t\}\)
+\end{itemize}
+\medskip
+
+We thus have the following recursive formula:
+\begin{equation}\label{eq:bellmanford}
+\operatorname{OPT}(i, v)
+=
+\begin{cases}
+0  \text{ if } v = t; \;
+\infty \text{ if } v \neq t
+& \text{if } i = 0\\
+\min\left\{
+\operatorname{OPT}(i-1, v),\;
+{\displaystyle \min_{(v,w) \in E} \left\{\operatorname{OPT}(i-1, w) + c_{vw}\right\}}
+\right\}
+& \text{otherwise}
+\end{cases}
+\end{equation}
+
+Assuming there is no negative cycle from \(v\) to \(t\),
+then \(\operatorname{OPT}(n-1, v)\) is the length of the shortest \(v\)-\(t\) path
+(by \autoref{obs:negative_cost_cycle})
+
+Thus, \(\operatorname{OPT}(n-1, s)\) is the length of the shortest path from \(s\) to \(t\)
+(assuming there is no negative cycle from \(s\) to \(t\)).
+
 
 \begin{algorithm}[h]
-\caption{Bellman-Ford}\label{alg:bellmanford}
+\caption{Shortest Path (1st attempt)}\label{alg:shortest_path_first_attempt}
 \begin{algorithmic}[1]
-\Function{BellmanFord}{$G,w:E\to\R,s$}
-  \ForAll{$v \in V(G)$}
-    \State \(\attrib{v}{\delta} \gets \infty\)
-    \State \(\attrib{v}{\pi} \gets \nil\) \Comment{predecessor on shortest path tree}
+\Function{Shortest-Path}{$G,t$}
+  \ForAll{$v \in V$}
+    \State \(M[0,v] \gets \infty\)
   \EndFor
-  \State \(\attrib{s}{\delta} \gets 0\)
-  \For{$i = 1 \TO |V(G)| - 1$} \Comment{at most \(|V|-1\) edges on a simple path}
-    \ForAll{$(u,v) \in E(G)$}
-      \If{\(\attrib{u}{\delta} + w(u,v) < \attrib{v}{\delta}\)}
-        \State \(\attrib{v}{\delta} \gets \attrib{u}{\delta} + w(u,v)\)
-        \State \(\attrib{v}{\pi} \gets u\)
-      \EndIf
+  \State \(M[0,t] \gets 0\)
+  \For{$i = 1 \TO n-1$}
+    \ForAll{$v \in V$}
+      \State \(M[i,v] \gets M[i-1,v]\)
+      \ForAll{$(v,w) \in E$} \Comment{use adjacency list of node \(v\)}
+        \State \(M[i,v] \gets \min\{M[i,v], M[i-1,w] + c_{vw}\}\)
+      \EndFor
     \EndFor
   \EndFor
-  \ForAll{$(u,v) \in E(G)$}
-    \If{\(\attrib{u}{\delta} + w(u,v) < \attrib{v}{\delta}\)}
-      \State \Return \fals \Comment{negative-weight cycle detected}
-    \EndIf
-  \EndFor
-  \State \Return \tru \Comment{distances \(\attrib{v}{\delta}\) are correct}
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\textcolor{AccentBlue}{Running time.}
-The algorithm performs \(O(|V|)\) passes, each relaxing all \(|E|\) edges once.
-Thus the running time is \(O(|V|\cdot|E|)\) and the space usage is \(O(|V|)\).
-The \(\attribute{\pi}\) pointers define a shortest-path tree rooted at \(s\).
+\textcolor{AccentBlue}{Analysis} of \autoref{alg:shortest_path_first_attempt}:
+\begin{itemize}
+\item Time: \(\Theta(mn)\), since \(\sum_{v \in V} \deg^+(v) = m\)
+\item Space: \(\Theta(n^2)\) for the \(n \times n\) table \(M\)
+\end{itemize}
+
+
+
+% \subsubsection{Space improvement}
+
+
+% slide 12
+
+We can improve the space usage by keeping only two rows of of the table \(M\) and different from \nameref{sec:sequence_alignment},
+we do not need to come up with a different algorithm to reconstruct the shortest paths.
+
+We only need to maintain the latest ``successor'' for each node.
+% We only need to know the best known distance to each node so far and who its successor is on the path achieving that distance.
+No need for a full matrix of hints.
+Just additional \(\Theta(n)\) space for a successor array.
+
+
+So we  use a \(2 \times n\) table plus a \(n\)-array for the successors.
+After \(i\) iterations, \(M[2,v]\) is length of shortest \(v\)-\(t\) path using \(\le i\) edges 
+and we can use the successor array to retrieve the path.
+
+
+
+\subsubsection{Practical improvement: one array only}
+
+We can do even better.
+Maintain only one \emph{single} \(n\)-array \(M[1\ldots n]\) and update it \textcolor{AccentRed}{in place}.
+
+In practice, this not only reduces space but potentially also time,
+because we do not insist to at most use \(i\) edges, but allow the best we can so far using any number of edges.
+
+
+
+\begin{observation}\label{obs:bf_one_array_invariant}
+Throughout the algorithm, each value \(M[v]\) is the length of \emph{some} \(v\)-\(t\) path (or \(\infty\)).
+After \(i\) rounds of updates, we have
+\(
+M[v] \le \operatorname{OPT}(i,v)
+\)
+for all \(v\).
+But it could be much smaller because a sequence of updates may discover a very good path that uses \emph{more than} \(i\) edges
+(this is why the one-array version is a ``practical improvement'' rather than a faithful DP table).
+\end{observation}
+
+
+So with this approach we only need two \(n\)-arrays, one for the values and one for the successors.
+In the worst case we still have the same time complexity, but usually it converges faster doing this trick.
+
+% slide 13
+
+\subsubsection{Practical improvement: early termination}
+
+\begin{observation}\label{obs:no_need_to_check_edges_to_nodes_that_did_not_change}
+No need to check edges of the form \((v, w)\) unless \(M[w]\) changed in the previous iteration.
+\end{observation}
+
+
+% slide 14
+\begin{observation}\label{obs:if_no_change_stop}
+Once no change occurs at an iteration \(i\), the algorithm can stop:
+\begin{itemize}
+  \item no change at iteration \(i\) means: \(\operatorname{OPT}(i,v) = \operatorname{OPT}(i-1,v)\) for all \(v\).
+  \item the values of \(\operatorname{OPT}(i+1,v)\) are computed using \(\operatorname{OPT}(i,v)\).
+  \item then \(\operatorname{OPT}(i+1,v) = \operatorname{OPT}(i,v) = \operatorname{OPT}(i-1,v)\), for all \(v\).
+  \item thus, no change at iteration \(i+1\).
+  \item by induction, no change for any \(j > i\).
+  \qedhere
+\end{itemize}
+\end{observation}
+
+
+
+% slide 17 (slide 16 does not exist)
+\begin{algorithm}[h]
+\caption{Bellman-Ford}\label{alg:bellmanford_push}
+\begin{algorithmic}[1]
+\Function{Push-Based-Shortest-Path}{$G,t$}
+  \ForAll{$v \in V$}
+    \State \(M[v] \gets \infty\) \Comment{distance array}
+    \State \(\texttt{succ}[v] \gets \nil\) \Comment{successor array}
+  \EndFor
+  \State \(M[t] \gets 0\)
+  \For{$i = 1 \TO n-1$}
+    \ForAll{$w \in V$}
+    \If{\(M[w]\) has been updated in previous iteration} \Comment{\autoref{obs:no_need_to_check_edges_to_nodes_that_did_not_change}}
+      \ForAll{$(v,w) \in E$} \Comment{incoming edges into \(w\)}
+        \If{\(M[w] + c_{vw} < M[v]\)}
+          \State \(M[v] \gets M[w] + c_{vw}\)
+          \State \(\texttt{succ}[v] \gets w\)
+        \EndIf
+      \EndFor
+    \EndIf
+    \EndFor
+    \If{no \(M[v]\) changed in this iteration} \Comment{\autoref{obs:if_no_change_stop}}
+      \State \Return
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+% end slide 17
+
+
+% slide 15
+\autoref{alg:bellmanford_push} implements the Bellman-Ford algorithm with the practical improvements discussed above.
+\begin{itemize}
+\item Memory: \(O(m + n)\).
+\item Running time: \(O(mn)\) worst case, but substantially faster in practice: once no change on \(M\), the iteration stops.
+\item The path whose length is \(M[v]\) after \(i\) iterations, can have \(\gg i\) edges.
+\end{itemize}
+% end slide 15
+
+
+\subsubsection{Standard implementation}
+
+\autoref{alg:bellmanford_alt} shows the standard variant of the Bellman-Ford algorithm.
+It starts from the source \(s\), which is why it uses \(pred[u]\) (predecessor) pointers instead of successor pointers.
+
+
+
+
+
+% slide 18: alternative efficient implementation (from the book)
+\begin{algorithm}[h]
+\caption{Bellman-Ford: Alternative Implementation}\label{alg:bellmanford_alt}
+\begin{algorithmic}[1]
+\Function{Bellman-Ford}{$G,s$}
+  \ForAll{$u \in V$}
+    \State \(d[u] \gets \infty\) \Comment{shortest path (so far) from \(s\) to \(u\)}
+    \State \(\texttt{pred}[u] \gets \nil\) \Comment{predecessor of \(u\) on this path}
+  \EndFor
+  \State \(d[s] \gets 0\)
+  \Repeat
+    \State \(\texttt{converged} \gets \tru\)
+    \ForAll{$(u,v) \in E$} \Comment{relax along each edge}
+      \If{\(d[u] + w(u,v) < d[v]\)}
+        \State \(d[v] \gets d[u] + w(u,v)\)
+        \State \(\texttt{pred}[v] \gets u\)
+        \State \(\texttt{converged} \gets \fals\)
+      \EndIf
+    \EndFor
+  \Until{\texttt{converged}}
+  \LComment{The \(\texttt{pred}\) pointers define an inverted shortest path tree}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+After \(\le n-1\) iterations of \autoref{alg:bellmanford_alt}, the \(d\)-values of all vertices will have their final values.
+Time: \(O(mn)\).
+% end slide 18
+
+
+
+
+% slide 20: advantages (19 does not exist)
+\subsubsection{Comparison Bellman-Ford and Dijkstra}
+Even though \nameref{alg:dijkstra}'s algorithm theoretically has better time complexity,
+it is centralized and you need to make choices based on the entire graph.
+So if a graph is huge, it is difficult to implement \nameref{alg:dijkstra}.
+
+\nameref{alg:bellmanford_push} has some advantages:
+\nameref{alg:dijkstra} requires global information of network, 
+whereas \nameref{alg:bellmanford_push} uses only \emph{local} knowledge of neighboring nodes.
+More flexible and \emph{decentralized} than \nameref{alg:dijkstra}'s.
+
+So \nameref{alg:bellmanford_push} is used much more often in practice, e.g.
+for the design of distributed routing algorithms to determine the most efficient path in a communication network.
+If the graph is reasonable and there are no negative weights, \nameref{alg:dijkstra} should be used.
+
+
+
+
+
+
+
+\subsubsection{Negative cycles}\label{sec:negative_cycles}
+% slide 26
+
+\begin{problem}[Negative Cycle]\label{prob:negative_cycle}
+Given a directed graph \(G=(V,E)\) with edge weights \(c: E \to \mathbb{R}\),
+determine if \(G\) contains a negative cycle.
+\end{problem}
+% end slide 26
+
+% slide 27
+\begin{lemma}\label{lem:bf:no_negative_cycle_on_path_to_t}
+If \(\operatorname{OPT}(n,v) = \operatorname{OPT}(n-1,v)\) for all \(v\),
+then there is no negative cycle on any path to \(t\).
+\end{lemma}
+\begin{proof}[Contrapositive]
+If there were a negative cycle from \(v\) to \(t\),
+then \(\operatorname{OPT}(i,v)\) would keep on decreasing in every iteration of \(i > n-1\).
+\end{proof}
+% end slide 27
+
+
+% slide 30 (slide 28 and 29 do not exist)
+\begin{lemma}\label{lem:bf:negative_cycle_on_path_to_t}
+If \(\operatorname{OPT}(n,v) < \operatorname{OPT}(n-1,v)\) for some node \(v\),
+then some path from \(v\) to \(t\) contains a cycle \(C\) with negative cost.
+\end{lemma}
+
+
+\[
+\begin{tikzpicture}[>=Stealth, scale=0.6, font=\footnotesize, line cap=round, line join=round]
+\useasboundingbox (-4,-2) rectangle (4,0);
+
+% nodes
+\tikzset{term/.style={circle,draw=black,fill=green!50!black,minimum size=9pt,inner sep=0pt,text=white}}
+\node[term] (v) at (-4,-0.5) {\(v\)};
+\node[term] (r) at (0,0) {\(r\)};
+\node[term] (t) at (4,-0.5) {\(t\)};
+
+% key point (attachment)
+\coordinate (A) at (-1,-1.2);
+\coordinate (B) at (-0.2,-2);
+\coordinate (C) at (0.7,-1.6);
+\coordinate (D) at (1,-0.9);
+
+% wavy path v -> t
+\draw[->, rounded corners=5pt] (v) -- (-2.7,-0.7) -- (-1.3,0.1) -- (r) -- (1.2,-0.3) --  (2.7,0) -- (t);
+
+% blob boundary with arrow at the top junction
+\draw[->, rounded corners=6pt] (r) --(A) --(B) --(C) --(D) --(r);
+
+\node[] at ($0.4*(A)+0.1*(B)+0.1*(C)+0.4*(D)$) {\(C\)};
+\end{tikzpicture}
+\]
+
+
+\begin{proof}
+Any path with \(n\) edges contains a cycle (it must have a vertex \(r\) repeating by the pigeonhole principle).
+Since \(\operatorname{OPT}(n,v) < \operatorname{OPT}(n-1,v)\),
+this cycle must have negative cost.
+\end{proof}
+
+
+\autoref{lem:bf:negative_cycle_on_path_to_t} gives a condition to check if there is a negative cycle on a path to a given \(t\).
+
+
+
+
+
+% end slide 30
+
+
+
+
+
+% slide 31
+\begin{claim}\label{claim:detect_negative_cycle}
+Can detect the existence of a negative cost cycle in \(G\) in \(O(mn)\) time.
+\end{claim}
+
+
+Add a ``super-sink'' \(t\) and connect all nodes to \(t\) with a \(0\)-cost edge.
+Check if \(\operatorname{OPT}(n,v) = \operatorname{OPT}(n-1,v)\) for all nodes \(v\) on new graph \(G'\):
+\begin{itemize}
+  \item if yes, then no negative cycle in \(G\) (\autoref{lem:bf:no_negative_cycle_on_path_to_t})
+  \item if no, then extract cycle from shortest path from \(v\) to \(t\) (from the entry whose value reduced) 
+\end{itemize}
+
+
+\begin{theorem}\label{thm:negative_cycle_reduction}
+\(G\) has a negative cycle iff there is a non-simple path from some node \(v\) to \(t\) in \(G'\) that contains a negative cycle.
+\end{theorem}
+\begin{proof}
+Let \(G'=(V',E')\) with \(V' = V \cup \{t\}\) and 
+\(E' = E \cup \{(v,t) : v \in V\}\), where each new edge has cost \(0\).
+
+\(\Rightarrow\):
+Suppose \(G\) contains a negative cycle \(C\), and let \(v\) be a vertex on \(C\).
+In \(G'\) there is a path from \(v\) to \(t\) that traverses \(C\) once and then takes the edge \((v,t)\).
+This path contains the negative cycle \(C\), hence there exists a path to \(t\) containing a negative cycle.
+
+\(\Leftarrow\):
+Suppose there exists a path from some \(v\) to \(t\) in \(G'\) that contains a negative cycle \(C\).
+No directed cycle in \(G'\) can use \(t\), since all added edges enter \(t\) and \(t\) has no outgoing edges.
+Therefore \(C\) uses only edges in \(E\), so \(C\) is a negative cycle in \(G\).
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \clearpage
+
+% \textcolor{AccentBlue}{DP viewpoint.}
+% Let \(G = (V,E)\) be a directed graph with edge weights \(w:E\to\R\), and let \(s\) be the source.
+% Define
+% \(
+% \operatorname{OPT}(i,v)
+% \)
+% to be the \hl{length of the shortest \(s\)-\(v\) path that uses \emph{at most} \(i\) edges}.
+% \begin{itemize}
+%   \item Base cases (\(i=0\)):
+%   \(
+%   \operatorname{OPT}(0,s) = 0
+%   \), 
+%   \(
+%   \operatorname{OPT}(0,v) = \infty
+%   \) for \(v \neq s\)
+%   \item For \(i \ge 1\) and any \(v \in V\),
+%   \[
+%   \operatorname{OPT}(i,v)
+%   =
+%   \min\Bigl\{
+%     \operatorname{OPT}(i-1,v),\;
+%     \min_{(u,v)\in E}\bigl(\operatorname{OPT}(i-1,u) + w(u,v)\bigr)
+%   \Bigr\}
+%   \]
+% \end{itemize}
+
+% \hl[2]{Any simple path in a graph on \(n\) vertices has at most \(n - 1\) edges}.
+% If there is no negative-weight cycle reachable from \(s\), the shortest paths are simple,
+% so the true shortest-path distances are given by \(\operatorname{OPT}(n-1,v)\).
+
+
+% Instead of explicitly storing the 2D table \(\operatorname{OPT}(i,v)\),
+% Bellman-Ford iteratively relaxes all edges in the graph.
+
+% \begin{algorithm}[h]
+% \caption{Bellman-Ford}\label{alg:bellmanford}
+% \begin{algorithmic}[1]
+% \Function{BellmanFord}{$G,w:E\to\R,s$}
+%   \ForAll{$v \in V(G)$}
+%     \State \(\attrib{v}{\delta} \gets \infty\)
+%     \State \(\attrib{v}{\pi} \gets \nil\) \Comment{predecessor on shortest path tree}
+%   \EndFor
+%   \State \(\attrib{s}{\delta} \gets 0\)
+%   \For{$i = 1 \TO |V(G)| - 1$} \Comment{at most \(|V|-1\) edges on a simple path}
+%     \ForAll{$(u,v) \in E(G)$}
+%       \If{\(\attrib{u}{\delta} + w(u,v) < \attrib{v}{\delta}\)}
+%         \State \(\attrib{v}{\delta} \gets \attrib{u}{\delta} + w(u,v)\)
+%         \State \(\attrib{v}{\pi} \gets u\)
+%       \EndIf
+%     \EndFor
+%   \EndFor
+%   \ForAll{$(u,v) \in E(G)$}
+%     \If{\(\attrib{u}{\delta} + w(u,v) < \attrib{v}{\delta}\)}
+%       \State \Return \fals \Comment{negative-weight cycle detected}
+%     \EndIf
+%   \EndFor
+%   \State \Return \tru \Comment{distances \(\attrib{v}{\delta}\) are correct}
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
+% \textcolor{AccentBlue}{Running time.}
+% The algorithm performs \(O(|V|)\) passes, each relaxing all \(|E|\) edges once.
+% Thus the running time is \(O(|V|\cdot|E|)\) and the space usage is \(O(|V|)\).
+% The \(\attribute{\pi}\) pointers define a shortest-path tree rooted at \(s\).
 
 
 
