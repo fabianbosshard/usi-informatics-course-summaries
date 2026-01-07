@@ -200,33 +200,41 @@ We need the notion of a
 
 \subsection{Residual Network}\label{sec:residual_network}
 
-Recall the transpose graph \(G^\top = (V, E^\top)\), where \(E^\top = \{(v,u) \mid (u,v) \in E\}\).
-
-In order to ``undo'' flow sent along edges, we consider original edges \(E\) (`forward arcs') as well as transpose edges \(E^\top\) (`backward arcs'), with capacities defined as follows.
-Given flow \(f\), the \emph{residual capacity} of any arc is
-\begin{equation}\label{eq:residual_capacity}
-c_f(e) =
-\begin{cases}
-  c(e) - f(e) & e \in E \\
-  f(e^R) & e \in E^\top
-\end{cases}
+Given a flow $f$, each original edge $e=(u,v)\in E$ gives rise to up to two
+\emph{residual arcs}:
+\begin{itemize}
+\item a \emph{forward residual arc} $e^+$ from $u$ to $v$ with residual capacity
+\begin{equation}\label{eq:residual_capacity_forward}
+c_f(e^+) \coloneqq c(e)-f(e)
 \end{equation}
-% where \(e^{R} = (u,v)\) denotes the original (forward) arc for a given backward arc \(e = (v,u) \in E^\top\).
-where for any arc $a=(x,y)$ we define $a^R\coloneqq (y,x)$.
-Note that if $e\in E^\top$, then $e^R\in E$.
+included if $f(e)<c(e)$
+\item a \emph{backward residual arc} $e^-$ from $v$ to $u$ with residual capacity
+\begin{equation}\label{eq:residual_capacity_backward}
+c_f(e^-) \coloneqq f(e)
+\end{equation}
+included if $f(e)>0$
+\end{itemize}
+
+Each residual arc $a\in E_f$ arises from a unique original edge $e\in E$ (its \emph{parent edge}); denote this edge by $\pi(a)$.
+We indicate whether $a$ is \texttt{forward} or \texttt{backward} by \(\sign(a)\).
+We view a residual arc as a labeled object \(a=(e,\sigma)\) with \(\sigma\in\{\texttt{forward}, \texttt{backward}\}\), so its parent edge is \(\pi(a)=e\) and \(\sign(a)=\sigma\).
 
 \begin{definition}[Residual Network]\label{def:residual_network}
-The \emph{residual network} \(G_f = (V, E_f)\) with respect to flow \(f\) contains the same vertices as \(G\) with the arc set
-\begin{equation}\label{eq:residual_edges}
-  E_f \coloneqq  \{ e \in E : f(e) < c(e) \} \cup \{ e \in E^\top: f(e^R) > 0 \}
-\end{equation}
-i.e., it contains all (forward and backward) arcs with positive residual capacity.
+The \emph{residual network} $G_f=(V,E_f)$ with respect to flow $f$ is the directed multigraph on vertex set $V$
+whose arc multiset $E_f$ contains exactly all residual arcs $e^+$ and $e^-$ with positive
+residual capacity, as defined in \eqref{eq:residual_capacity_forward}--\eqref{eq:residual_capacity_backward}.
 \end{definition}
 
-Each edge in \(G\) may result in the generation of at most two arcs in \(G_f\).
-Thus, \(G_f\) is of the same asymptotic size as \(G\).
+If both $(u,v)$ and $(v,u)$ are edges in $G$, then $G_f$ may contain two distinct residual arcs from $u$ to $v$; 
+hence we view $G_f$ as a directed multigraph.
+
+Since each edge of the original network \(G\) may result in the generation of at most two arcs in the residual network \(G_f\), 
+the latter is of the same asymptotic size as \(G\).
 % Also note that when \(v(f) = 0\), we have \(G_f = G\). % only true if there is no cycle
-Note that when \(f \equiv 0\), we have \(G_f = G\).
+% Note that when \(f \equiv 0\), we have \(G_f = G\). % not really the same objects
+Note that if $f\equiv 0$, then $G_f$ contains exactly the forward residual arc $e^+=(e,\texttt{forward})$
+for every $e=(u,v)\in E$, with residual capacity $c(e)$; in particular, $G_f$ has the same
+reachability structure as $G$.
 
 
 
@@ -237,7 +245,7 @@ An \emph{augmenting path} is a simple \(s\)-\(t\) path \(P\) in the residual net
 The \emph{bottleneck capacity} (also called {residual capacity}) of an \nameref{def:augmenting_path} \(P\) is
 \begin{equation}\label{eq:augmenting_path_capacity}
   {\color{Red}\boxed{\color{black}
-  c_f(P) \coloneqq \min_{e \in P} c_f(e)
+  c_f(P) \coloneqq \min_{a \in P} c_f(a)
   }}
 \end{equation}
 where the minimum is taken over all arcs on the path \(P\).
@@ -274,11 +282,19 @@ Since all arcs in \(P\) have positive residual capacity, \(c_f(P) > 0\).
 \begin{algorithmic}[1]
 \Function{Augment}{\(f, c, P\)}
 \State \(b \gets c_f(P)\) \Comment{bottleneck capacity \eqref{eq:augmenting_path_capacity}}
-\ForAll{\(e \in P\)}
-  \If{\(e \in E\)}
-     \State \(f(e) \gets f(e) + b\) \Comment{forward arc: increase flow}
-  \Else  \Comment{\(e \in E^\top\)}
-     \State \(f(e^R) \gets f(e^R) - b\) \Comment{backward arc: decrease flow along original edge}
+% \ForAll{\(e \in P\)}
+%   \If{\(e \in E\)}
+%      \State \(f(e) \gets f(e) + b\) \Comment{forward arc: increase flow}
+%   \Else  \Comment{\(e \in E^\top\)}
+%      \State \(f(e^R) \gets f(e^R) - b\) \Comment{backward arc: decrease flow along original edge}
+%   \EndIf
+% \EndFor
+\ForAll{residual arc $a \in P$}
+  \State $e \gets \pi(a)$ \Comment{retrieve original edge}
+  \If{$\sign(a) = \texttt{forward}$} \Comment{$a$ is forward}
+     \State $f(e) \gets f(e) + b$
+  \Else \Comment{$a$ is backward}
+     \State $f(e) \gets f(e) - b$
   \EndIf
 \EndFor
 \State \Return \(f\)
@@ -293,7 +309,7 @@ Since all arcs in \(P\) have positive residual capacity, \(c_f(P) > 0\).
 \ForAll{\(e \in E\)} 
  \State \(f(e) \gets 0\) \Comment{initial flow}
 \EndFor
-\State \(G_f \gets G\) \Comment{since the initial flow $f\equiv 0$, the initial residual network equals $G$}
+\State \(G_f \gets \text{\nameref{def:residual_network}}\) \Comment{initially only forward arcs with \(c_f(e^+) = c(e)\), since \(f \equiv 0\)}
 % \While{\(\exists P \subset G_f\)} \Comment{there is an \nameref{def:augmenting_path} in \nameref{def:residual_network}}
  \While{there exists an \nameref{def:augmenting_path} \(P\) in \nameref{def:residual_network} \(G_f\)}
   \State \(f \gets \Call{Augment}{f, c, P}\) \Comment{augment flow along \(P\)}
@@ -394,8 +410,15 @@ We now want to show again that the inqualities
 % \]
 in the \autoref{proof:weak_duality} of \autoref{lem:weak_duality_flow_capacity} are actually equalities.
 Let \(u \in A\) and \(v \in B\).
-If \((u,v) \in E\), then \(f(u,v) = c(u,v)\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
-If \((v,u) \in E\), then \(f(v,u) = 0\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
+% If \((u,v) \in E\), then \(f(u,v) = c(u,v)\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
+% If \((v,u) \in E\), then \(f(v,u) = 0\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
+If $(u,v)\in E$ and $f(u,v)<c(u,v)$, 
+then the forward residual arc $(u,v)$ has positive residual capacity and is therefore present in $G_f$, 
+implying $v\in A$, a contradiction. 
+Hence $f(u,v)=c(u,v)$.
+Similarly, if $(v,u)\in E$ and $f(v,u)>0$, then the backward residual arc $(u,v)$ is present in $G_f$,
+again implying $v\in A$, a contradiction. 
+Hence $f(v,u)=0$.
 
 This closes the triangle of implications and proves \autoref{thm:max-flow-min-cut}.
 \end{proof}
