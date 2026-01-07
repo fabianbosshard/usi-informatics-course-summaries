@@ -38,6 +38,12 @@ A \emph{\(s\)-\(t\) flow} is a function \(f : E \to \R_{\ge 0}\) that satisfies
 \end{itemize}
 where \(s, t \in V\) are the source and sink nodes.
 \end{definition}
+
+\begin{convention*}\label{conv:extend_flow}
+We extend $f$ and $c$ to all ordered pairs $(u,v)\in V\times V$ by setting
+$f(u,v)=0$ and $c(u,v)=0$ whenever $(u,v)\notin E$.
+\end{convention*}
+
 \begin{definition}\label{def:flow_value}
 The \emph{value} \(v(f)\) (also denoted by \(|f|\)) of a flow \(f\) is
 \begin{equation}\label{eq:flow_value}
@@ -1400,6 +1406,88 @@ Add edges
 and one extra edge \((t,s)\) with bounds \([0, \infty]\).
 Set all node demands to \(0\).
 
+
+
+% You can still keep m,n as “parameters” for the text,
+% but the drawing will show: R1, R2, …, R_m and C1, C2, …, C_n.
+\newcommand{\m}{m}
+\newcommand{\n}{n}
+\[
+\begin{tikzpicture}[
+  scale=0.7,
+  >=Stealth,
+  font=\footnotesize,
+  v/.style={circle, fill=black, inner sep=1.2pt},
+  edge/.style={->},
+  lab/.style={font=\footnotesize, align=center, inner sep=1pt}
+]
+\useasboundingbox (0,-3) rectangle (9.5,3);
+
+% --- geometry ---
+\def\xS{0}
+\def\xR{3.0}
+\def\xC{6.6}
+\def\xT{9.5}
+\def\ySep{1.15}
+
+% We draw only "representative" nodes:
+% rows:  R1, R2, (dots), Rm
+% cols:  C1, C2, (dots), Cn
+\coordinate (RowTop) at (\xR,  1.5*\ySep);
+\coordinate (RowBot) at (\xR, -1.5*\ySep);
+\coordinate (ColTop) at (\xC,  1.5*\ySep);
+\coordinate (ColBot) at (\xC, -1.5*\ySep);
+
+% source/sink
+\node[v,label=left:$s$]  (s) at (\xS,0) {};
+\node[v,label=right:$t$] (t) at (\xT,0) {};
+
+% --- row side: R1, R2, ..., Rm ---
+\node[v,label=above:$R_{1}$] (R1) at ($(RowTop)+(0,0)$) {};
+\node[v,label=above:$R_{2}$] (R2) at ($(RowTop)+(0,-1*\ySep)$) {};
+\node[font=\large] (Rdots) at ($(RowTop)+(0,-2*\ySep)$) {$\vdots$};
+\node[v,label=below:$R_{\m}$] (Rm) at ($(RowTop)+(0,-3*\ySep)$) {};
+
+% --- column side: C1, C2, ..., Cn ---
+\node[v,label=above:$C_{1}$] (C1) at ($(ColTop)+(0,0)$) {};
+\node[v,label=above:$C_{2}$] (C2) at ($(ColTop)+(0,-1*\ySep)$) {};
+\node[font=\large] (Cdots) at ($(ColTop)+(0,-2*\ySep)$) {$\vdots$};
+\node[v,label=below:$C_{\n}$] (Cn) at ($(ColTop)+(0,-3*\ySep)$) {};
+
+% --- edges ---
+% s -> rows
+\foreach \R in {R1,R2,Rm}{
+  \draw[edge] (s) -- (\R);
+}
+
+% rows -> cols (draw a readable “abstract” subset)
+\foreach \R in {R1,R2,Rm}{
+  \foreach \C in {C1,C2,Cn}{
+    \draw[edge,opacity=0.35] (\R) -- (\C);
+  }
+}
+
+% cols -> t
+\foreach \C in {C1,C2,Cn}{
+  \draw[edge] (\C) -- (t);
+}
+
+% extra edge t -> s with [0,∞]
+\draw[edge,out=-60,in=-120,looseness=1.2]
+  (t) to node[lab,above, outer sep = 2pt] {$[0,\infty]$} (s);
+
+% --- “bundle” labels (bounds) ---
+\node[lab] at ($(s)!0.55!(R1) + (-0.2,1.0)$)
+  {$(s,R_i)$\\$[\lfloor r_i\rfloor, \lceil r_i\rceil]$};
+
+\node[lab] at ($(R1)!0.5!(C1) + (0,0.8)$)
+  {$(R_i,C_j)$\\$[\lfloor x_{ij}\rfloor, \lceil x_{ij}\rceil]$};
+
+\node[lab] at ($(C1)!0.55!(t) + (0.2,1.0)$)
+  {$(C_j,t)$\\$[\lfloor c_j\rfloor, \lceil c_j\rceil]$};
+
+\end{tikzpicture}
+\]
 
 \begin{claim*}
 There is a consistent rounding iff the above network has an \emph{integral} valid circulation.

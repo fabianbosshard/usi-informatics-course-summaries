@@ -282,6 +282,9 @@
 \declaretheorem[style=remarkstyle,name=Observation, sibling=remark]{observation}
 \declaretheorem[style=remarkstyle,name=Invariant, sibling=remark]{invariant}
 \declaretheorem[style=remarkstyle,name=Assumption, sibling=remark]{assumption}
+\declaretheorem[style=remarkstyle,name=Convention, sibling=remark]{convention}
+\declaretheorem[style=remarkstyle,name=Convention, numbered=no]{convention*} % unnumbered convention
+
 \declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
 \declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=6pt,spacebelow=6pt,postheadspace=1em]{smallremarkstyle}
@@ -503,6 +506,8 @@
 \renewcommand{\remarkautorefname}{Remark}
 \renewcommand{\invariantautorefname}{Invariant}
 \renewcommand{\assumptionautorefname}{Assumption}
+\renewcommand{\conventionautorefname}{Convention}
+
 \renewcommand{\observationautorefname}{Observation}
 \renewcommand{\cautionautorefname}{Caution}
 \renewcommand{\digressionautorefname}{Digression}
@@ -589,6 +594,9 @@
 \renewcommand*{\theHobservation}{\thesection.\arabic{observation}}
 \renewcommand*{\theHinvariant}{\thesection.\arabic{invariant}}
 \renewcommand*{\theHassumption}{\thesection.\arabic{assumption}}
+\renewcommand*{\theHconvention}{\thesection.\arabic{convention}}
+
+
 \renewcommand*{\theHcaution}{\thesection.\arabic{caution}}
 \renewcommand*{\theHsmallremark}{\thesection.\arabic{smallremark}}
 
