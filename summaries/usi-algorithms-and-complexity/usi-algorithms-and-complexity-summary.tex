@@ -480,7 +480,6 @@
 
 
 
-\usepackage[titles]{tocloft}
 
 \usepackage[
   % linktoc=all,      % make the whole entry (text + pagenumber) a link
@@ -496,46 +495,59 @@
 ]{hyperref}
 \usepackage{etoolbox}
 
-% from https://tex.stackexchange.com/questions/129778/hyperref-links-entire-line-like-word
+
+% \makeatletter
+% \renewcommand*\@dottedtocline[5]{%
+%   \ifnum #1>\c@tocdepth \else
+%     \vskip \z@ \@plus .2\p@
+%     {%
+%       \leftskip #2\relax
+%       \rightskip \@tocrmarg
+%       \parfillskip -\rightskip
+%       \parindent #2\relax\@afterindenttrue
+%       \interlinepenalty\@M
+%       \leavevmode
+%       \@tempdima #3\relax
+%       \advance\leftskip \@tempdima
+%       \hskip -\leftskip
+%       % ---- start link for the whole visual line ----
+%       \ifcsname Hy@tocdestname\endcsname
+%         \hyper@linkstart{link}{\Hy@tocdestname}%
+%       \fi
+%       #4\nobreak
+%       \leaders\hbox{$\m@th
+%         \mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill
+%       \nobreak
+%       \hb@xt@\@pnumwidth{\hfil\normalfont\normalcolor #5}%
+%       \ifcsname Hy@tocdestname\endcsname
+%         \hyper@linkend
+%       \fi
+%       % ---- end link ----
+%       \par
+%     }%
+%   \fi
+% }
+% \makeatother
+
+
 \makeatletter
-\def\contentsline#1#2#3#4{%
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
   \begingroup
     \Hy@safe@activestrue
-  \edef\x{\endgroup
-    \def\noexpand\Hy@tocdestname{#4}%
-  }\x
-  \csname l@#1\endcsname{%
-    %\hyper@linkstart{link}{\Hy@tocdestname}{#2}\hyper@linkend
-    #2%
-  }{%
-    %\hyper@linkstart{link}{\Hy@tocdestname}{#3}\hyper@linkend
-    #3%
-  }%
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          % \hbox to \hsize{\strut\hfil}% this makes the link exeed the right margin (for subsections)
+          \hbox to \dimexpr\hsize-0.7\leftskip+10pt\relax{\strut\hfil}%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
 }
-% Update ToC hyperlinks for Chapters
-\patchcmd{\l@chapter}% <cmd>
-  {{\cftchapfont #1}}% <search>
-  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftchapfont #1}}% <replace>
-  {}{}% <success><failure>
-\patchcmd{\cftchapfillnum}{\par}{\hyper@linkend\par}{}{}
-% Update ToC hyperlinks for Sections
-\patchcmd{\l@section}% <cmd>
-  {{\cftsecfont #1}}% <search>
-  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsecfont #1}}% <replace>
-  {}{}% <success><failure>
-\patchcmd{\cftsecfillnum}{\par}{\hyper@linkend\par}{}{}
-% Update ToC hyperlinks for Subsections
-\patchcmd{\l@subsection}% <cmd>
-  {{\cftsubsecfont #1}}% <search>
-  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsubsecfont #1}}% <replace>
-  {}{}% <success><failure>
-\patchcmd{\cftsubsecfillnum}{\par}{\hyper@linkend\par}{}{}
-% Update ToC hyperlinks for Subsubsections
-\patchcmd{\l@subsubsection}% <cmd>
-  {{\cftsubsubsecfont #1}}% <search>
-  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsubsubsecfont #1}}% <replace>
-  {}{}% <success><failure>
-\patchcmd{\cftsubsubsecfillnum}{\par}{\hyper@linkend\par}{}{}   
 \makeatother
 
 
