@@ -457,6 +457,19 @@
 \usepackage{etoolbox}
 
 
+% height/depth of links in TOC
+\makeatletter
+% tweak these two numbers until you like it:
+%   height = 85% of normal strut height
+%   depth  = 10% of normal strut depth
+\newcommand*\FB@toclinkstrut{%
+  \vrule width 0pt
+         height \dimexpr 85\ht\strutbox/100\relax
+         depth  \dimexpr 20\dp\strutbox/100\relax
+}
+\makeatother
+
+% make the whole line in TOC a link
 \makeatletter
 \let\FB@orig@contentsline\contentsline
 \renewcommand*\contentsline[4]{%
@@ -471,7 +484,8 @@
           % \hbox to \dimexpr\hsize-\rightskip\relax{\strut\hfil}% not correct at all
           % \hbox to \dimexpr\hsize-\leftskip\relax{\strut\hfil}% better but still subtracts a bit too much (it also subtracts the difference between the start of the number and start of the section text)
           % \hbox to \dimexpr\hsize-\parindent-\rightskip\relax{\strut\hfil}% now everything is aligned on the right, i.e. we are subtracting the right proportions of something... but we subtract to much
-          \hbox to \dimexpr\hsize-\parindent\relax{\strut\hfil}% THIS IS FINALLY CORRECT
+          % \hbox to \dimexpr\hsize-\parindent\relax{\strut\hfil}% THIS IS FINALLY CORRECT
+          \hbox to \dimexpr\hsize-\parindent\relax{\FB@toclinkstrut\hfil}% using the custom height/depth strut
         \hyper@linkend
       }%
       #2%
