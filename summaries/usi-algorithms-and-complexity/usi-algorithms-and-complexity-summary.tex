@@ -439,46 +439,6 @@
 \addbibresource{\jobname.bib}
 
 
-% \usepackage[colorlinks=true, linkcolor=black, urlcolor=black, citecolor=black]{hyperref}
-
-% \usepackage[
-%   pdfauthor={Fabian Bosshard},
-%   pdftitle={USI - Algorithms and Complexity - Course Summary},
-%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
-%   colorlinks=false,       
-%   pdfborder={0.2 0.2 0.2},      % thin border
-%   linkbordercolor={0 0.6 1},      % internal links
-%   urlbordercolor={0 0.6 1},       % URLs
-%   citebordercolor={0 0.6 1}       % citations
-% ]{hyperref}
-
-% \definecolor{hyperlinkcolor}{HTML}{0000FF}
-% \usepackage[
-%   pdfauthor={Fabian Bosshard},
-%   pdftitle={USI - Algorithms and Complexity - Course Summary},
-%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
-%   colorlinks=true,    
-%   linkcolor=hyperlinkcolor,      % internal links
-%   urlcolor=hyperlinkcolor,       % URLs
-%   citecolor=hyperlinkcolor       % citations
-% ]{hyperref}
-
-% \definecolor{hyperlinkcolor}{HTML}{0000FF}
-% \usepackage[
-%   pdfauthor={Fabian Bosshard},
-%   pdftitle={USI - Algorithms and Complexity - Course Summary},
-%   pdfkeywords={USI, Algorithms and Complexity, course summary, informatics},
-%   colorlinks=false,       
-%   pdfborder={0.1 0.1 0.1},      % thin border
-%   linkbordercolor=hyperlinkcolor,      % internal links
-%   urlbordercolor=hyperlinkcolor,       % URLs
-%   citebordercolor=hyperlinkcolor       % citations
-% ]{hyperref}
-
-
-
-
-
 
 
 \usepackage[
@@ -488,46 +448,13 @@
   pdftitle={USI - Algorithms and Complexity - Course Notes},
   pdfkeywords={USI, Algorithms and Complexity, course notes, informatics},
   colorlinks=false,  
-  pdfborder={0.0 0.0 0.0},      
+  % pdfborder={0.0 0.0 0.3},  % debug
+  pdfborder={0 0 0},        % no visible borders
   linkbordercolor={0 0.6 1},      % internal links
   urlbordercolor={0 0.6 1},       % URLs
   citebordercolor={0 0.6 1}       % citations
 ]{hyperref}
 \usepackage{etoolbox}
-
-
-% \makeatletter
-% \renewcommand*\@dottedtocline[5]{%
-%   \ifnum #1>\c@tocdepth \else
-%     \vskip \z@ \@plus .2\p@
-%     {%
-%       \leftskip #2\relax
-%       \rightskip \@tocrmarg
-%       \parfillskip -\rightskip
-%       \parindent #2\relax\@afterindenttrue
-%       \interlinepenalty\@M
-%       \leavevmode
-%       \@tempdima #3\relax
-%       \advance\leftskip \@tempdima
-%       \hskip -\leftskip
-%       % ---- start link for the whole visual line ----
-%       \ifcsname Hy@tocdestname\endcsname
-%         \hyper@linkstart{link}{\Hy@tocdestname}%
-%       \fi
-%       #4\nobreak
-%       \leaders\hbox{$\m@th
-%         \mkern\@dotsep mu\hbox{.}\mkern\@dotsep mu$}\hfill
-%       \nobreak
-%       \hb@xt@\@pnumwidth{\hfil\normalfont\normalcolor #5}%
-%       \ifcsname Hy@tocdestname\endcsname
-%         \hyper@linkend
-%       \fi
-%       % ---- end link ----
-%       \par
-%     }%
-%   \fi
-% }
-% \makeatother
 
 
 \makeatletter
@@ -541,7 +468,10 @@
       \rlap{%
         \hyper@linkstart{link}{\Hy@tocdestname}%
           % \hbox to \hsize{\strut\hfil}% this makes the link exeed the right margin (for subsections)
-          \hbox to \dimexpr\hsize-0.7\leftskip+10pt\relax{\strut\hfil}%
+          % \hbox to \dimexpr\hsize-\rightskip\relax{\strut\hfil}% not correct at all
+          % \hbox to \dimexpr\hsize-\leftskip\relax{\strut\hfil}% better but still subtracts a bit too much (it also subtracts the difference between the start of the number and start of the section text)
+          % \hbox to \dimexpr\hsize-\parindent-\rightskip\relax{\strut\hfil}% now everything is aligned on the right, i.e. we are subtracting the right proportions of something... but we subtract to much
+          \hbox to \dimexpr\hsize-\parindent\relax{\strut\hfil}% THIS IS FINALLY CORRECT
         \hyper@linkend
       }%
       #2%
