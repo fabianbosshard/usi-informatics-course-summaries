@@ -456,41 +456,47 @@
 ]{hyperref}
 \usepackage{etoolbox}
 
-
-% height/depth of links in TOC
 \makeatletter
-% tweak these two numbers until you like it:
-%   height = 85% of normal strut height
-%   depth  = 10% of normal strut depth
-\newcommand*\FB@toclinkstrut{%
-  \vrule width 0pt
-         height \dimexpr 85\ht\strutbox/100\relax
-         depth  \dimexpr 20\dp\strutbox/100\relax
-}
-\makeatother
+\newlength\FB@toclinkht
+\newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
 
-% make the whole line in TOC a link
-\makeatletter
+% --- ToC: add a target at the entry + one full-width clickable line ---
 \let\FB@orig@contentsline\contentsline
 \renewcommand*\contentsline[4]{%
   \begingroup
     \Hy@safe@activestrue
     \edef\Hy@tocdestname{#4}%
     \FB@orig@contentsline{#1}{%
+      % target for "back to ToC"
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
       \leavevmode
       \rlap{%
         \hyper@linkstart{link}{\Hy@tocdestname}%
-          % \hbox to \hsize{\strut\hfil}% this makes the link exeed the right margin (for subsections)
-          % \hbox to \dimexpr\hsize-\rightskip\relax{\strut\hfil}% not correct at all
-          % \hbox to \dimexpr\hsize-\leftskip\relax{\strut\hfil}% better but still subtracts a bit too much (it also subtracts the difference between the start of the number and start of the section text)
-          % \hbox to \dimexpr\hsize-\parindent-\rightskip\relax{\strut\hfil}% now everything is aligned on the right, i.e. we are subtracting the right proportions of something... but we subtract to much
-          % \hbox to \dimexpr\hsize-\parindent\relax{\strut\hfil}% THIS IS FINALLY CORRECT
-          \hbox to \dimexpr\hsize-\parindent\relax{\FB@toclinkstrut\hfil}% using the custom height/depth strut
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
         \hyper@linkend
       }%
       #2%
     }{#3}{#4}%
   \endgroup
+}
+
+% --- Headings: make NUMBER + TITLE one link back to the ToC entry ---
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      % IMPORTANT: \hskip needs a DIMENSION only; #3 is text -> separate them
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
 }
 \makeatother
 
@@ -651,7 +657,7 @@
 
 % \title{Algorithms \& Complexity -- Summary}
 \title{Algorithms \& Complexity}
-\author{Fabian Bosshard}
+\author{\href{https://fabianbosshard.github.io/}{Fabian Bosshard}}
 \date{\today}
 
 
