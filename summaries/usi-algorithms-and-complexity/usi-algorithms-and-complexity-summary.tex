@@ -135,7 +135,7 @@
 % float management ––––––––––––––––––––––––––––––––––––––––––––––––
 \usepackage{float}
 \usepackage{placeins} 
-\usepackage{etoolbox}
+
 
 % \makeatletter
 %   % single-column floats
@@ -475,8 +475,16 @@
 %   citebordercolor=hyperlinkcolor       % citations
 % ]{hyperref}
 
+
+
+
+
+
+\usepackage[titles]{tocloft}
+
 \usepackage[
   linktoc=all,      % make the whole entry (text + pagenumber) a link
+  % linktoc=none,
   pdfauthor={Fabian Bosshard},
   pdftitle={USI - Algorithms and Complexity - Course Notes},
   pdfkeywords={USI, Algorithms and Complexity, course notes, informatics},
@@ -486,6 +494,50 @@
   urlbordercolor={0 0.6 1},       % URLs
   citebordercolor={0 0.6 1}       % citations
 ]{hyperref}
+\usepackage{etoolbox}
+
+
+\makeatletter
+\def\contentsline#1#2#3#4{%
+  \begingroup
+    \Hy@safe@activestrue
+  \edef\x{\endgroup
+    \def\noexpand\Hy@tocdestname{#4}%
+  }\x
+  \csname l@#1\endcsname{%
+    %\hyper@linkstart{link}{\Hy@tocdestname}{#2}\hyper@linkend
+    #2%
+  }{%
+    %\hyper@linkstart{link}{\Hy@tocdestname}{#3}\hyper@linkend
+    #3%
+  }%
+}
+% Update ToC hyperlinks for Chapters
+\patchcmd{\l@chapter}% <cmd>
+  {{\cftchapfont #1}}% <search>
+  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftchapfont #1}}% <replace>
+  {}{}% <success><failure>
+\patchcmd{\cftchapfillnum}{\par}{\hyper@linkend\par}{}{}
+% Update ToC hyperlinks for Sections
+\patchcmd{\l@section}% <cmd>
+  {{\cftsecfont #1}}% <search>
+  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsecfont #1}}% <replace>
+  {}{}% <success><failure>
+\patchcmd{\cftsecfillnum}{\par}{\hyper@linkend\par}{}{}
+% Update ToC hyperlinks for Subsections
+\patchcmd{\l@subsection}% <cmd>
+  {{\cftsubsecfont #1}}% <search>
+  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsubsecfont #1}}% <replace>
+  {}{}% <success><failure>
+\patchcmd{\cftsubsecfillnum}{\par}{\hyper@linkend\par}{}{}
+% Update ToC hyperlinks for Subsubsections
+\patchcmd{\l@subsubsection}% <cmd>
+  {{\cftsubsubsecfont #1}}% <search>
+  {\hyper@linkstart{link}{\Hy@tocdestname}{}{\cftsubsubsecfont #1}}% <replace>
+  {}{}% <success><failure>
+\patchcmd{\cftsubsubsecfillnum}{\par}{\hyper@linkend\par}{}{}   
+\makeatother
+
 
 \usepackage[
   type     = {CC},
@@ -624,52 +676,27 @@
 
 
 
-
-\makeatletter
-\RedeclareSectionCommand[
-  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
-]{section}
-\RedeclareSectionCommand[
-  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
-]{subsection}
-\RedeclareSectionCommand[
-  toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
-]{subsubsection}
-\makeatother
-
-
-
+% % this is almost what i want:
+% \makeatletter
+% \RedeclareSectionCommand[
+%   toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+% ]{section}
+% \RedeclareSectionCommand[
+%   toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+% ]{subsection}
+% \RedeclareSectionCommand[
+%   toclinefill=\hyper@linkstart{link}{\Hy@tocdestname}\TOCLineLeaderFill\hyper@linkend,
+% ]{subsubsection}
+% \makeatother
+% % we just need to make the links fill the entire width (from beginning of section name to end of page number)
 
 
 
-\title{Algorithms \& Complexity - Summary}
+
+% \title{Algorithms \& Complexity -- Summary}
+\title{Algorithms \& Complexity}
 \author{Fabian Bosshard}
 \date{\today}
-
-
-
-
-
-
-% ======================================================
-% BUILD MODE TOGGLE
-% ======================================================
-% Uncomment *one* of the two lines below depending on what you want.
-
-% \newcommand{\buildmode}{full}    % ← compile everything (default)
-\newcommand{\buildmode}{speed}   % ← only compile selected chapters
-
-% ------------------------------------------------------
-% For partial compilation, list the chapters you’re editing:
-\ifx\buildmode\undefined\else
-  \ifx\buildmode\speed
-    \includeonly{
-      chapters/05_network_flow
-    }
-  \fi
-\fi
-% ======================================================
-
 
 
 
