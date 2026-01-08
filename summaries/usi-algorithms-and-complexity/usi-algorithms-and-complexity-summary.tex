@@ -2,7 +2,7 @@
 % © CC BY 4.0
 
 % \documentclass[twocolumn, a3paper, fontsize=9pt, headings=standardclasses, parskip=never]{scrartcl}
-\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half]{scrartcl}
+\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half, titlepage]{scrartcl}
 % \documentclass[a4paper, fontsize=9pt, headings=standardclasses]{scrartcl}
 
 \usepackage{csquotes}
@@ -657,25 +657,47 @@
 
 % \title{Algorithms \& Complexity -- Summary}
 \title{Algorithms \& Complexity}
-\author{\href{https://fabianbosshard.github.io/}{Fabian Bosshard}}
+\author{Fabian Bosshard}
 \date{\today}
 
 
 
 
 \begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{5cm}
+{\Huge\bfseries \href{https://search.usi.ch/courses/35275486/algorithms-complexity}{Algorithms \& Complexity}\par}
+\vspace{0.5cm}
+{\large\color{AccentGray}\href{https://www.usi.ch/}{\textsc{Università della Svizzera italiana}}\par}
+\vspace{1.5cm}
+
+{\Large \href{https://fabianbosshard.github.io/}{Fabian Bosshard}\par}
+\vfill
+{ \today\par}
+
+\end{titlepage}
+
 \pagenumbering{roman}
 
 
 
-\maketitle
 \thispagestyle{scrheadings}
 \tableofcontents
 
-% \section*{Preface}
-% \addcontentsline{toc}{section}{Preface}
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
 
-% \doclicenseThis
+This document is an unofficial student-made summary of the course
+\href{https://search.usi.ch/courses/35275486/algorithms-complexity}{Algorithms \& Complexity} taught by \href{http://usi.to/i3c}{Evanthia Papadopoulou} in Winter 2025/2026 at the \href{https://www.usi.ch/en}{Università della Svizzera italiana}.
+It is based on the lecture slides and other course materials.
+If you find any errors, please report them to \href{mailto:fabianlucasbosshard@gmail.com}{{fabianlucasbosshard@gmail.com}}.
+The \LaTeX{} source code is available on \url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
+
+\doclicenseThis
 
 % ----- Keep the following commands unchanged -------------------
 % \renewcommand{\emph}[1]{\textcolor{black}{#1}}
