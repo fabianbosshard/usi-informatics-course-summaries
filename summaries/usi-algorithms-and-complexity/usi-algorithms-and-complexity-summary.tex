@@ -272,6 +272,7 @@
 \declaretheorem[style=definitionstyle,name=Axiom,sibling=definition]{axiom}
 \declaretheorem[style=definitionstyle, name=Problem, sibling=definition]{problem}
 \declaretheorem[style=definitionstyle, name=Notation, sibling=definition]{notation}
+\declaretheorem[style=definitionstyle, name=Notation, numbered=no]{notation*} % unnumbered notation
 
 
 \declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
@@ -375,7 +376,17 @@
 \newcommand{\im}{\operatorname{Im}}
 
 % commands for vectors and matrices
-\newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
 \newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
 % \newcommand{\vect}[1]{\vec{{#1}}\,}
 

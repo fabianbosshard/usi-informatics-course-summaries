@@ -1740,13 +1740,6 @@ Therefore \(C\) uses only edges in \(E\), so \(C\) is a negative cycle in \(G\).
 
 
 
-
-
-
-
-
-
-
 % \clearpage
 
 % \textcolor{AccentBlue}{DP viewpoint.}
@@ -1814,6 +1807,200 @@ Therefore \(C\) uses only edges in \(E\), so \(C\) is a negative cycle in \(G\).
 % The algorithm performs \(O(|V|)\) passes, each relaxing all \(|E|\) edges once.
 % Thus the running time is \(O(|V|\cdot|E|)\) and the space usage is \(O(|V|)\).
 % The \(\attribute{\pi}\) pointers define a shortest-path tree rooted at \(s\).
+
+
+
+
+
+
+\subsection{Matrix Chain Multiplication}
+
+% \textcolor{AccentBlue}{Motivation.}
+% Matrix multiplication is associative (so we may parenthesize freely) but not commutative (order fixed).
+% Different parenthesizations can have wildly different running times.
+
+
+\begin{problem}[Matrix Chain Multiplication]
+Given matrices \(\matr{A}_1,\ldots,\matr{A}_n\) with dimensions
+\(\matr{A}_i \in \mathbb{R}^{p_{i-1}\times p_i}\) (so the dimension vector is \(\vect{p} = (p_0,\ldots,p_n)^\top\)),
+find a parenthesization of 
+\(
+% \prod_{i=1}^n \matr{A}_i 
+% =
+\matr{A}_1 \cdots \matr{A}_n
+\) 
+that minimizes the number of scalar multiplications.
+\end{problem}
+
+\textcolor{AccentBlue}{Cost of one multiplication}.
+Multiplying an \(a\times b\) matrix by a \(b\times c\) matrix yields an \(a\times c\) matrix.
+Each of the \(ac\) entries takes \(b\) scalar multiplications and \(b-1\) additions, so the total cost is
+\(abc\) scalar multiplications and \(ac(b-1)\) additions, i.e. \(\Theta(abc)\) arithmetic operations.
+
+\medskip
+
+\textcolor{AccentBlue}{DP formulation}.
+For \(1 \le i \le j \le n\), let \(m(i,j)\) be the minimum cost to compute the product
+\(
+\matr{A}_{i..j} 
+:=
+\prod_{l=i}^j \matr{A}_l
+=
+ \matr{A}_i
+ \cdots 
+ \matr{A}_j
+\)
+(where \(\matr{A}_{i..j}\) has dimension \(p_{i-1}\times p_j\)).
+We seek \(m(1,n)\).
+
+\begin{observation}
+\(\matr{A}_{i..j} = \matr{A}_{i..k} \cdot \matr{A}_{k+1..j}\) for any \(i \le k < j\).
+\end{observation}
+
+\textcolor{AccentBlue}{Recurrence}.
+If \(i=j\), no multiplication is needed, so \(m(i,i)=0\).
+Now consider \(i<j\).
+We must split the product somewhere \(i \le k < j\) (top-level parenthesization).
+The miniumum cost of those subproblems is \(m(i,k)\) and \(m(k+1,j)\) by definition.
+Finally, the cost to multiply the two resulting matrices is \(p_{i-1} p_k p_j\).
+Thus,
+\[
+m(i,j)
+=
+\begin{cases}
+0 & i = j\\
+\displaystyle
+\min_{i\le k<j}\Bigl\{ m(i,k)+m(k+1,j)+p_{i-1}\,p_k\,p_j \Bigr\} & i < j
+\end{cases}
+\]
+Interpretation: choose the {last}/top-level split \(k\) optimally, compute both subchains optimally, then multiply the results
+(\(p_{i-1}\times p_k\) times \(p_k\times p_j\)).
+
+\medskip
+
+\textcolor{AccentBlue}{Bottom-up computation} (\autoref{alg:matrix_chain}).
+Compute by increasing chain length \(L=j-i+1\) (diagonal-by-diagonal), since \(m(i,j)\) depends on shorter subchains.
+\[
+\begin{tikzpicture}[scale=0.85, font=\footnotesize, line cap=round, line join=round]
+% grid with for loop
+
+% define number of rows and columns
+\def\n{5}
+
+\foreach \i in {1,...,\n} {
+  \foreach \j in {1,...,\n} {
+    \ifnum\i=\j
+      \draw[] ({\j-1},-\i+1) -- (\j-1,-\i) -- (\j,-\i) -- (\j,-\i+1) -- cycle;
+      \ifnum\i=\numexpr\n-1\relax
+        \node at (\j-0.5, -\i+0.5) {$\ddots$};
+      \else
+      \node at (\j-0.5, -\i+0.5) {0};
+      \fi
+    \else
+      \ifnum\i>\j
+        \draw[fill=gray!20!white] (\j-1,-\i+1) -- (\j-1,-\i) -- (\j,-\i) -- (\j,-\i+1) -- cycle;
+      \else
+        \draw[] (\j-1,-\i+1) -- (\j-1,-\i) -- (\j,-\i) -- (\j,-\i+1) -- cycle;
+      \fi
+    \fi
+  }
+}
+\draw[fill=green!20!white] (4,0) -- (4, -1) -- (5, -1) -- (5,0) -- cycle;
+% \node at (4.5, -0.5) {\(m(1,n)\)};
+\draw[<-] (4.5, -0.5) to[bend right] (5.5, -0.5) node[above right, outer sep=0pt, inner sep=0pt] {\(m(1,n)\)};
+
+
+
+% --- row labels on the left
+\foreach \i in {1,...,\n} {
+  \ifnum\i=\numexpr\n-1\relax
+    \node[left] at (-0.1,{-\i+0.5}) {$\vdots$};
+  \else
+    \ifnum\i=\n
+      \node[left] at (-0.1,{-\i+0.5}) {$i=n$};
+    \else
+      \node[left] at (-0.1,{-\i+0.5}) {$i=\i$};
+    \fi
+  \fi
+}
+
+% --- column labels at the bottom
+\foreach \j in {1,...,\n} {
+  \ifnum\j=\numexpr\n-1\relax
+    \node[below] at ({\j-0.5},{-\n-0.1}) {$\cdots$};
+  \else
+    \ifnum\j=\n
+      \node[below] at ({\j-0.5},{-\n-0.1}) {$j=n$};
+    \else
+      \node[below] at ({\j-0.5},{-\n-0.1}) {$j=\j$};
+    \fi
+  \fi
+}
+
+\draw[<-] (-0.25, 0.25) -- (-0.75, 0.75) node[above] {\(L = 1\)};
+\draw[<-] (0.75, 0.25) -- (0.25, 0.75) node[above] {\(L = 2\)};
+\draw[<-] (1.75, 0.25) -- (1.25, 0.75) node[above] (l3) {\(L = 3\)};
+\draw[<-] (\n-1.25, 0.25) -- (\n-1.75, 0.75) node[above] (ln) {\(L = n\)};
+\node at ($(l3)!0.5!(ln)$) {\(\dots\)};
+\end{tikzpicture}
+\]
+
+
+\begin{algorithm}[h]
+\caption{Matrix Chain Multiplication}\label{alg:matrix_chain}
+\begin{algorithmic}[1]
+\Require dimensions \(p_0,\ldots,p_n\) where \(\matr{A}_i\) is \(p_{i-1}\times p_i\)
+\State allocate \(m[1\ldots n,1\ldots n]\) \Comment{costs}
+\State allocate \(s[1\ldots n-1, 2\ldots n]\) \Comment{split points}
+\For{$i=1\TO n$}
+  \State $m[i,i]\gets 0$
+\EndFor
+\For{$L=2\TO n$} \Comment{length of subchain}
+  \For{$i=1\TO n-L+1$}
+    \State $j\gets i+L-1$
+    \State $m[i,j]\gets \infty$
+    \For{$k=i\TO j-1$} \Comment{try all splits}
+      \State $\texttt{cost} \gets m[i,k] + m[k+1,j] + p_{i-1} p_k p_j$
+      \If{$\texttt{cost} < m[i,j]$} \Comment{found new minimum?}
+        \State $m[i,j]\gets \texttt{cost}$ \Comment{save its cost}
+        \State $s[i,j]\gets k$ \Comment{save split point}
+      \EndIf
+    \EndFor
+  \EndFor
+\EndFor
+\State \Return $m[1,n]$ and split table $s$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\textcolor{AccentBlue}{Time and space complexity} of \autoref{alg:matrix_chain}:
+There are three nested loops, and each may iterate at most \(n\) times.
+Thus the running time is \(O(n^3)\).
+The tables use \(\Theta(n^2)\) space.
+
+
+\textcolor{AccentBlue}{Reconstructing the optimal parenthesization}.
+Given the split table \(s\) from \autoref{alg:matrix_chain}, we can reconstruct the optimal parenthesization recursively (\autoref{alg:multiply_optimal}).
+
+\begin{algorithm}[h]
+\caption{Matrix Chain Multiplication}\label{alg:multiply_optimal}
+\begin{algorithmic}[1]
+\Require marices \(\matr{A}_1,\ldots,\matr{A}_n\), split table \(s\)
+\Function{Multiply}{$i, j$}
+  \If{$i = j$} \Comment{base case}
+    \State \Return $\matr{A}_i$
+  \Else
+    \State $k \gets s[i,j]$ \Comment{optimal split point}
+    \State $\matr{X} \gets$ \Call{Multiply}{$i, k$} \Comment{\(\matr{A}_{i..k}\)}
+    \State $\matr{Y} \gets$ \Call{Multiply}{$k+1, j$} \Comment{\(\matr{A}_{k+1..j}\)}
+    \State \Return $\matr{X} \cdot \matr{Y}$ \Comment{\(\matr{A}_{i..j} = \matr{A}_{i..k} \cdot \matr{A}_{k+1..j}\)}
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
 
 
 
