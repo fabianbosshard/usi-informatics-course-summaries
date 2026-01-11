@@ -1,0 +1,3136 @@
+% author: Fabian Bosshard % © CC BY 4.0
+
+\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen}
+\usepackage{iftex}
+\usepackage{csquotes}
+
+\usepackage[T1]{fontenc}     % handle accented glyphs properly
+\usepackage[english]{babel}  % load the hyphenation patterns you need
+
+
+
+\usepackage[automark]{scrlayer-scrpage}
+% \clearpairofpagestyles
+% \ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+\pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+
+
+
+
+
+
+
+% \usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=25mm, right=25mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=20mm, right=60mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=38mm, right=38mm, top=20mm, bottom=30mm]{geometry}
+
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{accents}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+\usepackage{pifont}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings}
+\usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
+\usepackage{tikz-3dplot}
+\usepackage{tikzpagenodes}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
+\usepackage{pgfplots}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+% \renewcommand{\emph}[1]{\textcolor{highlightpurple}{#1}}
+% \renewcommand{\emph}[1]{\textsl{#1}}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+% \renewcommand{\emph}[1]{\textcolor{mypurple}{#1}}
+
+% \usepackage{thmtools}
+
+% \newlength{\thmspace} \setlength{\thmspace}{3pt plus 1pt minus 1pt} 
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace;/, qed=\ensuremath{\vartriangleleft}, postheadspace=1em]{assertionstyle}
+% \declaretheorem[style=assertionstyle, name=Theorem]{theorem}
+% \declaretheorem[style=assertionstyle, name=Lemma, sibling=theorem]{lemma}
+% \declaretheorem[style=assertionstyle, name=Corollary, sibling=theorem]{corollary}
+% \declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+% \declaretheorem[style=assertionstyle, name=Conjecture, sibling=theorem]{conjecture}
+% \declaretheorem[style=assertionstyle, name=Claim, sibling=theorem]{claim}
+% \declaretheorem[style=assertionstyle, name=Fact, sibling=theorem]{fact}
+
+% \declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+% \declaretheorem[style=digressionstyle,name=Digression]{digression}
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ding{45}, postheadspace=1em]{definitionstyle}
+% \declaretheorem[style=definitionstyle, name=Definition]{definition}
+% \declaretheorem[style=definitionstyle, name=Problem, sibling=definition]{problem}
+
+
+% % \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{definitionstyle}
+% % \declaretheorem[style=definitionstyle, name=Definition]{definition}
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\square}, postheadspace=1em]{proofstyle}
+% \let\proof\relax \let\endproof\relax
+% \declaretheorem[style=proofstyle, name=Proof, numbered=no]{proof}
+
+% \declaretheoremstyle[headfont=\bfseries\color{funblue}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{funblue}\blacktriangleleft}, postheadspace=1em]{examplestyle}
+% \declaretheorem[style=examplestyle, name=Example,]{example}
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{remarkstyle}
+% \declaretheorem[style=remarkstyle, name=Remark,]{remark}
+
+% \declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft}, postheadspace=1em]{cautionstyle}
+% \declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+% \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont\footnotesize, spaceabove=\thmspace, spacebelow=\thmspace, postheadspace=1em]{smallremarkstyle}
+% \declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+
+\usepackage{thmtools}
+
+\newlength{\thmspace}
+\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+% ===== main assertion-style family (Theorem, Lemma, etc.) =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\vartriangleleft},
+  postheadspace=1em
+]{assertionstyle}
+
+\declaretheorem[
+  style=assertionstyle,
+  name=Theorem,
+  numberwithin=section   % <-- resets in each section
+]{theorem}
+
+\declaretheorem[style=assertionstyle, name=Lemma,       sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle, name=Corollary,   sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle, name=Conjecture,  sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
+
+
+% ===== definitions =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{definitionstyle}
+
+\declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
+
+% ===== exercises, solutions =====
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ding{45},
+  postheadspace=1em
+]{exercisestyle}
+\declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
+\declaretheoremstyle[
+  headfont=\bfseries\color{red},
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{red}\blacktriangleleft},
+  postheadspace=1em
+]{solutionstyle}
+\declaretheorem[style=solutionstyle, name=Solution, numbered=no]{solution}
+
+% ===== proofs =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+
+\let\proof\relax
+\let\endproof\relax
+\declaretheorem[style=proofstyle, name=Proof,    numbered=no]{proof}
+
+
+% ===== remarks, cautions, examples =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{remarkstyle}
+
+\declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{funblue},
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{funblue}\blacktriangleleft},
+  postheadspace=1em
+]{examplestyle}
+
+\declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+
+
+\declaretheoremstyle[
+  headfont=\color{alizarincrimsonred}\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},
+  postheadspace=1em
+]{cautionstyle}
+
+\declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\footnotesize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  postheadspace=1em
+]{smallremarkstyle}
+
+\declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{amethyst},
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\color{amethyst}\blacktriangleleft},
+  postheadspace=1em
+]{digressionstyle}
+
+\declaretheorem[style=digressionstyle, name=Digression, sibling=remark]{digression}
+
+
+\numberwithin{equation}{section} % equations numbered within sections
+
+
+
+
+
+
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
+
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+% The algopseudocodex package uses TikZ internally. The easiest solution would be to disable the externalization for the algorithmic environment by doing
+% \AddToHook{env/algorithmic/begin}{\tikzexternaldisable} 
+
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+
+
+% \newcommand{\matr}[1]{\boldsymbol{#1}}
+% \newcommand{\matr}[1]{\underline{\boldsymbol{#1}}}
+% \newcommand{\matr}[1]{\smash{\underline{\boldsymbol{#1}}}}
+% \newcommand{\matr}[1]{\underaccent{\bar}{\boldsymbol{#1}}}
+
+
+% \newcommand*\matrspace{0.8mu} % ← adjust this to control underline shortening
+% \newcommand{\matr}[1]{%
+%   \mspace{\matrspace}%
+%   \underline{\mspace{-\matrspace}\boldsymbol{#1}\mspace{-\matrspace}}%
+%   \mspace{\matrspace}%
+% }
+
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
+
+% \newcommand*\matrshrink{0.25ex} % total amount to shorten the underline (tweak)
+% \makeatletter
+% \newcommand{\matr}[1]{\mathpalette\@matr{#1}}
+% \newcommand{\@matr}[2]{%
+%   \begingroup
+%     \setbox0=\hbox{$#1\boldsymbol{#2}$}% measure in the current math style
+%     \dimen0=\wd0 \advance\dimen0 by -\matrshrink % shorter underline
+%     % center a shorter \underline under the full-width box, then print the glyphs:
+%     \rlap{\hbox to \wd0{\hss\underline{\hbox to \dimen0{}}\hss}}%
+%     \box0
+%   \endgroup
+% }
+% \makeatother
+
+
+
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\smash{\vec{\boldsymbol{#1}}}}
+% \newcommand{\vect}[1]{\vec{{#1}}\,}
+% \newcommand{\vect}[1]{\vec{#1}}
+
+
+
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+\newcommand{\blackheight}{\operatorname{bh}}
+
+% \algnewcommand{\LeftComment}[1]{\(\triangleright\) #1}
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+% \newcommand{\attribute}[1]{\ensuremath{\mathtt{#1}}}
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
+
+
+
+
+
+\title{Scattered Data Approximation}
+% \author{\today}
+% \date{}
+\author{Fabian Bosshard}
+\date{\today}
+
+
+
+% \usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green]{hyperref}
+% \usepackage{hyperref} % for printing use this version (without colorlinks)
+\usepackage[
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Scattered Data Approximation - Course Notes},
+  pdfkeywords={USI, scattered data approximation, course notes, informatics},
+  colorlinks=false,  
+  pdfborder={0.0 0.0 0.0},      
+  linkbordercolor={0 0.6 1},      % internal links
+  urlbordercolor={0 0.6 1},       % URLs
+  citebordercolor={0 0.6 1}       % citations
+]{hyperref}
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+\usepackage{cleveref}
+
+% after \usepackage{hyperref} and \numberwithin{equation}{section}
+\makeatletter
+
+% ========== equations ==========
+% equation numbers are section-relative: (1.1), (1.2), ...
+% make hyperref anchors match that so they’re unique
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+
+% ========== theorem family ==========
+% theorem is the base counter; all siblings share its counter
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+
+% ========== definition family ==========
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+
+% ========== exercise family ==========
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+% Solution is numbered=no → no counter, no \theHsolution needed
+
+% ========== remark / example / caution family ==========
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+
+\makeatother
+
+% load glossaries *after* hyperref
+\usepackage[acronym,              % create an “acronym” glossary
+            nomain,               % omit the main glossary (only acronyms)
+            toc,                  % add list of acronyms to the ToC
+            nonumberlist          % omit page list in the printed glossary
+           ]{glossaries-extra}
+
+% choose how the first appearance looks:
+\setabbreviationstyle[acronym]{long-short}
+
+% must be issued once *after* loading glossaries
+\makeglossaries
+
+
+\newacronym{rbf}{RBF}{radial basis function}
+\newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
+
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\clearpage
+
+\section{Introduction}
+
+We have data values \(y_i\) (e.g., measurements or samples) together with the corresponding data sites \(\vect{x}_i\). 
+We want a model $s_f$ that matches the data according to a certain criterion.
+
+We distinguish 2 cases, depending on our knowledge of the underlying data-generating process \(f\):
+\begin{itemize}
+  \item $f$ is \hl{unknown}, we seek a model $s_f$ that allows extrapolation to unseen data sites. goodness of fit may be defined in various ways.
+  \item $f$ is \hl{known}, {for example as the solution operator of a PDE, the goal is to build a surrogate model $s_f$ that is cheaper to evaluate than $f$ itself.}
+\end{itemize}
+
+\hl[2]{scattered}: data sites not located on a uniform grid
+
+data sites:
+\(
+X := \{\vect{x}_1, \ldots, \vect{x}_N\} \subset \Omega \subset \R^d
+\)
+
+We start from the interpolation problem, which aims at exactly matching a given set of data:
+\begin{problem}[Scattered data interpolation]\label{problem:scattered_data_interpolation}
+Given data \((\vect{x}_i, y_i)\), \(i=1, \ldots, N\), with \(\vect{x}_i \in \R^d\) and \(y_i \in \R\), find a continuous function \(s_f\) such that
+\begin{equation}\label{eq:scattered_data_interpolation_condition}
+s_f(\vect{x}_i) = y_i, \quad i=1, \ldots, N
+\qedhere
+\end{equation}
+\end{problem}
+
+A common solution to \autoref{problem:scattered_data_interpolation} is to assume that \(s_f\) is a linear combination of certain functions \(\varphi_j\):
+\begin{equation}\label{eq:linear_combination}
+s_f(\vect{x}) = \sum_{j=1}^N c_j \varphi_j(\vect{x})
+\end{equation}
+
+Applying the interpolation condition \eqref{eq:scattered_data_interpolation_condition} to \eqref{eq:linear_combination} yields 
+\begin{equation}\label{eq:scattered_data_interpolation_system}
+\matr{A} \vect{c} = \vect{y}
+\end{equation}
+where the \hl[3]{generalized Vandermonde matrix} is given by
+\begin{equation}\label{eq:generalized_vandermonde_matrix}
+\matr{A} := [\varphi_j(\vect{x}_i)]_{i,j=1}^N =
+\begin{bmatrix}
+\varphi_1(\vect{x}_1)  & \cdots & \varphi_N(\vect{x}_1) \\
+\vdots  & \ddots & \vdots \\
+\varphi_1(\vect{x}_N)  & \cdots & \varphi_N(\vect{x}_N)  
+\end{bmatrix}
+\end{equation}
+
+\autoref{problem:scattered_data_interpolation} is \hl[1]{well-posed} (i.e. a solution exists and is unique), iff \(\matr{A}\) is non-singular.
+
+\begin{example}[Polynomial interpolation]\label{example:polynomial_interpolation}
+Given \(x_1, \ldots, x_N \in \R\) and \(y_1, \ldots, y_N \in \R\), find a polynomial \(p \in \Pi_{N-1} := \Span\{1, x, \ldots, x^{N-1}\}\) such that \(p(x_i) = y_i\), \(i=1, \ldots, N\).
+With respect to the monomial basis \(\varphi_j(x) = x^{j-1}\), \(j=1, \ldots, N\), the Vandermonde matrix is given by 
+\[
+\matr{A} =
+\begin{bmatrix}
+1 & x_1 & \cdots & x_1^{N-1} \\
+\vdots & \vdots & & \vdots \\
+1 & x_N & \cdots & x_N^{N-1}
+\end{bmatrix}
+\in \R^{N \times N}
+\]
+
+It can be shown that 
+\[
+\det(\matr{A}) = \prod_{1 \leq i < j \leq N} (x_j - x_i)
+\]
+
+Therefore, we have \(\det(\matr{A}) \neq 0\) whenever \(x_i \neq x_j\) for \(i \neq j\), 
+which implies the well-posedness of the polynomial interpolation problem.
+\end{example}
+
+Generalizing the ideas of \autoref{example:polynomial_interpolation} yields the following concept:
+\begin{definition}[Haar space]\label{definition:haar_space}
+Let \(V \subset C(\Omega)\) be a finite-dimensional function space with basis \(\{\varphi_1, \ldots, \varphi_N\}\).
+\(V\) is a \hl{Haar space}, iff \(\det(\matr{A}) \neq 0\) for every set of mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N \in \Omega\), where \(\matr{A} = [\varphi_j(\vect{x}_i)]_{i,j=1}^N\) is the corresponding generalized Vandermonde matrix from \eqref{eq:generalized_vandermonde_matrix}.
+\end{definition}
+
+We have the following negative result:
+\begin{theorem}[Mairhuber-Curtis]\label{theorem:mairhuber_curtis}
+If \(\Omega \subset \R^d\), \(d > 1\), contains an interior point%{\textcolor{orange}{(what?)}}%
+, 
+then there exist no Haar spaces except for one-dimensional ones.
+\end{theorem}
+
+\begin{proof}[Contradiction]
+Let \(d > 1\) and assume that there exists a Haar space \(V \subset C(\Omega)\) with basis \(\{\varphi_1, \ldots, \varphi_N\}\) where \(N > 1\).
+Let \(\vect{x}_1, \ldots, \vect{x}_N \in \Omega\) be a set of mutually distinct interior %{\textcolor{orange}{(why?)}}%
+points.
+By assumption, \(\det(\matr{A}) \neq 0\).
+
+Now consider a simple closed path \(p\) connecting only \(\vect{x}_1\) and \(\vect{x}_2\):
+\[
+\begin{tikzpicture}[scale=0.8]
+% axes
+\begin{scope}[xshift=-0.5cm]
+  \draw[->,black,thick] (0,0) -- (8,0);
+  \draw[->,black,thick] (0,0) -- (0,4);
+\node at (0.5,0.5) {\(\R^d\)};
+\end{scope}
+
+% domain boundary (blob)
+\draw[black,thick, fill=gray!30]
+  plot[smooth cycle,tension=0.55]
+  coordinates {(0.8,1.4) (1.3,3.7) (4.0,4.1) (6.6,3.9) (7.8,2.8) (7.3,1.3) (5.7,0.6) (3.7,0.3) (1.6,0.5)};
+\node[black] at (7.2,4.0) {$\Omega$};
+
+% % random crosses
+% \foreach \p in {(3.4,1.2),(1.4,2.0),(2.4,3.2),(3.3,2.5),(3.8,3.6),(4.8,2.2),(5.4,3.4),(6.8,3.2),(6.9,1.8)}
+%   \node[black] at \p {$\times$};
+
+% paths, start / end marks
+\node[black, circle, fill=black, outer sep=0pt, inner sep=1.4pt] (xi) at (2.2,1.5) {};
+\node[black, circle, fill=black, outer sep=0pt, inner sep=1.4pt] (xj) at (6.6,2.6) {};
+\node[black,left] at (xi) {$\vect{x}_1$};
+\node[black,right] at (xj) {$\vect{x}_2$};
+\draw[black,thick,postaction={decorate},decoration={
+      markings,
+      mark=at position 0.5 with {\arrow{Stealth[length=3mm]}}
+    }] (xi) .. controls (2.2,3.7) and (6.6,3.6) .. node[pos=0.18, above]{$p$} node[pos=0.65, circle, fill=black, outer sep=2.4pt, inner sep=1.4pt](xip){} (xj);
+\draw[black,thick,postaction={decorate},decoration={
+      markings,
+      mark=at position 0.25 with {\arrow{Stealth[length=3mm]}}
+    }] (xj) .. controls (5.0,1.0) and (3.0,1.2) .. node[pos=0.55, circle, fill=black, outer sep=2.4pt, inner sep=1.4pt](xjp){} (xi);
+\node[above] at (xip) {$\vect{x}_1'$};
+\node[below] at (xjp) {$\vect{x}_2'$};
+
+\end{tikzpicture}
+\]
+
+We can interchange the positions of \(\vect{x}_1\) and \(\vect{x}_2\), effectively swapping the first two rows of \(\matr{A}\), by continuously moving along \(p\).
+This in turn changes the sign of \(\det(\matr{A})\).
+
+Since \(\varphi_j(\cdot)\), \(p\) and \(\det(\cdot)\) are all continuous functions, there must exist \(\vect{x}_1', \vect{x}_2'\) on \(p\) such that \(\det(\matr{A}') = 0\) for the corresponding generalized Vandermonde matrix \(\matr{A}'\), which contradicts the assumption that \(V\) is a Haar space. 
+\end{proof}
+
+\autoref{theorem:mairhuber_curtis} implies that if we want to have a well-posed multivariate interpolation problem, we cannot choose the basis in advance, as we did in \autoref{example:polynomial_interpolation}.
+Instead, the basis should depend on the data locations \(\vect{x}_i\).
+
+
+\begin{example}[Interpolation by distance matrices]\label{example:interpolation_by_distance_matrices}
+Given data sites \(x_1, \ldots, x_N \in \R\) and values \(y_1, \ldots, y_N \in \R\), we make the ansatz
+\[
+s_f(x) = \sum_{j=1}^N c_j |x - x_j|
+\]
+which amounts to the linear spline interpolant if we solve \eqref{eq:scattered_data_interpolation_condition}.
+For \(d > 1\), this can be generalized to:
+\[
+\begin{verticalhack}
+s_f(\vect{x}) = \sum_{j=1}^N c_j \|\vect{x} - \vect{x}_j\|_2
+\end{verticalhack}
+\qedhere
+\]
+\end{example}
+
+The basis functions in \autoref{example:interpolation_by_distance_matrices} are examples of:
+\begin{definition}[Radial basis function]\label{def:rbf}
+A function \(K: \R^d \to \R\) is called \hl{radial}, iff there exists a univariate function \(k: [0, \infty) \to \R\) such that \(K(\vect{x}) = k(r)\), where \(r := \|\vect{x}\|\) and \(\|\cdot\|\) is any norm on \(\R^d\).
+We say that \(\varphi_j(\vect{x}) = K(\vect{x} - \vect{x}_j)\), \(j=1, \ldots, N\), are RBFs.
+\end{definition}
+
+\begin{definition}\label{def:positive_definite_rbf}
+A function \(K: \R^d \to \R\) is called {positive semi-definite}, iff the generalized Vandermonde matrix \(\matr{A} = [\varphi_j(\vect{x}_i)]_{i,j=1}^N = [K(\vect{x}_i - \vect{x}_j)]_{i,j=1}^N\) is symmetric positive semi-definite any mutually distinct \(\vect{x}_1, \ldots, \vect{x}_N \in \R^d\) and any \(N \in \N\).
+It is called \hl{positive definite}, iff \(\matr{A}\) is symmetric positive definite.
+\end{definition}
+
+\begin{example}[Matérn kernels]\label{example:matern_kernels}
+The Matérn kernels 
+\[
+k_\nu(r) = \frac{2^{1-\nu}}{\Gamma(\nu)} \left(\frac{\sqrt{2\nu} r}{\ell}\right)^\nu B_\nu \! \left(\frac{\sqrt{2\nu} r}{\ell}\right), \quad \nu, \ell > 0
+\]
+where \(B_\nu\) is the modified Bessel function of the second kind of order \(\nu\), are positive definite.
+In particular, \(k_{1/2}(r) = \exp(-r/\ell)\) and \(k_{\infty}(r) = \exp(-r^2/(2\ell^2))\).
+\end{example}
+
+\begin{fact}\label{fact:properties_posdeffun}
+  \leavevmode
+  \begin{enumerate}[label=\textbf{(\arabic*)}]
+    \item If \(K_1, \ldots, K_n\) are positive semi-definite and \(c_l \geq 0\), \(l=1, \ldots, n\), then \(K = \sum_{l=1}^n c_l K_l\) is also positive semi-definite.
+          If at least one \(K_l\) is positive definite and \(c_l > 0\), then \(K\) is positive definite. \label{item:sum_posdeffun}
+    \item If \(K\) is positive semi-definite, then \(K(\vect{0}) \geq 0\). \label{item:diag_posdeffun}
+    \item If \(K\) is positive semi-definite, then \(K(\vect{x}) = K(-\vect{x})\). \label{item:sym_posdeffun}
+    \item Any positive semi-definite function is bounded, i.e., \(|K(\vect{x})| \leq K(\vect{0})\). \label{item:bounded_posdeffun}
+    \item If \(K\) is positive semi-definite with \(K(\vect{0}) = 0\), then \(K \equiv 0\). \label{item:zero_posdeffun}
+    \item The product of positive (semi-)definite functions is positive (semi-)definite. \label{item:product_posdeffun}
+    \qedhere
+  \end{enumerate}
+\end{fact}
+
+For the corresponding Vandermonde matrix \(\matr{A} = [K(\vect{x}_i - \vect{x}_j)]_{i,j=1}^N\), \autoref{fact:properties_posdeffun} can be interpreted as follows.
+\ref{item:sum_posdeffun} states that if \(\matr{A}_1, \ldots, \matr{A}_n\) are symmetric positive semi-definite and \(c_l \ge 0\), then \(\matr{A} = \sum_{l=1}^n c_l \matr{A}_l\) is symmetric positive semi-definite.
+If at least one \(\matr{A}_l\) is symmetric positive definite and \(c_l>0\), then \(\matr{A}\) is symmetric positive definite.
+\ref{item:diag_posdeffun} means that the diagonal entries satisfy \(A_{kk} \ge 0\) for all \(k\).
+\ref{item:sym_posdeffun} means that \(\matr{A}\) is symmetric, i.e., \(A_{ij} = A_{ji}\).
+\ref{item:bounded_posdeffun} means that \(|A_{ij}| \le A_{kk}\) for all \(i,j,k\).
+\ref{item:zero_posdeffun} means that \(\matr{A} = \matr{0}\) if \(A_{kk} = 0\).
+\ref{item:product_posdeffun} corresponds to the fact that the entrywise product of symmetric positive (semi-)definite matrices is symmetric positive (semi-)definite.
+
+
+
+
+\clearpage
+
+
+\section{Scattered data interpolation with polynomial precision}
+
+Often it is desirable that an approximation can represent polynomials exactly.
+As we have seen in \autoref{theorem:mairhuber_curtis}, in this case the interpolation points need to be carefully chosen.
+
+
+\subsection{Unisolvency}
+We define
+\(
+\vect{x}^{\vect{\alpha}} 
+:=
+% \prod_{\ell=1}^d x_\ell^{\alpha_\ell} 
+x_1^{\alpha_1} \cdots x_d^{\alpha_d}
+\)
+for \(\vect{x} 
+% = (x_1, \ldots, x_d)^\top 
+\in \R^d\) and a \emph{multi-index} \(\vect{\alpha} = 
+% (\alpha_1, \ldots, \alpha_d)^\top 
+\in \N_0^d\).
+
+\begin{definition}[q-unisolvent]\label{def:q_unisolvent}
+We call a set \(X = \{\vect{x}_1, \ldots, \vect{x}_N\} \subset \R^d\) \hl{\(q\)-unisolvent}, iff the only polynomial 
+\(
+p \in \Pi_q^d := \Span\{\vect{x}^{\vect{\alpha}} : \vect{\alpha} \in \N_0^d, \|\vect{\alpha}\|_1 \le q\}
+\)
+interpolating zero data on \(X\) is \(p \equiv 0\).
+This means that the matrix
+\begin{equation}\label{eq:polynomial_vandermonde_matrix}
+\matr{P} := \big[\vect{x}_i^{\vect{\alpha}}\big]_{
+\substack{
+i=1,\ldots,N \\
+\|\vect{\alpha}\|_1 \le q}
+} \in \R^{N \times m_q}
+\end{equation}
+has full column rank \(m_q := \dim \Pi_q^d = \binom{q+d}{d}\).
+\end{definition}
+
+\begin{remark}
+For \(d=1\), a set \(X=\{x_1,\dots,x_N\}\subset\R\) is \(q\)-unisolvent iff \(N\ge m_q=q+1\) and the points are pairwise distinct (a nonzero univariate polynomial of degree \(\le q\) has at most \(q\) distinct roots).
+
+For general \(d\ge 1\), the condition \(N\ge m_q=\dim\Pi_q^d\) is necessary: 
+if \(N<m_q\), then \(\matr P\in\R^{N\times m_q}\) cannot have full column rank, hence there exists a nonzero \(p\in\Pi_q^d\) such that \(p(\vect x_i)=0\) for all \(\vect x_i\in X\).
+
+In contrast to the one-dimensional case, for \(d>1\) the condition \(N\ge m_q\) is not sufficient. 
+The reason is that a nonzero multivariate polynomial may vanish on infinitely many points (e.g.\ along an algebraic curve or surface). 
+Concretely, if there exists a nonzero \(p\in\Pi_q^d\) with \(X\subset Z(p):=\{\vect x\in\R^d: p(\vect x)=0\}\), then \(X\) is not \(q\)-unisolvent.
+\end{remark}
+
+
+\subsection{Interpolation with polynomial precision}
+
+Taking polynomials into account for the approximation gives rise to a specific version of \autoref{problem:scattered_data_interpolation}:
+\begin{equation}\label{eq:scattered_data_interpolation_with_polynomial_precision}
+  {\color{Red}
+  % \setlength{\fboxrule}{1pt}
+  \boxed{ 
+  \color{black}
+s_f(\vect{x}) = \sum_{j=1}^N c_j \varphi_j(\vect{x}) + \sum_{k=1}^{m_q} d_k p_k(\vect{x})
+}}
+\end{equation}
+for a basis \(\{p_1, \ldots, p_{m_q}\}\) of \(\Pi_q^d\) and \(q \ge 0\).
+
+Enforcing the interpolation conditions \(s_f(\vect{x}_i) = y_i\) for \(i=1, \ldots, N\) leads to a linear system of \(N\) equations for \(N + m_q\) unknowns.
+To determine the remaining \(m_q\) coefficients, we add the additional conditions
+\begin{equation}\label{eq:additional_conditions}
+\sum_{j=1}^N c_j p_k(\vect{x}_j) = 0 \quad \text{for } k=1, \ldots, m_q
+\end{equation}
+
+
+% \begin{remark}
+% The constraints \eqref{eq:additional_conditions} are not an arbitrary ``counting'' fix, they are necessary for two structural reasons:
+% \begin{itemize}
+%   \item They remove the polynomial nullspace and make the solution unique.
+%         Many kernels used here are only conditionally positive definite of order \((q+1)\) (see \autoref{def:conditionally_positive_definite}).
+%         This means that the quadratic form \(\vect{c}^\top \matr{A} \vect{c}\) is guaranteed nonnegative only on 
+%         \(
+%         \Kern(\matr{P}^\top) = \{\vect{c} : \matr{P}^\top \vect{c} = \vect{0}\}
+%         \),
+%         see \autoref{def:conditionally_positive_definite}, \eqref{eq:conditional_positive_definiteness}.
+%         Outside that subspace, \(\matr{A}\) can be singular/indefinite.
+%         So we must restrict \(\vect{c}\) to \(\Kern(\matr{P}^\top)\).
+%         Writing that restriction in coordinates gives exactly the constraints \eqref{eq:additional_conditions}.
+%         With this, the block system \eqref{eq:saddle_point_system} becomes (under \(q\)-unisolvency and strict conditional positive definiteness) nonsingular, hence uniquely solvable (see \autoref{thm:saddle_point_system_wellposedness}).
+%   \item They prevent a non-unique decomposition between the RBF part and the polynomial part of the ansatz \eqref{eq:scattered_data_interpolation_with_polynomial_precision}.
+%         Without \eqref{eq:additional_conditions}, one can often trade off polynomial pieces between the RBF term and the polynomial term and still hit the same data values, i.e., non-uniqueness.
+%         The conditions \eqref{eq:additional_conditions} force the RBF coefficient vector \(\vect{c}\) to be orthogonal (in the discrete sense) to all polynomials in \(\Pi_q^d\), so the polynomial component is carried purely by \(\vect{d}\).
+% \end{itemize}
+% So: the constraints \eqref{eq:additional_conditions} are the conditions that pin \(\vect{c}\) into the subspace where conditional positive definiteness applies, and they are exactly what makes the augmented interpolation problem \eqref{eq:saddle_point_system} well-posed and uniquely solvable.
+% \end{remark}
+
+\begin{remark}
+The constraints \eqref{eq:additional_conditions} prevent a non-unique decomposition between the RBF part and the polynomial part of the ansatz \eqref{eq:scattered_data_interpolation_with_polynomial_precision}.
+Without \eqref{eq:additional_conditions}, one can often trade off polynomial pieces between the two parts in \eqref{eq:scattered_data_interpolation_with_polynomial_precision} and still hit the same data values (non-uniqueness).
+\eqref{eq:additional_conditions} forces the RBF coefficient vector \(\vect{c}\) to be orthogonal (in the discrete sense) to all polynomials in \(\Pi_q^d\), so the polynomial component is carried purely by \(\smash{\vect{d}}\).
+\end{remark}
+
+
+
+
+
+Introducing the matrices
+\[
+\matr{A} := \big[\varphi_j(\vect{x}_i)\big]_{i,j=1}^N \in \R^{N \times N} \quad \text{and} \quad
+\matr{P} := \big[p_j(\vect{x}_i)\big]_{\substack{i=1,\ldots,N \\ j=1,\ldots,m_q}} \in \R^{N \times m_q}
+\]
+as well as the vectors \(\vect{c} := [c_1, \ldots, c_N]^\top\), \(\vect{d} := [d_1, \ldots, d_{m_q}]^\top\) yields the saddle point system
+\begin{equation}\label{eq:saddle_point_system}
+\begin{bmatrix}
+\matr{A} & \matr{P} \\
+\matr{P}^\top & \matr{0}
+\end{bmatrix}
+\begin{bmatrix}
+\vect{c} \\
+\vect{d}
+\end{bmatrix} 
+=
+\begin{bmatrix}
+\vect{y} \\
+\vect{0}
+\end{bmatrix}
+\end{equation}
+
+Since we now solve the augmented system \eqref{eq:saddle_point_system} instead of \eqref{eq:scattered_data_interpolation_system},
+we don't need \(K\) to be positive definite anymore -
+it's enough for \(K\) to be \hl{conditionally positive definite} of order \((q+1)\) (\autoref{def:conditionally_positive_definite}), as we will see in \autoref{thm:saddle_point_system_wellposedness}.
+
+\subsection{Conditionally positive definite functions}
+
+\begin{definition}\label{def:conditionally_positive_definite}
+A function \(K: \R^d \to \R\) is called conditionally positive definite of order \((q+1)\), iff for any mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N \in \R^d\) and any \(N \in \N\) the generalized Vandermonde matrix \(\matr{A} = [K(\vect{x}_i - \vect{x}_j)]_{i,j=1}^N\) satisfies
+\begin{equation}\label{eq:conditional_positive_definiteness}
+\vect{c}^\top \matr{A} \vect{c} \ge 0 \quad \text{for any } \vect{c} \in \Kern(\matr{P}^\top)
+\end{equation}
+where \(\matr{P} = [\vect{x}_i^{\vect{\alpha}}]_{i=1,\ldots,N, \, \|\vect{\alpha}\|_1 \le q}\) is the polynomial Vandermonde matrix from \autoref{def:q_unisolvent}, \autoref{eq:polynomial_vandermonde_matrix}.
+It is called {strictly conditionally positive definite}, iff equality in \eqref{eq:conditional_positive_definiteness} only holds for \(\vect{c} = \vect{0}\).
+\end{definition}
+
+We have the following relation between conditionally positive definite functions.
+\begin{fact}\label{fact:properties_cond_posdeffun}
+A function that is (strictly) conditionally positive definite of order \((q+1)\) is also (strictly) conditionally positive definite of any higher order.
+In particular, a function that is (strictly) conditionally positive definite of order 1 is (strictly) conditionally positive definite of any order.
+\end{fact}
+
+\begin{theorem}\label{thm:saddle_point_system_wellposedness}
+Let \(K: \R^d \to \R\) be strictly conditionally positive definite of order \((q+1)\) and let \(\vect{x}_1, \ldots, \vect{x}_N\) be \(q\)-unisolvent.
+Then, the linear system \eqref{eq:saddle_point_system} is uniquely solvable.
+\end{theorem}
+
+\begin{proof}
+To prove the assertion, we show that the kernel of the matrix in \eqref{eq:saddle_point_system} consists of only the zero vector \(\vect{0}_{N+m_q}\):
+\[
+\begin{bmatrix}
+\matr{A} & \matr{P} \\
+\matr{P}^\top & \matr{0}
+\end{bmatrix}
+\begin{bmatrix}
+\vect{c} \\
+\vect{d}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\vect{0}_N \\
+\vect{0}_{m_q}
+\end{bmatrix}
+\Leftrightarrow
+\begin{cases}
+\matr{A} \vect{c} + \matr{P} \vect{d} = \vect{0}_N \\
+\matr{P}^\top \vect{c} = \vect{0}_{m_q}
+\end{cases}
+\]
+
+To find \(\vect{c}\), we multiply the top equation by \(\vect{c}^\top\) from the left, yielding
+\[
+\vect{c}^\top \matr{A} \vect{c} + \vect{c}^\top \matr{P} \vect{d} = 0
+\]
+From the bottom equation, we have \(\matr{P}^\top \vect{c} = \vect{0} \Leftrightarrow\vect{c}^\top \matr{P} = \vect{0}^\top\).
+Consequently, we infer \(\vect{c}^\top \matr{A} \vect{c} = 0\).
+Since \(K\) is strictly conditionally positive definite of order \((q+1)\), this implies \(\vect{c} = \vect{0}_N\).
+
+To find \(\vect{d}\), we insert \(\vect{c} = \vect{0}_N\) into the top equation, yielding
+\[
+\matr{A} \vect{c} + \matr{P} \vect{d} = \matr{P} \vect{d} = \vect{0}_N
+\]
+By the \(q\)-unisolvency of \(\vect{x}_1, \ldots, \vect{x}_N\), the matrix \(\matr{P}\) has full column rank \(m_q\).
+Therefore, \(\vect{d} = \vect{0}_{m_q}\) is the only solution to the top block of \eqref{eq:saddle_point_system}.
+\end{proof}
+
+\begin{remark}
+\autoref{def:conditionally_positive_definite} and \autoref{thm:saddle_point_system_wellposedness} are a special, finite-dimensional, instance of the inf-sup- or Ladyzhenskaya-Babuška-Brezzi (LBB) condition, which guarantees the well-posedness of (infinite-dimensional) saddle point problems.
+\end{remark}
+
+\begin{example}\label{example:conditionally_positive_definite_rbf}
+The generalized multiquadrics \(K(\vect{x}) = (1 + \|\vect{x}\|^2)^\beta\), \(0 < \beta \notin \N\), are strictly conditionally positive definite of order \(\lceil \beta \rceil\).
+
+The radial powers \(K(\vect{x}) = \|\vect{x}\|^\beta\), \(0 < \beta \notin 2\N\) are strictly conditionally positive definite of order \(\lceil \beta/2 \rceil\).
+This means that the distance functions from \autoref{example:interpolation_by_distance_matrices} are conditionally positive definite of order 1.
+
+Duchon's thin plate splines \(K(\vect{x}) = \|\vect{x}\|^{2\beta} \log(\|\vect{x}\|)\), \(\beta \in \N^*\), are strictly conditionally positive definite of order \(\beta + 1\).
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\section{Functional Analysis}
+
+\subsection{Norm, Completeness, Inner product}
+\begin{definition}[Norm]\label{def:norm}
+If \(V\) is a vector space over \(\F\)\footnote{henceforth, \(\F\) is short for \(\R\) or \(\C\)}, then a function \(\|\cdot\|: V \to \R_{\ge 0}\) is called a norm if
+\begin{itemize}
+  \item \(\|x\| = 0 \Leftrightarrow x = 0\) \hfill (positive definite)
+  \item \(\|\lambda x\| = |\lambda| \|x\|\) \hfill (homogeneous)
+  \item \(\|x + y\| \le \|x\| + \|y\|\) \hfill (triangle inequality)
+\end{itemize}
+for all \(x, y \in V\) and \(\lambda \in \F\).
+A vector space on which a norm is defined is called a normed space.
+\end{definition}
+
+The function spaces used in functional analysis are mostly infinite-dimensional.
+Therefore, the norm and the notion of convergence alone are not sufficient to obtain powerful results.
+
+A normed space can be completed by adding a limit for every Cauchy sequence that does not converge, until all Cauchy sequences possess a limit.
+In this way one passes from a normed space \(X\) to its completion \(\overline{X}\).
+If it is not clear which norm is meant, this is indicated as an exponent:
+\begin{equation}\label{eq:completion}
+\overline{X}^{\|\cdot\|_X}
+\end{equation}
+If \(Y\) is the completion of \(X\), one says that \(X\) is dense in \(Y\).
+
+\begin{theorem}\label{theorem:completion}
+Let \((X, \|\cdot\|_X)\) be a normed space.
+There exists a Banach space \((\overline{X}, \|\cdot\|_{\overline{X}})\) called \hl{completion} of \(X\) and an injective mapping \(J: X \to \overline{X}\) such that
+\[
+J(v + w) = J(v) + J(w), \quad J(\lambda v) = \lambda J(v), \quad \|J(v)\|_{\overline{X}} = \|v\|_X
+\]
+for all \(v, w \in X\).
+This completion is unique up to isometry (rotation).
+\end{theorem}
+
+\begin{definition}[Inner product]\label{def:inner_product}
+If \(V\) is a vector space over \(\F\) (\(\R\) or \(\C\)), then a function \(\langle \cdot, \cdot \rangle: V \times V \to \F\) is called an inner product if
+\begin{itemize}
+  \item \(\langle x, y \rangle = \overline{\langle y, x \rangle}\) \hfill (conjugate symmetry)
+  \item \(\langle \lambda x + y, z \rangle = \lambda \langle x, z \rangle + \langle y, z \rangle\) \hfill (linear in first argument) 
+  \item \(\langle x, x \rangle \ge 0\) with equality if and only if \(x = 0\) \hfill (positive definite)
+\end{itemize}
+for all \(x, y, z \in V\) and \(\lambda \in \F\):
+A vector space on which an inner product is defined is called an inner product space.
+\end{definition}
+
+
+
+
+\[
+\begin{tikzpicture}[>=Stealth, line cap=round, line join=round, scale=1.1, font=\footnotesize]
+% ---------- LEFT: Pythagorean ----------
+\begin{scope}
+  \coordinate (O) at (0,0);
+  \coordinate (X) at (4,0);
+  \coordinate (Y) at (0,2.4);
+
+  \draw[dashed] (O)--(X) node[midway, below] {$\|y\|$};
+  \draw[dashed] (O)--(Y) node[midway, left]  {$\|x\|$};
+  \draw[very thick, red!70!black] (Y)--(X) node[midway, above, sloped] {$\|x+y\|$};
+
+  \node[draw, rounded corners, fill=white]
+       at ($(O)!0.5!(X)+(0,-1)$) {\nameref{theorem:pythagorean_formula}};
+\end{scope}
+
+% ---------- RIGHT: Parallelogram Law ----------
+\begin{scope}[xshift=5cm]
+  \coordinate (A) at (0,0);
+  \coordinate (B) at (4,0);
+  \coordinate (C) at (5,2.2);
+  \coordinate (D) at (1,2.2);
+
+  % base + right/top edges
+  \draw (B)--(C)--(D);
+  % dashed sides to match the style
+  \draw[dashed] (A)--(B) node[midway, below] {$\|y\|$};
+  \draw[dashed] (A)--(D) node[midway, left]  {$\|x\|$};
+
+  % diagonals
+  \draw[very thick, red!70!black] (A)--(C) node[pos=0.675, above, sloped] {$\|x+y\|$};
+  \draw[very thick, red!70!black] (B)--(D) node[pos=0.325, below, sloped] {$\|x-y\|$};
+
+  \node[draw, rounded corners, fill=white]
+       at ($(A)!0.5!($(C)-(0,2.2)$)+(0,-1)$) {\nameref{theorem:parallelogram_law}};
+\end{scope}
+\end{tikzpicture}
+\]
+\begin{theorem}[Parallelgram law]\label{theorem:parallelogram_law}
+For any \(x, y\) in an \hyperref[def:inner_product]{inner product space}, we have
+\begin{equation}\label{eq:parallelogram_law}
+\|x + y\|^2 + \|x - y\|^2 = 2\|x\|^2 + 2\|y\|^2
+\end{equation}
+\end{theorem}
+\begin{theorem}[Pythagorean formula]\label{theorem:pythagorean_formula}
+For any \(x, y\) in an \hyperref[def:inner_product]{inner product space} with \(x \perp y\) (i.e. they are orthogonal, i.e. \(\langle x, y \rangle = 0\)), we have
+\begin{equation}\label{eq:pythagorean_formula}
+\|x + y\|^2 = \|x\|^2 + \|y\|^2
+\end{equation}
+\end{theorem}
+\begin{theorem}[Cauchy-Schwarz inequality]\label{theorem:cauchy_schwarz_inequality}
+For any \(x, y\) in an \hyperref[def:inner_product]{inner product space}, we have
+\begin{equation}\label{eq:cauchy_schwarz_inequality}
+|\langle x, y \rangle| \le \|x\| \cdot \|y\|
+\end{equation}
+with equality if and only if \(x\) and \(y\) are linearly dependent.
+\end{theorem}
+
+
+
+
+\begin{definition}[Hilbert space]\label{def:hilbert_space}
+An inner product space that is complete with respect to the norm induced by the inner product is called a Hilbert space.
+\end{definition}
+
+\subsection{Bases in Hilbert spaces}
+
+In linear algebra the concept of a (Hamel) basis is central.
+For a Hamel basis of a vector space, every vector can be represented as a \emph{finite} linear combination of basis vectors.
+Since linear algebra mostly deals with finite-dimensional spaces, this is no restriction there.
+
+The spaces of interest in functional analysis, however, are all \emph{infinite}-dimensional.
+% A Hamel basis of a vector space V (over \R or \mathbb{C}) is a set B \subset V such that:
+% 	1.	(linearly independent) No element of B can be expressed as a finite linear combination of the others.
+% 	2.	(spanning) Every vector v \in V can be written as a finite linear combination of vectors from B:
+% v = \sum_{i=1}^n \alpha_i b_i, \quad b_i \in B, \ \alpha_i \in \mathbb{K}.
+% (that is, with finitely many summands!)
+While the general statement still holds that such a space has a Hamel basis (that is, a linearly independent, spanning (i.e. every vector can be represented as a finite linear combination) subset), every such Hamel basis has \emph{infinitely} many elements.
+Moreover: Those spaces that possess a \emph{countable} Hamel basis are not complete (e.g. the space of trigonometric polynomials).
+One can show that in an infinite-dimensional Banach space a Hamel basis is always uncountable.
+This disqualifies the concept of a Hamel basis for functional analysis.
+
+The idea of a Schauder basis is to drop the requirement that the representation of a vector uses finitely many elements.
+Instead we represent the elements as series whose partial sums are linear combinations of the basis vectors.
+
+\begin{definition}[Orthonormal basis]\label{def:orthonormal_basis}
+A subset \(B\) of a Hilbert space \(\mathcal{H}\) is called an orthogonal system if any two distinct elements of \(B\) are orthogonal, i.e., \(\langle x, y \rangle = 0\) if \(x \neq y\).
+
+If there exists in a Hilbert space \(\mathcal{H}\) an orthogonal system
+\[
+B = \{e_k \in \mathcal{H} : k \in \N\}
+\]
+such that for every \(f \in \mathcal{H}\) the representation
+\[
+f = \sum_{k=1}^\infty \langle f, e_k \rangle e_k
+\]
+holds, then \(B\) is called an orthonormal basis of \(\mathcal{H}\).
+\end{definition}
+
+In Hilbert spaces orthonormal bases replace the standard bases from linear algebra.
+That the elements of a \nameref{def:orthonormal_basis} actually have norm \(1\) can be checked easily:
+\[
+e_n = \sum_{k=1}^\infty \langle e_n, e_k \rangle e_k = \langle e_n, e_n \rangle e_n = \|e_n\|^2 e_n
+\quad
+\Longrightarrow 
+\quad
+\|e_n\| = 1
+\]
+Thus we have:
+\[
+\langle e_k, e_n \rangle = \begin{cases}
+1, & k = n \\
+0, & k \neq n
+\end{cases}
+\]
+
+\begin{theorem}\label{theorem:uniqueness_orthonormal_basis}
+The representation of a vector \(f\) in a Hilbert space with respect to an orthonormal basis is unique.
+\end{theorem}
+\begin{proof}
+Consider the representation
+\[
+f = \sum_{k=1}^\infty c_k e_k
+\]
+for some coefficients \((c_k)\).
+Then for every \(N \ge n \in \N\) we have
+\[
+c_n = \sum_{k=1}^N c_k \langle e_k, e_n \rangle
+=
+\left\langle \sum_{k=1}^N c_k e_k, e_n \right\rangle
+\]
+Letting \(N\) tend to infinity yields
+\[
+c_n = \langle f, e_n \rangle
+\]
+where we used the continuity of the inner product in its first argument%
+\footnote{i.e. \(\lim_{m \to \infty} \langle f_m, g \rangle = \langle \lim_{m \to \infty} f_m, g \rangle\)}
+\end{proof}
+
+This uniqueness of the representation means that we have the technique of comparing coefficients at our disposal.
+
+\begin{example}[Fourier series]\label{example:fourier_series}
+The prototype of such an orthonormal basis is the set
+\[
+\varphi_k=\frac{1}{\sqrt{2 \pi}} \mathrm{e}^{\mathrm{i} k x}, \quad k \in \Z, \; x \in (-\pi, \pi)
+\]
+in the Hilbert space \(L^2(-\pi, \pi)\).
+Here the series representation
+\[
+f = \sum_{k=-\infty}^\infty \langle f, \varphi_k \rangle \varphi_k
+\]
+is the Fourier series expansion of \(f\), where
+\(
+\langle f, g \rangle = \int_{-\pi}^\pi f(x) \overline{g(x)} \, \dif x
+\).
+\end{example}
+
+With arguments similar to the \hyperref[theorem:uniqueness_orthonormal_basis]{uniqueness of the representation} above one proves \hl[2]{Parseval's identity}
+\begin{equation}\label{eq:parsevals_identity}
+{\color{Red}\boxed{\color{black}
+\|f\|^2 = \sum_{k=1}^\infty |\langle f, e_k \rangle|^2
+}}
+\end{equation}
+
+\begin{remark}
+In \autoref{def:orthonormal_basis} we implicitly built in that the orthonormal basis is countable.
+This is not necessary, but the spaces with countable orthonormal bases, called \hl{separable} spaces, are the most important in practice.
+\end{remark}
+
+
+\subsection{Operators}\label{section:operators}
+
+\subsubsection{Linear bounded operators are continuous}
+
+\begin{definition}[Boundedness, continuity]\label{def:continuous_operators}
+Let \(U\) and \(V\) be normed spaces. 
+An operator \(\mathcal{A}: U \to V\) is called \emph{bounded} if there exists a constant \(M_\mathcal{A} > 0\) such that
+\[
+\|\mathcal{A} u\|_V \le M_\mathcal{A} \|u\|_U
+\]
+for all \(u \in U\).
+An operator \(\mathcal{A}: U \to V\) is called \emph{continuous} if
+\[
+\lim_{n \to \infty} \left( \mathcal{A} u_n \right) = \mathcal{A} \left( \lim_{n \to \infty} u_n \right)
+\]
+for every sequence \((u_n)\).
+
+The set of linear bounded operators from \(U\) to \(V\) is denoted by \(B(U, V)\).
+\end{definition}
+
+A \hl[2]{linear}, bounded operator is continuous:
+\[
+\left\| \mathcal{A} u_n - \mathcal{A} u \right\|_V
+\overset{\text{linear}}{=}
+\left\| \mathcal{A} (u_n - u) \right\|_V
+\overset{\text{bounded}}{\le}
+M_\mathcal{A} \left\|u_n - u\right\|_U
+\]
+where \((u_n)\) is a sequence in \(U\) converging to \(u\).
+The converse also holds: A linear continuous operator is bounded.
+
+The boundedness of an operator depends essentially on the underlying space and the norm used (see \autoref{bsp:differential_operator_C1_to_C0}).
+
+\begin{caution}
+A bounded operator is something completely different from a bounded function.
+For a bounded function, the image is a bounded set.
+For a bounded operator, every bounded set is mapped to a bounded set.
+The image need not be bounded.
+Among linear bounded operators only the zero operator has a bounded image.
+\end{caution}
+
+\begin{example}[Differential operator]\label{bsp:differential_operator_C1_to_C0}
+Consider the differential operator
+\[
+\frac{\dif}{\dif t}: C^1([0,1]) \to C([0,1]).
+\]
+We can turn both spaces into normed spaces by equipping them with the maximum norm, i.e.
+\[
+\|f\|_{\infty} := \max_{t \in [0,1]} |f(t)|.
+\]
+In this case the differential operator is not bounded, as can be seen from the sequence \((f_n)\) with
+\(
+f_n(t) = \cos(n t)
+\).
+We have \(\|f_n\|_{\infty} = 1\) for all \(n\), but
+\(
+\|f_n'\|_{\infty} = \max_{t \in [0,1]} | n \sin(n t) |
+\),
+which tends to infinity as \(n \to \infty\).
+
+If, however, we equip \(C^1([0,1])\) with the norm
+\[
+\|f\|_{C^1} := \|f\|_{\infty} + \|f'\|_{\infty}
+\]
+then for every \(f \in C^1([0,1])\) we trivially have
+\[
+\left\| \frac{\dif}{\dif t} f \right\|_{\infty} = \|f'\|_{\infty} \le \|f\|_{C^1}.
+\]
+Thus the differential operator is bounded with \(M_{\frac{\dif}{\dif t}} = 1\).
+\end{example}
+
+\subsubsection{Operator norm}
+
+The set \hyperref[def:continuous_operators]{\(B(U, V)\)} is itself again a vector space and we can also equip it with a norm:
+\begin{definition}[Operator norm]\label{def:operator_norm}
+For a linear bounded operator \(\mathcal{A} \in B(U, V)\) we define
+\begin{equation}\label{eq:operator_norm}
+\|\mathcal{A}\| := \sup_{u \in U \setminus \{0\}} \frac{\|\mathcal{A} u\|_V}{\|u\|_U} = \sup_{\|u\|_U = 1} \|\mathcal{A} u\|_V
+\qedhere
+\end{equation}
+\end{definition}
+If \(V\) is a Banach space, then \(B(U, V)\) is also a Banach space.
+The \nameref{def:operator_norm} has all the properties of a \nameref{def:norm}.
+In addition, for the composition \(\mathcal{B} \mathcal{A}\) of two linear bounded operators \(\mathcal{A}:U \to V\) and \(\mathcal{B} : V \to W\) the estimate
+\[
+  \|\mathcal{B} \mathcal{A}\| \le \|\mathcal{B}\| \, \|\mathcal{A}\|
+\]
+holds.
+
+\subsubsection{Bounded inverse}
+Complete spaces have, among other things, the advantage that they ensure well-behaved properties of linear bounded operators.
+Consider the situation where we want to solve an operator equation
+\begin{equation}\label{eq:operator_equation}
+\mathcal{A} x=y
+\end{equation}
+If the operator $\mathcal{A}$ is injective, then this equation has for every $y$ from the image of $\mathcal{A}$ a unique solution, i.e. the operator $\mathcal{A}$ possesses an inverse $\mathcal{A}^{-1}$.
+For the numerical solution of the problem it would, however, be useful if this inverse were also continuous, because then small errors in the right-hand side (the data) would change the solution of the equation only slightly.
+\begin{theorem}[Bounded inverse]\label{theorem:bounded_inverse}
+If \(U\) and \(V\) are Banach spaces and \(\mathcal{A}: U \to V\) a bijective linear bounded operator, then the inverse \(\mathcal{A}^{-1}: V \to U\) is also bounded (and hence continuous).
+\end{theorem}
+
+Unfortunately, the assumptions in \autoref{theorem:bounded_inverse} are often not fulfilled in practice.
+For \hl{compact operators}, the image is never a complete space and hence their inverse is always unbounded.
+
+
+\subsubsection{Continuous extension of an operator}
+We consider a linear bounded operator $\mathcal{A} \in B(U, V)$, where $U$ and $V$ are normed spaces. 
+As already mentioned, many important results require complete spaces (i.e. Banach spaces). 
+
+If $U$ and $V$ are not complete, they can be enlarged to their completions \eqref{eq:completion}.
+% The operator $\mathcal{A}$ can be extended to these larger spaces in a unique way. 
+Consider a Cauchy sequence $(u_n)$ from $U$. Then
+\[
+\left\|\mathcal{A} u_n-\mathcal{A} u_m\right\| = \left\|\mathcal{A} (u_n - u_m)\right\| \leq\|\mathcal{A}\|\left\|u_n-u_m\right\|
+\]
+
+
+Thus $(\mathcal{A} u_n)$ is a Cauchy sequence in $V$.
+The Cauchy sequence $\left(u_n\right)$ has a limit in $u \in \overline{U}$, the Cauchy sequence ($\mathcal{A} u_n$) a limit $v \in \overline{V}$. We set
+\[
+\overline{\mathcal{A}} u=\mathcal{A}\left(\lim _{n \rightarrow \infty} u_n\right)=\lim _{n \rightarrow \infty} \mathcal{A} u_n=v
+\]
+and obtain an operator $\overline{\mathcal{A}}: \overline{U} \rightarrow \overline{V}$ with $\overline{\mathcal{A}} u=\mathcal{A} u$ for all $u \in U$. 
+In other words: We extend $\mathcal{A}$ continuously from $U$ to $\overline{U}$. 
+This extension is unique and the norm of the operator does not change, i.e. $\|\overline{\mathcal{A}}\|=\|\mathcal{A}\|$.
+\[
+\begin{tikzpicture}[scale=0.9, font=\footnotesize]
+
+% nodes
+\node[circle, draw=blue!70, fill=blue!12] (X) at (-2, 0) {$X$};
+\node[circle, draw=blue!70, fill=blue!12] (Y) at (2, 0) {$Y$};
+\node[circle, draw=red!70!black, fill=red!12] (Xb) at (-2, 1.5) {$\overline{X}$};
+\node[circle, draw=red!70!black, fill=red!12] (Yb) at (2, 1.5) {$\overline{Y}$};
+
+% horizontal arrows + labels
+\draw[blue!70, ->] (X) -- node[below] {$\mathcal{A}$} (Y);
+\draw[red!70!black, ->]  (Xb) -- node[above] {$\overline{\mathcal{A}}$} (Yb);
+
+% vertical completion arrows
+\draw[green!45!black, ->] (X) -- (Xb);
+\draw[green!45!black, ->] (Y) -- (Yb);
+
+% "Vervollständigung" labels
+% \node[green!45!black, anchor=east] at ($ (X)!0.5!(Xb) + (-0.2,0) $) {extension};
+% \node[green!45!black, anchor=west] at ($ (Y)!0.5!(Yb) + (0.2,0) $)  {extension};
+
+\end{tikzpicture}
+\]
+
+% \begin{theorem}[Continuous extension of an operator]\label{theorem:continuous_extension}
+%   For two normed spaces $U, V$ and an operator $\mathcal{A} \in B(U, V)$ there exists a uniquely determined continuous extension $\overline{\mathcal{A}} \in B(\overline{U}, \overline{V})$. It holds that
+%   \[
+%   \overline{\mathcal{A}} u=\mathcal{A} u \quad \text { for all } u \in U
+%   \]
+%   and $\|\overline{\mathcal{A}}\|=\|\mathcal{A}\|$.
+% \end{theorem}
+Usually, however, one uses the same symbol for the continuous extension as for the original operator, i.e. one writes $\mathcal{A}$ again for $\overline{\mathcal{A}}$. 
+
+
+\subsubsection{Neumann series}
+
+\begin{theorem}[Perturbation lemma]\label{theorem:neumann_series}
+If \(V\) is a Banach space and \(\mathcal{A} : V \to V\) a linear bounded operator with \(\|\mathcal{A}\| < 1\), then
+\[
+(\mathrm{id}_V - \mathcal{A})^{-1} = \sum_{k=0}^\infty \mathcal{A}^k
+\]
+where the series converges in the operator norm.
+It holds that
+\[
+\begin{verticalhack}
+\left\| \left( \mathrm{id}_V - \mathcal{A} \right)^{-1} \right\| \le \frac{1}{1 - \|\mathcal{A}\|}
+\end{verticalhack}
+\qedhere
+\]
+\end{theorem}
+
+\subsection{Functionals and distributions}
+
+\begin{definition}[Functional]\label{def:functional}
+If \(V\) is a vector space over \(\F\), then a mapping \(\varphi: V \to \F\) is called a functional.
+If \(\varphi\) is linear, it is called a linear functional or also a linear form.
+\end{definition}
+
+\begin{example}
+When solving a linear operator equation of the form \eqref{eq:operator_equation} one can proceed by minimizing the norm of the residual, or equivalently its square
+\[
+\| \mathcal{A} x - y \|^2
+\]
+This is a nonlinear functional that has the minimum \(0\) for a possible solution.
+
+Sometimes minimizing only the residual leads to instabilities.
+One possibility for improvement is the introduction of an additional penalty term
+\[
+\| \mathcal{A} x - y \|^2 + \lambda \| x \|^2
+\]
+with a suitably chosen constant \(\lambda > 0\) (regularization).
+\end{example}
+
+\subsubsection{Distributions}
+can be regarded as a generalization of functions.
+
+We denote by \(C_0^\infty(\R)\) the space of infinitely differentiable functions with compact support (i.e. there exists a compact interval \(I \subset \R\) such that \(f(x) = 0\) for all \(x \notin I\)).
+The space \(C_0^\infty(\R)\) is also called the space of test functions.
+
+A sequence \((\varphi_k)\) of test functions converges to \(\varphi \in C_0^\infty(\R)\) if there exists a compact interval \(I \subset \R\) such that for every order of derivative \(n \in \N_0\)
+\[
+\| \varphi_k^{(n)} - \varphi^{(n)} \|_{I, \infty} \xrightarrow[]{k \to \infty} 0
+\]
+and \(\varphi_k(x) = 0\) for all \(x \notin I\).
+On the compact interval \(I\) every sequence of derivatives of the \((\varphi_k)\) therefore converges uniformly to the corresponding derivative of \(\varphi\).
+Outside of \(I\) all these functions vanish.
+
+We cannot describe this notion of convergence by means of a norm.\footnote{\(C_0^\infty(\R)\) is therefore not a normed space, and in particular not a Banach space or an inner product space. The problem is that we consider infinitely many derivatives.}
+However, we can consider functionals \(\psi : C_0^\infty(\R) \to \C\) that are continuous with respect to this notion of convergence.
+From \(\varphi_k \to \varphi\) we therefore require \(\psi(\varphi_k) \to \psi(\varphi)\).
+The set \(D\) of all such continuous functionals is called the space of \hl{distributions}.
+
+\begin{example}[$\delta$-distribution]\label{example:delta_distribution}
+A very simple distribution is the $\delta$-distribution defined by
+\[
+\delta(\varphi)=\varphi(0), \quad \varphi \in C_0^{\infty}(\R) .
+\]
+If $\left(\varphi_k\right)$ is a sequence of test functions with $\varphi_k \rightarrow \varphi \in C_0^{\infty}(\R)$, then there is uniform convergence on every compact interval that contains zero. Hence
+\[
+\lim _{k \rightarrow \infty} \delta\left(\varphi_k\right)=\lim _{k \rightarrow \infty} \varphi_k(0)=\varphi(0)=\delta(\varphi) .
+\]
+This shows that $\delta$ is a continuous functional on the space of test functions.
+\end{example}
+
+\subsubsection{Regular distributions}
+\begin{definition}[Regular distribution]\label{def:regular_distribution}
+A function that is integrable over every compact interval is called locally integrable.
+For every locally integrable function \(f : \R \to \C\) we obtain a corresponding distribution by 
+\[
+\psi_f(\varphi) := \int_{-\infty}^{\infty} f(x) \varphi(x) \, \dif x, \quad \varphi \in C_0^\infty(\R)
+\]
+We also write 
+\[
+\psi_f(\varphi) = \langle f, \varphi \rangle, \quad \varphi \in C_0^\infty(\R)
+\]
+Two different locally integrable functions yield different distributions.
+Distributions that can be represented in this way are called regular distributions.
+\end{definition}
+\begin{example}[Heaviside function]\label{example:heaviside_function}
+The function $H: \R \rightarrow \R$,
+\[
+H(x)= \begin{cases}0, & x<0, \\ 1, & x \geq 0,\end{cases}
+\]
+is also called the Heaviside function. 
+% In the literature it is sometimes also denoted by $\Theta$. 
+Since it is piecewise continuous, it is integrable over every compact interval $I \subseteq \R$. 
+Thus we can define a distribution $\psi_H$ by
+\[
+\psi_H(\varphi)=\int_{-\infty}^{\infty} H(x) \varphi(x) \, \dif x, \quad \varphi \in C_0^{\infty}(\R)
+\]
+The integral exists because the domain of integration is in fact only the compact interval outside of which $\varphi$ vanishes, and the integrand is piecewise continuous there. 
+The continuity of $\psi_H$ with respect to the convergence in $C_0^{\infty}(\R)$ can be shown using the Lebesgue dominated convergence theorem.
+\end{example}
+
+By identifying the locally integrable functions with the regular distributions they generate, we obtain an embedding of locally integrable functions into the distributions. 
+Since all classical function spaces contain only locally integrable functions, we thereby recover, for example, the continuous or the continuously differentiable functions in the distributions.
+
+\begin{caution}
+Not every distribution is regular!
+\end{caution}
+
+% \textcolor{red}{Not every distribution is regular}.
+The \hyperref[example:delta_distribution]{$\delta$-distribution} is the classical example of a distribution that cannot be represented by a locally integrable function. 
+Nevertheless, especially among practitioners, the notations
+\[
+\delta(\varphi)=\langle\delta, \varphi\rangle=\int_{-\infty}^{\infty} \delta(x) \varphi(x) \, \dif x = \varphi(0)
+\]
+are common. 
+Note, however, that in the penultimate notation this is by no means an integral in the Lebesgue sense, but merely the evaluation of the functional $\delta$ at the point $\varphi$!
+
+The integral notation has yet another background, and this is closely linked to the fact that the $\delta$-distribution is suitable for modeling instantaneous impulse transfer.
+
+
+\subsubsection{Derivative of distributions}
+The remarkable fact about distributions is that we can generalize many properties of classical functions and transfer them to distributions.
+
+For a continuously differentiable function $f$ we consider the regular distribution generated by $f^{\prime}$. 
+We apply this distribution to a test function $\varphi$ that vanishes outside an interval $I=(a, b)$. 
+By integration by parts we obtain
+\[
+\begin{aligned}
+\left\langle f^{\prime}, \varphi\right\rangle & =\int_I f^{\prime}(x) \varphi(x)  \, \dif x  \\
+& =[f(x) \varphi(x)]_a^b-\int_I f(x) \varphi^{\prime}(x)  \, \dif x  \\
+& =-\int_{-\infty}^{\infty} f(x) \varphi^{\prime}(x)  \, \dif x =-\left\langle f, \varphi^{\prime}\right\rangle
+\end{aligned}
+\]
+since $\varphi(a)=\varphi(b)=0$. 
+Note that the notation in the last line is justified, because with $\varphi$ the derivative $\varphi^{\prime}$ is again a test function.
+\begin{caution}
+An antiderivative of a test function is in general no longer a test function.
+\end{caution}
+
+
+For every continuously differentiable function \(f\) the equation
+\[
+\left\langle f^{\prime}, \varphi\right\rangle=-\left\langle f, \varphi^{\prime}\right\rangle, \quad \varphi \in C_0^{\infty}(\R),
+\]
+holds, which establishes a relation between the distribution given by $f^{\prime}$ and that given by $f$. 
+Conversely, this relation characterizes function and derivative.
+
+With this equation we can generalize the concept of the derivative: 
+We use it to define a derivative in the distributional sense for an \emph{arbitrary distribution}.
+\begin{definition}[Distributional derivative]\label{def:distributional_derivative}
+  If \(d\) is a distribution, then its derivative \(d'\) is defined by
+  \[
+  \langle d', \varphi \rangle := - \langle d, \varphi' \rangle, \quad \varphi \in C_0^\infty(\R)
+  \qedhere
+  \]
+\end{definition}
+
+\begin{example}
+\leavevmode
+\begin{itemize}
+  \item 
+  The \hyperref[example:heaviside_function]{Heaviside function} \(H\) is not continuously differentiable.
+  However, we can determine its derivative in the distributional sense.
+  For \(\varphi \in C_0^\infty(\R)\) we have
+  \[
+  \begin{aligned}
+  \langle H', \varphi \rangle
+  &= - \langle H, \varphi' \rangle
+  = - \int_{-\infty}^\infty H(x) \varphi'(x) \, \dif x \\
+  &= - \int_0^\infty \varphi'(x) \, \dif x
+  = - \left[ \varphi(x) \right]_0^\infty
+  = \varphi(0)
+  = \langle \delta, \varphi \rangle
+  \end{aligned}
+  \]
+  Thus the derivative of the Heaviside function is the \(\delta\)-distribution.
+  \item
+  The derivative of the \hyperref[example:delta_distribution]{$\delta$-distribution} can be written down immediately.
+  For \(\varphi \in C_0^\infty(\R)\) we have
+  \[
+  \langle \delta', \varphi \rangle
+  = - \langle \delta, \varphi' \rangle
+  = - \varphi'(0)
+  \qedhere
+  \]
+\end{itemize}
+\end{example}
+
+There are no restrictions in the definition of the distributional derivative.
+Every distribution is differentiable in the distributional sense arbitrarily many times.
+
+
+
+
+
+\subsection{Operators in Hilbert spaces}
+Due to the inner product, in Hilbert spaces it is possible to adopt many statements and arguments from analytic geometry.
+However, because of the infinite dimension of function spaces there are also differences in the chains of argument.
+
+\subsubsection{Orthogonal projection}
+Let \(\mathcal{H}\) be an arbitrary Hilbert space and \(U \subset \mathcal{H}\) a closed subspace.
+\(U\) is therefore itself again a Hilbert space.
+We now want to know whether for an arbitrary \(x \in \mathcal{H}\) there exists a \(\hat{u} \in U\) that has minimal distance to \(x\), i.e.
+\begin{equation}\label{eq:orthogonal_projection_minimization}
+  \| x - \hat{u} \| \leq \| x - u \| \quad \forall u \in U
+\end{equation}
+We now show that such a \(\hat{u}\) exists and is unique.
+
+To this end we construct two sequences recursively.
+We set \(a_0 = 0\) and \(b_0 = \|x - u_0\|\) for some \(u_0 \in U\).
+We define
+\[
+c_n = \frac{a_{n - 1} + b_{n - 1}}{2}
+\]
+and check whether 
+\(
+c_n \leq \| x - u \| 
+\)
+holds for all \(u \in U\).
+If yes, we set \(a_n = c_n\) and \(b_n = b_{n - 1}\), otherwise \(a_n = a_{n - 1}\) and \(b_n = c_n\).
+
+\((a_n)\) is monotonically increasing and bounded above by \(b_0\), \((b_n)\) is monotonically decreasing and bounded below by \(a_0=0\).
+By the monotone convergence criterion both sequences are convergent, and with a proof by contradiction one can also show that they converge to the same limit \(\rho \geq 0\), which we call the \hl{distance} of \(x\) to \(U\).
+
+Analogous to the construction of \((b_n)\) we also obtain a sequence \((u_n)\) from \(U\) with \(\| x - u_n \| \to \rho\).
+The parallelogram identity now yields
+\[
+\begin{aligned}
+\| u_n - u_m \|^2
+&= \| u_n - x - (u_m - x) \|^2 \\
+&= 2 \| u_n - x \|^2 + 2 \| u_m - x \|^2 - 4 \left\| \frac{u_n + u_m}{2} - x \right\|^2 \\
+&\leq 2 \| u_n - x \|^2 + 2 \| u_m - x \|^2 - 4 \rho^2
+\end{aligned}
+\]
+where the right-hand side converges to \(0\) as \(n, m \to \infty\).
+Thus \((u_n)\) is Cauchy and hence has a limit \(\hat{u} \in U\).
+This proves the existence of a best approximation \eqref{eq:orthogonal_projection_minimization}, because by our construction we have
+\begin{equation}\label{eq:orthogonal_projection_distance}
+\| x - \hat{u} \| = \rho \leq \| x - u \| 
+\end{equation}
+for all \(u \in U\). 
+
+Moreover, \(x - \hat{u}\) is orthogonal to \(U\).
+Indeed, choose an arbitrary \(v \in U\) and set in \eqref{eq:orthogonal_projection_distance} \(u = \hat{u} + \alpha v \in U\), then
+\begin{equation}\label{eq:orthogonal_projection_distance_alpha}
+\begin{aligned}
+\| x - \hat{u} \|^2
+&\leq \| x - \hat{u} - \alpha v \|^2 \\
+&= \| x - \hat{u} \|^2 - 2 \, \mathrm{Re}( \overline{\alpha} \langle x - \hat{u}, v \rangle ) + |\alpha|^2 \| v \|^2
+\end{aligned}
+\end{equation}
+where the right-hand side is a quadratic function in \(\alpha \in \F\) that attains its minimum at 
+\[
+\alpha = \frac{\langle x - \hat{u}, v \rangle}{\| v \|^2}
+\]
+\eqref{eq:orthogonal_projection_distance_alpha} must hold for all \(\alpha \in \F\) and in particular also for this minimizer.
+Inserting this choice of \(\alpha\) into \eqref{eq:orthogonal_projection_distance_alpha} we obtain
+\[
+\| x - \hat{u} \|^2
+\leq \| x - \hat{u} \|^2 - \frac{|\langle x - \hat{u}, v \rangle|^2}{\| v \|^2}
+\]
+which is only possible if the numerator is zero.
+Since \(v \in U\) was arbitrary, it follows that
+\begin{equation}\label{eq:orthogonal_projection_orthogonality}
+\langle x - \hat{u}, v \rangle = 0
+\end{equation}
+for all \(v \in U\).
+The best approximation \(\hat{u}\) is also unique, as can be shown using the Pythagorean theorem.
+\tdplotsetmaincoords{70}{200}
+\[
+\begin{tikzpicture}[scale = 2.2, tdplot_main_coords, font=\footnotesize]
+\coordinate (A1) at (0,0,0);
+\coordinate (A2) at (2,0,0);
+\coordinate (A3) at (2,2,0);
+\coordinate (A4) at (0,2,0);
+
+\coordinate (S) at (0.5,0.5,0);
+\coordinate (E) at (0.5,3,1.5);
+\coordinate (P) at (1.15,1.15,0);
+\fill[fill=blue!20] (A1) -- (A2) -- (A3)  -- (A4) -- cycle;
+\node at (S) [right] {\(O\)};
+\draw[black, -latex] (S) -- (E);
+\draw[black!80, -latex] (S) -- (P);
+\draw[thick, black!50, densely dotted, -latex] (E) -- (P);
+\node[above] at (E) {$x$};
+% \node[below] at (P) {$\hat{u} = \mathcal{P} x$};
+\node[below] at (P) {$\hat{u}$};
+
+\draw[black] (2,2.3,1) node[above] 
+ {Orthogonal projection \(\mathcal{P} : \mathcal{H} \to U\)} to [out=-90,in=180] ($0.5*($(E)+(P)$)$);
+
+ \draw[black] (2.3,2.3,0.4) node[above] 
+ {Subspace \(U\)} to [out=-90,in=90] ($(A3)+(-0.2,-0.2,0)$);
+\end{tikzpicture}
+\]
+Thus, by the assignment \(x \mapsto \hat{u}\) we have determined a mapping \(\mathcal{P} : \mathcal{H} \to U\).
+\begin{theorem}[Orthogonal projection]\label{theorem:orthogonal_projection}
+If \(U\) is a closed subspace of a Hilbert space \(\mathcal{H}\), then there exists a \(\mathcal{P} : \mathcal{H} \to U\) with the property
+\[
+\| x - \mathcal{P} x \| \leq \| x - u \| 
+\]
+for all \(u \in U\).
+The operator \(\mathcal{P}\) is linear and bounded with \(\| \mathcal{P} \| = 1\).
+Moreover,
+\[
+\langle x - \mathcal{P} x, u \rangle = 0
+\]
+for all \(u \in U\).
+\end{theorem}
+
+From \autoref{theorem:orthogonal_projection} it follows that one can carry out an orthogonal decomposition in Hilbert spaces.
+If \(U\) is a closed subspace of \(\mathcal{H}\), one defines the \hl{orthogonal complement}
+\[
+U^\perp := \{ v \in \mathcal{H} : \langle v, u \rangle = 0 \quad \forall u \in U \}
+\]
+which is likewise a closed subspace of \(\mathcal{H}\).
+For \(x \in \mathcal{H}\), for example, \(x - \mathcal{P} x \in U^\perp\).
+Thus every \(x\) can be written uniquely as
+\[
+x = u + v
+\]
+with \(u \in U\) and \(v \in U^\perp\).
+Here \(u = \mathcal{P} x\) and \(v = x - \mathcal{P} x\).
+
+
+
+
+\subsubsection{Continuous linear forms}
+
+\begin{theorem}[Riesz representation theorem]\label{theorem:riesz_representation_theorem}
+In a Hilbert space \(\mathcal{H}\) for every \hl[2]{continuous} \hl[2]{linear} form \(\varphi : \mathcal{H} \to \F\) there exists exactly one \(z \in \mathcal{H}\) such that
+\begin{equation}\label{eq:riesz_representation}
+\varphi(f) = \langle f, z \rangle 
+\end{equation}
+for all \(f \in \mathcal{H}\).
+Conversely, for every \(z \in \mathcal{H}\) a continuous linear form is given by \(\langle \cdot, z \rangle\).
+
+In more operator-theoretic terms: There is an isometric isomorphism
+\begin{equation}\label{eq:riesz_isomorphism}
+J : \mathcal{H}' \to \mathcal{H}
+\end{equation}
+such that
+\begin{equation}\label{eq:riesz_isomorphism_explicit}
+  {\color{Red}
+  % \setlength{\fboxrule}{1pt}
+  \boxed{ 
+  \color{black}
+  \varphi(f) = \langle f, (J \varphi) \rangle
+  }}
+\end{equation}
+for all \(f \in \mathcal{H}\) and all \(\varphi \in \mathcal{H}'\).
+\end{theorem}
+For the proof one uses the fact that the null space \(N\) of a continuous linear form \(\varphi\),
+\(
+N=\{f \in \mathcal{H} \mid \varphi(f)=0\}
+\),
+forms a closed subspace and its orthogonal complement \(N^{\perp}\) has dimension \(1\).
+From an element of \(N^{\perp}\) the vector \(z\) belonging to \(\varphi\) can be constructed.
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+
+
+\section{Reproducing kernel Hilbert spaces}
+
+\begin{definition}[RKHS]\label{def:rkhs}
+Let \((\mathcal{H}, \langle \cdot, \cdot \rangle_{\mathcal{H}})\) be real Hilbert space of functions \(f: \Omega \to \R\).
+A function \(K: \Omega \times \Omega \to \R\) is a \hl[5]{reproducing kernel} for \(\mathcal{H}\), iff
+\begin{enumerate}
+  \item \(K(\vect{x}, \cdot) \in \mathcal{H}\) for all \(\vect{x} \in \Omega\) \hfill (``kernel sections live in the space'')\label{item:kernel_section_lives_in_hilbert_space}
+  \item \(\langle K(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = f(\vect{x})\) for all \(f \in \mathcal{H}\) and all \(\vect{x} \in \Omega\) \hfill (reproducing property)\label{item:reproducing_property}
+\end{enumerate}
+If \(\mathcal{H}\) exhibits a reproducing kernel, we call it a reproducing kernel Hilbert space.
+\end{definition}
+
+
+\[
+\begin{tikzpicture}[scale=0.7, font=\footnotesize]
+
+% ---- colors
+\definecolor{outerbg}{RGB}{238,238,238}
+\definecolor{normbg}{RGB}{255,245,204}
+\definecolor{banach}{RGB}{98,183,209}     % teal-ish
+\definecolor{ips}{RGB}{255,102,102}       % red-ish
+\definecolor{hilb}{RGB}{60,100,70}        % dark green text
+\definecolor{rkhs}{RGB}{102,0,153}        % purple
+
+% ---- canvas sizes
+\def\W{16} \def\H{7}
+\def\inpad{0.4}
+
+% OUTER: Vector space
+\draw[line width=1pt,rounded corners=12pt,fill=outerbg] (0,0) rectangle (\W,\H);
+\node[anchor=west,gray!50!black] at (0.6,0.3) { Vector Space \(\rightarrow\) linear combinations};
+
+% INNER: Normed space
+\path let \p1 = (0,0), \p2=(\W,\H) in node[anchor=south west,inner sep=0pt,outer sep=0pt] (NS) at (\inpad,2*\inpad) {};
+\def\nW{\W-2*\inpad} \def\nH{\H-3*\inpad}
+\draw[line width=1pt,rounded corners=18pt,fill=normbg,draw=yellow!40!brown] (NS) rectangle ++(\nW,\nH);
+\node[anchor=west] at (\inpad+0.6,1.2) { \hyperref[def:norm]{Normed Space} \(\rightarrow\) length, distance, convergence};
+
+% Overlapping ellipses (Banach vs IPS)
+\def\elW{4.9} \def\elH{2.25}
+% Banach (left)
+\path (NS) ++(5.3,3.2) node (Bctr) {};
+\fill[banach,opacity=0.7, draw=banach!60!black, line width=0.8pt] (Bctr) ellipse ({\elW} and {\elH});
+\node[align=center, text=blue!60!black, ] at ($(Bctr)+(-2.4,0.8)$) {Banach Space\\{\tiny \(\rightarrow\) completeness}};
+% Inner Product Space (right)
+\path (NS) ++(10,3.2) node (IPctr) {};
+\draw[ips!80!black,line width=0.9pt] (IPctr) ellipse ({\elW} and {\elH});
+\fill[ips,opacity=0.3] (IPctr) ellipse ({\elW} and {\elH});
+\node[align=center, text=ips!80!black, ] at ($(IPctr)+(2.4,0.8)$) {\hyperref[def:inner_product]{Inner Product Space}\\{\tiny\(\rightarrow\) angle, orthogonality}};
+% Hilbert space label (over the overlap)
+\begin{scope}
+  \clip (Bctr) ellipse ({\elW} and {\elH});
+  \fill[hilb!50!white, draw=hilb!80!black, line width=0.8pt] (IPctr) ellipse ({\elW} and {\elH});
+\end{scope}
+\begin{scope}
+  \clip (IPctr) ellipse ({\elW} and {\elH});
+  \draw[hilb!80!black, line width=0.8pt] (Bctr) ellipse ({\elW} and {\elH});
+\end{scope}
+\node[align=center, text=hilb] (HilbertLabel) at ($0.5*(Bctr)+0.5*(IPctr)+(0,1.1)$) {\hyperref[def:hilbert_space]{Hilbert Space}\\{\tiny \(\rightarrow\) \hyperref[theorem:orthogonal_projection]{projection}, \hyperref[def:orthonormal_basis]{ONB}, \hyperref[theorem:riesz_representation_theorem]{Riesz}}};
+% RKHS blob in the middle of the overlap
+\path let \p1=($(Bctr)!0.5!(IPctr) - (0,0.7)$) in node (RK) at (\x1,\y1) {};
+\draw[rkhs!90!black, fill=rkhs!50!white] (RK) ellipse (1.5 and 0.9);
+\node[anchor=south, rkhs, align=center, text=rkhs] at ($(RK)-(0,0.3)$) {\nameref{def:rkhs}\\{\tiny \(\rightarrow\) \hyperref[item:reproducing_property]{\(\langle K_{\vect{x}}, f \rangle = f(\vect{x})\)}}};
+
+% % Callout for RKHS
+% \draw[rkhs, line width=1.0pt, -{Stealth[length=3.5pt]}] ($(RK)+(0,1.15)$) to[out=90,in=260] ($(HilbertLabel)+(2.9,3.0)$);
+% \node[anchor=south, rkhs, ] at ($(HilbertLabel)+(2.9,3.0)$) {Reproducing Kernel Hilbert Space};
+
+\end{tikzpicture}
+\]
+
+
+% \autoref{def:rkhs}.\ref{item:reproducing_property} says that evaluating \(f\) at a point \(\vect{x}\) is the same as taking an inner product with the kernel section \(K(\vect{x}, \cdot)\).
+% So the kernel reproduces the value \(f(\vect{x})\) from an inner product.
+% That’s why it’s called reproducing kernel.
+
+% What does this mean intuitively?
+% Usually, evaluating a function \(f\) at a single point \(\vect{x}\) isn’t a continuous operation (think of arbitrary \(L^2\) functions).
+% But in some special spaces of functions (like smooth or continuous ones), point evaluation is continuous - and those are exactly the spaces that have a reproducing kernel.
+% \(K(\vect{x}, \cdot)\) acts like a “probe” function that extracts \(f(\vect{x})\) via an inner product.
+
+
+
+% The question if the reproducing kernel is unique is answered by the following
+\begin{theorem}\label{theorem:uniqueness_of_reproducing_kernel}
+  The reproducing kernel of a \nameref{def:rkhs} is unique.
+\end{theorem}
+% \begin{proof}
+% Assume that \(K_1\) and \(K_2\) are two reproducing kernels of \(\mathcal{H}\).
+% Then, for any \(\vect{x}, \vect{y} \in \Omega\), we have
+% \[
+% \underbrace{
+% K_1(\vect{x}, \vect{y})
+% }_{f_1(\vect{y}) \in \R}
+% =
+% \langle K_2(\vect{y}, \cdot), \underbrace{K_1(\vect{x}, \cdot)}_{f_1 \in \mathcal{H}} \rangle_{\mathcal{H}}
+% =
+% % \overset{\text{\ref{def:rkhs}.\ref{item:reproducing_property}}}{=} 
+% \langle K_1(\vect{x}, \cdot), K_2(\vect{y}, \cdot) \rangle_{\mathcal{H}} 
+% % \overset{\text{\ref{def:rkhs}.\ref{item:reproducing_property}}}{=} 
+% =
+% K_2(\vect{y}, \vect{x})
+% \qedhere
+% \]
+% \end{proof}   
+% \begin{proof}
+% Assume that \(K_1\) and \(K_2\) are two reproducing kernels of \(\mathcal{H}\).
+% Then, for any \(\vect{x} \in \Omega\), we have
+% \[
+% \begin{aligned}
+%   &\begin{cases}
+%   \langle K_1(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = f(\vect{x}) \quad \forall f \in \mathcal{H} \\
+%   \langle K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = f(\vect{x}) \quad \forall f \in \mathcal{H}
+%   \end{cases} \\
+%   \Rightarrow &
+%   \langle K_1(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = \langle K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} \quad \forall f \in \mathcal{H} \\
+%   \Rightarrow &
+%   \langle K_1(\vect{x}, \cdot), f \rangle_{\mathcal{H}} - \langle K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = 0 \quad \forall f \in \mathcal{H} \\
+%   \Rightarrow &
+%   \langle K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = 0 \quad \forall f \in \mathcal{H} \\
+%   \Rightarrow &
+%   K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot) = 0 \\
+%   \Rightarrow &
+%   K_1(\vect{x}, \cdot) = K_2(\vect{x}, \cdot)
+% \end{aligned}
+% \]
+\begin{proof}
+Let \(K_1\) and \(K_2\) be two reproducing kernels of \(\mathcal{H}\).
+By \ref{def:rkhs}.\ref{item:reproducing_property}, for all \(\vect{x} \in \Omega\) and \(f \in \mathcal{H}\),
+\[
+\langle K_1(\vect{x}, \cdot), f \rangle_{\mathcal{H}}
+= f(\vect{x})
+= \langle K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}}
+\]
+Hence,
+\begin{equation}\label{eq:difference_of_kernels_inner_product_zero}
+\langle K_1(\vect{x}, \cdot), f \rangle_{\mathcal{H}} - \langle K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} 
+=
+\langle K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = 0
+\end{equation}
+This means that \(\langle K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot), f \rangle_{\mathcal{H}} = 0\)
+for all \(f \in \mathcal{H}\).  
+Since \(K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot) \in \mathcal{H}\) by \ref{def:rkhs}.\ref{item:kernel_section_lives_in_hilbert_space}, we can set \(f = K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot)\) in \eqref{eq:difference_of_kernels_inner_product_zero} to obtain
+\[
+\|K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot)\|_{\mathcal{H}}^2 = 0
+\]
+so \(K_1(\vect{x}, \cdot) - K_2(\vect{x}, \cdot) = 0_\mathcal{H}\) and
+therefore \(K_1(\vect{x}, \cdot) = K_2(\vect{x}, \cdot)\) for all \(\vect{x} \in \Omega\).
+Then, for every \(\vect{x}, \vect{y} \in \Omega\),
+\[
+K_1(\vect{x}, \vect{y})
+= \bigl(K_1(\vect{x}, \cdot)\bigr)(\vect{y})
+= \bigl(K_2(\vect{x}, \cdot)\bigr)(\vect{y})
+= K_2(\vect{x}, \vect{y})
+\]
+hence \(K_1 = K_2\).
+\end{proof}
+
+
+% Recall the definition of the point evaluation functional \(\delta_{\vect{x}}\):
+% \[
+% \begin{aligned}
+% \delta_{\vect{x}}: \mathcal{H} &\to \R \\
+% f &\mapsto \delta_{\vect{x}}(f) = f(\vect{x})
+% \end{aligned}
+% \]
+Recall the definition of the point evaluation functional
+\(
+\delta_{\vect{x}}: \mathcal{H} \to \R\),
+\(
+f \mapsto \delta_{\vect{x}}(f) = f(\vect{x})
+\).
+
+The existence of a reproducing kernel is equivalent to the point evaluation functional \(\delta_{\vect{x}}\) being continuous % maybe add a footnote?
+for every \(\vect{x} \in \Omega\), i.e., there exists \(M_{\vect{x}} > 0\) such that
+\[
+|\delta_{\vect{x}} f| = |f(\vect{x})| \le M_{\vect{x}} \|f\|_{\mathcal{H}} \quad \text{for all } f \in \mathcal{H}
+\]
+This means that \(\delta_{\vect{x}}\) is contained in the dual space \(\mathcal{H}'\) of \(\mathcal{H}\).
+By the \nameref{theorem:riesz_representation_theorem}, there exists \((J\delta_{\vect{x}}) \in \mathcal{H}\) such that \(\langle (J\delta_{\vect{x}}), f \rangle_{\mathcal{H}} = f(\vect{x})\) for all \(f \in \mathcal{H}\), i.e., \((J\delta_{\vect{x}})(\vect{y})\) is the reproducing kernel.
+
+\begin{theorem}[Properties of Reproducing Kernels]\label{thm:properties_rkhs}
+  Let \((\mathcal{H}, \langle \cdot, \cdot \rangle_{\mathcal{H}})\) be a \nameref{def:rkhs}.
+  Then
+  \begin{enumerate}
+  \item \(K(\vect{x}, \vect{y}) = \langle K(\vect{y}, \cdot), K(\vect{x}, \cdot) \rangle_{\mathcal{H}}\) for all \(\vect{x}, \vect{y} \in \Omega\) \label{item:kernel_inner_product}
+  \item \(K(\vect{x}, \vect{y}) = K(\vect{y}, \vect{x})\) for all \(\vect{x}, \vect{y} \in \Omega\) \label{item:kernel_symmetric} 
+  \item Convergence in \(\mathcal{H}\) implies pointwise convergence, i.e., if \(\|f_n - f\|_{\mathcal{H}} \to 0\) as \(n \to \infty\), then \(|f_n(\vect{x}) - f(\vect{x})| \to 0\) for all \(\vect{x} \in \Omega\). \label{item:convergence_in_hilbert_space_implies_pointwise_convergence}
+  \qedhere
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+\autoref{thm:properties_rkhs}.\ref{item:kernel_inner_product} follows from \autoref{def:rkhs} if we set \(f = K(\vect{y}, \cdot)\).
+
+\autoref{thm:properties_rkhs}.\ref{item:kernel_symmetric} follows from \autoref{thm:properties_rkhs}.\ref{item:kernel_inner_product} and the symmetry of the inner product.
+
+\autoref{thm:properties_rkhs}.\ref{item:convergence_in_hilbert_space_implies_pointwise_convergence} follows from \autoref{def:rkhs}.\ref{item:reproducing_property} and the Cauchy-Schwarz inequality:
+\[
+|f_n(\vect{x}) - f(\vect{x})| 
+\overset{\text{\ref{def:rkhs}.\ref{item:reproducing_property}}}{=} 
+|\langle K(\vect{x}, \cdot), f_n - f \rangle_{\mathcal{H}}| 
+% \overset{\text{CSI}}{\le} 
+\le
+\|K(\vect{x}, \cdot)\|_{\mathcal{H}} \|f_n - f\|_{\mathcal{H}}
+\qedhere
+\]
+\end{proof}
+
+\begin{remark}
+We have \(\|K(\vect{x}, \cdot)\|_{\mathcal{H}} = \sqrt{K(\vect{x}, \vect{x})}\).
+\end{remark}
+
+The reproducing kernel of an RKHS is positive definite in the sense of \autoref{def:positive_definite_rbf}, if we replace \(K(\vect{x}_i - \vect{x}_j)\) by \(K(\vect{x}_i, \vect{x}_j)\) everywhere.
+\begin{definition}\label{def:positive_definite_kernel}
+Let \(K : \Omega \times \Omega \to \R\) be a kernel.
+We say that \(K\) is {positive definite}, iff the \hl[2]{kernel matrix} 
+\begin{equation}\label{eq:kernel_matrix}
+  \matr{K} 
+  := 
+  [K(\vect{x}_i, \vect{x}_j)]_{i,j=1}^N
+  =
+  \begin{bmatrix}
+  K(\vect{x}_1, \vect{x}_1) & \cdots & K(\vect{x}_1, \vect{x}_N) \\
+  \vdots & \ddots & \vdots \\
+  K(\vect{x}_N, \vect{x}_1) & \cdots & K(\vect{x}_N, \vect{x}_N)
+  \end{bmatrix}
+\end{equation}
+is positive semi-definite for any mutually distinct \(\vect{x}_1, \ldots, \vect{x}_N\) and any \(N \in \N\).
+It is called strictly positive definite if the kernel matrix is positive definite.
+\end{definition}
+
+The following lemma is a direct consequence of the reproducing property \ref{def:rkhs}.\ref{item:reproducing_property} and characterizes the kernel matrix.
+
+\begin{lemma}\label{lemma:kernel_matrix_canonical_feature_map}
+Suppose that \((\mathcal{H}, \langle \cdot, \cdot \rangle_{\mathcal{H}})\) is a RKHS with reproducing kernel \(K: \Omega \times \Omega \to \R\).
+Given a set of mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N\), we have
+\begin{equation}\label{eq:kernel_matrix_inner_product}
+\matr{K} = \langle \vect{\Phi}, \vect{\Phi}^\top \rangle_{\mathcal{H}} := 
+\begin{bmatrix}
+\langle \varphi_1, \varphi_1 \rangle_{\mathcal{H}} & \cdots & \langle \varphi_1, \varphi_N \rangle_{\mathcal{H}} \\
+\vdots & \ddots & \vdots \\
+\langle \varphi_N, \varphi_1 \rangle_{\mathcal{H}} & \cdots & \langle \varphi_N, \varphi_N \rangle_{\mathcal{H}}
+\end{bmatrix}
+\end{equation}
+where \(\varphi_i := \Phi(\vect{x}_i) \in \mathcal{H}\) with \(\Phi: \Omega \to \mathcal{H}\), \(\vect{x} \mapsto K(\vect{x}, \cdot)\) is the \hl[3]{canonical feature map}\footnote{in Machine Learning jargon}.
+The vector \(\vect{\Phi} := [\varphi_1, \ldots, \varphi_N]^\top \in \mathcal{H}^N\) is called the \hl[3]{canonical feature vector}.
+\end{lemma}
+\autoref{lemma:kernel_matrix_canonical_feature_map} corresponds more or less the kernel trick.
+
+% \begin{remark}[Continuity of point evaluation depends on the norm]\label{remark:eval_continuity_norm}
+% Fix $\vect{x}_0\in\Omega$. The point~evaluation
+% \[
+% \delta_{\vect{x}_0}:\mathcal{H}\to\R,\qquad \delta_{\vect{x}_0}(f)=f(\vect{x}_0),
+% \]
+% is \emph{continuous} (equivalently, \emph{bounded}) iff there exists $M_{\vect{x}_0}>0$ such that
+% \[
+% |f(\vect{x}_0)|\le M_{\vect{x}_0}\,\|f\|_{\mathcal{H}}\quad\text{for all }f\in\mathcal{H},
+% \]
+% hence $\delta_{\vect{x}_0}\in\mathcal{H}'$. This is continuity in the \emph{function variable} $f$ (not in the spatial variable $\vect{x}$).
+
+% The validity of this bound depends entirely on the norm on $\mathcal{H}$:
+% \begin{itemize}
+%   \item In $\big(C(\overline{\Omega}),\|\cdot\|_\infty\big)$: $|f(\vect{x}_0)|\le\|f\|_\infty$ (take $M_{\vect{x}_0}=1$), so $\delta_{\vect{x}_0}$ is continuous.
+%   \item In $\big(L^2(\Omega),\|\cdot\|_{L^2}\big)$: $\delta_{\vect{x}_0}$ is \emph{not} continuous. For example,
+%   $f_n(\vect{x})=\exp\!\big(-n\|\vect{x}-\vect{x}_0\|^2\big)$ satisfies $\|f_n\|_{L^2}\to0$ while $f_n(\vect{x}_0)=1$.
+%   \item In an \nameref{def:rkhs}: by definition, all $\delta_{\vect{x}}$ are continuous and satisfy the reproducing identity
+%   $f(\vect{x})=\langle f, K(\vect{x},\cdot)\rangle_{\mathcal{H}}$.
+% \end{itemize}
+% Consequently, when all $\delta_{\vect{x}}$ are continuous, convergence in $\mathcal{H}$ implies pointwise convergence (cf.\ \autoref{thm:properties_rkhs}.\ref{item:convergence_in_hilbert_space_implies_pointwise_convergence}).
+% \end{remark}
+
+\begin{theorem}\label{thm:rkhs_positive_definite}
+Suppose that \((\mathcal{H}, \langle \cdot, \cdot \rangle_{\mathcal{H}})\) is a RKHS with reproducing kernel \(K: \Omega \times \Omega \to \R\).
+Then, \(K\) is positive definite.
+Moreover, \(K\) is strictly positive definite iff \(\delta_{\vect{x}_1}, \ldots, \delta_{\vect{x}_N}\) are linearly independent for any choice of mutually distinct \(\vect{x}_1, \ldots, \vect{x}_N \in \Omega\) and any \(N \in \N\).
+\end{theorem}
+
+The evaluation functionals \(\delta_{\vect{x}_1}, \dots, \delta_{\vect{x}_N}\) are \emph{linearly independent}
+if no nontrivial linear combination of them produces the zero functional in \(\mathcal{H}'\), i.e.,
+\[
+\sum_{i=1}^{N} c_i \delta_{\vect{x}_i} = 0_{\mathcal{H}'} \quad \Longrightarrow \quad c_1 = \cdots = c_N = 0
+\]
+where \(0_{\mathcal{H}'}\) is the zero vector of the dual space \(\mathcal{H}'\), i.e., the functional that maps every vector \(f \in \mathcal{H}\) to the scalar \(0 \in \R\).
+So the LHS above means
+\(
+\sum_{i=1}^{N} c_i \delta_{\vect{x}_i}(f) = 0 
+\)
+for all \(f \in \mathcal{H}\).
+% In other words, there are no nonzero coefficients \(c_i\) such that the weighted sum of evaluations \(\sum_i c_i f(x_i)\) vanishes for every \(f\) in the space.
+
+
+\begin{proof}
+Let \(\vect{x}_1, \ldots, \vect{x}_N\) be mutually distinct points in \(\Omega\) and let \(\vect{c} \in \R^N\) with \(\vect{c} \neq \vect{0}\).
+For the kernel matrix \eqref{eq:kernel_matrix_inner_product}, we have
+\begin{equation}\label{eq:kernel_matrix_pos_def}
+\vect{c}^\top \matr{K} \vect{c}
+=
+\vect{c}^\top \langle \vect{\Phi}, \vect{\Phi}^\top \rangle_{\mathcal{H}} \vect{c}
+=
+\langle \vect{c}^\top \vect{\Phi}, \vect{\Phi}^\top \vect{c} \rangle_{\mathcal{H}}
+=
+\langle \vect{\Phi}^\top \vect{c}, \vect{\Phi}^\top \vect{c} \rangle_{\mathcal{H}}
+=
+\|\vect{\Phi}^\top \vect{c}\|_{\mathcal{H}}^2
+\ge 0
+\end{equation}
+i.e. \(K\) is positive definite.
+
+To show the second part, assume that \(K\) is not strictly positive definite.
+Hence, there exists a vector \(\vect{c} \in \R^N \setminus \{\vect{0}\}\) such that \(\vect{c}^\top \matr{K} \vect{c} = 0\).
+\eqref{eq:kernel_matrix_pos_def} implies \(\|\vect{\Phi}^\top \vect{c}\|_{\mathcal{H}}^2 = 0\) and thus \(\vect{\Phi}^\top \vect{c} \equiv 0_{\mathcal{H}}\).
+So,
+\[
+\begin{aligned}
+0
+&= \langle f, 0_{\mathcal{H}} \rangle_{\mathcal{H}} 
+= \langle f, \vect{\Phi}^\top \vect{c} \rangle_{\mathcal{H}}
+= \left\langle f, \;  \sum_{i=1}^N c_i K(\vect{x}_i, \cdot) \right\rangle_{\mathcal{H}} \\
+&= \sum_{i=1}^N c_i \langle f, K(\vect{x}_i, \cdot) \rangle_{\mathcal{H}}
+= \sum_{i=1}^N c_i  f(\vect{x}_i)
+= \sum_{i=1}^N c_i \delta_{\vect{x}_i}(f)
+\end{aligned}
+\]
+for all \(f \in \mathcal{H}\). 
+Consequently, we have
+\[
+\left\| \sum_{i=1}^N c_i \delta_{\vect{x}_i} \right\|_{\mathcal{H}'} \overset{\text{\eqref{eq:operator_norm}}}{=} \sup_{0 \neq f \in \mathcal{H}} \frac{\left|\sum_{i=1}^N c_i \delta_{\vect{x}_i}(f)\right|}{\|f\|_{\mathcal{H}}} = 0
+\quad \overset{\text{Def \ref{def:norm}}}{\Longrightarrow} \quad
+\sum_{i=1}^N c_i \delta_{\vect{x}_i} \equiv 0_{\mathcal{H}'}
+\]
+which implies the linear dependence of the point evaluation functionals \(\delta_{\vect{x}_i}(f)\), \(i = 1, \ldots, N\), 
+since \(\vect{c} \neq \vect{0}\).
+The converse direction follows analogously.
+\end{proof}
+
+The reverse statement of \autoref{thm:rkhs_positive_definite} is also correct:
+Each strictly positive definite kernel can be associated to an \nameref{def:rkhs}, its \hl{native space}.
+Motivated by the fact that for
+\(
+f = \sum_{i=1}^N c_i K(\vect{x}_i, \cdot)
+\)
+we have
+\(
+\|f\|_{\mathcal{H}}^2 = \vect{c}^\top \matr{K} \vect{c}
+\)\footnote{i.e. motivated by the kernel trick},
+we define the linear space
+\begin{equation}\label{eq:native_space}
+H_K(\Omega) 
+:= 
+\left\{ \sum_{i=1}^N c_i K(\vect{x}_i, \cdot) : c_i \in \R, \; \vect{x}_i \in \Omega, \; N \in \N \right\}
+\end{equation}
+equipped with the bilinear form
+\begin{equation}\label{eq:native_space_inner_product}
+\langle f, g \rangle_K
+=
+\left\langle \sum_{i=1}^N c_i K(\vect{x}_i, \cdot), \sum_{j=1}^M d_j K(\vect{y}_j, \cdot) \right\rangle_K
+:=
+\vect{c}^\top \left[ K(\vect{x}_i, \vect{y}_j) \right]_{i=1,j=1}^{N,M} \vect{d}
+\end{equation}
+where \(M = N = \infty\) is possible.
+
+
+\begin{theorem}\label{theorem:bilinear_form_is_inner_product}
+If \(K: \Omega \times \Omega \to \R\) is symmetric and strictly positive definite,
+then the bilinear form \(\langle \cdot, \cdot \rangle_K\) defined in \eqref{eq:native_space_inner_product} 
+defines an \hyperref[def:inner_product]{inner product} on \(H_K(\Omega)\).
+Moreover, \(H_K(\Omega)\) is a pre-Hilbert space with reproducing kernel \(K\).
+\end{theorem}
+
+\begin{proof}
+% Linearity can be seen if we write
+% \[
+% \begin{aligned}
+% \langle \alpha f_1+\beta f_2,\, g\rangle_K
+% &= \left\langle \alpha \sum_{i=1}^{N_1} c_i^{(1)} K(\vect{x}_i^{(1)},\cdot)
+%  + \beta \sum_{i=1}^{N_2} c_i^{(2)} K(\vect{x}_i^{(2)},\cdot),\,
+%    \sum_{j=1}^{M} d_j K(\vect{y}_j,\cdot) \right\rangle_K \\
+% &=
+% \begin{bmatrix}
+% \alpha \vect{c}^{(1)} \\[2pt]
+% \beta \vect{c}^{(2)}
+% \end{bmatrix}^\top
+% \begin{bmatrix}
+% \left[ K(\vect{x}_i^{(1)}, \vect{y}_j) \right]_{i=1,j=1}^{N_1,M} \\[6pt]
+% \left[ K(\vect{x}_i^{(2)}, \vect{y}_j) \right]_{i=1,j=1}^{N_2,M}
+% \end{bmatrix} \vect{d} \\
+% &= \alpha \vect{c}^{(1)\top} \left[ K(\vect{x}_i^{(1)}, \vect{y}_j) \right]_{i=1,j=1}^{N_1,M} \vect{d}
+%  + \beta \vect{c}^{(2)\top} \left[ K(\vect{x}_i^{(2)}, \vect{y}_j) \right]_{i=1,j=1}^{N_2,M} \vect{d} \\
+% &= \alpha \langle f_1,g\rangle_K + \beta \langle f_2,g\rangle_K
+% \end{aligned}
+% \]
+% and symmetry follows from $K(\vect{x},\vect{y})=K(\vect{y},\vect{x})$.
+Symmetry follows directly from the symmetry of \(K\).
+Positive definiteness follows from the strict positive definiteness of \(K\) according to
+\[
+\langle f,f\rangle_K
+% =\sum_{i,j=1}^N c_i c_j\,K(\vect{x}_i,\vect{x}_j)
+=\langle \vect{\Phi}^{\top} \vect{c}, \vect{\Phi}^{\top} \vect{c} \rangle_K
+=\vect{c}^\top \matr{K}\,\vect{c}>0 
+\]
+for all \(f = \vect{\Phi}^{\top} \vect{c} = \sum_{i=1}^N c_i K(\vect{x}_i, \cdot) \neq 0_{H_K(\Omega)}\).
+Hence $\langle\cdot,\cdot\rangle_K$ is an inner product.
+
+Finally, for any $\vect{y}\in\Omega$, the \hyperref[item:reproducing_property]{reproducing property} is obtained by
+\[
+\langle K(\vect{y},\cdot), f \rangle_K
+= 1 \left[ K(\vect{y}, \vect{x}_j) \right]_{j=1}^{N} \vect{c}
+= \sum_{j=1}^N c_j K(\vect{y}, \vect{x}_j)
+= \sum_{j=1}^N c_j K(\vect{x}_j, \vect{y})
+= f(\vect{y})
+\]
+for all \(f = \sum_{j=1}^N c_j K(\vect{x}_j, \cdot) \in H_K(\Omega)\).
+% so $K$ reproduces evaluation on $H_K(\Omega)$. Thus $H_K(\Omega)$ is a pre-Hilbert space with reproducing kernel $K$; its completion is the RKHS.
+\end{proof}
+
+\autoref{theorem:bilinear_form_is_inner_product} provides that \((H_K(\Omega), \langle \cdot, \cdot \rangle_K)\) is a pre-Hilbert space, hence it is not necessarily complete.
+But as we know from \autoref{theorem:completion}, each normed space exhibits a completion that is unique up to isometry.
+
+\begin{definition}[Native Space]\label{def:native_space}
+The completion \(\mathcal{N}_K(\Omega) := \overline{H_K(\Omega)}^{\|\cdot\|_K}\) with respect to the norm \(\|f\|_K := \sqrt{\langle f, f \rangle_K}\) is called the \hl[2]{native space} of \(K\).
+\end{definition}
+
+
+
+
+
+\subsection{Spectral POV}
+
+Another characterization of the native space is given by the eigenfunctions of the linear operator
+\[
+T_K: L^2(\Omega) \rightarrow L^2(\Omega),
+\quad
+\left(T_K v\right)(\vect{x})
+:=
+\int_{\Omega} K(\vect{x}, \vect{y}) v(\vect y) \dif \vect{y}
+\]
+
+\begin{fact}[Mercer]\label{fact:mercer} 
+Let \(K \in C(\Omega \times \Omega)\) be a continuous and positive definite kernel. Then, there holds
+\[
+K(\vect{x}, \vect{y})=\sum_{i=1}^{\infty} \lambda_i \phi_i(\vect{x}) \phi_i(\vect{y}),
+\]
+where \(\left\{\left(\lambda_i, \phi_i\right)\right\}_{i=1}^{\infty}\) are the eigen-pairs of the compact operator \(T_K\).
+\end{fact}
+
+The previous fact allows for a spectral characterization of the native space. To this end, we endow
+\[
+\mathcal{H}:=\left\{f: \Omega \rightarrow \R: f=\sum_{i=1}^{\infty} c_i \phi_i, c_i \in \R\right\}
+\]
+with the inner product
+\[
+\langle f, g\rangle_{\mathcal{H}}
+=
+\left\langle\sum_{i=1}^{\infty} c_i \phi_i, \sum_{i=1}^{\infty} d_i \phi_i\right\rangle_{\mathcal{H}}
+:=
+\sum_{i=1}^{\infty} \frac{c_i d_i}{\lambda_i}
+=
+\sum_{i=1}^{\infty} \frac{\langle f, \phi_i\rangle_{L^2(\Omega)}\langle g, \phi_i\rangle_{L^2(\Omega)}}{\lambda_i} 
+\]
+
+
+There holds
+\[
+\begin{aligned}
+\langle K(\vect{x}, \cdot), f\rangle_{\mathcal{H}} 
+& =\sum_{i=1}^{\infty} \frac{\langle K(\vect{x}, \cdot), \phi_i \rangle_{L^2(\Omega)} \langle f, \phi_i\rangle_{L^2(\Omega)}}{\lambda_i} \\
+& =\sum_{i=1}^{\infty} \frac{\langle \sum_{j=1}^{\infty} \lambda_j \phi_j(\vect{x}) \phi_j(\cdot), \phi_i\rangle_{L^2(\Omega)}\langle f, \phi_i\rangle_{L^2(\Omega)}}{\lambda_i} \\
+& =\sum_{i=1}^{\infty} \frac{\lambda_i \phi_i(\vect{x})\langle f, \phi_i\rangle_{L^2(\Omega)}}{\lambda_i}=\sum_{i=1}^{\infty} c_i \phi_i(\vect{x})=f(\vect{x})
+\end{aligned}
+\]
+
+
+Consequently, we may set \(\langle\cdot, \cdot\rangle_{\mathcal{N}_K(\Omega)}:=\langle\cdot, \cdot\rangle_{\mathcal{H}}\) and obtain
+\[
+\mathcal{N}_K(\Omega)=\left\{f \in L^2(\Omega):\langle f, f\rangle_{\mathcal{N}_K(\Omega)}<\infty\right\} .
+\]
+
+
+
+\clearpage
+
+\section{Approximation results}\label{sec:approximation_results}
+
+\begin{definition}\label{def:fill_separation_distance}
+Given \(\Omega \subset \R^d\) and \(X = \{\vect{x}_1, \ldots, \vect{x}_N\} \subset \Omega\), we introduct the \hl{fill distance}
+\begin{equation}\label{eq:fill_distance}
+h_{X, \Omega} := \sup_{\vect{x} \in \Omega} \min_{\vect{x}_i \in X} \|\vect{x} - \vect{x}_i\|_2
+\end{equation}
+and the \hl{separation distance}
+\begin{equation}\label{eq:separation_distance}
+q_{X} := \min_{\vect{x}_i \neq \vect{x}_j} \|\vect{x}_i - \vect{x}_j\|_2
+\end{equation}
+We call \(X\) \hl[2]{quasi-uniform}, iff there exists a constant \(c \geq 1\) such that
+\(
+q_X / c \le h_{X, \Omega} \le c q_X
+\).
+\end{definition}
+
+
+% Data
+% 	•	Domain \Omega: polygon with vertices
+% (0.8,1.4),(1.3,3.7),(4.0,4.1),(6.6,3.9),(7.8,2.8),(7.3,1.3),(5.7,0.6),(3.7,0.3),(1.6,0.5).
+% 	•	Point set X:
+% (2,1),(1.4,2.0),(2.4,3.2),(3.3,2.5),(3.4,1.2),(3.8,3.6),(4.8,0.8),(5.4,3.4),(6,1),(6.8,3.2),(6.9,1.8).
+
+% Separation distance q_X
+
+% Minimum pairwise distance among points in X:
+% 	•	Achieved by (2.4,3.2) and (3.3,2.5).
+% 	•	q_X = \sqrt{(0.9)^2 + (-0.7)^2} = \sqrt{1.3} \approx 1.14018.
+
+% Fill distance h_{X,\Omega}
+
+% Largest empty ball (center in \Omega) avoiding X.
+% The maximizer is the circumcenter of the three nearest points
+% (5.4,3.4),\quad (4.8,0.8),\quad (3.3,2.5),
+% which lies inside \Omega.
+% 	•	Maximizing point:
+% x^\star \approx (4.67195,\ 2.19878).
+% 	•	Distance to its nearest points (all three above, equidistant):
+% h_{X,\Omega} \;=\; \|x^\star-(5.4,3.4)\|_2
+% \;=\; \|x^\star-(4.8,0.8)\|_2
+% \;=\; \|x^\star-(3.3,2.5)\|_2
+% \;\approx\; 1.40463.
+
+% So:
+% 	•	Separation q_X = \sqrt{1.3} \approx 1.14018 at the pair (2.4,3.2)–(3.3,2.5).
+% 	•	Fill h_{X,\Omega} \approx 1.40463, attained at x^\star \approx (4.67195, 2.19878), equidistant to the three points (5.4,3.4), (4.8,0.8), (3.3,2.5).
+\[
+\begin{tikzpicture}[
+  scale=0.8, 
+  % font=\footnotesize
+  ]
+% axes
+\begin{scope}[xshift=-0.5cm]
+  \draw[->,black,thick] (0,0) -- (8,0);
+  \draw[->,black,thick] (0,0) -- (0,4);
+\node at (0.5,0.5) {\(\R^d\)};
+\end{scope}
+% \foreach \x in {1,2,...,7}{
+%   \draw[black,thick] (\x,0.1) -- (\x,-0.1);
+%   \node[below] at (\x,0) {\(\x\)};
+% }
+% \foreach \y in {1,2,3}{
+%   \draw[black,thick] (0.1,\y) -- (-0.1,\y);
+%   \node[left] at (0,\y) {\(\y\)};
+% }
+
+% domain boundary (blob)
+\draw[black,thick, fill=gray!30]
+  plot[smooth cycle,tension=0.55]
+  coordinates {(0.8,1.4) (1.3,3.7) (4.0,4.1) (6.6,3.9) (7.8,2.8) (7.3,1.3) (5.7,0.6) (3.7,0.3) (1.6,0.5)};
+\node[black] at (7.2,4.0) {$\Omega$};
+
+% data points
+\foreach \p in {(2,1),(1.4,2.0),(1.4,3.1),(2.4,3.2),(3.3,2.5),(3.4,1.2),(3.8,3.6),(4.8,0.8),(5.4,3.4),(6,1), (6.8,3.2),(6.9,1.8)}{
+  \node[black, circle, fill=black, inner sep=1.0pt, outer sep=0pt] at \p {};
+}
+
+% parameters for h and q 
+  \coordinate (Xstar) at (4.67195,2.19878);   % argmax point in Omega
+  \def\hr{1.40463}                             % fill radius h
+  \coordinate (A) at (2.4,3.2);               % closest pair
+  \coordinate (B) at (1.4,3.1);
+
+  % fill distance
+  \draw[red!70!black, dashed] (Xstar) circle (\hr);
+  \path (Xstar) ++(35:\hr) coordinate (Hend); 
+  \draw[red!70!black, <->] (Xstar) -- (Hend) node[midway, above left, xshift=0pt, yshift=0pt, inner sep=0pt] {$h_{X,\Omega}$};
+  \node[circle, fill=black, inner sep=0.5pt, red!70!black] at (Xstar) {};
+
+  % separation distance
+  \draw[blue!70!black, <->] ($(A)!0.0!(B)$) -- ($(A)!1.0!(B)$) node[midway, inner sep=1pt, above] {$q_X$};
+
+\end{tikzpicture}
+\]
+
+
+We start by introducing the concept of \emph{Lagrange bases}.
+To this end, we recall the kernel matrix
+\[
+ \matr{K} := [K(\vect{x}_i, \vect{x}_j)]_{i,j=1}^N
+\]
+from \autoref{def:positive_definite_kernel} and the feature vector
+\[
+ \vect{\Phi}(\vect{x}) = [K(\vect{x}_i, \vect{x})]_{i=1}^N = [\varphi_1(\vect{x}), \ldots, \varphi_N(\vect{x})]^\top
+\]
+Further, we denote the canonical basis in \(\R^N\) by \(\vect{e}_1, \ldots, \vect{e}_N\).
+
+
+\begin{theorem}\label{theorem:lagrange_basis}
+  Let \(K\) be a strictly positive definite kernel.
+  Then, for any mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N\), the \emph{Lagrange basis} is given by
+  \[
+  \ell_j(\vect{x}) := \sum_{k=1}^N c_k^{(j)} K(\vect{x}_k, \vect{x}) = \vect{c}^{(j)} \vect{\Phi}(\vect{x})
+  \]
+  with \(\vect{c}^{(j)} := \vect{e}_j^\top \matr{K}^{-1}\), \(j = 1, \ldots, N\).
+  The functions \(\ell_j\) satisfy \(\ell_j(\vect{x}_i) = \delta_{ij}\).
+\end{theorem}
+\begin{proof}
+  There holds
+  \[
+  \ell_j(\vect{x}_i) 
+  = \vect{c}^{(j)} \vect{\Phi}(\vect{x}_i)
+  = \vect{e}_j^\top \matr{K}^{-1} \matr{K}_{:,i}
+  = \vect{e}_j^\top \matr{K}^{-1} \matr{K} \vect{e}_i
+  = \vect{e}_j^\top \vect{e}_i
+  = \delta_{ij}
+  \]
+  since \(\vect{\Phi}(\vect{x}_i)\) is the \(i\)-th column of \(\matr{K}\).
+\end{proof}
+
+
+
+Given a function \(f : \Omega \to \R\) we can write its interpolant according to
+\[
+{\color{Red}\boxed{\color{black}
+s_{f}(\vect{x})
+=\sum_{j=1}^N f(\vect{x}_j) \ell_j(\vect{x})
+}}
+\]
+where \(\vect{x} \in \Omega\).
+
+To derive an error estimate in terms of the \hyperref[eq:fill_distance]{fill distance}, an important tool is the
+\begin{definition}[power function]\label{def:power_function}
+Let \(\Omega \subset \R^d\) and \(K: \Omega \times \Omega \to \R\) be a continuous and strictly positive definite kernel.
+Given any set \(X = \{\vect{x}_1, \ldots, \vect{x}_N\}\) of mutually distinct points, the \hl{power function} \(P_{K, X} : \Omega \to \R\) is defined as
+\begin{equation}\label{eq:power_function}
+P_{K, X}(\vect{x})
+:=
+\left\| K(\vect{x}, \cdot) - \sum_{j=1}^N \ell_j(\vect{x}) K(\vect{x}_j, \cdot) \right\|_{\mathcal{N}_K(\Omega)}
+\end{equation}
+where \(\vect{x} \in \Omega\) and \(\ell_j\) are the Lagrange basis functions from \autoref{theorem:lagrange_basis}.
+\end{definition}
+
+\hl[2]{The power function reflects how well the observations at \(X\) can approximate or predict the value at a new point}.
+
+
+A direct calculation yields the following
+\begin{fact}
+Under the same assumptions as in \autoref{def:power_function}, we have
+\begin{equation}\label{eq:power_function_formula}
+P_{K, X}(\vect{x}) 
+=
+\sqrt{K(\vect{x}, \vect{x}) - \vect{\Phi}(\vect{x})^\top \matr{K}^{-1} \vect{\Phi}(\vect{x})}
+\end{equation}
+for all \(\vect{x} \in \Omega\), and, hence, \(0 \le P_{K, X}(\vect{x}) \le \sqrt{K(\vect{x}, \vect{x})}\).
+\end{fact}
+
+The point-wise approximation error can be bounded by the power function.
+\begin{theorem}\label{theorem:pointwise_error_power_function}
+Under the same assumptions as in \autoref{def:power_function}, we have
+\[
+|f(\vect{x}) - s_f(\vect{x})| \le P_{K, X}(\vect{x}) \|f\|_{\mathcal{N}_K(\Omega)}
+\]
+for every \(f \in \mathcal{N}_K(\Omega)\) and \(\vect{x} \in \Omega\).
+\end{theorem}
+\begin{proof}
+Using the \hyperref[item:reproducing_property]{reproducing property} from \autoref{def:rkhs}, we obtain
+\[
+s_f(\vect{x})
+=
+\sum_{j=1}^N f(\vect{x}_j) \ell_j(\vect{x})
+=
+\sum_{j=1}^N \langle K(\vect{x}_j, \cdot), f \rangle_{\mathcal{N}_K(\Omega)} \ell_j(\vect{x})
+=
+\left\langle \sum_{j=1}^N \ell_j(\vect{x}) K(\vect{x}_j, \cdot), \, f \right\rangle_{\mathcal{N}_K(\Omega)}
+\]
+and thus
+\[
+\begin{aligned}
+|f(\vect{x}) - s_f(\vect{x})|
+&=
+\left| \langle K(\vect{x}, \cdot), f \rangle_{\mathcal{N}_K(\Omega)}
+- \left\langle \sum_{j=1}^N \ell_j(\vect{x}) K(\vect{x}_j, \cdot), \, f \right\rangle_{\mathcal{N}_K(\Omega)} \right| \\
+&=
+\left| \left\langle K(\vect{x}, \cdot) - \sum_{j=1}^N \ell_j(\vect{x}) K(\vect{x}_j, \cdot), \, f \right\rangle_{\mathcal{N}_K(\Omega)} \right| \\
+&\overset{\text{\eqref{eq:cauchy_schwarz_inequality}}}{\le}
+\left\| K(\vect{x}, \cdot) - \sum_{j=1}^N \ell_j(\vect{x}) K(\vect{x}_j, \cdot) \right\|_{\mathcal{N}_K(\Omega)} \cdot \|f\|_{\mathcal{N}_K(\Omega)} \\
+&=
+P_{K, X}(\vect{x}) \cdot \|f\|_{\mathcal{N}_K(\Omega)}
+\end{aligned}
+\]
+by the \nameref{theorem:cauchy_schwarz_inequality}.
+\end{proof}
+
+\begin{fact}\label{fact:power_function_fill_distance}
+  Let \(\Omega \subset \R^d\) satisfy an interior cone condition, i.e., there exists an angle \(\alpha > 0\) such that the interior angle at every corner of \(\Omega\) is bigger than \(\alpha\).
+  Let \(K \in C^{2k}(\Omega \times \Omega)\) be a strictly positive definite kernel.
+  Then there exist constants \(C_K, h_0 > 0\) such that 
+  \[
+  P_{K, X}(\vect{x}) \le C_K h_{X, \Omega}^k
+  \]
+  whenever \(h_{X, \Omega} \le h_0\)
+\end{fact}
+
+Combining \autoref{theorem:pointwise_error_power_function} and \autoref{fact:power_function_fill_distance} yields the final error estimate
+\begin{theorem}\label{theorem:error_estimate_fill_distance}
+Let \(\Omega \subset \R^d\) satisfy an interior cone condition, \(K \in C^{2k}(\Omega \times \Omega)\) be a strictly positive definite kernel and \(X = \{\vect{x}_1, \ldots, \vect{x}_N\}\) be a set of mutually distinct points.
+Then, we have for every \(f \in \mathcal{N}_K(\Omega)\)
+\[
+|f(\vect{x}) - s_f(\vect{x})| \le C_K h_{X, \Omega}^k \|f\|_{\mathcal{N}_K(\Omega)}
+\]
+for all \(\vect{x} \in \Omega\) whenever \(h_{X, \Omega} \le h_0\).
+\end{theorem}
+
+
+
+
+
+\subsection{Connection to Gaussian processes}\label{sec:connection_gaussian_processes}
+
+Let $(\mathcal{S},\mathcal{F},\Prob)$ be a probability space.%
+\footnote{%
+Usually, the sample space is denoted by \(\Omega\), but we already used this symbol for domains in \(\R^d\).
+Since the event space \(\mathcal{F}\) is a \emph{$\sigma$-algebra}, (i.e., a collection of subsets of \(\mathcal{S}\) that contains the empty set, is closed under complementation and countable unions), it is sometimes denoted by \(\Sigma\). 
+By using \(\mathcal{F}\) here, we avoid confusion with the notation for the covariance matrix.
+}
+
+\begin{definition}[Random variable]
+A \emph{random variable} is a measurable map
+\(
+X : \mathcal{S} \to \R
+\).
+\end{definition}
+
+\begin{definition}[Random function]
+A \emph{random function} is a map
+\(
+f : \R^d \times \mathcal{S} \to \R
+\).
+For fixed $\vect{x} \in \R^d$, $f(\vect{x},\cdot)$ is a random variable;  
+for fixed $\omega \in \mathcal{S}$, $f(\cdot,\omega)$ is a deterministic function.
+\end{definition}
+
+\begin{definition}[Gaussian process]
+A collection of random variables $\{f(\vect{x}) \mid \vect{x} \in \R^d\}$ is called a
+\emph{Gaussian process} if for all $\vect{x}_1,\dots,\vect{x}_m \in \R^d$,
+\[
+(f(\vect{x}_1),\dots,f(\vect{x}_m))
+\]
+is multivariate Gaussian.  
+It is characterized by its mean $\mu(\vect{x})=\Exp[f(\vect{x})]$ and covariance
+$k(\vect{x},\vect{x}')=\operatorname{Cov}(f(\vect{x}),f(\vect{x}'))$.
+\end{definition}
+
+
+\begin{theorem}[Connection to Gaussian processes]\label{ex:connection_gp_rkhs}
+Let $K$ be a strictly positive definite kernel on $\Omega \subset \R^d$ and let
+\[
+\matr{K} = \bigl[K(\vect{x}_i,\vect{x}_j)\bigr]_{i,j=1}^n
+\]
+be the kernel matrix associated with pairwise distinct points
+\(
+\{\vect{x}_1,\dots,\vect{x}_n\} \subset \Omega
+\).
+Consider a Gaussian process $f \sim \mathcal{GP}(0,K)$ and set
+\[
+X := \{\vect{x}_1,\dots,\vect{x}_{n-1}\},
+\qquad
+\vect{y} := \bigl(f(\vect{x}_1),\dots,f(\vect{x}_{n-1})\bigr)^\top,
+\qquad
+\vect{x}_\star := \vect{x}_n,
+\quad
+f_\star := f(\vect{x}_\star).
+\]
+
+Partition $\matr{K}$ as
+\begin{equation}\label{eq:partitioned_covariance}
+\matr{K} 
+= 
+\begin{pmatrix}
+\matr{K}_{mm} & \matr{K}_{m\star} \\[0.3em]
+\matr{K}_{\star m} & \matr{K}_{\star\star}
+\end{pmatrix},
+\end{equation}
+where $\matr{K}_{mm} \in \R^{(n-1)\times(n-1)}$ is the covariance on $X$, 
+$\matr{K}_{m\star} \in \R^{(n-1)\times 1}$ contains the covariances between $X$ and $\vect{x}_\star$, and
+$\matr{K}_{\star\star} \in \R$ is the variance at $\vect{x}_\star$.
+
+Then:
+\begin{enumerate}[label=(\roman *)]
+  \item The conditional distribution of $f_\star$ given the observations $\vect{y}$ is Gaussian with
+  \[
+    f_\star \mid \vect{y}
+    \sim
+    \mathcal{N}\!\left(
+      \matr{K}_{\star m} \matr{K}_{mm}^{-1}\vect{y},\;
+      \matr{K}_{\star\star}
+      -
+      \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}
+    \right).
+  \]
+  In particular, the conditional variance
+  \[
+    \Var\bigl(f_\star \mid \vect{y}\bigr)
+    =
+    \matr{K}_{\star\star}
+    -
+    \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}
+  \]
+  is the Schur complement \eqref{eq:schur_complement} of $\matr{K}_{mm}$ in $\matr{K}$.
+
+  \item Let $P_{K,X}$ be the power function from \autoref{def:power_function}. 
+  Using the explicit formula \eqref{eq:power_function_formula},
+  \[
+    P_{K,X}(\vect{x}_\star)^2
+    =
+    K(\vect{x}_\star,\vect{x}_\star)
+    - \vect{\Phi}(\vect{x}_\star)^\top \matr{K}_{mm}^{-1} \vect{\Phi}(\vect{x}_\star)
+    =
+    \matr{K}_{\star\star}
+    -
+    \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}.
+  \]
+  Hence
+  \[
+    P_{K,X}(\vect{x}_\star)
+    =
+    \sqrt{\Var\bigl(f_\star \mid \vect{y}\bigr)},
+  \]
+  i.e.\ the power function evaluated at $\vect{x}_\star$ is exactly the conditional standard deviation (posterior uncertainty) of the Gaussian process at $\vect{x}_\star$ given the observations at $X$.
+\end{enumerate}
+\end{theorem}
+
+
+\clearpage
+
+
+
+
+
+\section{Numerical methods}\label{sec:numerical_methods}
+
+In this chapter, we focus on the situation where the basic or kernel function under consideration is positive definite. 
+As a consequence, the generalized Vandermonde or kernel matrix $\matr{K}=\bigl[K(\vect{x}_i,\vect{x}_j)\bigr]_{i,j=1}^N \in \R^{N\times N}$ is positive semi-definite. 
+We need the following 
+\begin{lemma}\label{lemma:schur_complement}
+Let $\matr{A}$ be a symmetric and positive semi-definite matrix. 
+Then, the \hl{Schur complement}
+\begin{equation}\label{eq:schur_complement}
+  {\color{Red}\boxed{\color{black}
+  \matr{S}:=\matr{A}_{2,2}-\matr{A}_{2,1}\matr{A}_{1,1}^{-1}\matr{A}_{1,2}
+  }}
+\end{equation}
+ is well defined for any block partitioning of
+\[
+\matr{A}=\begin{bmatrix}
+\matr{A}_{1,1} & \matr{A}_{1,2} \\
+\matr{A}_{2,1} & \matr{A}_{2,2}
+\end{bmatrix}
+\]
+for which $\matr{A}_{1,1}^{-1}$ exists. 
+Moreover, $\matr{A}_{1,1}$ is always symmetric and positive semi-definite, while $\matr{S}$ is symmetric and positive semi-definite.
+\end{lemma}
+\begin{proof}
+Let \(\left[\begin{smallmatrix}\vect{x}\\ \vect{y}\end{smallmatrix}\right]\in\R^N\) be partitioned similarly to $\matr{A}$. Since
+\[
+\begin{bmatrix}
+\matr{A}_{1,1} & \matr{A}_{1,2} \\
+\matr{A}_{2,1} & \matr{A}_{2,2}
+\end{bmatrix}
+=\matr{A}
+=\matr{A}^{\top}
+=
+\begin{bmatrix}
+\matr{A}_{1,1}^{\top} & \matr{A}_{2,1}^{\top} \\
+\matr{A}_{1,2}^{\top} & \matr{A}_{2,2}^{\top}
+\end{bmatrix}
+\]
+we obtain
+\[
+\matr{A}_{1,1}=\matr{A}_{1,1}^{\top},\quad
+\matr{A}_{2,2}=\matr{A}_{2,2}^{\top},\quad
+\matr{A}_{1,2}=\matr{A}_{2,1}^{\top}
+\]
+
+Consequently, $\matr{A}_{1,1}$ is symmetric and there holds
+\[
+0\le
+\begin{bmatrix}
+\vect{x}\\ \vect{0}
+\end{bmatrix}^{\top}
+\matr{A}
+\begin{bmatrix}
+\vect{x}\\ \vect{0}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\vect{x}\\ \vect{0}
+\end{bmatrix}^{\top}
+\begin{bmatrix}
+\matr{A}_{1,1}\vect{x}\\
+\matr{A}_{2,1}\vect{x}
+\end{bmatrix}
+=\vect{x}^{\top}\matr{A}_{1,1}\vect{x}
+\]
+Therefore, $\matr{A}_{1,1}$ is positive semi-definite. 
+In fact, it is even positive definite as $\matr{A}_{1,1}^{-1}$ exists by assumption.
+Furthermore, there holds
+\[
+\matr{S}^{\top}
+=\matr{A}_{2,2}^{\top}-\matr{A}_{1,2}^{\top}\matr{A}_{1,1}^{-\top}\matr{A}_{2,1}^{\top}
+=\matr{A}_{2,2}-\matr{A}_{2,1}\matr{A}_{1,1}^{-1}\matr{A}_{1,2}
+=\matr{S}
+\]
+
+Finally, we consider $\left[\begin{smallmatrix}\vect{x}\\ \vect{y}\end{smallmatrix}\right]$ with $\vect{x}=-\matr{A}_{1,1}^{-1}\matr{A}_{1,2}\vect{y}$. 
+This yields
+\[
+\begin{aligned}
+0&\le
+\begin{bmatrix}\vect{x}\\ \vect{y}\end{bmatrix}^{\top}
+\matr{A}
+\begin{bmatrix}\vect{x}\\ \vect{y}\end{bmatrix}
+=
+\begin{bmatrix}\vect{x}\\ \vect{y}\end{bmatrix}^{\top}
+\begin{bmatrix}
+\matr{A}_{1,1}\vect{x}+\matr{A}_{1,2}\vect{y}\\
+\matr{A}_{2,1}\vect{x}+\matr{A}_{2,2}\vect{y}
+\end{bmatrix}
+\\
+&=
+\begin{bmatrix}\vect{x}\\ \vect{y}\end{bmatrix}^{\top}
+\begin{bmatrix}
+-\matr{A}_{1,2}\vect{y}+\matr{A}_{1,2}\vect{y}\\
+-\matr{A}_{2,1}\matr{A}_{1,1}^{-1}\matr{A}_{1,2}\vect{y}+\matr{A}_{2,2}\vect{y}
+\end{bmatrix}
+=
+\begin{bmatrix}\vect{x}\\ \vect{y}\end{bmatrix}^{\top}
+\begin{bmatrix}
+\vect{0}\\
+\matr{S}\vect{y}
+\end{bmatrix}
+=\vect{y}^{\top}\matr{S}\vect{y}
+\end{aligned}
+\]
+which yields the semi-definiteness of $\matr{S}$.
+\end{proof}
+
+Given a positive semi-definite matrix $\matr{A}$, successively reducing the Schur complement by setting
+\[
+\matr{A}_1:=\matr{A},\quad
+\vect{\ell}_i:=\frac{1}{\sqrt{a_{\pi(i),\pi(i)}^{(i)}}}\,\vect{a}_{:,\pi(i)}^{(i)},\quad
+\matr{A}_{i+1}:=\matr{A}_i-\vect{\ell}_i\vect{\ell}_i^{\top}
+\]
+for a permutation $\pi$ of the set $\{1,\dots,N\}$ leads to a representation
+\[
+\matr{A}=\sum_{i=1}^{\operatorname{rank}(\matr{A})}\vect{\ell}_i\vect{\ell}_i^{\top}
+\]
+given that all pivots $a_{\pi(i),\pi(i)}^{(i)}$ are non-zero. 
+In this case, also all matrices $\matr{A}_i$, $i=1,\dots,\operatorname{rank}(\matr{A})$ are positive semi-definite. 
+This can be seen by introducing the permutation matrix $\matr{P}:=\bigl[\vect{e}_{\pi(1)},\dots,\vect{e}_{\pi(N)}\bigr]^{\top}$ and considering the matrix $\matr{P} \matr{A} \matr{P}^{\top}$ in \autoref{lemma:schur_complement}.
+
+\begin{remark}\label{remark:id_pivot_cholesky}
+For $\pi(i)=i$, we obtain the well known Cholesky decomposition.
+\end{remark}
+
+\begin{lemma}\label{lem:spd_inequality}
+Let $\matr{A}$ be a symmetric and positive semi-definite matrix. 
+Then, there holds
+\[
+\lvert a_{i,j}\rvert \le \sqrt{a_{i,i}\,a_{j,j}}
+\]
+for all $i,j=1,\dots,N$.
+\end{lemma}
+
+\begin{proof}
+The positive semi-definiteness of the Schur complement established by \autoref{lemma:schur_complement} holds true for any pivot element $a_{i,i}$, $i=1,\dots,N$. 
+In particular, all diagonal elements of the Schur complement have to be non-negative, which implies
+\[
+0 \le a_{j,j}-\frac{a_{i,j}^2}{a_{i,i}}
+\quad\text{or}\quad
+\lvert a_{i,j}\rvert \le \sqrt{a_{i,i}\,a_{j,j}}
+\]
+as claimed.
+\end{proof}
+
+A direct consequence of \autoref{lem:spd_inequality} is that the largest element of a positive semi-definite matrix is always located on the diagonal, i.e.,
+\[
+\lvert a_{i,j}\rvert \le \sqrt{a_{i,i}\,a_{j,j}} \le \frac{a_{i,i}+a_{j,j}}{2} \le \max_{i=1,\dots,N} a_{i,i}.
+\]
+Therefore, if all diagonal elements are zero, the matrix has to be the zero matrix. 
+This motivates the pivoted version of the Cholesky decomposition, \autoref{alg:pivoted_cholesky}, which greedily removes the largest element from the Schur complement.
+
+\begin{definition}[Biorthogonal basis]\label{def:biorthogonal_basis}
+Let $\matr{L}, \matr{B} \in \R^{N\times m}$. 
+We say that the column vectors of $\matr{L}$ and $\matr{B}$ form a {biorthogonal basis} of two subspaces $\mathcal{L},\mathcal{B}\subseteq\R^N$ if 
+\[
+\matr{B}^\top \matr{L} = \matr{I}_m
+\]
+i.e., each pair of basis vectors satisfies
+\(
+\vect{b}_i^{\top}\vect{\ell}_j = \delta_{ij}
+\)
+where $i,j=1,\dots,m$ and $\delta_{ij}$ denotes the Kronecker delta. 
+
+In contrast to an orthonormal basis, the vectors within each set $\{\vect{\ell}_i\}$ or $\{\vect{b}_i\}$ need not be mutually orthogonal; only the cross-orthogonality between both sets is required. 
+\end{definition}
+
+\begin{remark}
+In the context of \autoref{alg:pivoted_cholesky}, the matrix $\matr{B}$ can be interpreted as the \hl{dual basis} to $\matr{L}$ with respect to the Euclidean inner product, since $\matr{B}^{\top}\matr{L}=\matr{I}_m$ implies that each $\vect{b}_i$ extracts the coefficient of $\vect{\ell}_i$ from any linear combination of the columns of $\matr{L}$. 
+Hence, for any $\vect{v}\in\operatorname{span}(\matr{L})$, the coefficient vector in this basis is given by
+\(
+\vect{c}=\matr{B}^{\top}\vect{v}
+\),
+\(
+\vect{v}=\matr{L}\vect{c}
+\).
+This duality ensures numerical stability when orthogonality of $\matr{L}$ cannot be preserved. %and plays an analogous role to that of left and right bases in biorthogonal Krylov methods or Petrov--Galerkin projections.
+\end{remark}
+
+
+\begin{algorithm}[h]
+    \caption{Pivoted Cholesky Decomposition}
+    \label{alg:pivoted_cholesky}
+    \begin{algorithmic}[1]
+      \Require symmetric and positive semi-definite matrix \(\matr{K} \in \R^{N \times N}\), tolerance \(\varepsilon \ge 0\)
+      \Ensure low-rank approximation \(\matr{K} \approx \matr{L} \matr{L}^\top\) and biorthogonal basis \(\matr{B}\) such that \(\matr{B}^\top \matr{L} = \matr{I}_m\)
+      \State Initialization: \(m := 1\), \(\vect{d} := \operatorname{diag}(\matr{K})\), \(\matr{L} := []\), \(\matr{B} := []\), \(\texttt{err} := \|\vect{d}\|_1\)
+      \While{\(\texttt{err} > \varepsilon\)}
+        \State determine \(\pi(m) := \argmax_{1 \le i \le N} d_i\)
+        \State compute
+        \(
+        \vect{\ell}_m := \frac{1}{\sqrt{d_{\pi(m)}}} \left( \matr{K} - \matr{L} \matr{L}^\top \right) \vect{e}_{\pi(m)}
+        \)
+        and
+        \(
+        \vect{b}_m := \frac{1}{\sqrt{d_{\pi(m)}}} \left( \matr{I} - \matr{B} \matr{L}^\top \right) \vect{e}_{\pi(m)}
+        \)
+        \State \(\matr{L} := [\matr{L}, \vect{\ell}_m]\), \(\matr{B} := [\matr{B}, \vect{b}_m]\)
+        \State \(\vect{d} := \vect{d} - \vect{\ell}_m \odot \vect{\ell}_m\) \Comment{\(\odot\) denotes the Hadamard product}
+        \State \(\texttt{err} := \|\vect{d}\|_1\), \(m := m + 1\)
+      \EndWhile
+    \end{algorithmic}
+\end{algorithm}
+
+By the previous considerations (\autoref{lemma:schur_complement}, \autoref{remark:id_pivot_cholesky}, \autoref{lem:spd_inequality}), the pivoting strategy in \autoref{alg:pivoted_cholesky} amounts to a total pivoting, which always eliminates the largest entry of the Schur complement \eqref{eq:schur_complement}.
+Moreover, it also computes the \hyperref[def:biorthogonal_basis]{biorthogonal basis} associated to \(\matr{L}\).
+
+\begin{fact}\label{thm:properties_cholesky}
+For any \(\varepsilon \in \R_{\geq 0}\), \autoref{alg:pivoted_cholesky} computes \(N \times m\)-matrices \(\matr{B}\) and \(\matr{L}\) with \(m \leq \operatorname{rank}(\matr{K})\) such that \(\matr{K} - \matr{L}\matr{L}^\top\) is psd and
+\[
+\begin{aligned}
+  \Trace (\matr{K} - \matr{L}\matr{L}^\top) & \leq \varepsilon \\
+  \matr{B}^\top \matr{L} & = \matr{I}_m \\
+  \matr{K} \matr{B} & = \matr{L}
+\end{aligned}
+\]
+as can be proven by induction.
+\end{fact}
+
+\begin{corollary}
+  Let \(\matr{U} = [\vect{b}_{\pi(1), :}^\top, \ldots, \vect{b}_{\pi(m), :}^\top]^\top \in \R^{m \times m}\) be the first \(m\) rows\footnote{These are exactly the nonzero rows of \(\matr{B}\).} of the matrix that is obtained if we permute the rows of \(\matr{B}\) by \(\pi\).
+  Then \(\matr{U} \matr{U}^\top = [k_{\pi(i), \pi(j)}]_{i,j = 1,\ldots,m}^{-1}\).
+\end{corollary}
+\begin{proof}
+
+
+W.l.o.g., we assume that \(\pi\) is the identity permutation, i.e., \(\pi(m) = m\).
+Let
+% \[
+% \matr{K}=\begin{bmatrix}
+% \matr{K}_{1,1} & \matr{K}_{1,2} \\
+% \matr{K}_{2,1} & \matr{K}_{2,2}
+% \end{bmatrix},
+% \qquad
+% \matr{L}=\begin{bmatrix}
+% \matr{L}_{1} \\
+% \matr{L}_{2}
+% \end{bmatrix}
+% \]
+{%
+\setlength{\arraycolsep}{1.5pt}%
+\[
+\matr{K}
+=
+\begin{bmatrix}
+\tikz{\node[draw, minimum width=1.5cm, minimum height=1.5cm, inner sep=0pt] {\(\matr{K}_{1,1}\)}} &
+\tikz{\node[draw, minimum width=0.75cm, minimum height=1.5cm, inner sep=0pt] {\(\matr{K}_{1,2}\)}} \\
+\tikz{\node[draw, minimum width=1.5cm, minimum height=0.75cm, inner sep=0pt] {\(\matr{K}_{2,1}\)}} &
+\tikz{\node[draw, minimum width=0.75cm, minimum height=0.75cm, inner sep=0pt] {\(\matr{K}_{2,2}\)}} 
+\end{bmatrix},
+\qquad
+\matr{L}
+=
+\begin{bmatrix}
+\tikz[remember picture]%
+  \node[draw, minimum width=1.5cm, minimum height=1.5cm, inner sep=0pt] (Lone) {\(\matr{L}_{1}\)}; \\
+\tikz[remember picture]%
+  \node[draw, minimum width=1.5cm, minimum height=0.75cm, inner sep=0pt] (Ltwo) {\(\matr{L}_{2}\)}; \\
+\end{bmatrix}
+\]%
+\begin{tikzpicture}[overlay, remember picture]%
+  \coordinate (L1top) at (Lone.north east);
+  \coordinate (L1bot) at (Lone.south east);
+  \coordinate (L2top) at (Ltwo.north east);
+  \coordinate (L2bot) at (Ltwo.south east);
+  \def\dx{10mm} % horizontal offset to draw things to the right of L
+  \foreach \P in {L1top,L1bot,L2top,L2bot}{
+    \draw[green!70!black] ($( \P)+(\dx,0)$) ++(-1mm,0) -- ++(2mm,0); % small ticks at the four marks
+  }
+  \draw[-, green!70!black] ($(L1top)+(\dx,0)$) -- node[right] {$m$} ($(L1bot)+(\dx,0)$); % dimension for m
+  \draw[-, green!70!black]($(L2top)+(\dx,0)$) -- node[right] {$N - m$}($(L2bot)+(\dx,0)$); % dimension for N - m
+\end{tikzpicture}%
+}%
+where \(\matr{K}_{1,1}, \matr{L}_{1} \in \R^{m \times m}\).
+We have \(\matr{K}_{1,1} = \matr{L}_{1} \matr{L}_{1}^\top\).
+Furthermore, \autoref{thm:properties_cholesky} yields
+{%
+\setlength{\arraycolsep}{1.5pt}%
+\[
+\matr{B}^\top \matr{L}
+=
+\begin{bmatrix}
+\matr{U} \\
+\matr{0}_{(N - m) \times m}
+\end{bmatrix}^\top
+\begin{bmatrix}
+\matr{L}_{1} \\
+\matr{L}_{2}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\tikz{\node[draw, minimum width=1.5cm, minimum height=1.5cm, inner sep=0pt] {\(\matr{U}^\top\)}} &
+\tikz{\node[draw, minimum width=0.75cm, minimum height=1.5cm, inner sep=0pt] {\(\matr{0}\)}}
+\end{bmatrix}
+\begin{bmatrix}
+\tikz{\node[draw, minimum width=1.5cm, minimum height=1.5cm, inner sep=0pt] {\(\matr{L}_{1}\)}} \\
+\tikz{\node[draw, minimum width=1.5cm, minimum height=0.75cm, inner sep=0pt] {\(\matr{L}_{2}\)}}
+\end{bmatrix}
+=
+\matr{U}^\top \matr{L}_{1}
+=
+\matr{I}_m
+\]%
+}%
+which shows \(\matr{U}^\top = \matr{L}_{1}^{-1}\) or \(\matr{U} = \matr{L}_{1}^{-\top}\).
+Combining this with the previous argument yields
+\[
+\matr{K}_{1,1}^{-1}
+=
+\left( \matr{L}_{1} \matr{L}_{1}^\top \right)^{-1}
+=
+\matr{L}_{1}^{-\top} \matr{L}_{1}^{-1}
+=
+\matr{U} \matr{U}^\top
+\qedhere
+\]
+\end{proof}
+\begin{remark}\label{remark:U_is_triangular}
+The matrix \(\matr{U}\) is upper triangular since \(\matr{B}\) is constructed such that \(\vect{b}_{i,j} = 0\) for all \(i < j\) in \autoref{alg:pivoted_cholesky}.
+\end{remark}
+
+\begin{remark}
+The well known Nystr\"om method for the low-rank approximation of kernel matrices randomly selects data sites 
+\(\vect{x}_{\pi(1)}, \ldots, \vect{x}_{\pi(m)}\) 
+and computes the approximation 
+\[
+\matr{K} 
+\approx
+\left[
+K(\vect{x}_i, \vect{x}_{\pi(j)})
+\right]_{\substack{i=1,\ldots,n \\ j=1,\ldots,m}}
+\left[
+K(\vect{x}_{\pi(i)}, \vect{x}_{\pi(j)})\right]_{i,j=1,\ldots,m}^{-1}
+\left[
+K(\vect{x}_{\pi(i)}, \vect{x}_j)
+\right]_{\substack{i=1,\ldots,m \\ j=1,\ldots,n}}
+\]
+The previous corollary shows that this is equivalent to a pivoted Cholesky decomposition with pivots \(\pi(1), \ldots, \pi(m)\).
+\end{remark}
+
+\begin{corollary}
+Let \((\mathcal{H}, \langle \cdot, \cdot \rangle_{\mathcal{H}})\) be an \nameref{def:rkhs}.
+Given the canonical freature vector \(\vect{\Phi}(\vect{x}) := [K(\vect{x}_i, \vect{x})]_{i=1}^N\),
+the Newton basis 
+\begin{equation}\label{eq:newton_basis}
+{\color{Red}\boxed{\color{black}
+\vect{N}(\vect{x}) 
+:=
+\matr{B}^\top \vect{\Phi}(\vect{x})
+=
+\sum_{i=1}^m \big[\matr{B}^\top\big]_{:,\pi(i)} \varphi_{\pi(i)}(\vect{x})
+=
+\sum_{i=1}^m 
+% \underbrace{\vect{b}_{\pi(i),:}}_{\bigl[\matr{B}_{\pi(i),:}\bigr]^\top}
+\bigl[\matr{B}_{\pi(i),:}\bigr]^\top
+K(\vect{x}_{\pi(i)}, \vect{x})
+}}
+\end{equation}
+forms an orthonormal system in \(\mathcal{H}\),
+i.e.,
+\(\langle N_i, N_j \rangle_{\mathcal{H}} = \delta_{ij}\)
+for \(i,j = 1, \ldots, m\), where \(m = \operatorname{rank}(\matr{B})\).
+\end{corollary}
+
+\begin{proof}
+There holds 
+\[
+\langle \vect{N}, \vect{N}^\top \rangle_{\mathcal{H}}
+=
+\matr{B}^\top \langle \vect{\Phi}, \vect{\Phi}^\top \rangle_{\mathcal{H}} \matr{B}
+=
+\matr{B}^\top \matr{K} \matr{B}
+=
+\matr{B}^\top \matr{L}
+=
+\matr{I}_m
+\]
+by the third part of \autoref{thm:properties_cholesky}.
+\end{proof}
+
+\begin{remark}
+We have 
+\[
+\operatorname{span}\{N_1, \ldots, N_m\}
+=
+\operatorname{span}\{K(\vect{x}_{\pi(1)}, \cdot), \ldots, K(\vect{x}_{\pi(m)}, \cdot)\}
+\subset
+\operatorname{span}\{\varphi_1, \ldots, \varphi_N\}
+\qedhere
+\]
+\end{remark}
+
+The \hyperref[theorem:orthogonal_projection]{orthogonal projection} of a function \(f \in \mathcal{H}\) onto the subspace spanned by \(N_1, \ldots, N_m\) is computed by
+\begin{equation}\label{eq:orthogonal_projection_newton_basis}
+\mathcal{P} f 
+:= 
+\sum_{i=1}^m
+N_i \langle N_i, f \rangle_{\mathcal{H}}
+\overset{\text{\ref{def:rkhs}.\ref{item:reproducing_property}}}{=}
+\matr{N}^\top \matr{B}^\top \vect{f}
+=
+\vect{\Phi}^\top \matr{B} \matr{B}^\top \vect{f}
+\end{equation}
+where \(\vect{f} = \left[f(\vect{x}_1), \ldots, f(\vect{x}_N)\right]^\top\).
+In particular, there holds
+\[
+\left[(\mathcal{P} f)(\vect{x}_i)\right]_{i=1}^N
+=
+\matr{K} \matr{B} \matr{B}^\top \vect{f}
+=
+\matr{L} \matr{B}^\top \vect{f}
+\]
+
+Given a (low-rank) factorization of the kernel matrix \(\matr{K}\),
+we can directly compute the least square solution to the linear system
+\[
+\matr{K} \vect{c} = \vect{f}
+\]
+
+\begin{theorem}
+Let \(\matr{K} \approx \matr{L} \matr{L}^\top\) be the pivoted Cholesky decomposition of the kernel matrix \(\matr{K}\).
+A minimum norm solution of the problem
+\[
+\left\| \matr{L} \matr{L}^\top \vect{x} - \vect{f} \right\|_2 \to \min
+\]
+is given by
+\begin{equation}\label{eq:least_squares_solution_cholesky}
+\vect{x}^{\dagger}
+=
+\matr{L} \left( \matr{L}^\top \matr{L} \right)^{-2} \matr{L}^\top \vect{f}
+\end{equation}
+The cost for the computation of \(\vect{x}^{\dagger}\) is \(\mathcal{O}(Nm^2)\) where \(m = \operatorname{rank}(\matr{L})\).
+\end{theorem}
+
+\begin{proof}
+The Gaussian normal equations read
+\[
+\matr{L} \matr{L}^\top \matr{L} \matr{L}^\top \vect{x} = \matr{L} \matr{L}^\top \vect{b}
+\]
+Inserting \(\vect{x}^{\dagger}\) from \eqref{eq:least_squares_solution_cholesky} yields
+\[
+\matr{L} \matr{L}^\top \matr{L} \matr{L}^\top \matr{L} \left( \matr{L}^\top \matr{L} \right)^{-2} \matr{L}^\top \vect{b}
+=
+\matr{L} \matr{L}^\top \vect{b}
+\]
+which shows that \(\vect{x}^{\dagger}\) solves the Gaussian normal equations and is consequently a minimum norm solution.
+\end{proof}
+
+\begin{remark}
+The matrix \((\matr{L}^\top \matr{L})^{-2}\) has condition number \((\kappa(\matr{L}))^4\) and therefore easily becomes ill-conditioned.
+To mitigate this, one may compute the QR-decomposition \(\matr{L} = \matr{Q} \matr{R}\).
+Then, there holds \(\matr{L}^\top \matr{L} = \matr{R}^\top \matr{Q}^\top \matr{Q} \matr{R} = \matr{R}^\top \matr{R}\).
+The action of \((\matr{L}^\top \matr{L})^{-2}\) can thus be computed by solving two linear systems for $\matr{R}$ and $\matr{R}^{\top}$ respectively. 
+
+Since these matrices are assumed to be relatively small, a robust solver is given by the (pseudo-)inverse based on the singular value decomposition $\boldsymbol{R}=\boldsymbol{U} \boldsymbol{\Sigma} \boldsymbol{V}^{\top}$. 
+There holds
+\[
+\left(\matr{L}^{\top} \matr{L}\right)^{-2}=\left(\matr{R}^{\top} \matr{R}\right)^{-2}=\left(\matr{V} \matr{\Sigma}^2 \matr{V}^{\top}\right)^{-2}=\matr{V} \matr{\Sigma}^{-4} \matr{V}^{\top}
+\text{.}
+\]
+This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
+\end{remark}
+
+
+
+
+
+\clearpage
+
+
+\section{Optimal recovery}\label{sec:optimal_recovery}
+
+
+
+
+
+
+\clearpage
+
+\section{Least squares approximation}\label{sec:least_squares_approximation}
+
+
+
+
+
+
+
+\clearpage
+
+\section{Support vector machines}\label{sec:support_vector_machines}
+
+\definecolor{classPlus}{RGB}{0,114,178}   % blue
+\definecolor{classMinus}{RGB}{0,158,115}  % green
+\definecolor{marginfill}{RGB}{255,255,223}% light yellow
+
+\tikzset{
+  leftNode/.style={circle,inner sep=0pt, minimum width=1.1ex, draw=black,fill=classPlus},
+  rightNode/.style={circle,inner sep=0pt, minimum width=1.1ex, draw=black,fill=classMinus},
+  rightNodeInLine/.style={circle,inner sep=0pt, minimum width=1.2ex, draw=black,thick,fill=classMinus},
+  leftNodeInLine/.style={circle,inner sep=0pt, minimum width=1.2ex, draw=black,thick,fill=classPlus},
+}
+
+% exact SVM parameters for the *scaled* dataset
+\pgfmathsetmacro{\wx}{-10.0/29.0}
+\pgfmathsetmacro{\wy}{130.0/203.0}
+\pgfmathsetmacro{\bb}{-23.0/29.0}
+
+% norms etc.
+\pgfmathsetmacro{\wnormsq}{\wx*\wx + \wy*\wy}
+\pgfmathsetmacro{\wnorm}{sqrt(\wnormsq)}
+
+% offset for measuring margin
+\pgfmathsetmacro{\measureshift}{1mm}
+
+% displacement along normal for going from hyperplane to margin: w / ||w||^2
+\pgfmathsetmacro{\dmarginx}{\wx/\wnormsq}
+\pgfmathsetmacro{\dmarginy}{\wy/\wnormsq}
+
+% projection of origin onto hyperplane: -b * w / ||w||^2
+\pgfmathsetmacro{\px}{-\bb*\wx/\wnormsq}
+\pgfmathsetmacro{\py}{-\bb*\wy/\wnormsq}
+
+% slope of the hyperplane in (x,y)-plane
+\pgfmathsetmacro{\hslope}{7.0/13.0}
+
+\[
+\begin{tikzpicture}[
+    scale=0.7,
+    important line/.style={thick},
+    dashed line/.style={dashed, thick},
+    every node/.style={color=black},
+    font=\footnotesize
+]
+
+  % --- shaded margin band between w^T x + b = 1 and = -1 ---
+  % upper: y = (7/13)x + 14/5
+  % lower: y = (7/13)x - 21/65
+  \begin{scope}
+    \clip (0,0) rectangle (8.6,7.6);
+    \fill[fill=marginfill]
+      (0,0) --
+      (0,14/5) --
+      (8,462/65) --
+      (8,259/65) --
+      (3/5,0) -- cycle;
+  \end{scope}
+
+  % axes
+  \draw[thick,->] (0,0) -- (8.6,0) node[below right] {$x$};
+  \draw[thick,->] (0,0) -- (0,7.6) node[above left] {$y$};
+
+  % w^T x + b = 1  (upper margin, dashed)
+  \draw[dashed line] (0,14/5) -- (8,462/65) node[right] {$\vect{w}^\top \vect{x} + b = 1$};
+
+  % decision boundary w^T x + b = 0  (central, blue)
+  % y = (7/13)x + 161/130
+  \pgfmathsetmacro{\linestartx}{-0.9}
+  \pgfmathsetmacro{\linestarty}{7/13*\linestartx + 161/130}
+  \draw[important line] (\linestartx,\linestarty) -- (8,721/130) node[right, classPlus!60!black] {$\vect{w}^\top \vect{x} + b = 0$};
+
+  % w^T x + b = -1  (lower margin, dashed)
+  \draw[dashed line] (3/5,0) -- (8,259/65) node[right] {$\vect{w}^\top \vect{x} + b = -1$};
+
+  % mark support vectors on the margins (scaled points)
+  \node[leftNodeInLine]  at (2.6,4.2) {};
+  \node[leftNodeInLine]  at (5.2,5.6) {};
+  \node[rightNodeInLine] at (5.8,2.8) {};
+
+  % --- choose a base point on the hyperplane, e.g. at x = 4 ---
+  \coordinate (wbase) at (2, { \hslope*2 + 161.0/130.0 });
+
+  % --- normal vector w (arrow of exact length ||w||, direction w) ---
+  \coordinate (wend) at ($(wbase) + (\wx,\wy)$);
+  \draw[thick,->] (wbase) -- (wend) node[pos=0.99,left] {$\vect{w}$};
+
+  % --- margin width 2/||w||_2 (perpendicular to hyperplane) ---
+  % endpoints are one margin distance above/below the hyperplane along the normal:
+  \coordinate (margbase) at (4.5, { \hslope*4.5 + 161.0/130.0 });
+  \def\measureinset{0.0mm} % physical inward shift
+  \coordinate (margtop) at ($ (margbase) + (\dmarginx,\dmarginy) - \measureinset*(\wx/\wnorm,\wy/\wnorm) $);
+  \coordinate (margbot) at ($ (margbase) - (\dmarginx,\dmarginy) + \measureinset*(\wx/\wnorm,\wy/\wnorm) $);
+  \draw[thick] (margtop) -- (margbot);
+
+  % small ticks across the segment, parallel to the hyperplane
+  \pgfmathsetmacro{\ticklen}{0.15}
+  \coordinate (tangent) at (1,\hslope);
+  \pgfmathsetmacro{\tanlen}{sqrt(1 + \hslope*\hslope)}
+  \pgfmathsetmacro{\tx}{\ticklen * 1.0/\tanlen}
+  \pgfmathsetmacro{\ty}{\ticklen * \hslope/\tanlen}
+  \draw[thick] ($(margtop) + (\tx,\ty)$) -- ($(margtop) - (\tx,\ty)$);
+  \draw[thick] ($(margbot) + (\tx,\ty)$) -- ($(margbot) - (\tx,\ty)$);
+
+  \node[sloped,left] at ($(margtop)!0.35!(margbot)$) {$\frac{2}{\|\vect{w}\|}$};
+
+  % --- distance from origin to its projection on the hyperplane ---
+  \coordinate (proj) at ($(\px,\py) - \measureinset*(\wx/\wnorm,\wy/\wnorm)$);
+  \draw[thick] (0,0) -- (proj);
+  \draw[thick] ($(proj) + (\tx,\ty)$) -- ($(proj) - (\tx,\ty)$);
+  \node[below left] at ($(0,0)!0.55!(proj)$) {$\frac{-b}{\|\vect{w}\|}$};
+
+  % --- data points (scaled by factor 2) ---
+  % positive points (+1, blue)
+  \foreach \Point in {(1.8,4.8), (2.6,5.0), (2.6,4.2), (4.0,6.0), (2.0,5.8), (5.2,5.6)}{
+    \node[leftNode] at \Point {};
+  }
+
+  % negative points (-1, green)
+  \foreach \Point in {(5.8,2.8), (4.6,1.0), (6.6,2.2), (6.0,1.5), (5.0,2.0)}{
+    \node[rightNode] at \Point {};
+  }
+
+\end{tikzpicture}
+\]
+
+
+\end{document}
