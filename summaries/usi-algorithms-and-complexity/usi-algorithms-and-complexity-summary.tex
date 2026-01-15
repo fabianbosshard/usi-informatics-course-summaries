@@ -2,7 +2,7 @@
 % © CC BY 4.0
 
 % \documentclass[twocolumn, a3paper, fontsize=9pt, headings=standardclasses, parskip=never]{scrartcl}
-\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half, titlepage]{scrartcl}
+\documentclass[a4paper, fontsize=9pt, headings=standardclasses, parskip=half, titlepage, twoside]{scrartcl}
 % \documentclass[a4paper, fontsize=9pt, headings=standardclasses]{scrartcl}
 
 \usepackage{csquotes}
@@ -11,7 +11,7 @@
 
 \usepackage[automark]{scrlayer-scrpage}
 \clearpairofpagestyles
-\ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+\ofoot*{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
 % \pagestyle{scrheadings}
 
 % \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
@@ -691,6 +691,8 @@
 { \today\par}
 
 \end{titlepage}
+
+\cleardoublepage % inserts a blank page iff needed so the next page is a right/odd page
 
 \pagenumbering{roman}
 
