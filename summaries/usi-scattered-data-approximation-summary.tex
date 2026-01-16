@@ -348,16 +348,6 @@
 %   \mspace{\matrspace}%
 % }
 
-\newcommand*\matrspace{0.8mu}
-\newcommand{\matr}[1]{%
-  \mspace{\matrspace}%
-  \underline{%
-    \mspace{-\matrspace}%
-    \smash[b]{\boldsymbol{#1}}%
-    \mspace{-\matrspace}%
-  }%
-  \mspace{\matrspace}%
-}
 
 % \newcommand*\matrshrink{0.25ex} % total amount to shorten the underline (tweak)
 % \makeatletter
@@ -373,9 +363,19 @@
 % }
 % \makeatother
 
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
 
-
-\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
+% \newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
 % \newcommand{\vect}[1]{\smash{\vec{\boldsymbol{#1}}}}
 % \newcommand{\vect}[1]{\vec{{#1}}\,}
 % \newcommand{\vect}[1]{\vec{#1}}
@@ -440,6 +440,7 @@
 % \usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green]{hyperref}
 % \usepackage{hyperref} % for printing use this version (without colorlinks)
 \usepackage[
+  linktoc=none,
   pdfauthor={Fabian Bosshard},
   pdftitle={USI - Scattered Data Approximation - Course Notes},
   pdfkeywords={USI, scattered data approximation, course notes, informatics},
@@ -449,6 +450,56 @@
   urlbordercolor={0 0.6 1},       % URLs
   citebordercolor={0 0.6 1}       % citations
 ]{hyperref}
+
+
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+\makeatletter
+\newlength\FB@toclinkht
+\newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+% --- ToC: add a target at the entry + one full-width clickable line ---
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      % target for "back to ToC"
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+% --- Headings: make NUMBER + TITLE one link back to the ToC entry ---
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      % IMPORTANT: \hskip needs a DIMENSION only; #3 is text -> separate them
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
 \usepackage[
   type     = {CC},
   modifier = {by},
@@ -518,6 +569,249 @@
 
 \clearpage
 
+\section{Matrix Basics}
+
+%========================================================
+% Matrix calculus (numerator-layout / Jacobian convention)
+% using Fabian's macros: \R, \matr{}, \vect{}
+%========================================================
+\subsection{Derivatives}
+Let $n\in\N$ and let $\vect{x}\in\R^n$ be a column vector. For a scalar-valued function
+$f:\R^n\to\R$ we use the \emph{Jacobian (numerator-layout)} convention
+\[
+\frac{\partial f}{\partial \vect{x}}\in\R^{1\times n}
+\]
+i.e.\ a row vector. (The column-gradient is obtained by transposition:
+$\nabla_{\vect{x}} f = \big(\frac{\partial f}{\partial \vect{x}}\big)^\top$)
+
+\paragraph{Linear form.}
+For $f(\vect{x})=\vect{b}^\top \vect{x}$ with $\vect{b}\in\R^n$,
+\[
+\frac{\partial}{\partial \vect{x}}\bigl(\vect{b}^\top \vect{x}\bigr)=\vect{b}^\top
+\]
+
+% \paragraph{Quadratic form (general matrix).}
+% Let $\matr{A}\in\R^{n\times n}$ and define $f(\vect{x})=\vect{x}^\top \matr{A}\,\vect{x}$.
+% Writing
+% \[
+% f(\vect{x})=\sum_{i=1}^n\sum_{j=1}^n x_i\,A_{ij}\,x_j,
+% \]
+% we differentiate componentwise. For $k\in\{1,\ldots,n\}$,
+% \begin{align*}
+% \frac{\partial f}{\partial x_k}
+% &=\sum_{j=1}^n A_{kj}x_j+\sum_{i=1}^n x_iA_{ik}.
+% \end{align*}
+% Collecting the components into a row vector yields
+% \[
+% \frac{\partial}{\partial \vect{x}}\bigl(\vect{x}^\top \matr{A}\,\vect{x}\bigr)
+% =\vect{x}^\top\bigl(\matr{A}+\matr{A}^\top\bigr).
+% \]
+
+\paragraph{Quadratic form.}
+Let $\matr{A}\in\R^{n\times n}$ and define $f(\vect{x})=\vect{x}^\top \matr{A}\,\vect{x}$.
+Writing
+\[
+f(\vect{x})=\sum_{i=1}^n\sum_{j=1}^n x_i\,A_{ij}\,x_j,
+\]
+we differentiate componentwise. For $k\in\{1,\ldots,n\}$,
+\[
+\begin{aligned}
+\frac{\partial f}{\partial x_k}
+&=\frac{\partial}{\partial x_k}\left(\sum_{i=1}^n\sum_{j=1}^n x_i\,A_{ij}\,x_j\right)\\
+% &=\sum_{i=1}^n\sum_{j=1}^n \frac{\partial}{\partial x_k}\bigl(x_i\,A_{ij}\,x_j\bigr)\\
+&=\sum_{i=1}^n\sum_{j=1}^n A_{ij}\,\frac{\partial}{\partial x_k}(x_i x_j)\\
+&=\sum_{i=1}^n\sum_{j=1}^n A_{ij}\left(\frac{\partial x_i}{\partial x_k}\,x_j + x_i\,\frac{\partial x_j}{\partial x_k}\right)\\
+&=\sum_{i=1}^n\sum_{j=1}^n A_{ij}\left(\delta_{ik}\,x_j + x_i\,\delta_{jk}\right)\\
+&=\sum_{i=1}^n\sum_{j=1}^n A_{ij}\,\delta_{ik}\,x_j
+  +\sum_{i=1}^n\sum_{j=1}^n A_{ij}\,x_i\,\delta_{jk}\\
+&=\sum_{j=1}^n\left(\sum_{i=1}^n A_{ij}\,\delta_{ik}\right)x_j
+  +\sum_{i=1}^n x_i\left(\sum_{j=1}^n A_{ij}\,\delta_{jk}\right)\\
+&=\sum_{j=1}^n A_{kj}\,x_j + \sum_{i=1}^n x_i\,A_{ik}\\
+&=(\matr{A}\vect{x})_k + (\matr{A}^\top\vect{x})_k\\
+&=(\matr{A}\vect{x} + \matr{A}^\top\vect{x})_k\\
+&=((\matr{A}+\matr{A}^\top)\vect{x})_k
+\end{aligned}
+\]
+where $\delta_{ik}$ denotes the Kronecker delta.
+
+Collecting these components into a row vector gives
+\[
+\begin{aligned}
+\frac{\partial f}{\partial \vect{x}}
+&=\begin{bmatrix}
+\frac{\partial f}{\partial x_1} & \cdots & \frac{\partial f}{\partial x_n}
+\end{bmatrix}\\
+&=\begin{bmatrix}
+((\matr{A}+\matr{A}^\top)\vect{x})_1 & \cdots & ((\matr{A}+\matr{A}^\top)\vect{x})_n
+\end{bmatrix}\\
+&= ((\matr{A}+\matr{A}^\top)\vect{x})^\top \\
+&= \vect{x}^\top(\matr{A}+\matr{A}^\top)^\top\\
+&=\vect{x}^\top(\matr{A}+\matr{A}^\top)
+\end{aligned}
+\]
+
+\paragraph{Quadratic form (symmetric matrix).}
+If $\matr{A}=\matr{A}^\top$, then
+\[
+\frac{\partial}{\partial \vect{x}}\bigl(\vect{x}^\top \matr{A}\,\vect{x}\bigr)
+=2\vect{x}^\top \matr{A}
+\]
+
+\paragraph{Squared norm with a matrix.}
+Let $\matr{A}\in\R^{m\times n}$ and $\vect{b}\in\R^m$. For
+\[
+f(\vect{x})=\lVert \matr{A}\vect{x}-\vect{b}\rVert^2
+=(\matr{A}\vect{x}-\vect{b})^\top(\matr{A}\vect{x}-\vect{b})
+\]
+expand:
+\[
+f(\vect{x})
+=\vect{x}^\top \matr{A}^\top \matr{A}\,\vect{x}
+-2\,\vect{b}^\top \matr{A}\,\vect{x}
++\vect{b}^\top \vect{b}
+\]
+Differentiate using the previous rules:
+\begin{align*}
+\frac{\partial f}{\partial \vect{x}}
+&=\vect{x}^\top\!\Bigl(\matr{A}^\top \matr{A}+(\matr{A}^\top \matr{A})^\top\Bigr)
+-2\,\vect{b}^\top \matr{A}
+\end{align*}
+Since $\matr{A}^\top \matr{A}$ is symmetric, $(\matr{A}^\top \matr{A})^\top=\matr{A}^\top \matr{A}$, hence
+\[
+\frac{\partial}{\partial \vect{x}}\lVert \matr{A}\vect{x}-\vect{b}\rVert^2
+=2\,\vect{x}^\top \matr{A}^\top \matr{A}-2\,\vect{b}^\top \matr{A}
+=2\,(\matr{A}\vect{x}-\vect{b})^\top \matr{A}
+\]
+
+\subsection{Inverse}
+
+\subsubsection{Properties}
+\(
+\left(s\matr{A}\right)^{-1}=\frac{1}{s} \matr{A}^{-1}
+% \quad s \neq 0
+\)  
+
+
+\subsubsection{Woodbury}
+says that the inverse of a rank-\(k\) correction of some matrix can be computed by doing a rank-\(k\) correction to the inverse of the original matrix.
+
+Let
+\(
+\matr{A}\in\R^{n\times n}
+\)
+invertible,
+\(
+\matr{U}\in\R^{n\times k}
+\),
+\(
+\matr{C}\in\R^{k\times k}
+\)
+invertible,
+\(
+\matr{V}\in\R^{k\times n}
+\).
+(Recall that the product \(\matr{U}\matr{C}\matr{V}\) has rank at most \(k\).)
+
+Then
+\[
+\boxed{
+(\matr{A}+\matr{U}\matr{C}\matr{V})^{-1}
+=
+\matr{A}^{-1}
+-
+\matr{A}^{-1}\matr{U}
+\bigl(\matr{C}^{-1}+\matr{V}\matr{A}^{-1}\matr{U}\bigr)^{-1}
+\matr{V}\matr{A}^{-1}
+}
+\]
+
+
+
+
+
+
+
+
+
+% \paragraph{Summary.}
+% For $\vect{x}\in\R^n$, $\vect{b}\in\R^n$, $\matr{A}\in\R^{n\times n}$,
+% \[
+% \frac{\partial}{\partial \vect{x}}(\vect{b}^\top \vect{x})=\vect{b}^\top,
+% \qquad
+% \frac{\partial}{\partial \vect{x}}(\vect{x}^\top \matr{A}\,\vect{x})
+% =\vect{x}^\top(\matr{A}+\matr{A}^\top),
+% \]
+% and if $\matr{A}=\matr{A}^\top$,
+% \[
+% \frac{\partial}{\partial \vect{x}}(\vect{x}^\top \matr{A}\,\vect{x})
+% =2\vect{x}^\top \matr{A},
+% \]
+% while for $\matr{A}\in\R^{m\times n}$ and $\vect{b}\in\R^m$,
+% \[
+% \frac{\partial}{\partial \vect{x}}\lVert \matr{A}\vect{x}-\vect{b}\rVert^2
+% =2(\matr{A}\vect{x}-\vect{b})^\top \matr{A}.
+% \]
+
+% %========================================================
+% % Application: Kernel ridge regression normal equations
+% %========================================================
+% \subsection{Application: kernel ridge regression normal equations}
+% Let $n\in\N$, $\vect{y}\in\R^n$, $\lambda>0$, and let $\matr{K}\in\R^{n\times n}$ be symmetric positive definite.
+% Consider
+% \[
+% J(\vect{\alpha})
+% =\frac1n\lVert \vect{y}-\matr{K}\vect{\alpha}\rVert^2
+% +\lambda\,\vect{\alpha}^\top \matr{K}\vect{\alpha},
+% \qquad
+% \vect{\alpha}\in\R^n.
+% \]
+
+% \paragraph{Derivative of the data-fit term.}
+% Using $\frac{\partial}{\partial \vect{x}}\lVert \matr{A}\vect{x}-\vect{b}\rVert^2
+% =2(\matr{A}\vect{x}-\vect{b})^\top \matr{A}$ with $\matr{A}=\matr{K}$ and $\vect{b}=\vect{y}$, we get
+% \begin{align*}
+% \frac{\partial}{\partial \vect{\alpha}}
+% \left(\frac1n\lVert \vect{y}-\matr{K}\vect{\alpha}\rVert^2\right)
+% &=\frac1n\cdot 2(\matr{K}\vect{\alpha}-\vect{y})^\top \matr{K}.
+% \end{align*}
+
+% \paragraph{Derivative of the regularizer.}
+% Since $\matr{K}=\matr{K}^\top$,
+% \[
+% \frac{\partial}{\partial \vect{\alpha}}\bigl(\lambda\,\vect{\alpha}^\top \matr{K}\vect{\alpha}\bigr)
+% =\lambda\cdot 2\vect{\alpha}^\top \matr{K}
+% =2\lambda\,\vect{\alpha}^\top \matr{K}.
+% \]
+
+% \paragraph{Stationarity condition.}
+% Setting $\frac{\partial J}{\partial \vect{\alpha}}=\vect{0}^\top$ yields
+% \begin{align*}
+% \vect{0}^\top
+% &=\frac{2}{n}(\matr{K}\vect{\alpha}-\vect{y})^\top \matr{K}
+% +2\lambda\,\vect{\alpha}^\top \matr{K}.
+% \end{align*}
+% Transpose (equivalently, pass to the column-gradient) to obtain
+% \[
+% \vect{0}
+% =\frac{2}{n}\matr{K}(\matr{K}\vect{\alpha}-\vect{y})+2\lambda\,\matr{K}\vect{\alpha}
+% =\frac{2}{n}\matr{K}^2\vect{\alpha}-\frac{2}{n}\matr{K}\vect{y}+2\lambda\,\matr{K}\vect{\alpha}.
+% \]
+% Divide by $2$ and multiply by $n$:
+% \[
+% \matr{K}^2\vect{\alpha}-\matr{K}\vect{y}+n\lambda\,\matr{K}\vect{\alpha}=\vect{0}
+% \quad\Longleftrightarrow\quad
+% \matr{K}(\matr{K}+n\lambda \matr{I})\vect{\alpha}=\matr{K}\vect{y}.
+% \]
+% Since $\matr{K}$ is positive definite, it is invertible, hence
+% \[
+% (\matr{K}+n\lambda \matr{I})\vect{\alpha}=\vect{y},
+% \qquad\text{so}\qquad
+% \boxed{\vect{\alpha}=(\matr{K}+n\lambda \matr{I})^{-1}\vect{y}.}
+% \]
+
+
+\clearpage
+
 \section{Introduction}
 
 We have data values \(y_i\) (e.g., measurements or samples) together with the corresponding data sites \(\vect{x}_i\). 
@@ -537,6 +831,7 @@ X := \{\vect{x}_1, \ldots, \vect{x}_N\} \subset \Omega \subset \R^d
 \)
 
 We start from the interpolation problem, which aims at exactly matching a given set of data:
+
 \begin{problem}[Scattered data interpolation]\label{problem:scattered_data_interpolation}
 Given data \((\vect{x}_i, y_i)\), \(i=1, \ldots, N\), with \(\vect{x}_i \in \R^d\) and \(y_i \in \R\), find a continuous function \(s_f\) such that
 \begin{equation}\label{eq:scattered_data_interpolation_condition}
@@ -717,13 +1012,15 @@ If at least one \(\matr{A}_l\) is symmetric positive definite and \(c_l>0\), the
 
 
 
+
+
 \clearpage
 
 
 \section{Scattered data interpolation with polynomial precision}
 
-Often it is desirable that an approximation can represent polynomials exactly.
-As we have seen in \autoref{theorem:mairhuber_curtis}, in this case the interpolation points need to be carefully chosen.
+Often it is desirable that an approximation can \hl[2]{represent polynomials exactly}.
+As we have seen in \autoref{theorem:mairhuber_curtis}, in this case the interpolation points need to be chosen carefully.
 
 
 \subsection{Unisolvency}
@@ -736,7 +1033,7 @@ x_1^{\alpha_1} \cdots x_d^{\alpha_d}
 \)
 for \(\vect{x} 
 % = (x_1, \ldots, x_d)^\top 
-\in \R^d\) and a \emph{multi-index} \(\vect{\alpha} = 
+\in \R^d\) and a \emph{multi-index} \(\vect{\alpha} 
 % (\alpha_1, \ldots, \alpha_d)^\top 
 \in \N_0^d\).
 
@@ -849,7 +1146,7 @@ it's enough for \(K\) to be \hl{conditionally positive definite} of order \((q+1
 \subsection{Conditionally positive definite functions}
 
 \begin{definition}\label{def:conditionally_positive_definite}
-A function \(K: \R^d \to \R\) is called conditionally positive definite of order \((q+1)\), iff for any mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N \in \R^d\) and any \(N \in \N\) the generalized Vandermonde matrix \(\matr{A} = [K(\vect{x}_i - \vect{x}_j)]_{i,j=1}^N\) satisfies
+A function \(K: \R^d \to \R\) is called \hl{conditionally positive definite} of order \((q+1)\), iff for any mutually distinct points \(\vect{x}_1, \ldots, \vect{x}_N \in \R^d\) and any \(N \in \N\) the generalized Vandermonde matrix \(\matr{A} = [K(\vect{x}_i - \vect{x}_j)]_{i,j=1}^N\) satisfies
 \begin{equation}\label{eq:conditional_positive_definiteness}
 \vect{c}^\top \matr{A} \vect{c} \ge 0 \quad \text{for any } \vect{c} \in \Kern(\matr{P}^\top)
 \end{equation}
@@ -862,7 +1159,45 @@ We have the following relation between conditionally positive definite functions
 A function that is (strictly) conditionally positive definite of order \((q+1)\) is also (strictly) conditionally positive definite of any higher order.
 In particular, a function that is (strictly) conditionally positive definite of order 1 is (strictly) conditionally positive definite of any order.
 \end{fact}
+% \begin{proof}
+% Let \(K:\R^d\to\R\) be (strictly) conditionally positive definite of order \((q+1)\) and \(\vect{x}_1,\dots,\vect{x}_N \in \R^d\) be mutually distinct.
+% Fix any \(r \ge q\). 
+% Since \(\Pi_q^d \subseteq \Pi_r^d\), the columns of \(\matr{P}_q\) form a subset of the columns of \(\matr{P}_r\).
+% Consequently,
+% \(
+% \Kern(\matr{P}_r^\top) \subseteq \Kern(\matr{P}_q^\top)
+% \), since any \(\vect{c} \in \Kern(\matr{P}_r^\top)\) is orthogonal to all columns of \(\matr{P}_r\) and since the columns of \(\matr{P}_q\) are a subset of those, \(\vect{c}\) is also orthogonal to all columns of \(\matr{P}_q\).
 
+
+% Let \(\vect{c} \in \Kern(\matr{P}_r^\top)\). Then \(\vect{c} \in \Kern(\matr{P}_q^\top)\), and since
+% \(K\) is conditionally positive definite of order \((q+1)\), we obtain
+% \(
+% \vect{c}^\top \matr{A} \vect{c} \ge 0
+% \).
+% This is precisely the condition for \(K\) to be conditionally positive definite of order \((r+1)\).
+
+% If \(K\) is strictly conditionally positive definite of order \((q+1)\), then
+% \(\vect{c}^\top \matr{A} \vect{c} = 0\) with \(\vect{c} \in \Kern(\matr{P}_r^\top)\) implies
+% \(\vect{c} \in \Kern(\matr{P}_q^\top)\), and hence \(\vect{c} = \vect{0}\).
+% Therefore strict conditional positive definiteness also carries over to any higher order.
+% \end{proof}
+\begin{proof}
+Let \(r \ge q\).
+Since \(\Pi_q^d \subseteq \Pi_r^d\), the columns of \(\matr{P}_q\) form a subset of the columns of \(\matr{P}_r\).
+So a vector that is orthogonal to all columns of \(\matr{P}_r\) is also orthogonal to all columns of \(\matr{P}_q\).
+Consequently,
+\(\Kern(\matr{P}_r^\top) \subseteq \Kern(\matr{P}_q^\top)\).
+\end{proof}
+
+
+
+
+
+
+
+\subsection{Well-posedness of the saddle point system}
+
+\autoref{def:q_unisolvent} and \autoref{def:conditionally_positive_definite} now allow us to state the conditions under which the saddle point system \eqref{eq:saddle_point_system} is well-posed:
 \begin{theorem}\label{thm:saddle_point_system_wellposedness}
 Let \(K: \R^d \to \R\) be strictly conditionally positive definite of order \((q+1)\) and let \(\vect{x}_1, \ldots, \vect{x}_N\) be \(q\)-unisolvent.
 Then, the linear system \eqref{eq:saddle_point_system} is uniquely solvable.
@@ -897,13 +1232,13 @@ To find \(\vect{c}\), we multiply the top equation by \(\vect{c}^\top\) from the
 \]
 From the bottom equation, we have \(\matr{P}^\top \vect{c} = \vect{0} \Leftrightarrow\vect{c}^\top \matr{P} = \vect{0}^\top\).
 Consequently, we infer \(\vect{c}^\top \matr{A} \vect{c} = 0\).
-Since \(K\) is strictly conditionally positive definite of order \((q+1)\), this implies \(\vect{c} = \vect{0}_N\).
+Since \hl[2]{\(K\) is strictly conditionally positive definite of order \((q+1)\)}, this implies \(\vect{c} = \vect{0}_N\).
 
 To find \(\vect{d}\), we insert \(\vect{c} = \vect{0}_N\) into the top equation, yielding
 \[
 \matr{A} \vect{c} + \matr{P} \vect{d} = \matr{P} \vect{d} = \vect{0}_N
 \]
-By the \(q\)-unisolvency of \(\vect{x}_1, \ldots, \vect{x}_N\), the matrix \(\matr{P}\) has full column rank \(m_q\).
+By the \hl[2]{\(q\)-unisolvency of \(\vect{x}_1, \ldots, \vect{x}_N\)}, the matrix \(\matr{P}\) has full column rank \(m_q\).
 Therefore, \(\vect{d} = \vect{0}_{m_q}\) is the only solution to the top block of \eqref{eq:saddle_point_system}.
 \end{proof}
 
@@ -952,7 +1287,7 @@ The function spaces used in functional analysis are mostly infinite-dimensional.
 Therefore, the norm and the notion of convergence alone are not sufficient to obtain powerful results.
 
 A normed space can be completed by adding a limit for every Cauchy sequence that does not converge, until all Cauchy sequences possess a limit.
-In this way one passes from a normed space \(X\) to its completion \(\overline{X}\).
+In this way one passes from a normed space \(X\) to its \emph{completion} \(\overline{X}\).
 If it is not clear which norm is meant, this is indicated as an exponent:
 \begin{equation}\label{eq:completion}
 \overline{X}^{\|\cdot\|_X}
@@ -1036,7 +1371,12 @@ For any \(x, y\) in an \hyperref[def:inner_product]{inner product space} with \(
 \begin{theorem}[Cauchy-Schwarz inequality]\label{theorem:cauchy_schwarz_inequality}
 For any \(x, y\) in an \hyperref[def:inner_product]{inner product space}, we have
 \begin{equation}\label{eq:cauchy_schwarz_inequality}
+  {\color{red}
+%  \setlength{\fboxrule}{1pt}
+  \boxed{ 
+  \color{black}
 |\langle x, y \rangle| \le \|x\| \cdot \|y\|
+  }}
 \end{equation}
 with equality if and only if \(x\) and \(y\) are linearly dependent.
 \end{theorem}
@@ -1051,7 +1391,7 @@ An inner product space that is complete with respect to the norm induced by the 
 \subsection{Bases in Hilbert spaces}
 
 In linear algebra the concept of a (Hamel) basis is central.
-For a Hamel basis of a vector space, every vector can be represented as a \emph{finite} linear combination of basis vectors.
+For a \hl[2]{Hamel basis} of a vector space, every vector can be represented as a \emph{finite} linear combination of basis vectors.
 Since linear algebra mostly deals with finite-dimensional spaces, this is no restriction there.
 
 The spaces of interest in functional analysis, however, are all \emph{infinite}-dimensional.
@@ -1065,7 +1405,7 @@ Moreover: Those spaces that possess a \emph{countable} Hamel basis are not compl
 One can show that in an infinite-dimensional Banach space a Hamel basis is always uncountable.
 This disqualifies the concept of a Hamel basis for functional analysis.
 
-The idea of a Schauder basis is to drop the requirement that the representation of a vector uses finitely many elements.
+The idea of a \hl[2]{Schauder basis} is to \hl[1]{drop the requirement that the representation of a vector uses finitely many elements}.
 Instead we represent the elements as series whose partial sums are linear combinations of the basis vectors.
 
 \begin{definition}[Orthonormal basis]\label{def:orthonormal_basis}
@@ -1092,12 +1432,16 @@ e_n = \sum_{k=1}^\infty \langle e_n, e_k \rangle e_k = \langle e_n, e_n \rangle 
 \|e_n\| = 1
 \]
 Thus we have:
-\[
-\langle e_k, e_n \rangle = \begin{cases}
+\begin{equation}\label{eq:orthonormal_basis_kronecker_delta}
+\langle e_k, e_n \rangle 
+= 
+\delta_{kn}
+=
+\begin{cases}
 1, & k = n \\
 0, & k \neq n
 \end{cases}
-\]
+\end{equation}
 
 \begin{theorem}\label{theorem:uniqueness_orthonormal_basis}
 The representation of a vector \(f\) in a Hilbert space with respect to an orthonormal basis is unique.
@@ -1108,9 +1452,14 @@ Consider the representation
 f = \sum_{k=1}^\infty c_k e_k
 \]
 for some coefficients \((c_k)\).
-Then for every \(N \ge n \in \N\) we have
+Fix some index \(n \in \N\).
+Then for every \(N \ge n\) we have
 \[
-c_n = \sum_{k=1}^N c_k \langle e_k, e_n \rangle
+c_n 
+= 
+\sum_{k=1}^N c_k \delta_{kn}
+=
+\sum_{k=1}^N c_k \langle e_k, e_n \rangle
 =
 \left\langle \sum_{k=1}^N c_k e_k, e_n \right\rangle
 \]
@@ -1151,6 +1500,54 @@ With arguments similar to the \hyperref[theorem:uniqueness_orthonormal_basis]{un
 In \autoref{def:orthonormal_basis} we implicitly built in that the orthonormal basis is countable.
 This is not necessary, but the spaces with countable orthonormal bases, called \hl{separable} spaces, are the most important in practice.
 \end{remark}
+
+% \begin{example}[Separable spaces]\label{example:separable_spaces}
+% \begin{itemize}
+%   \item The Hilbert space \(L^2(-\pi,\pi)\) from \autoref{example:fourier_series} is separable (it has the countable orthonormal basis \(\{\varphi_k\}_{k\in\mathbb Z}\)).
+
+%   \item The sequence space \(\ell^2(\N)\) is a separable Hilbert space with countable orthonormal basis \(\{e_n\}_{n\in\N}\) (the standard unit vectors).
+
+%   \item The Banach space \(C([a,b])\) with the supremum norm
+%   \(\|f\|_\infty:=\max_{x\in[a,b]}|f(x)|\)
+%   is separable. 
+%   One way to see this is that polynomials with rational coefficients are countable and dense in \(C([a,b])\) (via Stone--Weierstrass).
+
+%   \item More generally, \(L^p([a,b])\) is separable for every \(1\le p<\infty\).
+%   In particular, \(L^2([a,b])\) is a separable Hilbert space.
+
+%   \item Typical Sobolev spaces \(H^k(\Omega)\) (for reasonable domains \(\Omega\subset\R^d\)) are separable Hilbert spaces.
+% \end{itemize}
+% \end{example}
+% \begin{example}[Non-separable spaces]\label{example:non_separable_spaces}
+% \begin{itemize}
+%   \item The Banach space \(L^\infty([0,1])\) (essential supremum norm) is non-separable.
+%   Indeed, the family \(\{\chi_{[0,t]}: t\in[0,1]\}\) is uncountable and satisfies
+%   \(\|\chi_{[0,s]}-\chi_{[0,t]}\|_\infty=1\) for \(s\neq t\).
+%   Hence no countable subset can be dense.
+
+%   \item The space \(B([a,b])\) of all bounded functions \(f:[a,b]\to\R\) with the supremum norm is non-separable:
+%   the uncountable set \(\{\chi_{\{t\}} : t\in[a,b]\}\) has pairwise distance
+%   \(\|\chi_{\{s\}}-\chi_{\{t\}}\|_\infty=1\) for \(s\neq t\).
+
+%   \item A Hilbert-space example: for an uncountable index set \(I\), the Hilbert space
+%   \[
+%     \ell^2(I):=\Big\{(x_i)_{i\in I}:\sum_{i\in I}|x_i|^2<\infty\Big\}
+%   \]
+%   is non-separable. 
+%   The vectors \(\{e_i\}_{i\in I}\) form an uncountable orthonormal system with
+%   \(\|e_i-e_j\|=\sqrt2\) for \(i\neq j\), so there cannot exist a countable dense subset.
+% \end{itemize}
+% \end{example}
+% \begin{remark}[Classification of Hilbert spaces via \(\ell^2(I)\)]
+% Every Hilbert space \(\mathcal H\) admits an orthonormal basis \(B=\{e_i\}_{i\in I}\) (possibly uncountable).
+% With respect to such a basis one has an isometric isomorphism
+% \[
+% \mathcal H \cong \ell^2(I), 
+% \qquad
+% f \longmapsto (\langle f,e_i\rangle)_{i\in I}.
+% \]
+% In particular, \(\mathcal H\) is separable if and only if it has a \emph{countable} orthonormal basis, i.e.\ if and only if \(\mathcal H\cong \ell^2(\N)\).
+% \end{remark}
 
 
 \subsection{Operators}\label{section:operators}
@@ -1230,7 +1627,9 @@ The set \hyperref[def:continuous_operators]{\(B(U, V)\)} is itself again a vecto
 \begin{definition}[Operator norm]\label{def:operator_norm}
 For a linear bounded operator \(\mathcal{A} \in B(U, V)\) we define
 \begin{equation}\label{eq:operator_norm}
+{\color{red}\boxed{\color{black}
 \|\mathcal{A}\| := \sup_{u \in U \setminus \{0\}} \frac{\|\mathcal{A} u\|_V}{\|u\|_U} = \sup_{\|u\|_U = 1} \|\mathcal{A} u\|_V
+}}
 \qedhere
 \end{equation}
 \end{definition}
@@ -1412,7 +1811,7 @@ The integral exists because the domain of integration is in fact only the compac
 The continuity of $\psi_H$ with respect to the convergence in $C_0^{\infty}(\R)$ can be shown using the Lebesgue dominated convergence theorem.
 \end{example}
 
-By identifying the locally integrable functions with the regular distributions they generate, we obtain an embedding of locally integrable functions into the distributions. 
+\hl[2]{By identifying the locally integrable functions with the regular distributions they generate, we obtain an embedding of locally integrable functions into the distributions}. 
 Since all classical function spaces contain only locally integrable functions, we thereby recover, for example, the continuous or the continuously differentiable functions in the distributions.
 
 \begin{caution}
@@ -1661,7 +2060,7 @@ such that
   \varphi(f) = \langle f, (J \varphi) \rangle
   }}
 \end{equation}
-for all \(f \in \mathcal{H}\) and all \(\varphi \in \mathcal{H}'\).
+for all \(f \in \mathcal{H}\) and all \(\varphi \in \mathcal{H}'\), where \(\mathcal{H}'\) is the dual space of \(\mathcal{H}\), i.e. the space of all continuous linear forms on \(\mathcal{H}\).
 \end{theorem}
 For the proof one uses the fact that the null space \(N\) of a continuous linear form \(\varphi\),
 \(
@@ -2991,6 +3390,267 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 \section{Optimal recovery}\label{sec:optimal_recovery}
 
 
+We consider the following
+
+\begin{problem}[Optimal recovery]
+Given values
+\(
+f_i := \lambda_i(f)
+\),
+\(i=1,\ldots,N\),
+where \(\{\lambda_1,\ldots,\lambda_N\}\) is a set of linearly independent linear functionals (called information functionals),
+how can we best approximate the value \(\lambda(f)\) of a known functional \(\lambda\) for an unknown function \(f\)?
+\end{problem}
+
+In the Hilbert space setting, 
+the set of all functions that are consistent with the given data
+\[
+\mathcal{A}
+:=
+\{ g \in \mathcal{H} : \lambda_i(g) = f_i, i=1,\ldots,N \}
+\]
+forms an \emph{affine subspace} of \(\mathcal{H}\).
+We are looking for the ``least biased'' among these functions.
+
+% In the Hilbert space setting, 
+As we will see in \autoref{theorem:optimality_minimum_norm_interpolant}, the solution to this problem is given by the \hl{minimum-norm interpolant},
+i.e., the function \(g^\star \in \mathcal{H}\) with
+\begin{equation}\label{eq:optimal_recovery_constraints}
+\lambda_i(g^\star) = \lambda_i(f), \quad i=1,\ldots,N
+\end{equation}
+and
+\[
+{\color{Red}\boxed{\color{black}
+\|g^\star\|_{\mathcal{H}}
+=
+\min_{g \in \mathcal{H}:\eqref{eq:optimal_recovery_constraints}} \|g\|_{\mathcal{H}}
+}}
+\]
+Geometrically, this corresponds to the orthogonal projection of the origin \(0_{\mathcal{H}}\) onto the affine subspace \(\mathcal{A}\).
+
+We present three corresponding optimality results for radial basis function interpolation.
+As a preparation, we require two lemmata.
+
+\begin{lemma}\label{lem:orthogonal_to_interpolant_difference}
+Let \(K\) be a strictly positive definite kernel. Then
+\begin{equation}\label{eq:orthogonal_to_interpolant_difference}
+\langle s_f,\, s_f - g \rangle_{\mathcal{N}_K(\Omega)} = 0
+\end{equation}
+for all interpolants \(g \in \mathcal{N}_K(\Omega)\) with
+\(g(\vect{x}_i) = f(\vect{x}_i)\) for \(i=1,\ldots,N\).
+\end{lemma}
+This is consistent with the geometric interpretation of \(s_f\) being the orthogonal projection of \(0_{\mathcal{H}}\) onto the affine subspace \(\mathcal{A}\).
+
+\begin{proof}
+There holds
+\[
+\begin{aligned}
+\langle s_f,\, s_f - g \rangle_{\mathcal{N}_K(\Omega)}
+&=
+\left\langle
+\sum_{j=1}^N c_j K(\vect{x}_j,\cdot),\, s_f - g
+\right\rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\sum_{j=1}^N c_j
+\langle K(\vect{x}_j,\cdot),\, s_f - g \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\sum_{j=1}^N c_j \bigl( s_f(\vect{x}_j) - g(\vect{x}_j) \bigr)
+= 0
+\end{aligned}
+\]
+since \(s_f\) and \(g\) both interpolate \(f\).
+\end{proof}
+
+\begin{lemma}
+Let \(K\) be a strictly positive definite kernel. Then
+\begin{equation}\label{eq:orthogonality_error}
+\langle f - s_f,\, h \rangle_{\mathcal{N}_K(\Omega)} = 0
+\end{equation}
+for all \(h \in \Span\{\varphi_1,\ldots,\varphi_N\}\), where \(\varphi_k(\cdot) := K(\vect{x}_k, \cdot)\).
+\end{lemma}
+This means that the error \(f - s_f\) is orthogonal to the finite-dimensional space spanned by the basis functions.
+Geometrically, this means that \(s_f\) corresponds to the orthogonal projection of \(f\) onto \(\Span\{\varphi_1,\ldots,\varphi_N\}\).
+
+\begin{proof}
+\[
+\begin{aligned}
+\langle f - s_f, h \rangle_{\mathcal{N}_K(\Omega)}
+&=
+\left\langle f - s_f, \sum_{k=1}^N \alpha_k \varphi_k \right\rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\sum_{k=1}^N \alpha_k \langle \varphi_k, f - s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\sum_{k=1}^N \alpha_k  \underbrace{\bigl(f(\vect{x}_k) - s_f(\vect{x}_k)\bigr)}_{=0} 
+= 0
+\end{aligned}
+\]
+since \(s_f\) interpolates \(f\).
+\end{proof}
+
+
+
+A straightforward consequence is a Pythagorean theorem.
+\begin{corollary}
+There holds
+\[
+\|f\|_{\mathcal{N}_K(\Omega)}^2
+=
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}^2
++
+\|s_f\|_{\mathcal{N}_K(\Omega)}^2 
+\]
+\end{corollary}
+
+\begin{proof}
+\[
+\begin{aligned}
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}^2
+&=
+\langle f - s_f, f - s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\langle f, f \rangle_{\mathcal{N}_K(\Omega)}
+-
+2 \langle f, s_f \rangle_{\mathcal{N}_K(\Omega)}
++
+\langle s_f, s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\langle f, f \rangle_{\mathcal{N}_K(\Omega)}
+-
+2 \langle f, s_f \rangle_{\mathcal{N}_K(\Omega)}
++
+2 \langle s_f, s_f \rangle_{\mathcal{N}_K(\Omega)}
+-
+\langle s_f, s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\|f\|_{\mathcal{N}_K(\Omega)}^2
+-
+2 
+\underbrace{\langle f - s_f, s_f \rangle_{\mathcal{N}_K(\Omega)}}_{\overset{\text{\eqref{eq:orthogonality_error}}}{=} 0}
+-
+\|s_f\|_{\mathcal{N}_K(\Omega)}^2\\
+&=
+\|f\|_{\mathcal{N}_K(\Omega)}^2
+-
+\|s_f\|_{\mathcal{N}_K(\Omega)}^2
+\end{aligned}
+\]
+since \(s_f \in \Span\{\varphi_1,\ldots,\varphi_N\}\).
+\end{proof}
+
+\begin{theorem}[Optimality I]\label{theorem:optimality_minimum_norm_interpolant}
+Let \(K\) be a strictly positive definite kernel.
+Then, given the values \(f_1,\ldots,f_N\),
+\begin{equation}\label{eq:minimum_norm_interpolant}
+\|s_f\|_{\mathcal{N}_K(\Omega)}
+=
+\min_{\substack{g \in \mathcal{N}_K(\Omega)\\ g(\vect{x}_j)=f_j}}
+\|g\|_{\mathcal{N}_K(\Omega)} 
+\end{equation}
+i.e., the interpolant \(s_f\) is the minimum-norm interpolant.
+\end{theorem}
+
+% \begin{proof}
+% From \autoref{lem:orthogonal_to_interpolant_difference} we have
+% \[
+% \langle s_f,\, s_f - g \rangle_{\mathcal{N}_K(\Omega)} = 0 .
+% \]
+% Hence
+% \[
+% \|s_f\|_{\mathcal{N}_K(\Omega)}^2
+% =
+% \langle s_f,\, s_f - g + g \rangle_{\mathcal{N}_K(\Omega)}
+% =
+% \langle s_f,\, g \rangle_{\mathcal{N}_K(\Omega)} .
+% \]
+% By the Cauchy--Schwarz inequality,
+% \[
+% \|s_f\|_{\mathcal{N}_K(\Omega)}^2
+% \le
+% \|s_f\|_{\mathcal{N}_K(\Omega)}\,\|g\|_{\mathcal{N}_K(\Omega)} .
+% \]
+% Dividing by \(\|s_f\|_{\mathcal{N}_K(\Omega)}\) yields the assertion.
+% \end{proof}
+\begin{proof}
+\[
+\begin{aligned}
+\|s_f\|_{\mathcal{N}_K(\Omega)}^2
+&=
+\langle s_f,\, s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\langle s_f,\, s_f - g + g \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\underbrace{\langle s_f,\, s_f - g \rangle_{\mathcal{N}_K(\Omega)}}_{\overset{\text{\eqref{eq:orthogonal_to_interpolant_difference}}}{=}0} 
++ \langle s_f,\, g \rangle_{\mathcal{N}_K(\Omega)} \\
+&=
+\langle s_f,\, g \rangle_{\mathcal{N}_K(\Omega)}
+\end{aligned}
+\]
+By the \nameref{theorem:cauchy_schwarz_inequality} \eqref{eq:cauchy_schwarz_inequality},
+\[
+\|s_f\|_{\mathcal{N}_K(\Omega)}^2
+\le
+\|s_f\|_{\mathcal{N}_K(\Omega)}\,\|g\|_{\mathcal{N}_K(\Omega)} 
+\]
+Dividing by \(\|s_f\|_{\mathcal{N}_K(\Omega)}\) yields the assertion.
+\end{proof}
+
+\begin{theorem}[Optimality II]
+Let \(K\) be a strictly positive definite kernel.
+Then \(s_f\) is the best approximation to \(f \in \mathcal{N}_K(\Omega)\) within
+\(\Span\{\varphi_1,\ldots,\varphi_N\}\), i.e.,
+\[
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}
+\le
+\|f - g\|_{\mathcal{N}_K(\Omega)}
+\]
+for all \(g \in \Span\{\varphi_1,\ldots,\varphi_N\}\).
+\end{theorem}
+
+\begin{proof}
+Since \(g - s_f \in \Span\{\varphi_1,\ldots,\varphi_N\}\), we have from \eqref{eq:orthogonality_error} that
+\[
+\begin{aligned}
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}^2
+&=
+\langle f - s_f,\, f - g + g - s_f \rangle_{\mathcal{N}_K(\Omega)} \\
+&= 
+\langle f - s_f,\, f - g \rangle_{\mathcal{N}_K(\Omega)} + \underbrace{\langle f - s_f,\, g - s_f \rangle_{\mathcal{N}_K(\Omega)}}_{\overset{\text{\eqref{eq:orthogonality_error}}}{=}0} \\
+&=
+\langle f - s_f,\, f - g \rangle_{\mathcal{N}_K(\Omega)}
+\end{aligned}
+\]
+By the \nameref{theorem:cauchy_schwarz_inequality} \eqref{eq:cauchy_schwarz_inequality},
+\[
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}^2
+\le
+\|f - s_f\|_{\mathcal{N}_K(\Omega)}\,\|f - g\|_{\mathcal{N}_K(\Omega)} 
+\]
+which we divide by \(\|f - s_f\|_{\mathcal{N}_K(\Omega)}\) to obtain the assertion.
+\end{proof}
+
+\begin{remark}
+The previous two optimality theorems also hold for strictly conditionally positive definite kernels,
+given that the point set \(X=\{\vect{x}_1,\ldots,\vect{x}_N\}\) is unisolvent.
+\end{remark}
+
+We state the last optimality theorem in the context of quasi-interpolation without proof.
+\begin{theorem}[Optimality III]
+Let \(K\) be strictly conditionally positive definite with respect to
+\(P \subset C(\Omega)\) and assume that \(X\) is \(P\)-unisolvent.
+Then for any fixed \(\vect{x} \in \Omega\) 
+\[
+\sup_{\substack{f \in \mathcal N_K(\Omega)\\ \|f\|_{\mathcal N_K(\Omega)}=1}}
+\left|
+f(\vect{x})-\sum_{j=1}^N f(\vect{x}_j)\,\ell_j(\vect{x})
+\right|
+\;\le\;
+\sup_{\substack{g \in \mathcal N_K(\Omega)\\ \|g\|_{\mathcal N_K(\Omega)}=1}}
+\left|
+g(\vect{x})-\sum_{j=1}^N g(\vect{x}_j)\,c_j
+\right|
+\]
+for any choice \(c_1,\ldots,c_N \in \mathbb{R}\) with \(\vect{c}^{\top}\matr{P}=\vect{0}\).
+\end{theorem}
 
 
 
@@ -2998,6 +3658,138 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 \clearpage
 
 \section{Least squares approximation}\label{sec:least_squares_approximation}
+
+As we have shown in the previous chapter, the kernel interpolation solves a constraint optimization problem.
+We adopt this perspective here, but make the more general assumption that our ansatz is of the form
+\[
+s_{f,m}:=\sum_{j=1}^{m} c_j K(\tilde{\vect{x}}_j,\cdot)
+\]
+where \(\tilde{\vect{x}}_1,\ldots,\tilde{\vect{x}}_m\) are not necessarily contained in \(X\).
+Then, we are looking for a vector \(\vect{c}\in\R^{m}\) which minimizes the quadratic form
+\[
+\frac{1}{2}\vect{c}^{\top}\matr{Q}\vect{c}
+\]
+for some symmetric and positive definite matrix \(\matr{Q}\), subject to the linear constraints
+\[
+\matr{A}\vect{c}=\vect{f}
+\]
+with the generalized Vandermonde matrix \(\matr{A}\in\R^{N\times m}\).
+
+\begin{remark}
+If $\matr{Q}$ is chosen as the kernel Gram matrix on the centers,
+\[
+\matr{Q}
+=
+\bigl[K(\tilde{\vect{x}}_i,\tilde{\vect{x}}_j)\bigr]_{i,j=1}^{m}
+\]
+then the quadratic form $\vect{c}^{\top}\matr{Q}\vect{c}$ coincides with the squared RKHS (native space) norm
+of the kernel expansion $s_{f,m}$, as can be seen from
+\[
+\begin{aligned}
+\|s_{f,m}\|_{\mathcal{N}_K(\Omega)}^{2}
+=&
+\left\|\sum_{j=1}^{m} c_j K(\tilde{\vect{x}}_j,\cdot)\right\|_{\mathcal{N}_K(\Omega)}^{2} \\
+=&
+\left\langle\sum_{i=1}^{m} c_i K(\tilde{\vect{x}}_i,\cdot), \sum_{j=1}^{m} c_j K(\tilde{\vect{x}}_j,\cdot)\right\rangle_{\mathcal{N}_K(\Omega)} \\
+=&
+\sum_{i=1}^{m} \sum_{j=1}^{m} c_i c_j \left\langle K(\tilde{\vect{x}}_i,\cdot), K(\tilde{\vect{x}}_j,\cdot) \right\rangle_{\mathcal{N}_K(\Omega)} \\
+=&
+\sum_{i=1}^{m} \sum_{j=1}^{m} c_i c_j K(\tilde{\vect{x}}_i,\tilde{\vect{x}}_j) \\
+=&
+\vect{c}^{\top}\matr{Q}\vect{c}
+\end{aligned}
+\]
+where we used the basic properties of \nameref{def:inner_product}s and \nameref{def:rkhs}s
+
+Hence minimizing $\tfrac12\vect{c}^{\top}\matr{Q}\vect{c}$ selects, among all expansions satisfying the constraints,
+the interpolant of minimal native space norm.
+Typically, this leads to a smooth interpolant.
+\end{remark}
+
+This constraint optimization problem is solved by minimizing
+\[
+\mathcal{L}(\vect{c},\vect{\lambda})
+:=
+\frac{1}{2}\vect{c}^{\top}\matr{Q}\vect{c}
+-
+\vect{\lambda}^{\top}(\matr{A}\vect{c}-\vect{f})
+\]
+with the Lagrange multipliers \(\vect{\lambda}\in\R^{N}\).
+The unique minimum of \(\mathcal{L}(\vect{c},\vect{\lambda})\) is obtained from the solution of the saddle point formulation
+\[
+\begin{bmatrix}
+\matr{Q} & -\matr{A}^{\top} \\
+\matr{A} & \matr{0}
+\end{bmatrix}
+\begin{bmatrix}
+\vect{c} \\
+\vect{\lambda}
+\end{bmatrix}
+=
+\begin{bmatrix}
+\vect{0} \\
+\vect{f}
+\end{bmatrix}
+\]
+
+The solution is obtained by block Gaussian elimination in accordance with
+\[
+\begin{aligned}
+\vect{\lambda} &= \bigl(\matr{A}\matr{Q}^{-1}\matr{A}^{\top}\bigr)^{\dagger}\vect{f} \\
+\vect{c} &= \matr{Q}^{-1}\matr{A}^{\top}\vect{\lambda}
+\end{aligned}
+\]
+
+In the particular case that \(m=N\), \(\tilde{\vect{x}}_i=\vect{x}_i\), and \(\matr{A}=\matr{Q}=\matr{K}\), we find
+\[
+\vect{c}=\vect{\lambda}=\matr{K}^{-1}\vect{f}
+\]
+as in the previous chapter.
+However, the presented approach is more general as it also considers the cases \(N<m\) (underdetermined least squares) and \(N>m\) (overdetermined least squares),
+where the matrix \(\matr{Q}\) takes the role of a regularization term.
+
+In the case that
+\(
+\matr{Q}=
+\bigl[K(\tilde{\vect{x}}_i,\tilde{\vect{x}}_j)\bigr]_{i,j=1}^{m}
+\)
+represents the native space norm of the interpolant, we obtain the least-squares problem
+\[
+\min_{\vect{c}\in\R^{m}}
+\frac{1}{2}\|\matr{A}\vect{c}-\vect{f}\|_2^2
++
+\frac{\omega}{2}\|s_{f,m}\|_{\mathcal{N}_K(\Omega)}^2 
+\]
+
+The ridge parameter \(\omega\) controls the tradeoff between the smoothness and the fit of \(s_{f,m}\).
+Finally, if we choose \(m=N\), \(\tilde{\vect{x}}_i=\vect{x}_i\), and \(\matr{A}=\matr{Q}=\matr{K}\),
+this minimization problem becomes
+\[
+\min_{\vect{c}\in\R^{N}}
+\frac{1}{2}\|\matr{K}\vect{c}-\vect{f}\|_2^2
++
+\frac{\omega}{2}\vect{c}^{\top}\matr{K}\vect{c}
+\]
+
+The first order optimality condition reads
+\[
+\matr{K}^{2}\vect{c}+\omega\matr{K}\vect{c}
+=
+\matr{K}(\matr{K}+\omega\matr{I})\vect{c}
+=
+\matr{K}\vect{f}
+\]
+
+If \(\matr{K}\) has a trivial kernel, this equation is satisfied iff
+\[
+(\matr{K}+\omega\matr{I})\vect{c}=\vect{f}
+\]
+% =========================================================
+
+
+
+
+
 
 
 
@@ -3008,6 +3800,86 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 \clearpage
 
 \section{Support vector machines}\label{sec:support_vector_machines}
+
+\subsection{Binary classification and linear separability}
+
+
+
+Given \(N\) points
+\(
+X=\{\vect{x}_{1}, \ldots, \vect{x}_{N}\} \subset \R^{d}
+\)
+and labels \(y_{i} \in\{-1,1\}\) for \(i=1, \ldots, N\),
+we introduce the sets
+\begin{equation}\label{eq:svm_sets}
+\begin{aligned}
+& X_{+}:=\{\vect{x}_{i} \in X: y_{i}=1\} \\
+& X_{-}:=\{\vect{x}_{i} \in X: y_{i}=-1\}
+\end{aligned}
+\end{equation}
+
+We are interested in solving the
+
+\begin{problem}[Binary classification problem]\label{problem:binary_classification}
+Given the two sets \(X_{+}\) and \(X_{-}\) from \eqref{eq:svm_sets},
+find a function \(f:\R^{d} \to \R\) such that
+\(
+f(\vect{x})>0
+\) for all \(\vect{x} \in X_{+}\)
+and
+\(
+f(\vect{x})<0 
+\)
+for all \(\vect{x} \in X_{-}\).
+\end{problem}
+
+In the easiest case, the two sets can be split by a separating hyper-plane.
+
+\begin{definition}[Linear separability]\label{def:linear_separability}
+The sets \(X_{+}\) and \(X_{-}\) are called linearly separable,
+iff there exists a separating hyper-plane
+\[
+H=\{\vect{x} \in \R^{d} : \vect{n}^{\top}\vect{x}=m\}
+\]
+such that
+\(\vect{n}^{\top}\vect{x}>m\) iff \(\vect{x} \in X_{+}\)
+and
+\(\vect{n}^{\top}\vect{x} \le m\) iff \(\vect{x} \in X_{-}\).
+\end{definition}
+
+
+
+
+\subsection{Hard-margin support vector machines}
+If \(X_{+}\) and \(X_{-}\) are linearly separable,
+it is sufficient to determine an affine map
+% \begin{equation}\label{eq:svm_affine}
+\[
+f(\vect{x})=\vect{w}^{\top}\vect{x}+b
+\]
+% \end{equation}
+whose zero levelset
+\[
+\mathcal{S}:=\{\vect{x} \in \R^{d} : f(\vect{x})=0\}
+\]
+serves as separator.
+More precisely, we wish to determine a vector
+\(\vect{w} \in \R^{d}\) and a threshold \(b\)
+such that the following two separation conditions are satisfied:
+\begin{equation}\label{eq:svm_separation_conditions}
+\begin{aligned}
+& \vect{w}^{\top}\vect{x}_{i}+b \ge 1, \quad \text{if } y_{i}=1 \\
+& \vect{w}^{\top}\vect{x}_{i}+b \le -1, \quad \text{if } y_{i}=-1 
+\end{aligned}
+\end{equation}
+
+These conditions can be summarized according to
+\begin{equation}\label{eq:svm_margin_constraints}
+y_{i}\bigl(\vect{w}^{\top}\vect{x}_{i}+b\bigr) \ge 1
+\end{equation}
+for all \(i=1, \ldots, N\).
+
+
 
 \definecolor{classPlus}{RGB}{0,114,178}   % blue
 \definecolor{classMinus}{RGB}{0,158,115}  % green
@@ -3029,8 +3901,8 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 \pgfmathsetmacro{\wnormsq}{\wx*\wx + \wy*\wy}
 \pgfmathsetmacro{\wnorm}{sqrt(\wnormsq)}
 
-% offset for measuring margin
-\pgfmathsetmacro{\measureshift}{1mm}
+% physical inward shift
+\def\measureinset{0.02} 
 
 % displacement along normal for going from hyperplane to margin: w / ||w||^2
 \pgfmathsetmacro{\dmarginx}{\wx/\wnormsq}
@@ -3076,7 +3948,7 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
   % y = (7/13)x + 161/130
   \pgfmathsetmacro{\linestartx}{-0.9}
   \pgfmathsetmacro{\linestarty}{7/13*\linestartx + 161/130}
-  \draw[important line] (\linestartx,\linestarty) -- (8,721/130) node[right, classPlus!60!black] {$\vect{w}^\top \vect{x} + b = 0$};
+  \draw[important line] (\linestartx,\linestarty) -- (8,721/130) node[right] {$\vect{w}^\top \vect{x} + b = 0$};
 
   % w^T x + b = -1  (lower margin, dashed)
   \draw[dashed line] (3/5,0) -- (8,259/65) node[right] {$\vect{w}^\top \vect{x} + b = -1$};
@@ -3096,7 +3968,7 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
   % --- margin width 2/||w||_2 (perpendicular to hyperplane) ---
   % endpoints are one margin distance above/below the hyperplane along the normal:
   \coordinate (margbase) at (4.5, { \hslope*4.5 + 161.0/130.0 });
-  \def\measureinset{0.0mm} % physical inward shift
+  
   \coordinate (margtop) at ($ (margbase) + (\dmarginx,\dmarginy) - \measureinset*(\wx/\wnorm,\wy/\wnorm) $);
   \coordinate (margbot) at ($ (margbase) - (\dmarginx,\dmarginy) + \measureinset*(\wx/\wnorm,\wy/\wnorm) $);
   \draw[thick] (margtop) -- (margbot);
@@ -3114,8 +3986,10 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 
   % --- distance from origin to its projection on the hyperplane ---
   \coordinate (proj) at ($(\px,\py) - \measureinset*(\wx/\wnorm,\wy/\wnorm)$);
-  \draw[thick] (0,0) -- (proj);
+  \coordinate (measureorigin) at ($(0,0) + \measureinset*(\wx/\wnorm,\wy/\wnorm)$);
+  \draw[thick] (measureorigin) -- (proj);
   \draw[thick] ($(proj) + (\tx,\ty)$) -- ($(proj) - (\tx,\ty)$);
+  \draw[thick] ($(measureorigin) + (\tx,\ty)$) -- ($(measureorigin) - (\tx,\ty)$);
   \node[below left] at ($(0,0)!0.55!(proj)$) {$\frac{-b}{\|\vect{w}\|}$};
 
   % --- data points (scaled by factor 2) ---
@@ -3132,5 +4006,307 @@ This particularly allows to threshold small values in $\matr{\Sigma}^{-4}$.
 \end{tikzpicture}
 \]
 
+Given that \(X_{+}\) and \(X_{-}\) are linearly separable,
+typically there exists more than one solution.
+Therefore, we aim to find a separator that maximizes the distance
+from \(X_{+}\) and \(X_{-}\) (maximal margin).
+In this case, there exist points
+\(\vect{x}_{+} \in X_{+}\),
+\(\vect{x}_{-} \in X_{-}\),
+such that
+\begin{equation}\label{eq:support_vectors}
+\vect{w}^{\top}\vect{x}_{+}+b=1
+\text{,}
+\qquad
+\vect{w}^{\top}\vect{x}_{-}+b=-1
+\end{equation}
+which are called support vectors.
+Taking any pair of such points, we have
+\begin{equation}\label{eq:margin_width}
+\vect{w}^{\top}(\vect{x}_{+}-\vect{x}_{-})=2
+\end{equation}
+
+From this, we obtain the separator by solving the maximization problem
+\begin{equation}\label{eq:svm_margin_max}
+\frac{1}{\|\vect{w}\|_{2}}
+\vect{w}^{\top}(\vect{x}_{+}-\vect{x}_{-})
+=
+\frac{2}{\|\vect{w}\|_{2}}
+\to \max 
+\end{equation}
+
+The latter es equivalent to the minimization problem
+\begin{equation}\label{eq:svm_primal_objective}
+\frac{1}{2}\|\vect{w}\|_{2}^{2}
+=
+\frac{1}{2}\sum_{i=1}^{d} w_{i}^{2}
+\to \min 
+\end{equation}
+
+Imposing the separation conditions finally yields the constrained optimization
+\begin{problem}[primal]
+\label{prob:svm_primal_problem}
+\[
+\min_{[\vect{w}, b]^{\top} \in \R^{d+1}}
+\frac{1}{2}\sum_{i=1}^{d} w_{i}^{2}
+\]
+such that 
+\[
+y_{i}\bigl(\vect{w}^{\top}\vect{x}_{i}+b\bigr) \ge 1
+\]
+for all \(i=1, \ldots, N\).
+\end{problem}
+
+A solution \([\vect{w}^{\star}, b^{\star}]^{\top}\) to \autoref{prob:svm_primal_problem}
+gives rise to the hard margin SVM classifier according to
+\begin{equation}\label{eq:svm_classifier}
+c(\vect{x})=\operatorname{sign}(\vect{w}^{\top}\vect{x}+b)
+\end{equation}
+
+\begin{fact}\label{fact:svm_uniqueness}
+Let
+\(X=\{\vect{x}_{1}, \ldots, \vect{x}_{N}\} \subset \R^{d}\)
+with labels \(y_{i} \in\{-1,1\}\) for \(i=1, \ldots, N\) be given.
+If the sets \(X_{+}\) and \(X_{-}\) are non-empty and linearly separable,
+then the optimization \autoref{prob:svm_primal_problem}
+has a unique solution
+\([\vect{w}^{\star}, b^{\star}]^{\top}\)
+with \(\vect{w}^{\star} \neq \vect{0}\).
+\end{fact}
+
+
+\subsection{Lagrangian formulation and KKT conditions}
+
+To solve the optimization \autoref{prob:svm_primal_problem},
+we introduce the \(N\) non-negative Lagrange multipliers
+\(\lambda_{i}\), \(i=1, \ldots, N\),
+and consider the Lagrange functional
+\begin{equation}\label{eq:svm_lagrangian}
+\mathcal{L}(\vect{w}, b, \vect{\lambda})
+=
+\frac{1}{2}\|\vect{w}\|_{2}^{2}
+-
+\sum_{i=1}^{N}
+\lambda_{i}\bigl(y_{i}(\vect{w}^{\top}\vect{x}_{i}+b)-1\bigr)
+\end{equation}
+
+The constrained optimization \autoref{prob:svm_primal_problem}
+is now equivalent to the unconstrained one
+\begin{equation}\label{eq:svm_primal_saddle}
+\min_{[\vect{w}, b]^{\top} \in \R^{d+1}}
+\max_{\vect{\lambda} \in \R^{N}}
+\mathcal{L}(\vect{w}, b, \vect{\lambda})
+\end{equation}
+which is called the primal problem.
+
+Minimizing \(\mathcal{L}\) with respect to \(\vect{w}\) and \(b\)
+yields the first order optimality conditions
+\begin{equation}\label{eq:svm_stationarity}
+\begin{aligned}
+\frac{\partial}{\partial \vect{w}} \mathcal{L}
+&=
+\vect{w}-\sum_{i=1}^{N}\lambda_{i}y_{i}\vect{x}_{i}
+=\vect{0} \\
+\frac{\partial}{\partial b} \mathcal{L}
+&=
+-\sum_{i=1}^{N}\lambda_{i}y_{i}
+=0 
+\end{aligned}
+\end{equation}
+
+In addition, we have to satisfy the complementarity conditions
+\begin{equation}\label{eq:svm_kkt}
+\lambda_{i} \ge 0
+\text{,}
+\quad
+y_{i}(\vect{w}^{\top}\vect{x}_{i}+b)-1 \ge 0
+\text{,}
+\quad
+\lambda_{i}\bigl(y_{i}(\vect{w}^{\top}\vect{x}_{i}+b)-1\bigr)=0
+\end{equation}
+for \(i=1, \ldots, N\). 
+
+Equations \eqref{eq:svm_stationarity} and \eqref{eq:svm_kkt}
+are known as Karush--Kuhn--Tucker conditions (KKT).
+They are necessary and sufficient for the existence of an optimal solution.
+Particularly, \eqref{eq:svm_kkt} ensures that either
+\(\vect{x}_{i}\) is lying on the hyperplane
+\(y_{i}(\vect{w}^{\top}\vect{x}_{i}+b)=1\)
+or \(\lambda_{i}=0\).
+
+
+\subsection{Dual problem and primal--dual correspondence}
+
+Inserting \eqref{eq:svm_stationarity} into \eqref{eq:svm_lagrangian}
+eliminates the variables \(\vect{w}, b\) according to
+\begin{equation}\label{eq:svm_dual_function}
+\mathcal{L}(\vect{w}, b, \vect{\lambda})
+=
+\sum_{i=1}^{N}\lambda_{i}
+-
+\frac{1}{2}
+\sum_{i,j=1}^{N}
+\lambda_{i}\lambda_{j}y_{i}y_{j}\vect{x}_{i}^{\top}\vect{x}_{j}
+=:-f(\vect{\lambda}) 
+\end{equation}
+
+% The optimization 
+\begin{problem}[dual]\label{prob:svm_dual_problem}
+\[
+\min_{\vect{\lambda} \in \R^{N}}
+f(\vect{\lambda})
+\]
+such that
+\[
+\sum_{i=1}^{N}\lambda_{i}y_{i}=0
+\text{,}
+\quad
+\lambda_{i} \ge 0
+\]
+for all \(i=1, \ldots, N\).
+This is called the dual problem to \autoref{prob:svm_primal_problem}.
+\end{problem}
+
+Vice versa, wa can solve \autoref{prob:svm_primal_problem}
+by solving \autoref{prob:svm_dual_problem}
+and inserting \eqref{eq:svm_stationarity}.
+Therefore, we have the following
+
+\begin{theorem}\label{thm:svm_primal_dual}
+Let \(\vect{\lambda}^{\star} \in \R^{N}\)
+be a solution to the dual \autoref{prob:svm_dual_problem}.
+Setting
+\[
+\vect{w}^{\star}
+:=
+\sum_{i=1}^{N}\lambda_{i}^{\star}y_{i}\vect{x}_{i}
+\]
+and choosing \(b^{\star}\) such that
+\[
+y_{i}\bigl((\vect{w}^{\star})^{\top}\vect{x}_{i}+b^{\star}\bigr)=1
+\]
+for any \(i \in \{1, \ldots, N\}\)
+with
+\(\lambda_{i} \neq 0\)
+yields the solution
+\([\vect{w}^{\star}, b^{\star}]^{\top}\)
+to \autoref{prob:svm_primal_problem}.
+\end{theorem}
+
+A solution to the dual problem exists whenever the conditions
+of \autoref{fact:svm_uniqueness} are satisfied.
+
+\begin{remark}
+Since \(f\) in \autoref{prob:svm_dual_problem} is not strictly convex,
+the solution may not be unique.
+The optimization problem can efficiently be solved
+by the active set method.
+\end{remark}
+
+
+\subsection{Kernel support vector machines}
+
+We finish this chapter by considering the situation
+that the sets \(X_{+}\) and \(X_{-}\), cf. \eqref{eq:svm_sets},
+are not linearly separable.
+In this case, we replace the inner product
+\(\vect{x}^{\top}\vect{y}\) in \eqref{eq:svm_classifier}
+by the inner product of the canonical feature map,
+i.e.,
+\[
+\langle K(\vect{x}, \cdot), K(\vect{y}, \cdot)\rangle_{\mathcal{H}}
+=
+K(\vect{x}, \vect{y})
+\quad
+\]
+for all \(\vect{x}, \vect{y} \in X\).
+
+In what follows, we assume that the data
+\((\varphi_{i}, y_{i})\), \(i=1, \ldots, N\),
+is linearly separable in the RKHS \(\mathcal{H}\).
+Then there exist
+\[
+w \in \mathcal{H}_{X}
+:=
+\Span\{K(\vect{x}_{1}, \cdot), \ldots, K(\vect{x}_{N}, \cdot)\}
+\subset \mathcal{H},
+\qquad
+b \in \R
+\]
+such that
+\[
+y_{i}\bigl(\langle w, K(\vect{x}_{i}, \cdot)\rangle_{\mathcal{H}}+b\bigr)
+\ge 1
+\]
+for all 
+\(i=1, \ldots, N\).
+
+\begin{remark}
+The kernel interpolant
+\[
+w(\vect{x})
+=
+\sum_{i=1}^{N} y_{i}\ell_{i}(\vect{x})
+\]
+obviously satisfies
+\(w(\vect{x}_{i})=y_{i}\) for \(i=1, \ldots, N\)
+and, hence, the above inequality for \(b=0\).
+Therefore, the existence of a solution is guaranteed
+whenever the kernel is strictly positive definite.
+\end{remark}
+
+Analogously to the linear case,
+the weight is obtained by solving the optimization problem
+\begin{equation}\label{eq:svm_kernel_primal}
+\min_{(w,b) \in \mathcal{H}_{X} \times \R}
+\frac{1}{2}\|w\|_{\mathcal{H}}^{2}
+\end{equation}
+such that the constraints above are satisfied.
+The existence and uniqueness of a solution
+is obtained analogously to \autoref{fact:svm_uniqueness}.
+Considering the dual problem yields the optimization problem
+\begin{equation}\label{eq:svm_kernel_dual}
+\min_{\vect{\lambda} \in \R^{N}}
+\frac{1}{2}
+\sum_{i,j=1}^{N}
+\lambda_{i}\lambda_{j}y_{i}y_{j}
+K(\vect{x}_{i}, \vect{x}_{j})
+-
+\sum_{i=1}^{N}\lambda_{i}
+\end{equation}
+with the constraints
+\[
+\sum_{i=1}^{N}\lambda_{i}y_{i}=0,
+\quad
+\lambda_{i} \ge 0
+\]
+for all \(i=1, \ldots, N\).
+
+Given a solution \(\vect{\lambda}^{\star}\),
+we retrieve \(w^{\star}\) via
+\[
+w^{\star}
+=
+\sum_{i=1}^{N}
+\lambda_{i}^{\star}y_{i}K(\vect{x}_{i}, \cdot)
+\]
+and \(b^{\star}\) by a choice such that
+\[
+y_{i}\bigl(\langle w, K(\vect{x}_{i}, \cdot)\rangle_{\mathcal{H}}+b^{\star}\bigr)=1
+\]
+for any \(i \in \{1, \ldots, N\}\)
+with \(\lambda_{i} \neq 0\).
+The classifier is then finally given by
+\[
+c(\vect{x})
+=
+\operatorname{sign}\!\left(
+\sum_{i=1}^{N}
+\lambda_{i}^{\star}y_{i}
+K(\vect{x}_{i}, \vect{x})
++
+b^{\star}
+\right)
+\]
 
 \end{document}
