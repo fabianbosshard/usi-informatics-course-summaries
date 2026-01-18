@@ -1,0 +1,1358 @@
+% author: Fabian Bosshard % © CC BY 4.0
+
+\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen}
+\usepackage{iftex}
+\usepackage{csquotes}
+
+\usepackage[T1]{fontenc}     % handle accented glyphs properly
+\usepackage[english]{babel}  % load the hyphenation patterns you need
+
+
+
+\usepackage[automark]{scrlayer-scrpage}
+% \clearpairofpagestyles
+% \ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+\pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+
+
+
+
+
+
+
+% \usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=25mm, right=25mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=20mm, right=60mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=38mm, right=38mm, top=20mm, bottom=30mm]{geometry}
+
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{accents}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+\usepackage{pifont}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings}
+\usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
+\usepackage{tikz-3dplot}
+\usepackage{tikzpagenodes}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
+\usepackage{pgfplots}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+% \renewcommand{\emph}[1]{\textcolor{highlightpurple}{#1}}
+% \renewcommand{\emph}[1]{\textsl{#1}}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+\usepackage{thmtools}
+
+\newlength{\thmspace}
+\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+% ===== main assertion-style family (Theorem, Lemma, etc.) =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\vartriangleleft},
+  postheadspace=1em
+]{assertionstyle}
+
+\declaretheorem[
+  style=assertionstyle,
+  name=Theorem,
+  numberwithin=section   % <-- resets in each section
+]{theorem}
+
+\declaretheorem[style=assertionstyle, name=Lemma,       sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle, name=Corollary,   sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle, name=Conjecture,  sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
+
+
+% ===== definitions =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{definitionstyle}
+
+\declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
+
+% ===== exercises, solutions =====
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ding{45},
+  postheadspace=1em
+]{exercisestyle}
+\declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
+\declaretheoremstyle[
+  headfont=\bfseries\color{red},
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{red}\blacktriangleleft},
+  postheadspace=1em
+]{solutionstyle}
+\declaretheorem[style=solutionstyle, name=Solution, numbered=no]{solution}
+
+% ===== proofs =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+
+\let\proof\relax
+\let\endproof\relax
+\declaretheorem[style=proofstyle, name=Proof,    numbered=no]{proof}
+
+
+% ===== remarks, cautions, examples =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{remarkstyle}
+
+\declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{funblue},
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{funblue}\blacktriangleleft},
+  postheadspace=1em
+]{examplestyle}
+
+\declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+
+
+\declaretheoremstyle[
+  headfont=\color{alizarincrimsonred}\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},
+  postheadspace=1em
+]{cautionstyle}
+
+\declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\footnotesize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  postheadspace=1em
+]{smallremarkstyle}
+
+\declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{amethyst},
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\color{amethyst}\blacktriangleleft},
+  postheadspace=1em
+]{digressionstyle}
+
+\declaretheorem[style=digressionstyle, name=Digression, sibling=remark]{digression}
+
+
+\numberwithin{equation}{section} % equations numbered within sections
+
+
+
+
+
+
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
+
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
+
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+
+% algorithm helpers
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
+
+\title{Scattered Data Approximation}
+\author{Fabian Bosshard}
+\date{\today}
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Scattered Data Approximation - Course Notes},
+  pdfkeywords={USI, scattered data approximation, course notes, informatics},
+  colorlinks=false,  
+  pdfborder={0.0 0.0 0.0},      
+  linkbordercolor={0 0.6 1},      % internal links
+  urlbordercolor={0 0.6 1},       % URLs
+  citebordercolor={0 0.6 1}       % citations
+]{hyperref}
+
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+\makeatletter
+\newlength\FB@toclinkht
+\newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+\usepackage{cleveref}
+
+\makeatletter
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+\makeatother
+
+\usepackage[acronym, nomain, toc, nonumberlist]{glossaries-extra}
+\setabbreviationstyle[acronym]{long-short}
+\makeglossaries
+
+\newacronym{rbf}{RBF}{radial basis function}
+\newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\clearpage
+
+
+
+
+
+
+
+
+
+
+
+% --- Slide 1 ---------------------------------------------------------------
+\section{Useful formulae} % Slide 1
+
+\textbf{Conditional probability:}
+Let $(\Omega, \mathcal{A}, \Prob)$ be a probability space. Recall that the conditional probability of an $A \in \mathcal{A}$ given $B \in \mathcal{A}$ is defined as
+\begin{equation}\label{eq:conditional-probability}
+\Prob(A \mid B)
+:= 
+\begin{cases}
+\frac{\Prob(A \cap B)}{\Prob(B)} & \Prob(B)>0 \\ 
+0 & \Prob(B)=0
+\end{cases}
+\end{equation}
+
+
+\begin{theorem}[Chain rule of probability]
+For any events \(A_1, \ldots, A_n\): %whose intersection has not probability zero
+\begin{equation}\label{eq:chain-rule-probability}
+\Prob\left(\bigcap_{i=1}^n A_i\right)
+=
+\prod_{k=1}^n \Prob\left(A_k \mid \bigcap_{j=1}^{k-1} A_j\right)
+\end{equation}
+e.g. with 4 variables:
+\(
+  \Prob(A,B,C,D)
+  = \Prob(A)\,\Prob(B\mid A)\,\Prob(C\mid A,B)\,\Prob(D\mid A,B,C)
+\).
+\end{theorem}
+\begin{proof}
+Apply \autoref{eq:conditional-probability} repeatedly.
+% \[
+% \begin{aligned}
+% \Prob\left(A_1 \cap A_2 \cap \ldots \cap A_n\right) & =\Prob\left(A_n \mid A_1 \cap \ldots \cap A_{n-1}\right) \Prob\left(A_1 \cap \ldots \cap A_{n-1}\right) \\
+% & =\Prob\left(A_n \mid A_1 \cap \ldots \cap A_{n-1}\right) \Prob\left(A_{n-1} \mid A_1 \cap \ldots \cap A_{n-2}\right) \Prob\left(A_1 \cap \ldots \cap A_{n-2}\right) \\
+% & =\Prob\left(A_n \mid A_1 \cap \ldots \cap A_{n-1}\right) \Prob\left(A_{n-1} \mid A_1 \cap \ldots \cap A_{n-2}\right) \cdot \ldots \cdot \Prob\left(A_3 \mid A_1 \cap A_2\right) \Prob\left(A_2 \mid A_1\right) \Prob\left(A_1\right) \\
+% & =\Prob\left(A_1\right) \Prob\left(A_2 \mid A_1\right) \Prob\left(A_3 \mid A_1 \cap A_2\right) \cdot \ldots \cdot \Prob\left(A_n \mid A_1 \cap \cdots \cap A_{n-1}\right) \\
+% & =\prod_{k=1}^n \Prob\left(A_k \mid A_1 \cap \cdots \cap A_{k-1}\right) \\
+% & =\prod_{k=1}^n \Prob\left(A_k \mid \bigcap_{j=1}^{k-1} A_j\right) 
+% \end{aligned}
+% \]
+\end{proof}
+
+% \begin{figure}[tbp]
+%   \centering
+% %   \includegraphics[width=\linewidth]{Screenshot 2026-01-17 alle 09.53.08.png}
+%   \caption{Overview of the models analysed up to transformers.}
+%   \label{fig:models-overview}
+% \end{figure}
+
+
+Cosine similarity between two vectors $\vect{A}$ and $\vect{B}$:
+\begin{equation}\label{eq:cosine-similarity}
+\text{similarity} = \cos(\angle(\vect{A}, \vect{B})) = \frac{\vect{A} \cdot \vect{B}}{\|\vect{A}\| \|\vect{B}\|} = \frac{\sum_{i=1}^n A_i B_i}{\sqrt{\sum_{i=1}^n A_i^2} \sqrt{\sum_{i=1}^n B_i^2}}
+\end{equation}
+
+
+
+
+
+
+
+% --- Slide 2 ---------------------------------------------------------------
+\section{Text Classification} % Slide 2
+
+\subsection{Text preprocessing}
+
+Prior to tokenisation:
+\begin{itemize}
+  \item Remove markup (non-content information), e.g.\ \texttt{<HTML>} tags
+  \item Lowercase the text
+  \item Remove punctuation
+\end{itemize}
+
+After tokenisation:
+\begin{itemize}
+  \item Remove stopwords (extremely high-frequency words)
+  \item Remove low-frequency words
+  \item Perform stemming or lemmatisation to reduce vocabulary size, e.g.\ fishing $\mapsto$ fish, thought $\mapsto$ think, etc.
+  \item Perform spelling correction
+\end{itemize}
+
+ASCII encoding keyboard $\to [1,128]$, UTF-8 encoding very vast (160 languages, 149k Unicode characters).\\
+
+\begin{definition}[Morpheme]
+Smallest linguistic unit that has semantic meaning.
+\end{definition}
+
+Tokenisation, but there are problems with other languages etc.\\
+Regular expression search for patterns in documents; check info if more is needed.
+
+\subsection{Bag of words}
+Vocabulary of document provides most important signal; \# occurrences of words provides further information.\\
+Bag-of-words model:
+\begin{itemize}
+  \item represent documents as vectors of word counts
+  \item massively sparse representation (long vector with many zeros)
+  \item completely ignores word order
+  \item can use $n$-gram: more dimensions but maybe better performance $\to$ more features than documents $\to$ strong regularisation needed
+\end{itemize}
+
+\subsubsection{Heaps' law}
+Vocabulary grows with approximately the square root of document/collection length.
+
+\subsubsection{Zipf's law}
+Token frequency is approximately proportional to the inverse of its rank.\\
+Most common word occurs approximately twice as often as the next common one, three times as often as the third most common, and so on.
+
+\subsection{Linear models}
+\subsubsection{Naive Bayes}
+\subsubsection{Logistic regression}
+
+\subsection{Evaluating text classifiers}
+
+\subsubsection{Evaluating a Binary Text Classifier}
+
+\definecolor{myblue}{RGB}{0,90,135}
+\definecolor{mygreen}{RGB}{205,232,170}
+\definecolor{myred}{RGB}{245,135,135}
+\definecolor{framegray}{gray}{0.65}
+
+\[
+\begin{tikzpicture}[font=\footnotesize, line cap=round, line join=round, scale=0.35]
+
+% ---- sizes ----
+\def\cw{6.2} % cell width
+\def\ch{3.4} % cell height
+
+% ---- 2x2 confusion matrix (bottom-left at (0,0)) ----
+% fills
+\fill[myred]   (0,0) rectangle (\cw,\ch);               % FP
+\fill[mygreen] (\cw,0) rectangle (2*\cw,\ch);           % TN
+\fill[mygreen] (0,\ch) rectangle (\cw,2*\ch);           % TP
+\fill[myred]   (\cw,\ch) rectangle (2*\cw,2*\ch);       % FN
+
+% border + inner lines
+\draw[line width=1pt] (0,0) rectangle (2*\cw,2*\ch);
+\draw[line width=1pt] (\cw,0) -- (\cw,2*\ch);
+\draw[line width=1pt] (0,\ch) -- (2*\cw,\ch);
+
+% cell text
+\node[text=myblue, align=center] at (0.5*\cw,1.5*\ch) {TP: true\\positives};
+\node[text=myblue, align=center] at (1.5*\cw,1.5*\ch) {FN: false\\negatives};
+\node[text=myblue, align=center] at (0.5*\cw,0.5*\ch) {FP: false\\positives};
+\node[text=myblue, align=center] at (1.5*\cw,0.5*\ch) {TN: true\\negatives};
+
+% ---- headings ----
+\node[text=myblue] at (\cw,2*\ch+2.2) {PREDICTED CLASS};
+\node[text=myblue] at (0.5*\cw,2*\ch+0.95) {Pos};
+\node[text=myblue] at (1.5*\cw,2*\ch+0.95) {Neg};
+
+% ---- side labels ----
+\node[text=myblue, align=center] at (-3.6,\ch) {TRUE\\CLASS};
+\node[text=myblue, align=center] at (-1.05,1.5*\ch) {Pos};
+\node[text=myblue, align=center] at (-1.05,0.5*\ch) {Neg};
+
+% ---- outer frame ----
+\draw[framegray, line width=1.1pt]
+  (-6.0,-1.0) rectangle (2*\cw+1.0,2*\ch+3.0);
+
+\end{tikzpicture}
+\]
+
+\begin{itemize}
+  \item Accuracy = \% of correct predictions:
+  \[
+  \text{Accuracy}
+  =
+    \frac{\text{TN}+\text{TP}}{\text{TN}+\text{TP}+\text{FN}+\text{FP}}
+  \]
+  \item Precision = \% of positive predictions that were correct:
+  \[
+  \text{Precision}
+  =
+    \frac{\text{TP}}{\text{TP}+\text{FP}}
+  \]
+  \item Recall = \% of positive instances that were found by model:
+  \[
+    \text{Recall}
+    =
+    \frac{\text{TP}}{\text{TP}+\text{FN}}
+  \]
+  \item F-measure = harmonic mean of precision and recall:
+  \[
+    F_{1}
+    =
+    \frac{2}{\frac{1}{\text{Precision}}+\frac{1}{\text{Recall}}}
+    % =
+    % \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision}+\text{Recall}}
+  \]
+  \item AUC = area under the ROC curve; single measure that doesn’t depend on the confidence threshold used to make predictions with the model
+\end{itemize}
+
+
+\subsubsection{Evaluating multi-class classifiers}
+if there are \(n\) classes,
+\begin{itemize}
+  \item confusion matrix will be $n\times n$
+  \item by considering it positive class in a one-vs-all setting
+  \item combine each class’s precision and recall values into a single measure:
+  \begin{itemize}
+    \item \textbf{macro-average}: average over classes weighting each class the same
+    \item \textbf{micro-average}: average over classes weighting each class by the number of datapoints in it
+  \end{itemize}
+\end{itemize}
+
+
+
+% --- Slide 3 ---------------------------------------------------------------
+\section{Text search and clustering} % Slide 3
+
+\subsection{RAG}
+RAG is method that allows us to give an LLM external knowledge sources.\\
+Often you have to retrieve the documents.
+
+\subsection{tf-idf: term frequency - inverse document frequency}
+\begin{definition}[inverse document frequency]\label{def:idf}
+\begin{equation}\label{eq:inverse-document-frequency}
+\operatorname{idf}_t
+=
+\log\frac{N}{ \operatorname{df}_{t}}
+\end{equation}
+where $\operatorname{df}_{t}$ is the number of documents in the corpus which contains $t$, 
+while $N$ is the number of documents in total (corpus size). 
+\end{definition}
+High idf $\Rightarrow$ few documents matching. \\
+$0$ if in every document: $\log 1 = 0$.
+
+\begin{definition}[term frequency]
+\begin{equation}\label{eq:term-frequency}
+\operatorname{tf}_{t,d}
+=
+\begin{cases}
+  1+\log_{10}(\operatorname{count}(t,d))  &  \operatorname{count}(t,d) > 0 \\
+    0                                       & \text{otherwise}
+\end{cases}
+\end{equation}
+\end{definition}
+a term \(t\) which occur 0 times in a document \(d\) has \(\operatorname{tf}_{t,d} = 0\);
+if it occurs once, \(\operatorname{tf}_{t,d} = 1 + \log_{10}(1) = 1\);
+if it occurs 10 times, \(\operatorname{tf}_{t,d} = 1 + \log_{10}(10) = 2\); and so on.
+
+
+\begin{definition}[tf-idf]
+\begin{equation}\label{eq:tf-idf}
+\operatorname{tf-idf}(t,d) = \operatorname{tf}_{t,d} \cdot \operatorname{idf}_t
+\end{equation}
+\end{definition}
+
+\begin{definition}[BM25]
+\[
+  \sum_{t\in q} \operatorname{idf}_t\;
+  \frac{\operatorname{tf}_{t,d}}{\operatorname{tf}_{t,d}+k\Bigl(1-b+b\frac{\lvert d\rvert}{d_{\operatorname{avg}}}\Bigr)}
+\]
+\begin{itemize}
+  \item $t$ terms in $q$ query
+  \item $k$ $\to$ adjusts balance between term frequency and IDF
+  \item $b$ $\to$ controls the importance of document length normalization
+%   \item typical $k_1=1.2$ and $b=0.75$
+  \item $|d|$ is length of the document; $d_{\operatorname{avg}}$ is the average on the document collection
+\qedhere
+\end{itemize}
+\end{definition}
+
+Vector interpretation: $\vect v=\{w_{1},\dots,w_{n}\}$ where $w_{i}$ is importance of term $i$ (BM25).\\
+Then you do a query vector $\vect q$ which most likely has $1$ for terms it has and $0$ for terms it doesn’t have (BM25 of each term).\\
+Then compute cosine:
+\[
+  \cos(\vect q,\vect v)
+  = \frac{\vect q}{\lVert \vect q\rVert}\cdot \frac{\vect v}{\lVert \vect v\rVert}.
+\]
+
+\subsection{Crawlers}
+A crawler starts from one or more initial web pages, often called seed URLs. It retrieves the content of those pages, analyses them to find hyperlinks inside, then visits those linked pages, and then the links inside them, and so on. In this way it explores the web graph. It’s used to compute search engine scores etc.
+
+\subsection{Evaluating search engines}
+\begin{itemize}
+  \item precision at depth $k$: $P@k = (\#\text{ relevant docs in top \(k\)})/k$
+  \item recall at depth $k$: $R@k = (\#\text{ relevant docs in top \(k\)})/(\#\text{ relevant docs in total})$
+  \item F-measure at depth $k$:
+  \[
+    F_{1}@k
+    =
+    \frac{1}{\bigl((1/P@k+1/R@k)/2\bigr)}
+  \]
+  \item AveP = MAP: mean average precision (compute area under precision/recall curve)
+  \[
+    \operatorname{AveP}
+    =
+    \frac{\sum_{k=1}^{n} P@k\,\operatorname{rel}(k)}{\#\text{ relevant docs}}
+  \]
+  \begin{itemize}
+    \item bool $\operatorname{rel}(k)=1$ if document at position $k$ is relevant
+  \end{itemize}
+\end{itemize}
+
+\subsection{Clustering}
+boh it exists
+
+
+% --- Slide 4 ---------------------------------------------------------------
+\section{Language models and word embeddings} % Slide 4
+
+\subsection{Language models}
+Predict next word. Use fixed number of words before (Markov model). Longer means better prediction but less chances of finding the exact same sequence.
+\[
+  \Prob(\text{croquet}\mid \text{play})
+  = \frac{N(\text{play croquet})}{N(\text{play})},
+  \qquad
+  \Prob(\text{croquet}\mid \text{to play})
+  = \frac{N(\text{to play croquet})}{N(\text{to play})}.
+\]
+Smoothing = add a small constant to everything ($+1$ up and therefore $+V$ at denom).\\
+Backoff: if an $n$-gram is unknown, use $(n-1)$-gram.\\
+Interpolate between $n$-grams:
+\[
+  \lambda_{1}\Prob(\text{croquet}\mid \text{play})
+  +\lambda_{2}\Prob(\text{croquet}\mid \text{to play})
+  +\dots,
+  \qquad
+  \sum_{i}\lambda_{i}=1.
+\]
+Can be used to generate next word knowing $n$-gram and having access to corpus (e.g.\ Shakespeare to generate sonnets etc).
+
+\subsubsection{Evaluating}
+Use it on a task like spelling corrector and assess performance.\\
+Train on train dataset, performance on test.\\
+Use likelihood that model would produce the new data to evaluate how well it is doing (?whut).
+
+\textbf{Perplexity} measures how unlikely the observed data is under the model.
+\begin{enumerate}
+  \item \emph{compute probability} of observed sequence $\Prob(w_1,w_2,\dots,w_n)$ under model
+  \begin{itemize}
+    \item 
+  e.g.\ for a bigram m:
+  \(
+    \Prob(w_1,\dots,w_n)
+    = \Prob(w_1)\Prob(w_2\mid w_1)\Prob(w_3\mid w_2)\cdots \Prob(w_n\mid w_{n-1})
+  \)
+   \end{itemize}
+  \item \emph{normalize probability} for length of text sequence
+  \begin{itemize}
+    \item i.e. compute ``average'' per-word probability: $\sqrt[n]{\Prob(w_1,w_2,\dots,w_n)}$
+  \end{itemize}
+  \item \emph{invert probability} to compute uncertainty:
+  \[
+    \operatorname{Perplexity}(w)
+    =
+    \bigl(1/\Prob(w_1,w_2,\dots,w_n)\bigr)^{1/n}
+    =
+    \sqrt[n]{\frac{1}{\Prob(w_1,w_2,\dots,w_n)}}
+  \]
+\end{enumerate}
+Problem: higher $n$-gram = harder to find; smaller $n$-gram backoff reduces performance.
+
+\subsection{Embeddings}
+To overcome the problem of data sparsity in $n$-gram language models it would be good to have a similar representation for similar words.
+\medskip
+
+\subsubsection{1st try: WordNet}
+\textbf{WordNet} organizes lexical information in terms of word meanings (senses), rather than word forms (actual words). 
+In that respect, WordNet resembles a thesaurus more than a dictionary.
+\begin{itemize}
+\item
+attempt to model human lexical memory
+\item
+is essentially an ontology (a carving up of the world's meanings)
+\item
+no longer SOTA, since difficult to build, language-specific, incomplete, still difficult to quantify similarity
+\end{itemize}
+\medskip
+
+\subsubsection{2nd try: Distributional hypothesis of Harris (1968)}
+\textcolor{red}{words that occur in the same contexts tend to have similar meanings.}
+\begin{itemize}
+\item
+\textbf{Practical implication}:\\
+We can find similar words by comparing their distribution over contexts.
+\item Count how often words appear in several contexts; 
+contexts become dimensions and target words $w,v$ become vectors $\vect w,\vect v$, then compute $\cos(\vect w,\vect v)$.
+gives a value in $[0,1]$ of similarity.
+\item Then apply dimensionality reduction (SVD / Latent Semantic Analysis): reducing millions of contexts to hundreds of dimensions, while keeping as much of the info as possible (now it’s \textbf{dense} embedding).
+\end{itemize}
+
+Why is called sparse? Because tf-idf vectors are long and full of $0$s (sparse), while learnt vectors are shorter and with full of non-$0$ (dense).
+
+
+Embeddings have nice properties, clustered semantically, queen--king etc.
+
+
+
+\subsubsection{Sparse versus dense vectors}
+
+
+Count-based (or tf-idf) vectors are
+\begin{itemize}[nosep,topsep=0pt, before=\vspace{-\parskip}]
+\item \textbf{long} (length $|V|\tikzmark{cb} = 20{,}000$ to $50{,}000$)%
+% --- bubble + pointer (overlay) ---%
+\begin{tikzpicture}[remember picture,overlay]%
+  \node[
+    fill=yellow!40,
+    draw=black,
+    thick,
+    % line width=1pt,
+    rounded corners=10pt,
+    inner xsep=20pt,
+    inner ysep=4pt,
+    align=center,
+    font=\normalsize
+  ] (bubble) at ($(pic cs:cb)+(8.0cm,1cm)$)
+  {Vocabulary, all the words\\ your model covers};
+
+  \draw[black,thick]
+    (bubble) -- ($(pic cs:cb)+(0,0.2cm)$);
+\end{tikzpicture}%
+\item \textbf{sparse} (most elements are zero)
+\end{itemize}
+
+Alternative: learn vectors which are
+\begin{itemize}[nosep,topsep=0pt, before=\vspace{-\parskip}]
+\item \textbf{short} (length 50--1000)
+\item \textbf{dense} (most elements are non-zero)
+\end{itemize}
+\medskip
+
+Why dense vectors? 
+\begin{itemize}
+  \item short vectors may be easier to use as \emph{features} in machine learning (fewer weights to learn)
+  \item may \emph{generalize} better than explicit counts
+  \item emprically, work better
+\end{itemize}
+
+
+
+\subsection{Word2vec}
+Train a classifier on a binary prediction task: “Is word $w$ likely to show up in context $c$?”
+
+SELF-SUPERVISED!!!
+
+We don't care about the task, but we take the model weights as embeddings.
+
+% Sigmoid maps $\R \to [0,1]$:
+% \[
+%   s(z)=\frac{1}{1+e^{-z}}
+% \]
+
+Different versions, we focus on \textbf{skip-gram} with negative sampling (SGNS).
+
+Skip-gram: given the central word, predict context.
+
+
+
+How do we compute $P(+\mid w,c)$, i.e.\ probability that word $w$ appears in context $c$?
+We have lots of context words. We'll assume independence and just multiply them:
+$$
+P(+\mid w, c)=\sigma(\vect c \cdot \vect w) =\frac{1}{1+\exp (-\vect c \cdot \vect w)}
+$$
+$$
+P\left(+\mid w, c_{1: L}\right)  =\prod_{i=1}^L \sigma\left(\vect c_i \cdot \vect w\right)
+$$
+$$
+\log P\left(+\mid w, c_{1: L}\right) =\sum_{i=1}^L \log \sigma\left(\vect c_i \cdot \vect w\right)
+$$
+
+
+Train via SGD!
+
+Word weights will be adjusted such that 
+\begin{itemize}
+  \item positive pairs will be more likely
+  \item negative pairs will be less likely
+\end{itemize}  
+over the entire training set.
+
+\bigskip
+
+
+SGNS learns 2 sets of embeddings:\tikzmark{w2v}%
+\begin{tikzpicture}[scale=0.6, font=\footnotesize, remember picture, overlay]%
+\begin{scope}[shift={($(pic cs:cb)+(14cm,1cm)$)}]
+        
+  % geometry
+  \def\xL{0}
+  \def\xR{0.8}
+  \def\yTop{10}
+  \def\yMid{5}
+  \def\yBot{0}
+
+  % main stacked matrix block
+  \draw[rounded corners=1pt, line width=.8pt] (\xL,\yBot) rectangle (\xR,\yTop);
+  \fill[green!35] (\xL,\yMid) rectangle (\xR,\yTop);
+  \fill[blue!25]  (\xL,\yBot) rectangle (\xR,\yMid);
+  \draw[line width=.8pt] (\xL,\yMid) -- (\xR,\yMid);
+
+  % top label
+  \node[gray, anchor=south] at ({(\xL+\xR)/2},\yTop) {$1..d$};
+
+  % slim horizontal "vector" bar with 3 red dots on top
+  \newcommand{\vecdots}[1]{%
+    % bar
+    \fill[white] (\xL,#1-0.16) rectangle (\xR,#1+0.16);
+    \draw[black, line width=.35pt] (\xL,#1-0.16) rectangle (\xR,#1+0.16);
+    % dots
+    \foreach \dx in {0.2,0.4,0.6}{
+      \fill[red!80!black] (\xL+\dx,#1) circle (1.4pt);
+      \draw[black, line width=.3pt] (\xL+\dx,#1) circle (1.4pt);
+    }%
+  }
+
+  % row y-positions (tighter aardvark/apricot; corrected bottom dot rows)
+  \def\yA{9.35}
+  \def\yB{8.35}  % apricot closer to aardvark
+  \def\yZt{5.55}
+  \def\yAb{4.45}
+  \def\yBb{3.45}
+  \def\yZb{0.65}
+
+  \vecdots{\yA}
+  \vecdots{\yB}
+  \vecdots{\yZt}
+  \vecdots{\yAb}
+  \vecdots{\yBb}
+  \vecdots{\yZb}
+
+  % internal ellipses (gray)
+  \node[gray] at ({(\xL+\xR)/2},6.65) {$\cdots$};
+  \node[gray] at ({(\xL+\xR)/2},2.10) {$\cdots$};
+
+  % left word lists
+  \node[anchor=east, text=green!50!black] at (-.25,\yA) {aardvark};
+  \node[anchor=east, text=green!50!black] at (-.25,\yB) {apricot};
+  \node[anchor=east, text=green!50!black] at (-.25,6.65) {$\cdots$};
+  \node[anchor=east, text=green!50!black] at (-.25,\yZt) {zebra};
+
+  \node[anchor=east, text=blue!70!black] at (-.25,\yAb) {aardvark};
+  \node[anchor=east, text=blue!70!black] at (-.25,\yBb) {apricot};
+  \node[anchor=east, text=blue!70!black] at (-.25,2.10) {$\cdots$};
+  \node[anchor=east, text=blue!70!black] at (-.25,\yZb) {zebra};
+
+  % right index labels
+  \node[anchor=west, gray] at (\xR,\yA) {$1$};
+  \node[anchor=west, gray] at (\xR,\yZt) {$|V|$};
+  \node[anchor=west, gray] at (\xR,\yAb) {$|V|{+}1$};
+  \node[anchor=west, gray] at (\xR,\yZb) {$2|V|$};
+
+  % braces + annotations
+  \draw[decorate, decoration={brace, amplitude=7pt}, line width=.8pt]
+    (\xR+1.5,\yTop) -- (\xR+1.5,\yMid)
+    node[midway, xshift=18pt] { $\matr{W}$};
+
+  \draw[decorate, decoration={brace, amplitude=7pt}, line width=.8pt]
+    (\xR+1.5,\yMid) -- (\xR+1.5,\yBot)
+    node[midway, xshift=18pt] { $\matr{C}$};
+\end{scope}
+\end{tikzpicture}%
+\begin{itemize}
+  \item target embeddings matrix $\matr{W}$
+  \item context embeddings matrix $\matr{C}$
+\end{itemize}
+it is common to just add them together, \\
+representing word $i$ as $\vect{w}_i + \vect{c}_i$.
+
+\bigskip
+
+% \textbf{Causal models}:
+% \begin{itemize}
+%     \item restrict context to before the missing word
+%     \item language modelling: can be used for predicting next word in a sequence
+%     \item with longer dependencies than possible with $n$-grams
+% \end{itemize}
+
+% \textbf{Non-causal}: 
+% \begin{itemize}
+%     \item can be used as additional feature vector for representing words
+%     \item improve performance on most tasks
+%     \item such as training classifier to detect sentiment
+%     \item or translating one language to another
+%     \item because they make use of additional domain knowledge (semantics of words)
+% \end{itemize}
+
+
+
+% --- Slide 5 ---------------------------------------------------------------
+\section{Sequence classification and labelling} % Slide 5
+
+\textbf{Hidden Markov models}: naive Bayes.\\
+\textbf{CRF}: conditional random fields.\\
+\textbf{Part of speech}: assigning to each word a word class (noun, verb etc), so a map from words to classes. Naively tagging words with their most common use performs already very well (e.g.\ back can be noun, but in back seat is adj etc; you take the most common). You can also tag with an RNN using softmax over target classes.
+
+\subsection{Named entity recognition}
+As POS but instead of noun etc classes like \enquote{person}, \enquote{organisation}, etc.\\
+NER can be hard because of:
+\begin{itemize}
+  \item \emph{segmentation}: in POS tagging each word gets one tag, while in NER entities can be phrases
+  \item \emph{type ambiguity}: same word/phrase can have many types depending on context
+\end{itemize}
+\textbf{B.I.O.}: begin-inside-outside tags given to each part of the text (?ok and...?)\\
+Then you can go from name to actual entity usually with Wikipedia database, if there’s one entry for it. Otherwise custom DB.\\
+
+\subsection{Why you need an RNN for sentiment analysis?}
+IDK the answer; is not in the slides. LSTM helps with issues from RNN tho.
+
+
+% --- Slide 6 ---------------------------------------------------------------
+\section{Sequence-to-sequence models \& Transformers} % Slide 6
+
+\subsection{Types}
+\subsubsection{Decoder-only (GPT)}
+Takes input of tokens and predicts words left to right.\\
+Generate from a model by computing the probability of the next token $w_i$ from the prior context:
+\[
+  \Prob(w_i\mid w_{<i}),
+\]
+then sampling from that distribution to generate a token.\\
+Many tasks can become next-sentence generation, like \enquote{what’s the sentiment of $x$} and see what it predicts next.\\
+Few-shots: don’t change the weights but context (in-context learning).\\
+For LLM like Claude it can be a lot of context to prevent sharing info about building nuclear bombs.
+
+\subsubsection{Encoder-only (BERT)}
+\subsubsection{Encoder-decoder}
+Good for mapping languages.
+
+\subsection{Sequence-to-sequence models}
+RNN/LSTM were so good that were adopted in text-in text-out tasks (translation, summarisation etc).\\
+Encoder--decoder.\\
+However a lot of text can be too much to pass to the decoder, so encoder inserts \textbf{attention} notes.
+
+What information flows into the decoder is controlled by previous state of decoder.\\
+What is the state of decoder (???)\\
+Similarity:
+\[
+  w_{i,j}=\Prob(j\mid i)=\operatorname{softmax}\bigl(\operatorname{similarity}(h_{i-1}, e_{j})\bigr),
+  \qquad
+  z_{i}=\sum_{j} w_{i,j}\, e_{j}.
+\]
+How similarity is computed:
+\begin{itemize}
+  \item \textbf{additive} attention: concatenate decoder state and encoder embedding in a feedforward network (?)
+  \item \textbf{multiplicative} attention: dot product of encoder vector and decoder previous state, divided by $\sqrt{d}$ where $d$ is document length (so we get std = $1$)
+\end{itemize}
+
+I think the following is just self-attention and not soft-attention.\\
+Generalise with queries (what is being looked up), keys (index of what to find), values (stored information at key):
+\[
+  z_i=\sum_{j}\operatorname{softmax}\!\Bigl(\frac{q_i\cdot k_j}{\sqrt{d}}\Bigr)\,v_j,
+\]
+where
+\[
+  q_i=\matr W_q h_{i-1},\qquad
+  k_i=\matr W_k e_j,\qquad
+  v_j=\matr W_v e_j,
+  \qquad
+  \matr W_{q,k,v}\in \R^{d\times d}.
+\]
+
+Here’s an ass attempt at explaining what’s going on:
+
+
+Hypothetical example:
+\begin{itemize}
+  \item \textbf{query}: what is being looked up\\
+  \textcolor{red}{need adjective that describes a person}
+  \item \textbf{key: }index of what to find\\
+  \textcolor{red}{have adjective that describes people \& animals}
+  \item \textbf{value}: stored information at key\\
+  \textcolor{red}{word is ``friendly'', which in Italian could be translated to ``simpatico''}
+\end{itemize}
+
+
+\[
+\begin{tikzpicture}[
+    scale=0.7,
+  font=\footnotesize,
+  >=Stealth,
+  node distance=14mm,
+  cell/.style={draw, fill=yellow!60, minimum width=6mm, minimum height=6mm},
+  weight/.style={draw, solid,fill=orange!75, minimum width=6.5mm, minimum height=6.5mm},
+  attn/.style={draw, rounded corners=3mm, fill=gray!25, minimum width=35mm, minimum height=10mm, align=center},
+  redbox/.style={draw=red, fill=white, very thick, inner sep=2pt},
+  dot/.style={circle, fill=black, inner sep=1.3pt},
+  arr/.style={->, thick},
+  darr/.style={->, thick, dashed}
+]
+
+% --- Encoder (bottom row) ----------------------------------------------------
+\node[cell] (enc1) at (0,-6) {};
+\node[cell] (enc2) at (3,-6) {};
+\node[cell] (enc3) at (6,-6) {};
+\node[cell] (enc4) at (9,-6) {};
+
+\draw[arr] (enc1) -- (enc2);
+\draw[arr] (enc2) -- (enc3);
+\draw[arr] (enc3) -- (enc4);
+
+% small up/down arrows on encoder cells
+\foreach \n in {enc1,enc2,enc3,enc4}{
+  \draw[arr, <-] (\n.south) -- ++(0,-6mm);
+}
+\draw[arr, <-] (enc1.west) -- ++(-6mm,0);
+
+\node[anchor=east] at ($(enc1.west)+(-8mm,0)$) {Encoder};
+
+% --- Decoder (top row) --------------------------------------------------------
+\node[cell] (dec1) at (0,7) {};
+\node[cell] (dec2) at (3,7) {};
+\node[cell] (dec3) at (6,7) {};
+
+\draw[arr] (dec1) -- (dec2);
+\draw[arr] (dec2) -- (dec3);
+
+% small up/down arrows on decoder cells
+\draw[arr, ->] (dec1.north) -- ++(0,6mm);
+\draw[arr, ->] (dec2.north) -- ++(0,6mm);
+\draw[arr, ->] (dec3.north) -- ++(0,6mm);
+\draw[arr, <-] (dec1.south) -- ++(0,-6mm);
+\draw[arr, <-] (dec3.south) -- ++(0,-6mm);
+
+\node[anchor=east] at ($(dec1.west)+(-8mm,0)$) {Decoder};
+
+% black dot on decoder state and label h_{i-1}
+\coordinate (mid12) at ($(dec1.east)!0.45!(dec2.west)$);
+\node[dot] (hpt) at (mid12) {};
+\node[above=0pt of hpt] {$\vect{h}_{i-1}$};
+
+% --- Attention block (middle) -------------------------------------------------
+\node[attn] (att) at ($(dec2)!0.5!(enc2)$) {\textbf{Attention}\\ $(w_{i1},\ldots,w_{in})$};
+
+% Multiplication circle and z_i arrow
+\node[outer sep=0pt, inner sep=0pt] (mul) at ($(att.north)!0.3!(dec2.south)$) {\huge$\otimes$};
+\draw[arr] (mul) -- node[pos=0.3, right] {$\vect{z}_i$} (dec2.south);
+\draw[arr] (att.north) -- (mul);
+
+% Values list (right, red boxed)
+\node[redbox, anchor=west] (vals) at ($(att.east)+ (0.6,0)$) {$(\vect{v}_1,\ldots,\vect{v}_j,\ldots,\vect{v}_n)$};
+
+% Dashed right-angle arrow from values to mul
+\draw[darr] (vals.north) |- (mul.east);
+
+% Inputs from encoder up into attention
+\draw[arr] (enc1.north) -- (att);
+\draw[arr] (enc2.north) -- (att);
+\draw[arr] (enc4.north) -- (att);
+
+
+
+
+
+
+\node[outer sep = 0pt] (ej) at ($(enc3.north)+(0,2.5mm)$) {$\vect{e}_j$};
+
+\draw[darr] (ej) -- node[pos=0.5, weight] {$\matr{W}_v$} (vals);
+
+
+\draw[arr] (ej) -- 
+node[pos=0.4, weight] {$\matr{W}_k$}
+node[pos=0.66, redbox] (kj) {$\vect{k}_j$}
+(att);
+
+
+
+\draw[arr] (hpt) to[out=-130,in=180] 
+node[pos=0.5, weight] {$\matr{W}_q$} 
+node[pos=0.76, redbox] (qi) {$\vect{q}_i$}
+(att.west);
+
+
+
+
+
+
+% little red "..." dots at encoder end
+\node[draw, circle, fill=red!60, minimum size=2mm, inner sep=0pt, outer sep=3pt] (r1) at ($(enc4.east)+(10mm,0)$) {};
+\node[draw, circle, fill=red!60, minimum size=2mm, inner sep=0pt, right=-3pt of r1, outer sep=3pt] (r2) {};
+
+
+\draw[arr] (enc4) -- (r1.west);
+\draw[arr] (r2.east) -- ++(0.5,0) -- ++(0,11) -- ++(-12.8,0) |- (dec1.west);
+
+
+\end{tikzpicture}
+\]
+
+Here’s a better one: (see \Cref{fig:attention-ass} and \Cref{fig:transformer-arch} for context).
+
+\subsection{Self-attention}
+For each input token embedding $\vect x_i$ the model computes three learned linear projections:
+\begin{itemize}
+  \item query $\vect q_i=\matr W_q \vect x_i$
+  \item key $\vect k_i=\matr W_k \vect x_i$
+  \item value $\vect v_i=\matr W_v \vect x_i$
+\end{itemize}
+The $\matr W$ are learnable matrices.\\
+To compute how much token $i$ attends to token $j$:
+\[
+  \operatorname{score}(i,j)=\frac{\vect q_i\cdot \vect k_j}{\sqrt{d_k}}.
+\]
+Attention weights:
+\[
+  a_{i,j}=\operatorname{softmax}(\operatorname{score}(i,j))
+  =\frac{\exp(\operatorname{score}(i,j))}{\sum_t \exp(\operatorname{score}(i,t))}.
+\]
+Output representation is the weighted sum of the values (what’s inside, weighted by the similarity between what you are looking for and what is inside for real).
+
+\subsubsection{Attention vs.\ self-attention}
+Attention was an optional improvement on encoder--decoder RNN to help them reference source better. It analyses sequence step by step and not all at once like in self-attention; in attention, attention happens at each time step over already-processed hidden states.
+
+\subsection{Transformer architecture}
+\begin{figure}[tbp]
+  \centering
+%   \includegraphics[width=\linewidth]{Screenshot 2026-01-16 alle 17.15.01.png}
+  \caption{Transformer block overview.}
+  \label{fig:transformer-arch}
+\end{figure}
+
+\begin{enumerate}
+  \item each token is first mapped to a vector using an embedding matrix; this gives a vector in $\R^{d_{\operatorname{model}}}$
+  \item transformer block processes all tokens in parallel; two main sublayers, each wrapped with a residual connection and layer normalisation
+  \item for each token, its query is compared with keys of all tokens using dot products; after scaling and softmax, this produces attention weights; all head outputs are concatenated and mixed, giving a vector of size $d_{\operatorname{model}}$
+  \item add the resulting vector to the original one and normalise
+  \item MLP to each token independently; ReLU introduces nonlinearity
+  \[
+    \operatorname{FFNN}(\vect z)=\matr W_2\,\operatorname{ReLU}(\matr W_1 \vect z)
+  \]
+  $\matr W_1$ expands dimensionality (typically $d\to 4d$), then $\matr W_2$ brings it back to $d$; papers say this layer is very important to store $n$-gram pattern--prediction pairs, e.g.\ attention builds \enquote{the eiffel tower height}, MLP adds \enquote{300 m}
+  \item add to input and normalise again
+  \item stack transformer blocks until softmax produces probabilities
+\end{enumerate}
+
+\subsubsection{Deep learning}
+Performs well but requires GPU and toolkit PyTorch. Before: stacking LSTM; now we’re using transformers.
+
+\subsection{Feeding a transformer}
+Depends on context: genome character level; other cases word level.\\
+Sub-word level: replace common sequences of words with one token.\\
+Also need info on the order of input (self-attention is permutation-invariant): pair a number to each token to say its position. Use sinusoids to map (pos, dimension) to a unique id:
+\[
+  P_{k,2i}=\sin\!\Bigl(\frac{k}{10000^{\frac{2i}{d}}}\Bigr),
+  \qquad
+  P_{k,2i+1}=\cos\!\Bigl(\frac{k}{10000^{\frac{2i}{d}}}\Bigr).
+\]
+In encoders attention sees everything; in decoders next tokens are masked.
+
+\subsection{Pretraining}
+Pretraining = getting information about language etc.\\
+Fine-tuning/training on a specific task. Variants can be pretrained in different domain corpora and fine-tuned for different tasks.\\
+BERT is pretrained by masking with \texttt{[MASK]} token a word and having access to Wikipedia.\\
+GPT-2 is trained on 40\,GB upvoted posts.
+
+
+% --- Slide 7 ---------------------------------------------------------------
+\section{Applications of transformers} % Slide 7
+
+\begin{itemize}
+  \item encoder--decoder (original transformer (2017) for translation)
+  \item encoder-only (like BERT)
+  \item decoder-only (like GPT-2, autoregressive which predicts next token) (?)
+\end{itemize}
+
+\texttt{[CLS]} is simply another token added with its own learned embedding vector. It does not have semantic meaning like real words but it has a dedicated embedding that is optimised during pretraining and finetuning. During fine-tune for classification for example you teach the model to produce class label at \texttt{[CLS]}.\\
+Attention allows each position to read information from every other position in the sequence so \texttt{[CLS]} can attend to all other tokens and all other tokens can attend to \texttt{[CLS]}. The final hidden vector at the \texttt{[CLS]} position contains information influenced by lexical content of all tokens. NB: I think SBERT and modern don’t just use \texttt{[CLS]} embeddings; rather they perform a pooling over all token embeddings.
+
+\subsection{Finetuning BERT}
+Add a task-specific component $g$ to the loss, then compute $L(f(x),y)$ where
+\[
+  f(x)=g_{\omega}(h_{\theta}(x)),
+\]
+then backpropagate w.r.t.\ both sets of parameters.\\
+Attention patterns and hidden states at \texttt{[CLS]} shift to become sensitive to task-relevant relations. All the weights change w.r.t.\ the new task.\\
+This way BERT can be used to rerank documents by fine-tuning, feeding query--document pairs and classify in relevant / not relevant / slightly relevant etc.\\
+Use \texttt{[SEP]} token to separate query and document on input; usually it’s a token helpful to determine end of sequences.\\
+An even better approach is to compute score right? Well yes, but it’s also very costly, therefore too slow for answering queries in real time; solution is \textbf{pre-computing} but one would require query to compute similarity.
+
+\textbf{Solution 1}: two-step, lexical search first to find candidates, then use BERT to re-rank them.\\
+\textbf{Solution 2}: precompute document embeddings; finetune so that \texttt{[CLS]} as representation of each document optimised for similarity; cosine/dot product is used.
+
+\subsection{Contrastive loss}
+Used so \texttt{[CLS]} embeddings are useful to determine similarity.\\
+Train model to predict similar / not similar for doc pairs.
+\begin{enumerate}
+  \item create batch of relevant docs and queries
+  \item compute a matrix of similarities between all the queries and docs; diagonal must be high as it’s the chosen pairs
+  \item softmax of dot product over column/row tells us how well it sets relevant apart from not relevant; cross entropy is used to finetune the model but it’s called contrastive because
+\end{enumerate}
+SBERT comes already fine-tuned on this; precompute encodings of each doc; when query arrives, encode the query then compute cosine/dot product.
+
+% cross refs: figures \Cref{fig:models-overview,fig:attention-ass,fig:transformer-arch}
+
+
+
+
+\section{Large Language Models}
+
+\section{LLM Deployment \& Architectures}
+
+
+\section{AgenticAI and Model Distillation}
+
+
+\section{Speech Detection \& Generation}
+
+\section{Spoken Dialogue}
+
+
+\section{Additional Topics}
+
+\section{Ethics and Multilingual NLP}
+
+
+
+\end{document}
