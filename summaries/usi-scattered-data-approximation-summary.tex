@@ -2810,6 +2810,43 @@ X : \mathcal{S} \to \R
 \).
 \end{definition}
 
+
+Consider a vector \(\vect{Z}\) split into two parts \(\vect{Z}_1\) and \(\vect{Z}_2\), where
+\begin{equation}\label{eq:joint_gaussian}
+\vect{Z} = \begin{bmatrix} \vect{Z}_1 \\ \vect{Z}_2 \end{bmatrix} 
+\sim
+\mathcal{N} \left(
+\begin{bmatrix} \vect{\mu}_1 \\ \vect{\mu}_2 \end{bmatrix},
+\begin{bmatrix} \matr{\Sigma}_{11} & \matr{\Sigma}_{12} \\ \matr{\Sigma}_{21} & \matr{\Sigma}_{22} \end{bmatrix}
+\right) 
+% \text{.}
+\end{equation}
+
+The conditional distribution of \(\vect{Z}_2\) given \(\vect{Z}_1\) is also Gaussian:
+\begin{equation}\label{eq:conditional_gaussian}
+\vect{Z}_2 \mid \vect{Z}_1 
+\sim
+\mathcal{N} \left(
+  \vect{\mu}_2 + \matr{\Sigma}_{21} \matr{\Sigma}_{11}^{-1} (\vect{Z}_1 - \vect{\mu}_1), \;
+  \matr{\Sigma}_{22} - \matr{\Sigma}_{21} \matr{\Sigma}_{11}^{-1} \matr{\Sigma}_{12} \right) 
+% \text{.}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \begin{definition}[Random function]
 A \emph{random function} is a map
 \(
@@ -2823,42 +2860,50 @@ for fixed $\omega \in \mathcal{S}$, $f(\cdot,\omega)$ is a deterministic functio
 A collection of random variables $\{f(\vect{x}) \mid \vect{x} \in \R^d\}$ is called a
 \emph{Gaussian process} if for all $\vect{x}_1,\dots,\vect{x}_m \in \R^d$,
 \[
-(f(\vect{x}_1),\dots,f(\vect{x}_m))
+[f(\vect{x}_1),\dots,f(\vect{x}_m)]
 \]
 is multivariate Gaussian.  
-It is characterized by its mean $\mu(\vect{x})=\Exp[f(\vect{x})]$ and covariance
+It is characterized by its mean $\mu(\vect{x})=\Exp[f(\vect{x})]$ and covariance function
 $k(\vect{x},\vect{x}')=\operatorname{Cov}(f(\vect{x}),f(\vect{x}'))$.
 \end{definition}
 
 
-\begin{theorem}[Connection to Gaussian processes]\label{ex:connection_gp_rkhs}
-Let $K$ be a strictly positive definite kernel on $\Omega \subset \R^d$ and let
-\[
-\matr{K} = \bigl[K(\vect{x}_i,\vect{x}_j)\bigr]_{i,j=1}^n
-\]
-be the kernel matrix associated with pairwise distinct points
-\(
-\{\vect{x}_1,\dots,\vect{x}_n\} \subset \Omega
-\).
-Consider a Gaussian process $f \sim \mathcal{GP}(0,K)$ and set
-\[
-X := \{\vect{x}_1,\dots,\vect{x}_{n-1}\},
-\qquad
-\vect{y} := \bigl(f(\vect{x}_1),\dots,f(\vect{x}_{n-1})\bigr)^\top,
-\qquad
-\vect{x}_\star := \vect{x}_n,
-\quad
-f_\star := f(\vect{x}_\star).
-\]
 
-Partition $\matr{K}$ as
+% Let $K$ be a strictly positive definite kernel on $\Omega \subset \R^d$ and let
+% \(
+% \matr{K} = \bigl[K(\vect{x}_i,\vect{x}_j)\bigr]_{i,j=1}^n
+% \)
+% be the kernel matrix associated with pairwise distinct points
+% \(
+% \{\vect{x}_1,\dots,\vect{x}_n\} \subset \Omega
+% \).
+
+Consider a Gaussian process with zero mean and covariance function $k$.
+Suppose we have observed 
+\(
+% \vect{y} := [f(\vect{x}_1),\dots,f(\vect{x}_{n-1})]^\top
+\vect{y} := [y_1,\dots,y_{n-1}]^\top
+\)
+at points
+\(
+X := \{\vect{x}_1,\dots,\vect{x}_{n-1}\}
+\).
+We want to predict the value of $f$ at a new point
+\(
+\vect{x}_\star := \vect{x}_n
+\),
+\(
+f_\star := f(\vect{x}_\star)
+\).
+
+The covariance matrix is given by $\matr{K} = \bigl[k(\vect{x}_i,\vect{x}_j)\bigr]_{i,j=1}^n$ and it can be partitioned as
 \begin{equation}\label{eq:partitioned_covariance}
 \matr{K} 
 = 
-\begin{pmatrix}
+\begin{bmatrix}
 \matr{K}_{mm} & \matr{K}_{m\star} \\[0.3em]
 \matr{K}_{\star m} & \matr{K}_{\star\star}
-\end{pmatrix},
+\end{bmatrix}
 \end{equation}
 where $\matr{K}_{mm} \in \R^{(n-1)\times(n-1)}$ is the covariance on $X$, 
 $\matr{K}_{m\star} \in \R^{(n-1)\times 1}$ contains the covariances between $X$ and $\vect{x}_\star$, and
@@ -2875,39 +2920,42 @@ Then:
       \matr{K}_{\star\star}
       -
       \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}
-    \right).
+    \right)
   \]
-  In particular, the conditional variance
+  % In particular, the conditional variance
+  % \[
+  %   \Var\bigl(f_\star \mid \vect{y}\bigr)
+  %   =
+  %   \matr{K}_{\star\star}
+  %   -
+  %   \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}
+  % \]
+  where the covariance term
+  is the Schur complement \eqref{eq:schur_complement} of $\matr{K}_{mm}$ in $\matr{K}$.
+
+  \item Let $P_{k,X}$ be the power function from \autoref{def:power_function}. 
+  Using the explicit formula \eqref{eq:power_function_formula},
   \[
-    \Var\bigl(f_\star \mid \vect{y}\bigr)
+    P_{k,X}(\vect{x}_\star)^2
+    =
+    k(\vect{x}_\star,\vect{x}_\star)
+    - \vect{\Phi}(\vect{x}_\star)^\top \matr{K}_{mm}^{-1} \vect{\Phi}(\vect{x}_\star)
     =
     \matr{K}_{\star\star}
     -
     \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}
   \]
-  is the Schur complement \eqref{eq:schur_complement} of $\matr{K}_{mm}$ in $\matr{K}$.
-
-  \item Let $P_{K,X}$ be the power function from \autoref{def:power_function}. 
-  Using the explicit formula \eqref{eq:power_function_formula},
-  \[
-    P_{K,X}(\vect{x}_\star)^2
-    =
-    K(\vect{x}_\star,\vect{x}_\star)
-    - \vect{\Phi}(\vect{x}_\star)^\top \matr{K}_{mm}^{-1} \vect{\Phi}(\vect{x}_\star)
-    =
-    \matr{K}_{\star\star}
-    -
-    \matr{K}_{\star m}\matr{K}_{mm}^{-1}\matr{K}_{m\star}.
-  \]
-  Hence
-  \[
-    P_{K,X}(\vect{x}_\star)
-    =
-    \sqrt{\Var\bigl(f_\star \mid \vect{y}\bigr)},
-  \]
-  i.e.\ the power function evaluated at $\vect{x}_\star$ is exactly the conditional standard deviation (posterior uncertainty) of the Gaussian process at $\vect{x}_\star$ given the observations at $X$.
+  % Hence
+  % \(
+  %   P_{k,X}(\vect{x}_\star)
+  %   =
+  %   \sqrt{\Var\bigl(f_\star \mid \vect{y}\bigr)}
+  % \),
+  % i.e.\ 
+  implying that
+  the power function evaluated at $\vect{x}_\star$ is exactly the conditional standard deviation (posterior uncertainty) of the Gaussian process at $\vect{x}_\star$ given the observations at $X$.
 \end{enumerate}
-\end{theorem}
+
 
 
 \clearpage
@@ -2923,7 +2971,7 @@ As a consequence, the generalized Vandermonde or kernel matrix $\matr{K}=\bigl[K
 We need the following 
 \begin{lemma}\label{lemma:schur_complement}
 Let $\matr{A}$ be a symmetric and positive semi-definite matrix. 
-Then, the \hl{Schur complement}
+Then, the \hl{Schur complement} of $\matr{A}_{1,1}$ in $\matr{A}$
 \begin{equation}\label{eq:schur_complement}
   {\color{Red}\boxed{\color{black}
   \matr{S}:=\matr{A}_{2,2}-\matr{A}_{2,1}\matr{A}_{1,1}^{-1}\matr{A}_{1,2}
