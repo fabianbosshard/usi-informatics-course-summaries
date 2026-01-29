@@ -1,0 +1,619 @@
+% author: Fabian Bosshard % © CC BY 4.0
+\documentclass[9pt,headings=standardclasses,parskip=half]{scrartcl}
+
+% ===================== basics =====================
+\usepackage{ifthen,iftex,csquotes}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% ===================== page style =====================
+\usepackage[automark]{scrlayer-scrpage}
+\pagestyle{scrheadings}
+
+% ===================== graphics / color =====================
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{caption,subcaption}
+\usepackage[left=38mm,right=38mm,top=20mm,bottom=30mm]{geometry}
+
+% ===================== math =====================
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathdots,accents}
+\numberwithin{equation}{section}
+
+% ===================== lists =====================
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+% ===================== bibliography =====================
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+% ===================== symbols =====================
+\usepackage{pifont}
+
+% ===================== TikZ / plots =====================
+\usepackage{tikz}
+\usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings}
+\usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
+\usepackage{pgfplots}
+
+% ===================== highlighting (SOUL + math-safe \hl) =====================
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1 {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN { \c{\(} (.*?) \c{\)} } { \cM\$ \1 \cM\$ } \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl
+}
+\ExplSyntaxOff
+
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}}
+
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+% ===================== colors / emphasis =====================
+\definecolor{funblue}{rgb}{0.10,0.35,0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85,0.17,0.11}
+\definecolor{amethyst}{rgb}{0.6,0.4,0.8}
+\definecolor{mypurple}{rgb}{0.5,0,0.5}
+\definecolor{highlightpurple}{rgb}{0.6,0,0.6}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+% ===================== theorem environments =====================
+\usepackage{thmtools}
+
+\newlength{\thmspace}\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem,numberwithin=section]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle,name=Fact,sibling=theorem]{fact}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition,numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle,name=Problem,sibling=definition]{problem}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
+\declaretheorem[style=exercisestyle,name=Exercise,numberwithin=section]{exercise}
+\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
+\declaretheorem[style=solutionstyle,name=Solution,numbered=no]{solution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\square},postheadspace=1em]{proofstyle}
+\let\proof\relax \let\endproof\relax
+\declaretheorem[style=proofstyle,name=Proof,numbered=no]{proof}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark,numberwithin=section]{remark}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example,sibling=remark]{example}
+
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=\thmspace,spacebelow=\thmspace,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression,sibling=remark]{digression}
+
+% ===================== misc helpers =====================
+\newenvironment{verticalhack}{\begin{array}[b]{@{}c@{}}\displaystyle}{\\\noalign{\hrule height0pt}\end{array}}
+
+% ===================== algorithms =====================
+\usepackage{algorithm,algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex}
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+% ===================== operators / notation =====================
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\re}{\operatorname{Re}}
+
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\eu}{\mathrm{e}}
+\newcommand{\iu}{\mathrm{i}}
+\newcommand{\sign}{\operatorname{sgn}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\#\,}}
+\newcommand{\blackheight}{\operatorname{bh}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}}
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}}
+
+% ===================== metadata / hyperlinks =====================
+\title{Graph Deep Learning}
+\author{Fabian Bosshard}
+\date{\today}
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Graph Deep Learning - Course Notes},
+  pdfkeywords={USI, Graph Deep Learning, course notes, informatics},
+  colorlinks=false,
+  pdfborder={0 0 0},
+  linkbordercolor={0 0.6 1},
+  urlbordercolor={0 0.6 1},
+  citebordercolor={0 0.6 1}
+]{hyperref}
+
+% ToC entries: dotted leaders + full-width clickable line
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+
+\makeatletter
+\newlength\FB@toclinkht \newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+% hyperref anchor uniqueness for section-relative numbering
+\makeatletter
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+\makeatother
+
+% ===================== license / cleveref =====================
+\usepackage[type={CC},modifier={by},version={4.0}]{doclicense}
+\usepackage{cleveref}
+
+% ===================== acronyms =====================
+\usepackage[acronym,nomain,toc,nonumberlist]{glossaries-extra}
+\setabbreviationstyle[acronym]{long-short}
+\makeglossaries
+\newacronym{rbf}{RBF}{radial basis function}
+\newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+% table of acronyms (remember everything is in build folder)
+% \printglossary[type=\acronymtype, title={List of Acronyms}]
+
+
+
+\section{Background}\label{sec:background}
+
+Let $G = (V, E)$ be an undirected graph with the
+adjacency matrix $\matr{A} \in \R^{n\times n}$
+\begin{equation}\label{eq:adjacency_matrix}
+    \matr{A}_{uv}
+    =
+    \begin{cases}
+        1 & (u,v) \in E\\
+        0 & (u,v) \notin E
+    \end{cases}
+\end{equation}
+
+The \emph{diagonal degree matrix} $\matr{D}\in\R^{n\times n}$ is defined by
+\begin{equation}\label{eq:degree_matrix}
+    \matr{D}_{uv}
+    =
+    \begin{cases}
+        d_u &  u = v\\
+        0 & u \ne v
+    \end{cases}
+\end{equation}
+i.e. $\matr{D}$ simply places all node degrees on the diagonal.
+
+
+
+
+\subsection{normalized adjacency and multi-hop propagation}
+
+
+\begin{definition}\label{def:normalized_adjacency}
+The \emph{symmetrically normalized adjacency matrix} is
+\begin{equation}\label{eq:normalized_adjacency}
+    {\color{Red}\boxed{\color{black}
+    \hat{\matr{A}}
+    =
+    \matr{D}^{-1/2}\matr{A}\matr{D}^{-1/2}
+    }}
+\end{equation}
+or, entrywise,
+\[
+\begin{verticalhack}
+    \hat{\matr{A}}_{uv}
+    =
+    \begin{cases}
+        \dfrac{1}{\sqrt{d_u d_v}} & (u,v) \in E\\[0.5ex]
+        0 & (u,v) \notin E
+    \end{cases}
+    \end{verticalhack}
+    \qedhere
+\]
+\end{definition}
+
+\begin{fact}[multi-hop propagation]\label{prop:multi_hop_propagation}
+The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
+\begin{equation}\label{eq:multi_hop_propagation}
+    (\hat{\matr{A}}^{k})_{vu}
+    =
+    \sum_{\pi}
+    \prod_{(x, y) \in E_\pi} \frac{1}{\sqrt{d_x d_y}}
+\end{equation}
+the sum is over all walks $\pi = (v, \ldots, u)$ of length $k$ from $v$ to $u$ and the product is over the edges \(E_\pi = \{(v, u_1), \ldots, (u_{k-1}, u)\}\) on the walk.
+\end{fact}
+
+
+
+\begin{corollary}\label{cor:multi_hop_propagation_single_path}
+Let $v,u \in V$ with $r = d_{G}(v,u)$, where $d_{G}(\cdot,\cdot)$ denotes the shortest-path distance.
+Assume there is exactly one path
+\[
+    (v, u_{1}, \ldots, u_{r-1}, u)
+\]
+of length $r$ between $v$ and $u$:
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.4,
+  vertex/.style={
+    circle,
+    draw,
+    fill=green!40,
+    minimum size=10pt,
+    inner sep=0,
+    label={
+        [anchor=base, label distance=5pt]
+        below:{#1} % parentheses necessary, otherwise the '=' breaks TikZ parsing
+    }
+  },
+  measure/.style={|-|}
+]
+
+\node[vertex={$v$}] (v) at (0, 0) {};
+\node[vertex={$u_{1}$}] (u1) at (3, 0) {};
+\node[vertex={$u_{r-1}$}] (urm1) at (9, 0) {};
+\node[vertex={$u$}] (u) at (12, 0) {};
+
+
+\draw[] (v) -- (u1);
+\draw[] (u1) -- ($(u1)!1/3!(urm1)$);
+\draw[dotted] ($(u1)!1/3!(urm1)$) -- ($(u1)!2/3!(urm1)$);
+\draw[] ($(u1)!2/3!(urm1)$) -- (urm1);
+\draw[] (urm1) -- (u);
+
+
+\def\offset{-0.5cm};
+\draw[measure] ($(v) + (0, -1) + (0, \offset)$) -- node[below, outer sep = 2pt, inner sep = 0] {$d_{G}(v,u) = r$} ($(u) + (0, -1) + (0, \offset)$);
+
+
+\end{tikzpicture}
+\]
+Then
+\begin{equation}\label{eq:multi_hop_propagation_single_path}
+    % \begin{aligned}
+    % (\hat{\matr{A}}^{r})_{vu}
+    % &=
+    % \frac{1}{\sqrt{d_v d_{u_{1}}}} \cdot
+    % \prod_{i=1}^{r-2} \frac{1}{\sqrt{d_{u_{i}} d_{u_{i+1}}}} \cdot
+    % \frac{1}{\sqrt{d_{u_{r-1}} d_{u}}} \\
+    % &=
+    % \frac{1}{\sqrt{d_v d_u}} \prod_{i=1}^{r-1} \frac{1}{d_{u_i}}
+    % \end{aligned}
+    (\hat{\matr{A}}^{r})_{vu}
+    =
+    \frac{1}{\sqrt{d_v d_{u_{1}}}} \cdot
+    \prod_{i=1}^{r-2} \frac{1}{\sqrt{d_{u_{i}} d_{u_{i+1}}}} \cdot
+    \frac{1}{\sqrt{d_{u_{r-1}} d_{u}}} 
+    =
+    \frac{1}{\sqrt{d_v d_u}} \prod_{i=1}^{r-1} \frac{1}{d_{u_i}}
+\end{equation}
+\end{corollary}
+
+
+
+\subsubsection{distance layers and layer degrees}
+
+% For \gls{laser} and related methods it is useful to separate connections by graph distance.
+
+\begin{definition}\label{def:distance_layer_adjacency}
+For $\ell \in \N_0$, we define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
+\begin{equation}\label{eq:distance_layer_adjacency}
+    \bigl(\matr{A}_{\ell}\bigr)_{uv}
+    =
+    \begin{cases}
+        1 & d_{G}(u,v) = \ell+1\\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+where $d_{G}(u,v)$ is the shortest-path distance.
+The corresponding \emph{layer degree} of a node $v$ at distance level $\ell$ is
+\begin{equation}\label{eq:layer_degree}
+    d_{v,\ell}
+    =
+    \sum_{u \in V} \bigl(\matr{A}_{\ell}\bigr)_{vu},
+\end{equation}
+i.e.\ the number of nodes at graph distance $\ell+1$ from $v$.
+Let $\matr{D}_{\ell}$ be the diagonal matrix with $(\matr{D}_{\ell})_{vv} = d_{v,\ell}$.
+The \emph{normalized distance-$(\ell+1)$ adjacency} is
+\begin{equation}\label{eq:normalized_distance_layer_adjacency}
+    {\color{Red}\boxed{\color{black}
+    \hat{\matr{A}}_{\ell}
+    =
+    \matr{D}_{\ell}^{-1/2} \matr{A}_{\ell} \matr{D}_{\ell}^{-1/2}
+    }}
+\end{equation}
+so that
+\[
+\begin{verticalhack}
+\bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
+=
+\begin{cases}
+    \frac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{G}(u,v) = \ell+1 \\
+    0 & \text{otherwise}
+\end{cases}
+\end{verticalhack}
+\qedhere
+\]
+\end{definition}
+
+% Finally, we denote by
+% \begin{equation}\label{eq:minimum_degree}
+%     d_{\min}
+%     =
+%     \min_{v \in V} d_v
+% \end{equation}
+% the \emph{minimum node degree} in the graph.
+
+
+
+
+
+
+
+\subsection{graph Laplacian}
+
+\begin{definition}\label{def:graph_laplacian}
+The \emph{combinatorial} graph Laplacian is
+% \begin{equation}\label{eq:graph_laplacian}
+%     \matr{L} = \matr{D} - \matr{A}
+% \end{equation}
+\(\matr{L} = \matr{D} - \matr{A}\)
+and the \emph{normalized} graph Laplacian is
+\begin{equation}\label{eq:normalized_graph_laplacian}
+    {\color{Red}\boxed{\color{black}
+    \hat{\matr{L}}
+    =
+    \matr{D}^{-1/2}\matr{L}\matr{D}^{-1/2}
+    % \overset{\text{\eqref{eq:graph_laplacian}}}{=}
+    =
+    \matr{D}^{-1/2}(\matr{D} - \matr{A})\matr{D}^{-1/2}
+    \overset{\text{\eqref{eq:normalized_adjacency}}}{=}
+    \matr{I}_{n} - \hat{\matr{A}}
+    }}
+\end{equation}
+It is symmetric and positive semidefinite, and its eigenvalues satisfy
+\[
+    0 = \lambda_{0} \le \lambda_{1} \le \dots \le \lambda_{n-1}
+\]
+$\lambda_1$ is called the \emph{spectral gap}.
+The number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph.
+\end{definition}
+
+To understand \autoref{def:graph_laplacian}, consider a function $f\colon V \to \R$.
+Denote by $\vect{f} \in \R^{n}$ the vector whose $v$-th entry is $f(v)$.
+Then
+% \begin{equation}\label{eq:laplacian_action_on_function}
+% (\matr{L}\vect{f})_v
+% =
+% d_v f(v) - \sum_{(u,v) \in E} f(u)
+% \end{equation}
+% i.e., $(\matr{L}\vect{f})_v$ is (up to the factor $d_v$) the difference between the value at $v$ and the sum of the values at its neighbors.
+% For the normalized Laplacian, we have
+\begin{equation}\label{eq:normalized_laplacian_action_on_function}
+(\hat{\matr{L}}\vect{f})_v
+=
+f(v)
+-
+\frac{1}{\sqrt{d_v}}
+\sum_{(u,v) \in E}
+\frac{f(u)}{\sqrt{d_u}}
+\end{equation}
+i.e., $(\hat{\matr{L}}\vect{f})_v$ is the value at $v$ minus a degree-normalized average of the neighbors.
+This is why the Laplacian is often viewed as a \emph{discrete second derivative} on the graph:
+\hl[2]{it measures how much $f$ at $v$ deviates from its neighborhood}.
+Another important identity is the quadratic form
+\begin{equation}\label{eq:laplacian_quadratic_form}
+    \vect{f}^{\top}\matr{L}\vect{f}
+    =
+    \frac{1}{2}
+    \sum_{(u,v) \in E}
+    \bigl(f(u) - f(v)\bigr)^{2}
+\end{equation}
+which shows that \(\matr{L}\) (and hence also \(\hat{\matr{L}}\)) is positive semidefinite, since the right-hand side is always nonnegative.
+Moreover, \eqref{eq:laplacian_quadratic_form} is small exactly when $f$ varies slowly across edges, so the Laplacian encodes the \emph{smoothness} of functions on the graph.
+
+
+
+
+\subsection{Cheeger inequality}
+
+The \emph{Cheeger inequality} relates the spectral gap $\lambda_1$ to the \emph{Cheeger constant} $h(G)$, which measures how difficult it is to separate the graph into two large pieces.  It states, in particular, that
+\[
+    \tfrac{1}{2}h(G)^2
+    \le
+    \lambda_1
+    \le
+    2 h(G),
+\]
+so a larger spectral gap implies that the graph is more ``well-connected''.
+
+
+\subsection{effective resistance}
+\begin{definition}[effective resistance]\label{def:effective_resistance}
+View each edge $(u,v)\in E$ as an electrical resistor of resistance $1\,$\(\Omega\).
+The resulting network has a well-defined resistance between any two nodes.
+
+For two nodes $s,t \in V$, the \emph{effective resistance} $R(s,t)$ is defined as the voltage difference needed to send one unit of electrical current from $s$ to $t$.
+It can be computed as
+\begin{equation}\label{eq:effective_resistance}
+{\color{Red}\boxed{\color{black}
+    R(s,t)
+    =
+    (\vect{e}_s - \vect{e}_t)^{\top}
+    \matr{L}^{\dagger}
+    (\vect{e}_s - \vect{e}_t)
+}}
+\end{equation}
+where $\matr{L}^{\dagger}$ is the Moore--Penrose pseudoinverse of $\matr{L}$ and $\vect{e}_v$ is the standard basis vector of vertex $v$.
+\end{definition}
+
+
+\subsubsection{Interpretation}
+If the graph offers many short, parallel paths between $s$ and $t$, then current can flow easily, so $R(s,t)$ is small.
+If there are few or long paths, the current is ``bottlenecked'' and $R(s,t)$ is large.
+Thus, effective resistance measures how ``well-connected'' two nodes are inside the global geometry of the graph.
+
+\subsubsection{Connection to random walks}
+A \emph{random walk} on $G$ is the Markov chain that, from a node $v$, moves to a uniformly random neighbor of $v$.  Its transition matrix is
+\begin{equation}\label{eq:random_walk_transition_matrix}
+\matr{P} = \matr{D}^{-1}\matr{A}
+\end{equation}
+so $\matr{P}_{vu} = 1/d_v$ if $(v,u)\in E$.
+
+\medskip
+For two nodes $u,v$, the \emph{commute time} $\texttt{CT}(u,v)$ is the expected number of steps for the random walk to start at $u$, reach $v$, and return to $u$ again.  
+It can be related to the \nameref{def:effective_resistance} via
+\begin{equation}\label{eq:commute_time_effective_resistance}
+    \texttt{CT}(u,v)
+    =
+    2|E|
+    R(u,v)
+    % \text{,}
+\end{equation}
+giving a geometric interpretation of how ``far apart'' two nodes are in terms of random-walk behavior,
+i.e. two nodes have small commute time exactly when they have small effective resistance.
+
+
+
+
+
+
+
+
+
+
+\end{document}
