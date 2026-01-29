@@ -433,14 +433,14 @@ Every flow value \(f(e)\) and every residual capacity \(c_f(e)\) remains an inte
 \end{invariant}
 
 \begin{theorem}\label{thm:ford_fulkerson_iteration}
-\autoref{alg:ford_fulkerson} terminates in at most \(v(f^*)\) iterations, where \(v(f^*) \leq nC\) is the value of a maximum flow.
+\autoref{alg:ford_fulkerson} terminates in at most \(v(f^*)\) iterations, where \hl[7]{\(v(f^*) \leq nC\)} is the value of a maximum flow.
 \end{theorem}
 \begin{proof}
 Each \nameref{alg:augment} increases \(v(f)\) by at least 1 and \(v(f^*) \leq \deg^+(s) \cdot C \leq nC\).
 \end{proof}
 
 \begin{corollary}
-\autoref{alg:ford_fulkerson} runs in time \(O(v(f^*) \cdot m)\) (not polynomial in \(n\)\textcolor{red}{!}), since an \nameref{def:augmenting_path} can be found in \(O(m)\) time.
+\autoref{alg:ford_fulkerson} runs in time \hl[8]{\(O(v(f^*) \cdot m)\)} (not polynomial in \(n\)\textcolor{red}{!}), since an \nameref{def:augmenting_path} can be found in \(O(m)\) time.
 \end{corollary}
 \begin{corollary}
 If \(C = 1\), \autoref{alg:ford_fulkerson} runs in \(O(n m)\) time.

@@ -50,8 +50,10 @@
 \definecolor{HLyellow}{HTML}{FFFF66}
 \definecolor{HLorange}{HTML}{FFB347}
 \definecolor{HLred}{HTML}{FF6961}
-\definecolor{HLpink}{HTML}{FFB6C1}
 \definecolor{HLturquoise}{HTML}{40E0D0}
+\definecolor{HLcyan}{HTML}{03FFFF}
+\definecolor{HLpinkBase}{HTML}{FF00FF}   % neon magenta
+\colorlet{HLpink}{HLpinkBase!60} 
 
 % master highlight macro: \hl[level]{text}, default = green
 \RenewDocumentCommand{\hl}{O{1} m}{%
@@ -63,6 +65,8 @@
     {4}{\sethlcolor{HLred}\SOULhl{#2}}%
     {5}{\sethlcolor{red}\SOULhl{#2}}%
     {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+    {7}{\sethlcolor{HLcyan}\SOULhl{#2}}%
+    {8}{\sethlcolor{HLpink}\SOULhl{#2}}%
   }[\PackageError{hl}{Undefined highlight level: #1}{}]%
   \endgroup
 }
