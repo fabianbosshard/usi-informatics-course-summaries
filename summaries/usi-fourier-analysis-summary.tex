@@ -289,6 +289,44 @@
 
 \clearpage
 \section{Preliminaries}
+
+
+
+\paragraph{Greek letters}
+\renewcommand{\arraystretch}{1.15}
+\newcommand{\latinlike}[1]{\textcolor{gray}{\mathrm{#1}}}
+\[
+\begin{array}{@{}l@{\qquad}c@{\quad}c@{\quad}c@{}}
+\textbf{Name} & \textbf{Low.} & \textbf{Var.} & \textbf{Upp.} \\
+\hline
+\text{alpha}   & \alpha   &              & \latinlike{A} \\
+\text{beta}    & \beta    &              & \latinlike{B} \\
+\text{gamma}   & \gamma   &              & \Gamma \\
+\text{delta}   & \delta   &              & \Delta \\
+\text{epsilon} & \epsilon & \varepsilon  & \latinlike{E} \\
+\text{zeta}    & \zeta    &              & \latinlike{Z} \\
+\text{eta}     & \eta     &              & \latinlike{H} \\
+\text{theta}   & \theta   & \vartheta    & \Theta \\
+\text{iota}    & \iota    &              & \latinlike{I} \\
+\text{kappa}   & \kappa   & \varkappa    & \latinlike{K} \\
+\text{lambda}  & \lambda  &              & \Lambda \\
+\text{mu}      & \mu      &              & \latinlike{M} \\
+\text{nu}      & \nu      &              & \latinlike{N} \\
+\text{xi}      & \xi      &              & \Xi \\
+\text{omicron} & \latinlike{o}        &  & \latinlike{O} \\
+\text{pi}      & \pi      & \varpi       & \Pi \\
+\text{rho}     & \rho     & \varrho      & \latinlike{P} \\
+\text{sigma}   & \sigma   & \varsigma    & \Sigma \\
+\text{tau}     & \tau     &              & \latinlike{T} \\
+\text{upsilon} & \upsilon &              & \Upsilon \\
+\text{phi}     & \phi     & \varphi      & \Phi \\
+\text{chi}     & \chi     &              & \latinlike{X} \\
+\text{psi}     & \psi     &              & \Psi \\
+\text{omega}   & \omega   &              & \Omega
+\end{array}
+\]
+
+
 % aligned label + content
 \newlength{\propw}
 \newlength{\propsep}
@@ -385,14 +423,14 @@ For \(k \in \N\), we write \(C^k(\R)\) for the space of functions from \(\R\) to
 % \phantom{\text{$f$ continuous}}   &\;\Leftarrow& \text{$f$ 3-times differentiable}&\;\Leftarrow& \dots \;\Leftarrow\; \text{$f$ smooth}
 % \end{aligned}
 % \]
-Recall that
-\[
-\begin{aligned}
-\text{$f$ continuous}           &\Leftarrow & \text{$f$ differentiable}         &\Leftarrow & \text{$f$ continuously differentiable} \\
-\phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ twice differentiable}   &\Leftarrow & \text{$f$ twice continuously differentiable} \\
-\phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ 3-times differentiable} &\Leftarrow & \dots \;\Leftarrow\; \text{$f$ smooth}
-\end{aligned}
-\]
+% Recall that
+% \[
+% \begin{aligned}
+% \text{$f$ continuous}           &\Leftarrow & \text{$f$ differentiable}         &\Leftarrow & \text{$f$ continuously differentiable} \\
+% \phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ twice differentiable}   &\Leftarrow & \text{$f$ twice continuously differentiable} \\
+% \phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ 3-times differentiable} &\Leftarrow & \dots \;\Leftarrow\; \text{$f$ smooth}
+% \end{aligned}
+% \]
 
 \begin{example}
   The function \(f(x) = x^k \sign(x)\) is in \(C^{k-1}(\R)\) but not in \(C^k(\R)\).
@@ -534,8 +572,8 @@ Moreover,
 \[
 |\hat{f}(\xi)| \leq \int_{-\infty}^{\infty}|f(x)| \dif x=\|f\|_1
 \]
-where \(\xi \in \R\),
-implying that $\hat{f}$ is in $L^{\infty}(\R)$ and the operator 
+for any \(\xi \in \R\),
+\hl[2]{implying that $\hat{f}$ is in $L^{\infty}(\R)$} and the operator 
 \[
 \mathcal{F}: f \in L^1(\R) \mapsto \hat{f} \in L^{\infty}(\R)
 \]
@@ -586,7 +624,16 @@ The Fourier transform is a bounded operator from $L^1(\R)$ to $L^{\infty}(\R)$. 
 % \]
 % by definition.
 \begin{example}[Characteristic function]
-For every \(\xi \ne 0\),
+Let 
+\begin{equation}\label{eq:characteristic-function}
+f(x) = \chi_{[-A/2, A/2]}(x):=
+\begin{cases}
+1, & x \in [-A/2, A/2] \\
+0, & \text{otherwise}
+\end{cases}
+\end{equation}
+be the characteristic function of the interval \([-A/2, A/2]\), with \(A > 0\).
+Then for every \(\xi \ne 0\),
 \[
 \hat{f}(\xi) 
 =
@@ -644,12 +691,111 @@ which is called \emph{cardinal sine} or \emph{sinc function}.
 \begin{example}[Gaussian]
 The Fourier transform of \(f(x) = \eu^{-\pi x^2}\) is \(\hat{f}(\xi) = \eu^{-\pi \xi^2}\).
 \end{example}
+\begin{example}
+The Fourier transform of \(f(x) = \eu^{-2 |x|}\) is \(\hat{f}(\xi) = \frac{1}{1 + \pi^2 \xi^2}\).
+\end{example}
+
+
+% --- operators (as in the notes) ---
+\subsection{Important operators in harmonic analysis}
+\begin{definition}\label{def:harmonic-operators}
+\begin{align}
+% {\color{Red}\boxed{\color{black}
+&\qquad& &\text{\textcolor{red}{translation}:}& T_{x_0} f(x) &= f(x-x_0),                 & x_0 &\in \R \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{modulation}:}& M_{\xi_0} f(x) &= \eu^{2\pi \iu \xi_0 x} f(x), & \xi_0 &\in \R \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{upper dilation}:}& f^{\lambda}(x) &= f(\lambda x),     & \lambda &> 0 \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{lower dilation}:}& f_{\lambda}(x) &= \frac{1}{\lambda} f(x/\lambda), & \lambda &> 0 \quad &\quad&%%
+\end{align}
+% }}
+\end{definition}
+
+
+% \begin{theorem}[Duality]\label{thm:duality-dilations}
+\subsubsection{Duality}
+Let \(f \in L^1(\R)\) and \(\lambda > 0\).
+
+Translation/Modulation:
+% {\color{Red}\boxed{\color{black}
+\begin{align}
+\widehat{(T_{x_0} f)}(\xi)
+&= M_{-x_0}\hat f(\xi)\\
+% = \eu^{-2\pi \iu x_0 \xi}\hat f(\xi)\\[0.4em]
+\widehat{(M_{\xi_0} f)}(\xi)
+&= T_{\xi_0}\hat f(\xi)
+% = \hat f(\xi-\xi_0)
+\end{align}
+% }}
+
+
+Dilation:
+% {\color{Red}\boxed{\color{black}
+\begin{align}
+\widehat{(f^{\lambda})}(\xi)
+&= (\hat f)_{\lambda}(\xi)\\
+% = \frac{1}{\lambda}\hat f(\xi/\lambda)\\[0.4em]
+\widehat{(f_{\lambda})}(\xi)
+&= (\hat f)^{\lambda}(\xi)
+% = \hat f(\lambda \xi)
+\end{align}
+% }}
+
+% \end{itemize}
+% \end{theorem}
+
+Compressing a function in the time domain causes its Fourier transform to expand in the frequency domain and vice versa.
+
+
+
+\subsection{Convolution}
+\begin{equation}\label{eq:convolution}\
+  {\color{Red}\boxed{\color{black}
+  (f * g)(x) := \int_{-\infty}^{\infty} f(y) g(x - y) \dif y
+  }}
+\end{equation}
+
+If \(f, g \in L^1(\R)\), then \(f * g \in L^1(\R)\) and \(\|f * g\|_1 \leq \|f\|_1 \|g\|_1\).
+
+The Fourier transform turns convolution into pointwise multiplication:
+\begin{equation}\label{eq:convolution-theorem}
+% {\color{Red}\boxed{\color{black}
+\widehat{(f * g)}(\xi) = \hat{f}(\xi) \cdot \hat{g}(\xi)
+% }}
+\end{equation}
+
+
+\subsection{Riemann-Lebesgue lemma}
+\begin{theorem}[Riemann-Lebesgue lemma]
+If \(f \in L^1(\R)\), then \(\hat{f}(\xi) \in C_0(\R)\), i.e., \(\hat{f}\) is continuous and vanishes outside a certain interval.
+\end{theorem}
+
+\subsection{Inversion formula}
+\begin{theorem}\label{thm:inversion}
+Let \(f \in L^1(\R)\).
+Assume that \(\hat{f} \in L^1(\R)\).
+Then,
+\begin{equation}\label{eq:inversion}
+{\color{Red}\boxed{\color{black}
+f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+}}
+\end{equation}
+for every \(x \in \R\), outside a set of measure zero.
+If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
+\end{theorem}
 
 
 
 
+\clearpage
 
+\section{PDE}
 
+Let \(f \in L^1(\R)\) and assume that \(f'\) exists and is in \(L^1(\R)\).
+Then,
+\begin{equation}\label{eq:fourier-derivative}
+{\color{Red}\boxed{\color{black}
+\widehat{(f')}(\xi) = 2\pi \iu \xi \cdot \hat{f}(\xi)
+}}
+\end{equation}
 
 
 
