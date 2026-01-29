@@ -1282,9 +1282,9 @@ Depends on context: genome character level; other cases word level.\\
 Sub-word level: replace common sequences of words with one token.\\
 Also need info on the order of input (self-attention is permutation-invariant): pair a number to each token to say its position. Use sinusoids to map (pos, dimension) to a unique id:
 \[
-  P_{k,2i}=\sin\!\Bigl(\frac{k}{10000^{\frac{2i}{d}}}\Bigr),
+  P_{k,2i}=\sin\left(\frac{k}{10000^{\frac{2i}{d}}}\right)
   \qquad
-  P_{k,2i+1}=\cos\!\Bigl(\frac{k}{10000^{\frac{2i}{d}}}\Bigr).
+  P_{k,2i+1}=\cos\left(\frac{k}{10000^{\frac{2i}{d}}}\right)
 \]
 In encoders attention sees everything; in decoders next tokens are masked.
 
