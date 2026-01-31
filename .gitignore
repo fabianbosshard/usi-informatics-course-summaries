@@ -3,6 +3,9 @@ script.tex
 script.pdf
 
 
+summaries/build/
+
+
 *.bib
 *.dat
 *.lua

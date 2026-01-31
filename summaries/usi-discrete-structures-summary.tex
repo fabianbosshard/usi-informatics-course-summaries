@@ -39,6 +39,117 @@
 \usepackage{graphicx}
 % \usepackage[dvipsnames, table]{xcolor} % causes problem with the red \ddots in the cantor's diagonal argument
 \usepackage[dvipsnames]{xcolor}
+% \usepackage{colortbl} % causes problem with the red \ddots in the cantor's diagonal argument
+
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+
+
+
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+% --- Soul + hyperlinks, references, citations etc. ---
+
+% --- hyperref core ---
+\soulregister\href7
+\soulregister\url7
+\soulregister\hyperref7
+\soulregister\nameref7
+\soulregister\Nameref7
+\soulregister\autoref7
+
+% --- cleveref / varioref ---
+\soulregister\cref7
+\soulregister\Cref7
+\soulregister\cpageref7
+\soulregister\Cpageref7
+\soulregister\vref7
+\soulregister\Vref7
+
+% --- standard LaTeX referencing commands ---
+\soulregister\ref7
+\soulregister\pageref7
+\soulregister\eqref7
+\soulregister\label7   % rarely needed but safe
+
+% --- biblatex / natbib ---
+\soulregister\cite7
+\soulregister\parencite7
+\soulregister\footcite7
+\soulregister\textcite7
+\soulregister\autocite7
+\soulregister\Cite7
+\soulregister\Citeauthor7
+\soulregister\Citeyear7
+\soulregister\citeauthor7
+\soulregister\citeyear7
+
+% --- glossaries, acronyms, etc. ---
+\soulregister\gls7
+\soulregister\Gls7
+\soulregister\glspl7
+\soulregister\Glspl7
+\soulregister\acrshort7
+\soulregister\acrlong7
+\soulregister\acrfull7
+\soulregister\Acrshort7
+\soulregister\Acrlong7
+\soulregister\Acrfull7
+
+% --- misc. text-formatting macros ---
+\soulregister\textbf7
+\soulregister\textit7
+\soulregister\emph7
+\soulregister\underline7
+\soulregister\textcolor7
+\soulregister\color7
+\soulregister\foreignlanguage7
+
+
+
+
+
 
 
 \usepackage[left=43mm, right=43mm, top=20mm, bottom=30mm]{geometry} % for A4
@@ -125,9 +236,7 @@
 }
 
 
-\usepackage{xparse}
 \usepackage{calc}   % for \heightof
-\usepackage{tikz}
 \usepackage{tikz}
 \usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, backgrounds, chains, svg.path, decorations.markings}
 \usepackage{forest}
@@ -731,13 +840,23 @@ A literal is an atom or a negated atom.
 \begin{definition}[Disjunctive Normal Form]\label{def:DNF}
 A formula \(F\) is in \emph{disjunctive normal form} (DNF) if there exist literals \(L_{i,j}\) such that
 \[
-  F=  \bigvee_{i=1}^n\left(\bigwedge_{j=1}^{m_i} L_{i, j}\right) =  \left(L_{1,1} \wedge \ldots \wedge L_{1, m_1}\right) \vee \ldots  \vee\left(L_{n, 1} \wedge \ldots \wedge L_{n, m_n}\right) \qedhere
+\begin{verticalhack}
+  {\color{Red}\boxed{\color{black}
+  F=  \bigvee_{i=1}^n\left(\bigwedge_{j=1}^{m_i} L_{i, j}\right) =  \left(L_{1,1} \wedge \ldots \wedge L_{1, m_1}\right) \vee \ldots  \vee\left(L_{n, 1} \wedge \ldots \wedge L_{n, m_n}\right)
+  }}
+\end{verticalhack}
+\qedhere
 \]
 \end{definition}
 \begin{definition}[Conjunctive Normal Form]\label{def:CNF}
 A formula \(F\) is in \emph{conjunctive normal form} (CNF) if there exist literals \(L_{i,j}\) such that
 \[
-  F=  \bigwedge_{i=1}^n\left(\bigvee_{j=1}^{m_i} L_{i, j}\right) =  \left(L_{1,1} \vee \ldots \vee L_{1, m_1}\right) \wedge \ldots  \wedge\left(L_{n, 1} \vee \ldots \vee L_{n, m_n}\right) \qedhere
+\begin{verticalhack}
+  {\color{Red}\boxed{\color{black}
+  F=  \bigwedge_{i=1}^n\left(\bigvee_{j=1}^{m_i} L_{i, j}\right) =  \left(L_{1,1} \vee \ldots \vee L_{1, m_1}\right) \wedge \ldots  \wedge\left(L_{n, 1} \vee \ldots \vee L_{n, m_n}\right)
+  }}
+\end{verticalhack}
+\qedhere
 \]
 \end{definition}
 Note that, in these definitions, we put equalities $(=)$, not merely equivalences $(\equiv)$: The normal forms are also syntactic notions.
@@ -845,7 +964,7 @@ Let us look at this is some more detail.
 Let us compare the hardness of the tautology problems for CNF and DNF, respectively:
 If $F$ is given in CNF, one merely has to check the double occurrence of an atom (once positive, once negated) in each of the subformulas. 
 This can be done in essentially linear time, i.e., the number of steps being upper-bounded by a linear function in the length of the formula, simply going through the formula. 
-On the other hand, in the case of $F$ being a DNF, one has to write down the entire truth table, containing $2^l$ rows. 
+On the other hand, in the case of $F$ being a DNF, a straightforward decision procedure is to write down the entire truth table, containing $2^l$ rows. 
 The number of computational steps is thus exponential in the length $l$, growing much faster. In a sense. the two problems are opposite extremal cases of hardness. 
 Let us look at that in some more depth.
 
@@ -895,7 +1014,9 @@ Let us look at that in some more depth.
 \end{tikzpicture}
 \end{center}
 
-Complexity theory is about classifying computational problems by their computational difficulty. The set P contains all problems that can be solved in polynomial time, i.e., the number of computational steps being at most a polynomial function of the input size. P is a subset of NP, containing all problems for which one can verify a given solution in polynomial time, whereas the solution may not be found in polynomial time.
+Complexity theory is about classifying computational problems by their computational difficulty. 
+The set P contains all problems that can be \emph{solved} in polynomial time, i.e., the number of computational steps being at most a polynomial function of the input size. 
+P is a subset of NP, containing all problems for which one can \emph{verify} a given solution in polynomial time, whereas the solution may not be found in polynomial time.
 
 A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard as any other problem in NP. That means that any problem in NP can be reduced to any problem in NPC in polynomial time. Consequently, any problem in NPC can be reduced to another problem in NPC in polynomial time. This means that NPC problems can be used as indicators of simplicity for all NP problems: If you can solve one NPC problem in polynomial time, then you can solve all of them. (In fact, you have then shown $\mathrm{P}=\mathrm{NP}=\mathrm{NPC}$, which would be an overly surprising result that makes you very famous; most people believe that the three classes P, NP, and NPC are all different from each other - no one has proven that so far, however.)
 
@@ -903,27 +1024,30 @@ A subset of NP are the NP-complete problems (NPC): Problems in NPC are as hard a
 \begin{example}[Elements of P] 
 P contains
 \begin{itemize}
-\item the tautology problem for CNF;
-\item the (un)satisfiability problem for DNF.
+\item the tautology problem for \hyperref[def:CNF]{CNF};
+\item the (un)satisfiability problem for \hyperref[def:DNF]{DNF}.
 \end{itemize}
 Even more, these decision problems can be solved not only in polynomial but even in linear time; they are among the simplest even among P problems. 
 \end{example}
 
 
-\begin{example}[Elements in NPC]
-NPC contains
+\begin{example}[Intractable problems]
+The following problems are believed not to admit polynomial-time algorithms:
 \begin{itemize}
-\item the tautology problem for DNF;
-\item the satisfiability problem for CNF
-\item the problem to find a semantically equivalent DNF for a given CNF, and vice versa.
+\item the tautology problem for \hyperref[def:DNF]{DNF} (coNP-complete);
+\item the satisfiability problem for \hyperref[def:CNF]{CNF} (the famous SAT problem, NP-complete);
+\item the problem of finding a semantically equivalent \hyperref[def:DNF]{DNF} for a given \hyperref[def:CNF]{CNF}, and vice versa.
 \end{itemize}
-The last follows from the first two: If we could find a $G$ in CNF for any $F$ in DNF with $F \equiv G$ in polynomial time, we could solve the tautology problem for a DNF in polynomial time by first turning it into a CNF and then applying the criteria above.
+The last statement follows from the first two:
+If we could compute a \hyperref[def:CNF]{CNF} formula $G$ with $F \equiv G$ for every \hyperref[def:DNF]{DNF} formula $F$ in polynomial time, then we could decide \hyperref[def:DNF]{DNF}-tautology in polynomial time by converting to \hyperref[def:CNF]{CNF} and applying the linear-time \hyperref[def:CNF]{CNF} tautology test. 
+This would imply $\mathrm{P}=\mathrm{coNP}$.
 \end{example}
 
 \paragraph{Real-life problems?}
 Are problems in real life hard? Yes, they are, as one can see in the following example.
 \begin{example}[Sudoku]
-Sudoku is an NPC problem, as it boils down to the satisfiability of a CNF: As one has to find a solution satisfying all conditions on the rows, columns, and subboxes, it is a problem of the form
+Sudoku is an NPC problem, as it boils down to the satisfiability of a \hyperref[def:CNF]{CNF}: 
+As one has to find a solution satisfying all conditions on the rows, columns, and subboxes, it is a problem of the form
 \begin{equation}\label{eq:real_life_problem}
 (\text{condition 1}) \wedge (\text{condition 2}) \wedge \ldots
 \end{equation}
@@ -932,14 +1056,14 @@ $$
 \text { condition } i =\text { way } 1 \vee \text { way } 2 \vee \text { way } 3 \vee \ldots
 $$
 
-This is a CNF; to find a solution is the same as proving satisfiability. 
-The satisfiability problem for a CNF is in NPC; so is Sudoku.
+This is a \hyperref[def:CNF]{CNF}; to find a solution is the same as proving satisfiability. 
+The satisfiability problem for a \hyperref[def:CNF]{CNF} is in NPC; so is Sudoku.
 \end{example} 
 
 Actually, this is a common structure of real-life problems. 
 Usually there is a number of necessary conditions yielding a formula of the form \eqref{eq:real_life_problem}.
 Each condition can be met in various ways, so the subformulas are disjunctions. 
-Thus, one is usually looking for an assignment satisfying a CNF.
+Thus, one is usually looking for an assignment satisfying a \hyperref[def:CNF]{CNF}.
 
 
 
@@ -965,244 +1089,6 @@ That is, if a formula is not unsatisfiable, then the resolution calculus leads u
 A functional programming language directly based on resolution calculus is PROLOG.
 
 
-
-
-% \section{Set Theory}\label{sec:set-theory}
-% Let us turn to the second pillar of mathematics, namely, set theory. As mentioned in the Introduction, all objects in mathematics are sets. For instance, the natural numbers can be defined inductively, starting from the empty set, through never‐ending formation of new sets:
-% \begin{align}\label{eq:natural-numbers}
-% 0 &:= \emptyset,\\
-% 1 &:= \{0\} = \{\emptyset\},\nonumber\\
-% 2 &:= \{0,1\} = \{\emptyset,\{\emptyset\}\},\nonumber\\
-% \vdots\quad &\nonumber\\
-% n &:= \{0,1,\dots,n-1\}.\nonumber
-% \end{align}
-
-% \subsection{Basic notions}\label{subsec:basic-notions}
-% A set is a collection of objects—where all these objects are sets themselves. Thus, set theory is about a relation, called the \emph{element relation}, among sets.
-
-% \begin{definition}[Element Relation]\label{def:element-relation}
-% The relation “is an element of” relates a set $x$ with a set $A$. We write
-% \[
-% x\in A,
-% \]
-% and if $x$ is not in $A$ we write
-% \[
-% x\notin A.
-% \]
-% \end{definition}
-
-% \subsubsection{Cantor's Paradise}\label{subsubsec:cantor-paradise}
-% Georg Cantor's naive definition:
-
-% \begin{definition}[Cantor's naive approach]\label{def:cantor-naive}
-% Any collection of well‐distinguished objects is a set.
-% \end{definition}
-
-% This allows in particular that a set might contain itself. Russell's paradox shows this leads to inconsistency: consider
-% \[
-% M := \{\,B \mid B\notin B\}.
-% \]
-% Asking whether $M\in M$ yields a contradiction. Naive set theory thus must be replaced by an axiomatic theory.
-
-% \subsubsection{Zermelo-Fraenkel-Choice (ZFC) set theory}\label{subsubsec:zfc}
-% ZFC is a collection of axioms prescribing how sets can be formed.
-
-% \begin{definition}[Quantifiers]\label{def:quantifiers}
-% The universal quantifier $\forall$ and existential quantifier $\exists$ from predicate logic are used as usual.
-% \end{definition}
-
-% \begin{axiom}[Extensionality]\label{ax:extensionality}
-% Two sets are equal iff they have the same elements:
-% \[
-% \forall A,B\bigl(\forall x\,(x\in A\Leftrightarrow x\in B)\Rightarrow A=B\bigr).
-% \]
-% \end{axiom}
-
-% \begin{definition}[Predicate]\label{def:predicate}
-% A predicate on $A$ is a function $P\colon A\to\{\text{false},\text{true}\}$. We write
-% \[
-% \{x\in A\mid P(x)\}
-% \]
-% for the subset of $A$ where $P$ is true.
-% \end{definition}
-
-% \begin{axiom}[Separation / Subsets]\label{ax:separation}
-% For any set $A$ and predicate $P$ there is a set
-% \[
-% \{x\in A \mid P(x)\}.
-% \]
-% \end{axiom}
-
-% \begin{definition}[Subset]\label{def:subset}
-% $A\subseteq B$ iff $\forall x\,(x\in A\!\Rightarrow\!x\in B)$.
-% \end{definition}
-
-% \begin{theorem}\label{thm:subset-extensionality}
-% If $A\subseteq B$ and $B\subseteq A$ then $A=B$.
-% \end{theorem}
-% \begin{proof}
-% Immediate from Axiom~\ref{ax:extensionality} and the definition of $\subseteq$.
-% \end{proof}
-
-% One obtains the empty set by separation on any nonempty $A$ with the predicate $x\neq x$.
-
-% \begin{definition}[Intersection]\label{def:intersection}
-% \[
-% A\cap B := \{\,x\mid x\in A\wedge x\in B\}.
-% \]
-% \end{definition}
-
-% \begin{axiom}[Union]\label{ax:union}
-% \[
-% A\cup B := \{\,x\mid x\in A\vee x\in B\}
-% \]
-% is a set.
-% \end{axiom}
-
-% \begin{definition}[Difference and Symmetric Difference]\label{def:differences}
-% \[
-% A\setminus B := \{\,x\mid x\in A\wedge x\notin B\}, 
-% \quad
-% A\triangle B := (A\setminus B)\cup(B\setminus A).
-% \]
-% \end{definition}
-
-% \begin{definition}[Power Set]\label{def:powerset}
-% \[
-% \mathbb{P}(A) := \{\,X\mid X\subseteq A\}.
-% \]
-% \end{definition}
-
-% \begin{definition}[Complement]\label{def:complement}
-% If $A\subseteq\mathcal U$ then 
-% \[
-% \bar A := \mathcal U\setminus A.
-% \]
-% \end{definition}
-
-% For families $\{A_i\}_{i\in I}$ one defines
-% \[
-% \bigcup_{i\in I}A_i,\quad
-% \bigcap_{i\in I}A_i
-% \]
-% in the obvious way by $\exists i$ or $\forall i$.
-
-% \begin{axiom}[Choice]\label{ax:choice}
-% Given a family of nonempty sets, there is a function selecting one element from each.
-% \end{axiom}
-
-% \subsubsection{Laws derived from logic}\label{subsubsec:laws-logic}
-% Replacing $\wedge,\vee,\neg$ by $\cap,\cup,{}^c$ in logical identities yields:
-% \[
-% A\cap A=A,\quad A\cup A=A,\quad A\cap(A\cup B)=A,\quad (A\cap B)\cup C=(A\cup C)\cap(B\cup C),
-% \]
-% \[
-% (A\cup B)^c = A^c\cap B^c,\quad (A\cap B)^c = A^c\cup B^c.
-% \]
-
-% \begin{example}\label{ex:absorption}
-% Prove $A\cap(A\cup B)=A$ by mutual inclusion; see standard textbook proof.
-% \end{example}
-
-% \subsubsection{The Cartesian product}\label{subsubsec:cartesian}
-% Ordered pairs are defined by Kuratowski:
-% \[
-% (x,y):=\{\{x\},\{x,y\}\}.
-% \]
-% Then
-% \[
-% A\times B := \{(a,b)\mid a\in A,\;b\in B\}.
-% \]
-
-% The definitions of ordered pairs extends naturally to ordered lists of more than two numbers, so called tuples. Given a finite index set, $I=\{1, \ldots, k\}$ we define the Cartesian product of $k$ sets as
-% $$
-% \underset{i \in I}{X} A_i:=\left\{\left(a_1, \ldots, a_k\right) \mid \forall i \in I\left(a_i \in A_i\right)\right\}
-% $$
-
-
-% \begin{example}\label{ex:order-relation}
-% The relation $\{(x,y)\in\R^2\mid x\le y\}$ is the usual order on~$\R$.
-% \end{example}
-
-% \subsection{Relations}\label{sec:relations}
-% \begin{definition}[Binary Relation]\label{def:binary-relation}
-% A relation $R$ from $A$ to $B$ is a subset $R\subseteq A\times B$. We write $aRb$ for $(a,b)\in R$.
-% \end{definition}
-
-% Set‐operations on relations and their connection with logical connectives follow directly.
-
-% \subsubsection{Representation of relations}\label{subsubsec:repr-relations}
-% Finite relations $R\subseteq A\times B$ can be shown as a $0$--$1$ matrix or as a bipartite graph.
-
-% \subsubsection{Properties of relations}\label{subsubsec:props-relations}
-% For $R\subseteq A\times A$:
-% \begin{itemize}
-%   \item \emph{Reflexive:} $\forall a\,(a,a)\in R$.
-%   \item \emph{Irreflexive:} $\forall a\,(a,a)\notin R$.
-%   \item \emph{Symmetric:} $(a,b)\in R\Leftrightarrow(b,a)\in R$.
-%   \item \emph{Antisymmetric:} $(a,b)\in R\wedge(b,a)\in R\Rightarrow a=b$.
-%   \item \emph{Transitive:} $(a,b)\in R\wedge(b,c)\in R\Rightarrow(a,c)\in R$.
-% \end{itemize}
-
-% \subsubsection{Equivalence relations}\label{subsubsec:equivalence}
-% \begin{definition}[Equivalence Relation]\label{def:equivalence}
-% $R$ on $A$ is an equivalence if it is reflexive, symmetric, and transitive.
-% \end{definition}
-
-% Equivalence relations partition $A$ into \emph{equivalence classes} $[a]=\{x\mid x\sim a\}$.
-
-% \begin{theorem}\label{thm:equiv-partition}
-% Equivalence relations on $A$ are in bijection with partitions of $A$.
-% \end{theorem}
-% \begin{proof}
-% Standard mutual‐construction proof using reflexivity, symmetry, transitivity.
-% \end{proof}
-
-% \subsubsection{Order relations}\label{subsubsec:orders}
-% \begin{definition}[Partial Order]\label{def:partial-order}
-% A relation $\le$ on $A$ is a partial order if it is reflexive, antisymmetric, and transitive.
-% \end{definition}
-
-% If in addition $\forall x,y\;(x\le y\vee y\le x)$ it is a \emph{total} (linear) order.
-
-% Maximal and greatest elements of a poset are defined in the usual way.
-
-% \subsection{Functions}\label{sec:functions}
-% \begin{definition}[Function]\label{def:function}
-% A function $f\colon A\to B$ is a relation such that
-% \[
-% \forall a\in A\,\exists!\,b\in B:\;(a,b)\in f.
-% \]
-% We write $f(a)=b$.
-% \end{definition}
-
-% \begin{definition}[Injective / Surjective / Bijective]\label{def:inj-surj-bij}
-% \begin{itemize}
-%   \item $f$ \emph{injective} iff $f(a)=f(a')\Rightarrow a=a'$.
-%   \item $f$ \emph{surjective} iff $\forall b\in B\,\exists a\in A:f(a)=b$.
-%   \item $f$ \emph{bijective} iff it is both injective and surjective.
-% \end{itemize}
-% \end{definition}
-
-% Cardinality is compared via injective and bijective maps:
-
-% \begin{definition}[Cardinality]\label{def:cardinality}
-% $A\preccurlyeq B$ iff there is an injective $f\colon A\to B$.  
-% $A\approx B$ iff there is a bijection $f\colon A\to B$.
-% \end{definition}
-
-% \begin{theorem}[Cantor-Schröder-Bernstein]\label{thm:csb}
-% If $A\preccurlyeq B$ and $B\preccurlyeq A$ then $A\approx B$.
-% \end{theorem}
-
-% \begin{theorem}[Cantor]\label{thm:cantor}
-% For any set $A$, $A\prec\mathbb P(A)$, i.e.\ no bijection $A\to\mathbb P(A)$ exists.
-% \end{theorem}
-% \begin{proof}
-% Diagonal‐set argument: $B=\{a\in A\mid a\notin f(a)\}$ leads to a contradiction.
-% \end{proof}
-
-% This completes the chapter on set theory.
 
 
 
