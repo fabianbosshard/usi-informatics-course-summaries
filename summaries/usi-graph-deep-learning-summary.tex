@@ -163,7 +163,7 @@
 
 \newcommand*\matrspace{0.8mu}
 \newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
-\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
 
 \newcommand{\dif}{\mathrm{d}}
 \newcommand{\eu}{\mathrm{e}}
@@ -280,6 +280,79 @@
 \newacronym{rbf}{RBF}{radial basis function}
 \newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%% commands from the paper
+\newcommand{\gph}{G}
+\newcommand{\MPNN}{\text{MPNN}}
+\newcommand{\cheeg}{{h}_{\text{Cheeg}
+}}
+\newcommand{\res}{\text{Res}}
+\newcommand{\V}{{V}}
+\newcommand{\E}{{E}}
+\newcommand{\GAMma}{\boldsymbol{\Gamma}}
+%\newcommand{\MPNN}{\mathrm{MPNN}}
+\newcommand{\Hi}{\mathbf{H}}
+\newcommand{\Hit}{\mathbf{H}^{(t)}}
+\newcommand{\rs}{\text{r}}
+\newcommand{\mpas}{\text{a}}
+
+
+\newcommand{\up}{\gamma}
+\newcommand{\agg}{\texttt{agg}}
+\newcommand{\mess}{\phi}
+
+
+\newcommand{\com}{\text{com}}
+\newcommand{\colfirst}{\textcolor{red}}
+\newcommand{\colsecond}{\textcolor{blue}}
+\newcommand{\colthird}{\textcolor{violet}}
+% \newcommand{\MPNN}{\text{MPNN}}
+\newcommand{\eigen}{\boldsymbol{\psi}}
+\newcommand{\cost}{{c}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\DELta}{\boldsymbol{\Delta}}
+\newcommand{\KER}{\mathcal{K}}
+\newcommand{\OMEga}{\boldsymbol{\Omega}}
+\newcommand{\Anorm}{\boldsymbol{\text{A}}}
+\newcommand{\tel}{\text{MPNN}_{\text{tel}}}
+\newcommand{\poly}{\text{p}}
+\newcommand{\ourname}{\text{telescopic}-\text{MPNN}}
+\newcommand{\oper}{\boldsymbol{\text{S}}_{\rs,\mpas}}
+\newcommand{\xb}{\vb{x}}
+\newcommand{\Xb}{\mathbf{X}}
+\newcommand{\Wb}{\vb{W}}
+\newcommand{\Hb}{\mathbf{H}}
+\newcommand{\Ab}{\mathbf{A}}
+\newcommand{\Ib}{\mathbf{I}}
+\newcommand{\hb}{\mathbf{h}}
+\newcommand{\phib}{\boldsymbol{\phi}}
+\newcommand{\pepfunc}{\texttt{Peptides-func}\xspace}
+\newcommand{\pepstruct}{\texttt{Peptides-struct}\xspace}
+
+
+
+
+
+
+
+
+
 \begin{document}
 
 \maketitle
@@ -290,30 +363,57 @@
 % table of acronyms (remember everything is in build folder)
 % \printglossary[type=\acronymtype, title={List of Acronyms}]
 
+\section{Spectral theorem}
+\begin{theorem}\label{thm:spectral_theorem}
+Let $\matr{A}\in\R^{n\times n}$ be symmetric, i.e.\ $\matr{A}^\top=\matr{A}$.
+Then,
+\begin{equation}\label{eq:spectral_decomposition}
+    \matr{A}
+    =
+    \sum_{i=1}^{n} \lambda_i\, \vect{u}_i \vect{u}_i^\top
+\end{equation}
+with orthonormal eigenvectors $\vect{u}_1,\dots,\vect{u}_n\in\R^n$
+and real eigenvalues $\lambda_1,\dots,\lambda_n\in\R$.
+Equivalently,
+\begin{equation}\label{eq:diagonalization}
+    \matr{A} = \matr{U}\matr{\Lambda}\matr{U}^\top
+\end{equation}
+with $\matr{U} := \big[\vect{u}_1\,\cdots\,\vect{u}_n\big]$, $\matr{U}^\top \matr{U} = \matr{I}_n$ and
+$\matr{\Lambda}:=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$.
+\end{theorem}
+
+\autoref{thm:spectral_theorem} is extensively used in Principal Component Analysis (PCA) to reduce the complexity of the input space (it is applied to the covariance matrix of the inputs).
 
 
-\section{Background}\label{sec:background}
+
+\section{Graphs}
 
 Let $G = (V, E)$ be an undirected graph with the
 adjacency matrix $\matr{A} \in \R^{n\times n}$
 \begin{equation}\label{eq:adjacency_matrix}
-    \matr{A}_{uv}
+    % \matr{A}_{uv}
+    % a_{uv}
+    [\matr{A}]_{uv}
     =
     \begin{cases}
         1 & (u,v) \in E\\
         0 & (u,v) \notin E
     \end{cases}
 \end{equation}
+where \([\cdot]_{uv}\) denotes the entry in row \(u\) and column \(v\).
 
 The \emph{diagonal degree matrix} $\matr{D}\in\R^{n\times n}$ is defined by
 \begin{equation}\label{eq:degree_matrix}
-    \matr{D}_{uv}
+    % \matr{D}_{uv}
+    [\matr{D}]_{uv}
     =
     \begin{cases}
         d_u &  u = v\\
+        % \deg{u} &  u = v\\
         0 & u \ne v
     \end{cases}
 \end{equation}
+where \(d_u\) is the degree of node \(u\),
 i.e. $\matr{D}$ simply places all node degrees on the diagonal.
 
 
@@ -334,10 +434,14 @@ The \emph{symmetrically normalized adjacency matrix} is
 or, entrywise,
 \[
 \begin{verticalhack}
-    \hat{\matr{A}}_{uv}
+    % \hat{\matr{A}}_{uv}
+    [\hat{\matr{A}}]_{uv}
     =
+    % \hat{a}_{uv}
+    % =
     \begin{cases}
-        \dfrac{1}{\sqrt{d_u d_v}} & (u,v) \in E\\[0.5ex]
+        \dfrac{1}{\sqrt{d_u d_v}} & (u,v) \in E\\
+        % \frac{1}{\sqrt{\deg(u)  \deg(v)}} & (u,v) \in E\\
         0 & (u,v) \notin E
     \end{cases}
     \end{verticalhack}
@@ -348,7 +452,7 @@ or, entrywise,
 \begin{fact}[multi-hop propagation]\label{prop:multi_hop_propagation}
 The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
 \begin{equation}\label{eq:multi_hop_propagation}
-    (\hat{\matr{A}}^{k})_{vu}
+    [\hat{\matr{A}}^{k}]_{vu}
     =
     \sum_{\pi}
     \prod_{(x, y) \in E_\pi} \frac{1}{\sqrt{d_x d_y}}
@@ -425,59 +529,48 @@ Then
 
 
 
-\subsubsection{distance layers and layer degrees}
+% \subsubsection{distance layers and layer degrees}
 
-% For \gls{laser} and related methods it is useful to separate connections by graph distance.
-
-\begin{definition}\label{def:distance_layer_adjacency}
-For $\ell \in \N_0$, we define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
-\begin{equation}\label{eq:distance_layer_adjacency}
-    \bigl(\matr{A}_{\ell}\bigr)_{uv}
-    =
-    \begin{cases}
-        1 & d_{G}(u,v) = \ell+1\\
-        0 & \text{otherwise}
-    \end{cases}
-\end{equation}
-where $d_{G}(u,v)$ is the shortest-path distance.
-The corresponding \emph{layer degree} of a node $v$ at distance level $\ell$ is
-\begin{equation}\label{eq:layer_degree}
-    d_{v,\ell}
-    =
-    \sum_{u \in V} \bigl(\matr{A}_{\ell}\bigr)_{vu},
-\end{equation}
-i.e.\ the number of nodes at graph distance $\ell+1$ from $v$.
-Let $\matr{D}_{\ell}$ be the diagonal matrix with $(\matr{D}_{\ell})_{vv} = d_{v,\ell}$.
-The \emph{normalized distance-$(\ell+1)$ adjacency} is
-\begin{equation}\label{eq:normalized_distance_layer_adjacency}
-    {\color{Red}\boxed{\color{black}
-    \hat{\matr{A}}_{\ell}
-    =
-    \matr{D}_{\ell}^{-1/2} \matr{A}_{\ell} \matr{D}_{\ell}^{-1/2}
-    }}
-\end{equation}
-so that
-\[
-\begin{verticalhack}
-\bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
-=
-\begin{cases}
-    \frac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{G}(u,v) = \ell+1 \\
-    0 & \text{otherwise}
-\end{cases}
-\end{verticalhack}
-\qedhere
-\]
-\end{definition}
-
-% Finally, we denote by
-% \begin{equation}\label{eq:minimum_degree}
-%     d_{\min}
+% \begin{definition}\label{def:distance_layer_adjacency}
+% For $\ell \in \N_0$, we define the \emph{distance-($\ell+1$) adjacency matrix} $\matr{A}_{\ell} \in \R^{n\times n}$ by
+% \begin{equation}\label{eq:distance_layer_adjacency}
+%     \bigl(\matr{A}_{\ell}\bigr)_{uv}
 %     =
-%     \min_{v \in V} d_v
+%     \begin{cases}
+%         1 & d_{G}(u,v) = \ell+1\\
+%         0 & \text{otherwise}
+%     \end{cases}
 % \end{equation}
-% the \emph{minimum node degree} in the graph.
-
+% where $d_{G}(u,v)$ is the shortest-path distance.
+% The corresponding \emph{layer degree} of a node $v$ at distance level $\ell$ is
+% \begin{equation}\label{eq:layer_degree}
+%     d_{v,\ell}
+%     =
+%     \sum_{u \in V} \bigl(\matr{A}_{\ell}\bigr)_{vu},
+% \end{equation}
+% i.e.\ the number of nodes at graph distance $\ell+1$ from $v$.
+% Let $\matr{D}_{\ell}$ be the diagonal matrix with $(\matr{D}_{\ell})_{vv} = d_{v,\ell}$.
+% The \emph{normalized distance-$(\ell+1)$ adjacency} is
+% \begin{equation}\label{eq:normalized_distance_layer_adjacency}
+%     {\color{Red}\boxed{\color{black}
+%     \hat{\matr{A}}_{\ell}
+%     =
+%     \matr{D}_{\ell}^{-1/2} \matr{A}_{\ell} \matr{D}_{\ell}^{-1/2}
+%     }}
+% \end{equation}
+% so that
+% \[
+% \begin{verticalhack}
+% \bigl(\hat{\matr{A}}_{\ell}\bigr)_{uv}
+% =
+% \begin{cases}
+%     \frac{1}{\sqrt{d_{u,\ell} d_{v,\ell}}} & d_{G}(u,v) = \ell+1 \\
+%     0 & \text{otherwise}
+% \end{cases}
+% \end{verticalhack}
+% \qedhere
+% \]
+% \end{definition}
 
 
 
@@ -491,7 +584,11 @@ The \emph{combinatorial} graph Laplacian is
 % \begin{equation}\label{eq:graph_laplacian}
 %     \matr{L} = \matr{D} - \matr{A}
 % \end{equation}
-\(\matr{L} = \matr{D} - \matr{A}\)
+\begin{equation}\label{eq:graph_laplacian}
+    {\color{Red}\setlength{\fboxrule}{2pt}\boxed{\color{black}
+\matr{L} = \matr{D} - \matr{A}
+}}
+\end{equation}
 and the \emph{normalized} graph Laplacian is
 \begin{equation}\label{eq:normalized_graph_laplacian}
     {\color{Red}\boxed{\color{black}
@@ -505,12 +602,12 @@ and the \emph{normalized} graph Laplacian is
     \matr{I}_{n} - \hat{\matr{A}}
     }}
 \end{equation}
-It is symmetric and positive semidefinite, and its eigenvalues satisfy
+Both are symmetric and positive semidefinite, and their eigenvalues satisfy
 \[
     0 = \lambda_{0} \le \lambda_{1} \le \dots \le \lambda_{n-1}
 \]
 $\lambda_1$ is called the \emph{spectral gap}.
-The number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph.
+\hl[6]{The number of zero eigenvalues (i.e., the multiplicity of the \(0\) eigenvalue) equals the number of connected components of the graph}.
 \end{definition}
 
 To understand \autoref{def:graph_laplacian}, consider a function $f\colon V \to \R$.
@@ -535,6 +632,9 @@ f(v)
 i.e., $(\hat{\matr{L}}\vect{f})_v$ is the value at $v$ minus a degree-normalized average of the neighbors.
 This is why the Laplacian is often viewed as a \emph{discrete second derivative} on the graph:
 \hl[2]{it measures how much $f$ at $v$ deviates from its neighborhood}.
+
+If we plot the eigenvectors of the Laplacian, it resembles that of a signal.
+
 Another important identity is the quadratic form
 \begin{equation}\label{eq:laplacian_quadratic_form}
     \vect{f}^{\top}\matr{L}\vect{f}
@@ -578,7 +678,7 @@ It can be computed as
     (\vect{e}_s - \vect{e}_t)
 }}
 \end{equation}
-where $\matr{L}^{\dagger}$ is the Moore--Penrose pseudoinverse of $\matr{L}$ and $\vect{e}_v$ is the standard basis vector of vertex $v$.
+where $\matr{L}^{\dagger}$ is the Moore--Penrose pseudoinverse of the graph Laplacian \eqref{eq:graph_laplacian} and $\vect{e}_v$ is the standard basis vector of vertex $v$.
 \end{definition}
 
 
@@ -590,9 +690,12 @@ Thus, effective resistance measures how ``well-connected'' two nodes are inside 
 \subsubsection{Connection to random walks}
 A \emph{random walk} on $G$ is the Markov chain that, from a node $v$, moves to a uniformly random neighbor of $v$.  Its transition matrix is
 \begin{equation}\label{eq:random_walk_transition_matrix}
+{\color{Red}\setlength{\fboxrule}{2pt}\boxed{\color{black}
 \matr{P} = \matr{D}^{-1}\matr{A}
+}}
 \end{equation}
-so $\matr{P}_{vu} = 1/d_v$ if $(v,u)\in E$.
+so $\matr{P}_{vu} = 1/d_v$ if $(v,u)\in E$. 
+The matrix \eqref{eq:random_walk_transition_matrix} is often called \hl{random-walk matrix}.
 
 \medskip
 For two nodes $u,v$, the \emph{commute time} $\texttt{CT}(u,v)$ is the expected number of steps for the random walk to start at $u$, reach $v$, and return to $u$ again.  
@@ -611,7 +714,332 @@ i.e. two nodes have small commute time exactly when they have small effective re
 
 
 
+\section{Graph neural networks}
 
+\subsection{Graph shift operators}
+
+\begin{definition}\label{def:graph_shift_operator}
+% Let $\matr{A}\in\R^{n\times n}$ be the adjacency matrix of $G$.
+A matrix $\tilde{\matr{A}}\in\R^{n\times n}$ is called a \emph{graph shift operator} ({GSO}) if it satisfies
+\[
+{\color{Red}\setlength{\fboxrule}{2pt}\boxed{\color{black}
+    \tilde{a}_{ij} = 0 \quad \text{whenever } (i,j)\notin E \text{ and } i\neq j
+}}
+\]
+where $\tilde{a}_{ij} = [\tilde{\matr{A}}]_{ij}$.
+This means that applying $\tilde{\matr{A}}$ to node attributes only mixes information from direct neighbors.
+Typical choices include the Laplacian \eqref{eq:graph_laplacian} and the random-walk matrix \eqref{eq:random_walk_transition_matrix}.
+\end{definition}
+
+% \begin{remark}[local action]
+Applying \(\tilde{\matr{A}}\) to node attributes \(\matr{X}\in\R^{n\times d_x}\) is local in the sense that the $i$-th row of \(\tilde{\matr{A}}\matr{X}\) depends only the neighbors $N(i)$ together with possibly $i$ itself:
+\[
+\vect{x}_i' 
+= 
+[\tilde{\matr{A}}\matr{X}]_{i,:} 
+= 
+% \sum_{j=1}^n [\tilde{\matr{A}}]_{ij} \vect{x}_j 
+\sum_{j=1}^n \tilde{a}_{ij} \vect{x}_j 
+= 
+\tilde{a}_{ii} \vect{x}_i + \sum_{j\in N(i)} \tilde{a}_{ij} \vect{x}_j
+% \sum_{j\in N(i)\cup\{i\}} [\tilde{\matr{A}}]_{ij} \vect{x}_j
+\]
+
+
+Using a parameter matrix \(\matr{\Theta}\in\R^{d_x\times d_h}\), we can apply the filter on a different space:
+\[
+\vect{h}_i 
+=
+[\tilde{\matr{A}}\matr{X}\matr{\Theta}]_{i,:}
+=
+\sum_{j=1}^n \tilde{a}_{ij} \vect{x}_j \matr{\Theta}
+=
+\tilde{a}_{ii} \vect{x}_i \matr{\Theta} + \sum_{j\in N(i)} \tilde{a}_{ij} \vect{x}_j \matr{\Theta}
+\]
+% \end{remark}
+
+\subsection{Graph convolutions}
+
+Let $\matr{X}\in\R^{n\times d_x}$ be node features, let $\tilde{\matr{A}}\in\R^{n\times n}$ be a GSO and let $\matr{\Theta}\in\R^{d_x\times d_h}$ be trainable weights.
+A \emph{linear graph convolution} is
+\begin{equation}\label{eq:linear_graph_convolution}
+    \matr{H}=\tilde{\matr{A}}\matr{X}\matr{\Theta}
+\end{equation}
+where $\matr{H}\in\R^{n\times d_h}$ are the transformed node features.
+
+Adding a nonlinearity $\sigma$ yields a \emph{graph convolutional layer}
+\begin{equation}\label{eq:nonlinear_graph_convolution}
+{\color{Red}\boxed{\color{black}
+    \matr{H}=\sigma\bigl(\tilde{\matr{A}}\matr{X}\matr{\Theta}\bigr)
+}}
+\end{equation}
+so the parameters can be learned by gradient-based optimization.
+
+\begin{remark}[multi-hop aggregation]
+Stacking $K$ layers increases the receptive field.
+Ignoring nonlinearities for intuition, applying two layers gives
+\(
+    \tilde{\matr{A}}\bigl(\tilde{\matr{A}}\matr{X}\bigr)=\tilde{\matr{A}}^{2}\matr{X}
+\)
+which aggregates information from $2$-hop neighborhoods.
+\end{remark}
+
+Two common ways to aggregate up to $K$ hops are \hl[2]{polynomial filters}
+\begin{equation}\label{eq:polynomial_filter}
+    \matr{H}^{(K)}=\sum_{k=0}^{K}\tilde{\matr{A}}^{k}\matr{X}\matr{\Theta}^{(k)}
+\end{equation}
+or a sequence of first-order steps
+\(
+    \matr{H}^{(0)}=\matr{X}
+\),
+\(
+    \matr{H}^{(k)}=\tilde{\matr{A}}\matr{H}^{(k-1)}\matr{\Theta}^{(k)}
+\)
+where nonlinearities can be inserted between layers.
+
+\subsection{Examples of choices for \texorpdfstring{$\tilde{\matr{A}}$}{Atilde}}
+
+Several popular layers differ essentially by the choice of $\tilde{\matr{A}}$.
+A standard example is the \emph{GCN normalization}
+\begin{equation}\label{eq:gcn_normalization}
+{\color{Red}\boxed{\color{black}
+  \tilde{\matr{A}}
+  =
+  \matr{D}^{-1/2}\bigl(\matr{I}_n+\matr{A}\bigr)\matr{D}^{-1/2}
+}}
+\end{equation}
+which \hl[1]{includes self-loops} through $\matr{I}_n+\matr{A}$.
+Another example is the random-walk normalization \eqref{eq:random_walk_transition_matrix}
+which corresponds to averaging over neighbors with probabilities.
+A third example is the \emph{GIN} choice
+\begin{equation}\label{eq:gin_normalization}
+    \tilde{\matr{A}}=\matr{A}+(1+\varepsilon)\matr{I}_n
+\end{equation}
+which strengthens the contribution of the root node via $\varepsilon$.
+
+\subsection{Message passing}
+
+\begin{definition}\label{def:message_passing}
+Let $\vect{x}_i\in\R^{d_x}$ be the feature of node $i$ and let $\vect{e}_{ji}\in\R^{d_e}$ be the feature of edge $(j,i)$.
+A \emph{message-passing} ({MP}) layer has the form
+\begin{equation}\label{eq:message_passing}
+{\color{Red}\boxed{\color{black}
+\vect{h}_i
+=
+\up\Bigl(
+    \vect{x}_i,\,
+    \agg_{j\in N(i)}
+    \bigl\{
+        \mess(\vect{x}_i,\vect{x}_j,\vect{e}_{ji})
+    \bigr\}
+\Bigr)
+}}
+\end{equation}
+where 
+\begin{itemize}
+\item $\mess$ is a \hl[2]{message function}, depending on \(\vect{x}_i\), \(\vect{x}_j\) and possibly edge features \(\vect{e}_{ji}\)
+\item $\agg$ is a permutation-invariant \hl[2]{aggregation function} (e.g.\ sum, mean, max)
+\item $\up$ is an \hl[2]{update function} to obtain new features from aggregated messages and previous features
+\end{itemize}
+Note that \(\mess\) and \(\up\) are often parametric (e.g. MLPs).
+\end{definition}
+
+\begin{remark}%[convolutions as MP]
+% The layer $\matr{H}=\sigma(\tilde{\matr{A}}\matr{X}\matr{\Theta})$ 
+% \eqref{eq:nonlinear_graph_convolution}
+% is a special case of \autoref{def:message_passing}.
+\autoref{def:message_passing} is the most general (and expressive) form of GNN, encompassing also graph convolutions \eqref{eq:nonlinear_graph_convolution} as a special case.
+\eqref{eq:nonlinear_graph_convolution} can be rewritten as
+\[
+\vect{h}_i 
+=
+\sigma
+\Bigl(
+\sum\nolimits_{j\in N(i)}
+a_{ji} \vect{x}_j \matr{\Theta}
+\Bigr)
+\]
+with $a_{ji}=\tilde{\matr{A}}_{ji}$.
+So it fits into \autoref{def:message_passing} with 
+\(
+\mess(\vect{x}_i,\vect{x}_j,\vect{e}_{ji}) = a_{ji} \vect{x}_j \matr{\Theta}
+\) (independent of \(\vect{x}_i\) and \(\vect{e}_{ji}\)),
+\(\agg = \text{sum}\), 
+and
+\(\up(\vect{x}_i, \cdot) = \sigma(\cdot)\) (independent of \(\vect{x}_i\)).
+\end{remark}
+
+Message passing operations whose message function \(\mess\) depends only on the sender node's features are called \emph{isotropic}.
+They are called \emph{anisotropic} when also edge's or receiver node's features are exploited, i.e. \(\mess\) also depends on \(\vect{e}_{ji}\) or \(\vect{x}_i\).
+
+
+
+\subsubsection{Graph attention networks}
+
+are a typical example of anisotropic message passing.
+
+\begin{enumerate}
+\item 
+Transform node features:
+\begin{equation}\label{eq:gat_linear}
+    \vect{x}_i' = \vect{x}_i \matr{\Theta}_1
+\end{equation}
+with \(\matr{\Theta}_1\in\R^{d_x\times d_h}\).
+\item
+Compute attention scores between neighbors:
+\begin{enumerate}[label=\arabic{enumi}.\arabic{enumii}.]
+\item 
+Score (\(\vect{\theta}_2\in\R^{2d_h}\)):
+\begin{equation}\label{eq:gat_scores}
+    \alpha_{ji}=\sigma\bigl([\vect{x}_i' \mathbin{\|} \vect{x}_j']\vect{\theta}_2\bigr)
+\end{equation}
+\item 
+Normalize with softmax over $N(i)$:
+\begin{equation}\label{eq:gat_softmax}
+    \tilde{\alpha}_{ji}
+    =
+    \frac{\exp(\alpha_{ji})}{\sum_{k\in N(i)}\exp(\alpha_{ki})}
+\end{equation}
+\end{enumerate}
+\item
+Aggregate (weighted sum) using attention coefficients as weights:
+\begin{equation}\label{eq:gat_aggregation}
+    \vect{h}_i=\sum_{j\in N(i)}\tilde{\alpha}_{ji}\,\vect{x}_j'
+\end{equation}
+\end{enumerate}
+
+\subsubsection{Edge-conditioned convolution}
+
+To incorporate edge attributes into the messages, one may use an MLP $\rho \colon \R^{d_e}\to\R^{d_x\times d_h}$ to generate edge-dependent weights.
+For each edge $(j,i)$ we compute
+\begin{equation}\label{eq:ecc_weights}
+    \matr{\Theta}_{ji}=\rho(\vect{e}_{ji}) \in \R^{d_x\times d_h}
+\end{equation}
+and update nodes by
+\begin{equation}\label{eq:ecc_update}
+    \vect{h}_i=\vect{x}_i\matr{\Theta}_i+\sum_{j\in N(i)}\vect{x}_j\matr{\Theta}_{ji}
+\end{equation}
+so edges directly control how neighbor information is transformed.
+
+
+% good recipe here, including tikz image
+\subsection{A good recipe}
+is to pre- and post-process node features with a $2$-layer MLP and to use $4$ to $6$ message-passing steps in between:
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.6,
+  box/.style={draw, rounded corners=2pt, minimum width=30mm, minimum height=4mm, align=center},
+  mp/.style={box, fill=orange!25},
+  mlp/.style={box, fill=gray!20},
+  arr/.style={-{Latex[length=1mm,width=1mm]}, line width=0.5pt},
+  res/.style={densely dotted, -{Latex[length=1mm,width=1mm]}, line width=0.5pt}
+]
+\node[mlp] (mlp1) {2-layer MLP};
+\node[mp, below=6mm of mlp1] (mp1) {Message Passing};
+\node[mp, below=4mm of mp1] (mp2) {Message Passing};
+\node[mp, below=4mm of mp2] (mp3) {Message Passing};
+\node[mp, below=4mm of mp3] (mp4) {Message Passing};
+\node[mlp, below=6mm of mp4] (mlp2) {2-layer MLP};
+
+\draw[arr] (mlp1) -- coordinate[pos=0.5] (res1out) (mp1);
+\draw[arr] (mp1) -- coordinate[pos=0.3] (res1in) coordinate[pos=0.55] (res2out) (mp2);
+\draw[arr] (mp2) -- coordinate[pos=0.3] (res2in) coordinate[pos=0.55] (res3out) (mp3);
+\draw[arr] (mp3) -- coordinate[pos=0.3] (res3in) coordinate[pos=0.55] (res4out) (mp4);
+\draw[arr] (mp4) -- coordinate[pos=0.5] (res4in) (mlp2);
+
+% residual (side) connections: left -> down -> right, bypassing each MP block
+\foreach \a/\b in {res1out/res1in, res2out/res2in, res3out/res3in, res4out/res4in} {
+  \draw[res]
+    ($(\a)+(0mm,0)$) --
+    ($(\a)+(-32mm,0)$) --
+    ($(\b)+(-32mm,0)$) --
+    ($(\b)+(0mm,0)$);
+}
+\end{tikzpicture}
+\]
+
+Message passing at the $\ell$-th layer:
+\begin{enumerate}
+\item
+Message:
+\begin{equation}\label{eq:good_recipe_message}
+    \vect{m}^{\ell}_{ji}
+    =
+    \operatorname{PReLU}\Bigl(
+        \operatorname{BatchNorm}\bigl(
+            \vect{h}^{\ell}_{j}\matr{\Theta}^{\ell} + \vect{b}^{\ell}
+        \bigr)
+    \Bigr)
+\end{equation}
+% where $\matr{\Theta}^{\ell}$ and $\vect{b}^{\ell}$ are learnable parameters.
+\item
+Aggregate by summation:
+\begin{equation}\label{eq:good_recipe_aggregation}
+    \vect{m}^{\ell}_{i}
+    =
+    \sum_{j\in N(i)} \vect{m}^{\ell}_{ji}
+\end{equation}
+\item
+Update by concatenation:
+\begin{equation}\label{eq:good_recipe_update}
+    \vect{h}^{\ell+1}_{i}
+    =
+    \vect{h}^{\ell}_{i} \mathbin{\|} \vect{m}^{\ell}_{i}
+\end{equation}
+\end{enumerate}
+
+\begin{remark}
+This message-passing instance is \emph{isotropic}, since the message \eqref{eq:good_recipe_message} depends only on the sender embedding $\vect{h}^{\ell}_{j}$ and not on edge attributes or the receiver features.
+\end{remark}
+
+
+
+\subsection{Over-smoothing}
+
+Repeated graph convolutions tend to reduce feature differences across neighbors, behaving like low-pass filtering on the graph.
+After many layers, node representations can become almost indistinguishable within connected components, which can harm node-level prediction tasks.
+
+\section{Pooling on graphs}
+
+Pooling builds coarser graphs to reduce size or to obtain hierarchical representations.
+
+\subsection{SRC decomposition}
+\begin{enumerate}
+\item \textcolor{red}{\textbf{S}election}: \label{def:selection}
+A selection operator computes $K$ supernodes
+\[
+    \operatorname{SEL}\colon G \mapsto S=\{S_1,\dots,S_K\}
+\]
+where each $S_k$ is a set of nodes equipped with nonnegative scores.
+Equivalently, selection can be encoded by a matrix $\matr{S}\in\R^{K\times n}$.
+
+\item \textcolor{red}{\textbf{R}eduction}: \label{def:reduction}
+Given a selection matrix $\matr{S}\in\R^{K\times n}$ and node features $\matr{X}\in\R^{n\times d_x}$, a typical reduction is the weighted aggregation
+\[
+    \matr{X}'=\matr{S}\matr{X}
+\]
+which produces pooled features $\matr{X}'\in\R^{K\times d_x}$.
+
+\item \textcolor{red}{\textbf{C}onnection}: \label{def:connection}
+A common connection rule builds the pooled adjacency by aggregating edges between supernodes.
+Using the same $\matr{S}$, a standard choice is
+\[
+    \matr{A}'=\matr{S}\matr{A}\matr{S}^{\top}
+\]
+which yields $\matr{A}'\in\R^{K\times K}$.
+\end{enumerate}
+
+\begin{remark}[spectral intuition]
+Low-frequency eigenvectors of the Laplacian reveal coarse clusters.
+A classical pipeline performs clustering (e.g.\ $k$-means) in the space spanned by the first few Laplacian eigenvectors, but this can be expensive and ignores attributes.
+\end{remark}
+
+\subsection{Global pooling}
+
+For graph-level tasks, one often needs a graph-to-vector map.
+A \emph{global pooling} (or \emph{readout}) aggregates node embeddings $\{\vect{h}_i\}_{i\in V}$ into a single vector and must be permutation-invariant.
+Typical choices include sum, mean or max pooling, as well as attention-weighted sums.
 
 
 
