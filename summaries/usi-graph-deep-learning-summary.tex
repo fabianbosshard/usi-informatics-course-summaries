@@ -856,13 +856,13 @@ Note that \(\mess\) and \(\up\) are often parametric (e.g. MLPs).
 \sigma
 \Bigl(
 \sum\nolimits_{j\in N(i)}
-a_{ji} \vect{x}_j \matr{\Theta}
+a_{ij} \vect{x}_j \matr{\Theta}
 \Bigr)
 \]
-with $a_{ji}=\tilde{\matr{A}}_{ji}$.
+with $a_{ij}=\tilde{\matr{A}}_{ij}$.
 So it fits into \autoref{def:message_passing} with 
 \(
-\mess(\vect{x}_i,\vect{x}_j,\vect{e}_{ji}) = a_{ji} \vect{x}_j \matr{\Theta}
+\mess(\vect{x}_i,\vect{x}_j,\vect{e}_{ji}) = a_{ij} \vect{x}_j \matr{\Theta}
 \) (independent of \(\vect{x}_i\) and \(\vect{e}_{ji}\)),
 \(\agg = \text{sum}\), 
 and
@@ -891,20 +891,20 @@ Compute attention scores between neighbors:
 \item 
 Score (\(\vect{\theta}_2\in\R^{2d_h}\)):
 \begin{equation}\label{eq:gat_scores}
-    \alpha_{ji}=\sigma\bigl([\vect{x}_i' \mathbin{\|} \vect{x}_j']\vect{\theta}_2\bigr)
+    \alpha_{ij}=\sigma\bigl([\vect{x}_i' \mathbin{\|} \vect{x}_j']\vect{\theta}_2\bigr)
 \end{equation}
 \item 
 Normalize with softmax over $N(i)$:
 \begin{equation}\label{eq:gat_softmax}
-    \tilde{\alpha}_{ji}
+    \tilde{\alpha}_{ij}
     =
-    \frac{\exp(\alpha_{ji})}{\sum_{k\in N(i)}\exp(\alpha_{ki})}
+    \frac{\exp(\alpha_{ij})}{\sum_{k\in N(i)}\exp(\alpha_{ik})}
 \end{equation}
 \end{enumerate}
 \item
 Aggregate (weighted sum) using attention coefficients as weights:
 \begin{equation}\label{eq:gat_aggregation}
-    \vect{h}_i=\sum_{j\in N(i)}\tilde{\alpha}_{ji}\,\vect{x}_j'
+    \vect{h}_i=\sum_{j\in N(i)}\tilde{\alpha}_{ij}\,\vect{x}_j'
 \end{equation}
 \end{enumerate}
 
