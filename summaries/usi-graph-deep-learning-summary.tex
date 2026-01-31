@@ -363,6 +363,8 @@
 % table of acronyms (remember everything is in build folder)
 % \printglossary[type=\acronymtype, title={List of Acronyms}]
 
+% \clearpage
+
 \section{Spectral theorem}
 \begin{theorem}\label{thm:spectral_theorem}
 Let $\matr{A}\in\R^{n\times n}$ be symmetric, i.e.\ $\matr{A}^\top=\matr{A}$.
@@ -385,6 +387,7 @@ $\matr{\Lambda}:=\operatorname{diag}(\lambda_1,\dots,\lambda_n)$.
 \autoref{thm:spectral_theorem} is extensively used in Principal Component Analysis (PCA) to reduce the complexity of the input space (it is applied to the covariance matrix of the inputs).
 
 
+\clearpage
 
 \section{Graphs}
 
@@ -999,6 +1002,11 @@ This message-passing instance is \emph{isotropic}, since the message \eqref{eq:g
 
 Repeated graph convolutions tend to reduce feature differences across neighbors, behaving like low-pass filtering on the graph.
 After many layers, node representations can become almost indistinguishable within connected components, which can harm node-level prediction tasks.
+
+
+
+
+\clearpage
 
 \section{Pooling on graphs}
 
