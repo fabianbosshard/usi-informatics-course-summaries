@@ -10,15 +10,6 @@ This repository contains only the TeX sources. The PDFs can be viewed [here](htt
 
 ---
 
-## 🔨 Build all summaries at once
-To compile every `.tex` into a `.pdf`, run:
-```bash
-./build.sh
-```
-After successful builds, this script will delete **any** file in the `summaries/` directory that is not `.pdf` or `.tex`. **If you keep extra assets in that folder, move them elsewhere first.**
-
----
-
 ## 📄 About
 - They are not official, not exhaustive and may contain mistakes.
 - If you find an error please [open an issue](https://github.com/fabianbosshard/usi-informatics-course-summaries/issues) or send an email to [fabianlucasbosshard@gmail.com](mailto:fabianlucasbosshard@gmail.com).
