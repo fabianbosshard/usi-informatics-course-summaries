@@ -1,0 +1,2155 @@
+% author: Fabian Bosshard % © CC BY 4.0
+
+\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen}
+\usepackage{iftex}
+\usepackage{csquotes}
+
+\usepackage[T1]{fontenc}     % handle accented glyphs properly
+\usepackage[english]{babel}  % load the hyphenation patterns you need
+
+
+\usepackage[automark]{scrlayer-scrpage}
+\pagestyle{scrheadings}
+
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+\usepackage{nicematrix}
+\usepackage{booktabs}
+\usepackage{array}
+
+\usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+
+
+% float management ––––––––––––––––––––––––––––––––––––––––––––––––
+\usepackage{float}
+\usepackage{placeins} 
+
+
+% \makeatletter
+%   % single-column floats
+%   \def\fps@figure {htb} 
+%   \def\fps@table  {htb}
+
+%   % double-column floats
+%   \def\fps@figure*{htb} 
+%   \def\fps@table* {htb}
+% \makeatother
+
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\preto\subsubsection{\FloatBarrier} 
+
+\setcounter{topnumber}{8}
+\setcounter{bottomnumber}{8}
+\setcounter{totalnumber}{20}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
+\renewcommand{\floatpagefraction}{1.0}
+\renewcommand{\dblfloatpagefraction}{1.0}
+
+% On a float‐only page, kill the default “centered” glue
+\makeatletter
+  \setlength{\@fptop}{0pt} % no extra space above
+  \setlength{\@fpsep}{\floatsep} % between floats: same as \floatsep
+  \setlength{\@fpbot}{0pt plus 1fil} % infinite stretch below, so floats are pushed up
+\makeatother
+% ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{accents}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+\usepackage{pifont}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings}
+\usepackage{tkz-fct}
+\usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
+\usepackage{tikz-3dplot}
+\usepackage{tikzpagenodes}
+\usepackage{pgfplots}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+
+\usepackage{thmtools}
+
+\newlength{\thmspace}
+\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem,numberwithin=section ]{theorem}
+\declaretheorem[style=assertionstyle, name=Lemma,       sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle, name=Corollary,   sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle, name=Conjecture,  sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
+\declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
+\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
+\declaretheorem[style=solutionstyle, name=Solution, numbered=no]{solution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\square},postheadspace=1em]{proofstyle}
+\let\proof\relax
+\let\endproof\relax
+\declaretheorem[style=proofstyle, name=Proof,    numbered=no]{proof}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=\thmspace,spacebelow=\thmspace,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle, name=Digression, sibling=remark]{digression}
+
+\numberwithin{equation}{section} % equations numbered within sections
+
+
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
+
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+\newcommand{\im}{\operatorname{Im}}
+
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
+
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
+
+\newcommand{\dif}{\mathrm{d}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+\newcommand{\blackheight}{\operatorname{bh}}
+
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
+
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Numerical Algorithms - Course Summary},
+  pdfkeywords={USI, numerical algorithms, course summary, informatics},
+  colorlinks=false,  
+  pdfborder={0.0 0.0 0.0},      
+  linkbordercolor={0 0.6 1},      % internal links
+  urlbordercolor={0 0.6 1},       % URLs
+  citebordercolor={0 0.6 1}       % citations
+]{hyperref}
+
+
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+\makeatletter
+\newlength\FB@toclinkht
+\newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+\usepackage{cleveref}
+
+\makeatletter
+
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+
+\makeatother
+
+
+
+\title{Numerical Algorithms - Summary}
+\author{Fabian Bosshard}
+\date{\today}
+
+
+
+
+
+\begin{document}
+\pagenumbering{roman}
+
+\maketitle
+
+\tableofcontents
+
+
+
+\clearpage
+\pagenumbering{arabic}
+
+\section{Introduction}
+
+\subsection{Root Finding}
+
+\textbf{Goal:} Find $\sqrt{a}$ for $a > 0$.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+  \def\W{8}
+  \def\H{2}
+  \draw[thick] (0,0) rectangle (\W,\H);
+  \draw[very thick,red] (0,0) -- (\W,0);
+  \node at (\W/2,0.5*\H) {\textcolor{red}{$A=a$}};
+  \node[left] at (0,0.5*\H) {$y_0=1$};
+  \node[below] at (\W/2,0) {$x_0=a$};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Idea:} successively transform conserving area until perfect square.
+
+\medskip
+
+\textbf{Straightedge and compass approach:}
+\[
+x_{i+1} = \frac{x_i + y_i}{2}
+\]
+
+Since $A = x_i \cdot y_i = a \implies y_i = \frac{a}{x_i}$ (can always express like this):
+\[
+x_{i+1} = \frac{x_i + \frac{a}{x_i}}{2}
+= \frac{x_i^2 + a}{2x_i}
+= x_i - \frac{x_i^2 - a}{2x_i}
+\]
+\[
+\begin{tikzpicture}[scale=0.25,
+  outer sep=0pt,
+  inner sep=2pt,
+  font=\footnotesize,
+  myshape/.style={},
+  aux/.style={dashed, draw=orange!80!black},
+  constr/.style={draw=orange!90!black},
+  brace/.style={decorate, decoration={brace, amplitude=5pt, mirror}, draw=blue!70!black},
+  lab/.style={},
+  bluelab/.style={font=\tiny, text=blue!70!black}
+]
+  % sizes
+  \pgfmathsetmacro{\W}{8}             % x_i
+  \pgfmathsetmacro{\H}{2}             % y_i
+  \pgfmathsetmacro{\A}{\W*\H}         % area
+  \pgfmathsetmacro{\xone}{(\W+\H)/2}  % x_{i+1}
+  \pgfmathsetmacro{\yone}{\A/\xone}   % y_{i+1}
+  \pgfmathsetmacro{\gap}{5.5}         % panel spacing
+  \pgfmathsetmacro{\ang}{asin(\H/\xone)} % construction angle
+
+  %==================== initial rectangle ====================
+  \begin{scope}
+    \draw[myshape] (0,0) rectangle (\W,\H);
+    \node[lab,left] at (0,0.5*\H) {$y_i$};
+    \node[lab,below] at (\W/2,0) {$x_i$};
+    \node at (\W/2,0.5*\H) {\textcolor{red}{$A=a$}};
+    \draw[aux] (\W,\H) arc[start angle=90, end angle=0, radius=\H];
+    \draw[brace] (0,-1.0) -- node[bluelab,below=4pt] {$y_i + x_i$} (\W+\H,-1.0);
+    \fill[aux] (\W,0) circle (3pt);
+    \draw[constr] (\W,0) -- ++(\H,0) -- ++(0.1,0);
+    \draw[->,red!70!black] (\W+\H+1.3,0.5*\H) -- ++(2.0,0);
+  \end{scope}
+
+  %==================== heared (same height) ====================
+  \begin{scope}[shift={(\W+\H+\gap,0)}]
+    \draw[myshape] (0,0) rectangle (\W,\H);
+    \draw[constr] (\xone,-0.2) -- (\xone,0.2); 
+    \draw[constr] (0,0) -- (\ang:\xone) -- ++(\W,0);
+    \draw[aux] (\xone,0) arc[start angle=0, end angle=\ang, radius=\xone];             
+    \draw[constr] (\W,0) -- node[bluelab, midway,below right] {$x_{i+1}$} ++ (\ang:\xone);
+    \draw[brace] (0,-1.0) -- node[bluelab,below=4pt] {$x_{i+1}=\frac{x_i+y_i}{2}$} (\xone,-1.0);
+    \draw[->,red!70!black] (\W+6.5,0.5*\H) -- ++(2.0,0);
+  \end{scope}
+
+  %==================== (3) final: unshear downward ====================
+  \begin{scope}[shift={(2*\W+\H+2*\gap+5,0)}]
+    \draw[constr] (0,0) -- node[bluelab, midway,above, xshift=-4pt] {$x_{i+1}$} (\ang:\xone) -- node[bluelab, midway,right] {$x_{y+1} = \frac{a}{x_{i+1}}$} ++($(\ang-90:\yone)$) -- ++($(\ang-180:\xone)$) -- cycle;
+    \node[text=red] at ($ (0,0) + (\ang:{0.5*\xone}) + (\ang-90:{0.5*\yone}) $) {$A=a$};
+  \end{scope}
+\end{tikzpicture}
+\]
+
+% We can define
+% \[
+% f(x) = x^2 - a
+% \]
+% so that
+% \[
+% x_{i+1} = x_i - \frac{f(x_i)}{f'(x_i)}
+% \]
+% which is a 
+special case of \textbf{Newton’s Method}, i.e. finding $x \in \R$ such that $f(x) = 0$:
+\[
+x_{i+1} = x_i - \frac{f(x_i)}{f'(x_i)}
+\]
+
+\textbf{Remark:} $|x - x_i|$ decreases quadratically in $i$ (can be shown using Taylor expansion).
+
+\medskip
+
+\textbf{BUT careful:} can also fail badly if
+\begin{itemize}
+  \item $x_0$ is too far from correct solution $x$
+  \item $f'(x_i) \approx 0$ for some $x_i$
+  \item $f'$ unbounded close to the root $x$
+\end{itemize}
+
+
+
+\clearpage
+
+\section{Iterative Methods}
+
+\subsection{Jacobi Method}
+
+\[
+x_i^{(k+1)} = \frac{1}{a_{ii}} \Biggl( b_i - \sum_{\substack{j=1 \\ j \neq i}}^{n} a_{ij} x_j^{(k)} \Biggr),
+\qquad i = 1, \dots, n
+\]
+
+or in matrix notation:
+
+\[
+\vect{x}^{(k+1)} = \matr{D}^{-1} \bigl( \vect{b} - \matr{L} \vect{x}^{(k)} - \matr{U} \vect{x}^{(k)} \bigr),
+\]
+
+where
+\[
+\matr{A} 
+= \matr{L} + \matr{D} + \matr{U}
+=
+\def\x{0.16}%
+\begin{tikzpicture}[scale=1.4, baseline=(current bounding box.center)]
+    \useasboundingbox (0,0) rectangle (1,1);
+    \draw[fill=yellow!40] (0,0) -- (0,1-\x) -- (1-\x,0) -- cycle;
+    \draw[thick] (0,0) rectangle (1,1);
+    \node at (0.7,0.7) {\huge $0$};
+\end{tikzpicture}
++
+\begin{tikzpicture}[scale=1.4, baseline=(current bounding box.center)]
+    \useasboundingbox (0,0) rectangle (1,1);
+    \draw[fill=yellow!40] (0,1-\x) -- (0,1) -- (\x,1) -- (1,\x) -- (1,0) -- (1-\x,0) -- cycle;
+    \draw[thick] (0,0) rectangle (1,1);
+    \node at (0.2,0.8) {\footnotesize $a_{\!1\!1}$};
+    \node at (0.4, 0.6) {\footnotesize $\cdot$};
+    \node at (0.5, 0.5) {\footnotesize $\cdot$};
+    \node at (0.6, 0.4) {\footnotesize $\cdot$};
+    \node at (0.8,0.2) {\footnotesize $a_{\!n\!n}$};
+    \node at (0.25,0.25) {\Large $0$};
+    \node at (0.75,0.75) {\Large $0$};
+\end{tikzpicture}
++
+\begin{tikzpicture}[scale=1.4, baseline=(current bounding box.center)]
+    \useasboundingbox (0,0) rectangle (1,1);
+    \draw[fill=yellow!40] (\x,1) -- (1,1) -- (1,\x) -- cycle;
+    \draw[thick] (0,0) rectangle (1,1);
+    \node at (0.3,0.3) {\huge $0$};
+\end{tikzpicture}
+\]
+
+
+
+
+Can be improved if always the most recent values of $\vect{x}$ are used:
+
+\subsection{Gauss--Seidel Method}
+
+\[
+x_i^{(k+1)} = \frac{1}{a_{ii}} \Biggl( b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{(k+1)} - \sum_{j=i+1}^{n} a_{ij} x_j^{(k)} \Biggr)
+\]
+
+or
+
+\[
+\vect{x}^{(k+1)} = \matr{D}^{-1} \bigl( \vect{b} - \matr{L} \vect{x}^{(k+1)} - \matr{U} \vect{x}^{(k)} \bigr)
+\quad \Longleftrightarrow \quad
+\vect{x}^{(k+1)} = (\matr{D} + \matr{L})^{-1} \bigl( \vect{b} - \matr{U} \vect{x}^{(k)} \bigr)
+\]
+
+\paragraph{Advantages:}
+\begin{itemize}
+  \item Averaged faster (often)
+  \item Easier to implement, because $x_i^{(k)}$ can simply be overwritten by $x_i^{(k+1)}$
+\end{itemize}
+
+\paragraph{Diagonal dominance:}
+\[
+|a_{ii}| \ge \sum_{\substack{j=1 \\ j \neq i}}^{n} |a_{ij}|, \qquad i = 1, \dots, n
+\]
+
+Both methods are guaranteed to converge to the correct solution if $\matr{A}$ is diagonally dominant.
+
+\paragraph{Cost:} For each iteration, the cost is $\mathcal{O}(n^2)$ and only $\mathcal{O}(n)$ if $\matr{A}$ is sparse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% =========================
+%  Polynomial Interpolation
+% =========================
+
+
+\clearpage
+
+\section{Polynomial Interpolation}\label{sec:poly-interp}
+
+A polynomial \(p:\R\to\R\) of degree at most \(n\) is most commonly represented in the monomial basis 
+\(\{1, x, x^2, \dots, x^n\}\)
+as
+\[
+p(x)
+=
+% a_n x^n + a_{n-1}x^{n-1}+\cdots+a_1x+a_0
+% = 
+\sum_{i=0}^{n} a_i x^i
+\]
+where \(a_0,\dots,a_n\in\R\).
+It can be evaluated in \hl[6]{\(\mathcal{O}(n)\)} operations using \nameref{alg:horner_scalar}.
+
+\begin{algorithm}[h]
+  \caption{Horner's scheme}
+  \label{alg:horner_scalar}
+  \begin{algorithmic}[1]
+    \Require coefficients \(a_0,\dots,a_n \in \R\), evaluation point \(x\in\R\)
+    \Ensure value \(p(x)=\sum_{i=0}^{n} a_i x^i\)
+    \State \(p \gets a_n\)
+    \For{\(i = n-1 \DOWNTO 0\)}
+      \State \(p \gets p\cdot x + a_i\)
+    \EndFor
+    \State \Return \(p\)
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Polynomial Curves}\label{subsec:poly-curves}
+
+In curve design, we consider polynomial curves \( \vect{P}:\R\to\R^d\) (in applications typically \(d\in\{2,3\}\), but the theory works for arbitrary \(d\)).  
+Using the monomial basis, a polynomial curve of degree at most \(n\) can be written as
+\[
+\vect{P}(t)
+=
+% \vect{A}_n t^n+\vect{A}_{n-1}t^{n-1}+\cdots+\vect{A}_1 t+\vect{A}_0
+% =
+\sum_{i=0}^{n} \vect{A}_i t^i
+\]
+where \(\vect{A}_0,\dots,\vect{A}_n\in\R^d\). 
+It can be evaluated with \nameref{alg:horner_vector} by replacing scalar operations with vector operations.
+
+\begin{algorithm}[h]
+  \caption{Horner's scheme}
+  \label{alg:horner_vector}
+  \begin{algorithmic}[1]
+    \Require coefficients \(\vect{A}_0,\dots,\vect{A}_n \in \R^d\), evaluation point \(t\in\R\)
+    \Ensure value \(\vect{P}(t)=\sum_{i=0}^{n} \vect{A}_i t^i\)
+    \State \(\vect{P} \gets \vect{A}_n\)
+    \For{\(i = n-1 \DOWNTO 0\)}
+      \State \(\vect{P} \gets \vect{P}\cdot t + \vect{A}_i\)
+    \EndFor
+    \State \Return \(\vect{P}\)
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+% \paragraph{Interpolation problem.}
+Often we are interested in finding an interpolating polynomial curve.
+Given points \(\vect{P}_0,\dots,\vect{P}_n\in\R^d\) and distinct parameter values \(t_0,\dots,t_n\in\R\),
+we seek a polynomial curve \(\vect{P}\) of degree at most \(n\) such that
+\[
+\vect{P}(t_i)=\vect{P}_i
+\]
+where \(i=0,\dots,n\).
+
+Writing \(\matr{A}=[\vect{A}_0,\dots,\vect{A}_n]^\top \in \R^{(n+1)\times d}\) and
+\(\matr{P}=[\vect{P}_0,\dots,\vect{P}_n]^\top \in \R^{(n+1)\times d}\),
+these conditions yield the linear system
+\begin{equation}\label{eq:Vandermonde_system}
+\matr{V} \matr{A}=\matr{P}
+\end{equation}
+where \(\matr{V}\in\R^{(n+1)\times(n+1)}\) is the Vandermonde matrix
+\[
+\matr{V}
+=
+[t_i^j]_{i,j=0}^{n}
+=
+\begin{bmatrix}
+1 & t_0 & t_0^2 & \cdots & t_0^n \\
+1 & t_1 & t_1^2 & \cdots & t_1^n \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+1 & t_n & t_n^2 & \cdots & t_n^n
+\end{bmatrix}
+\]
+
+In principle, one can solve a system like \eqref{eq:Vandermonde_system} in \hl[6]{\(\mathcal{O}(n^3)\)}, 
+but the special structure of \(\matr{V}\) can be used to design an \(\mathcal{O}(n^2)\) algorithm. 
+We do not go into the details here,
+since interpolation can also be done more directly without ever forming the monomial coefficients.
+
+\subsection{Neville's Algorithm}\label{subsec:neville}
+
+\nameref{alg:neville} evaluates the interpolating polynomial curve \(\vect{P}(t)\) at a given \(t\in\R\) \emph{on-the-fly}.
+It is based on the following recursive formulation.
+Define the constant curves
+\[
+\vect{Q}_i^{0}(t)\equiv \vect{P}_i
+\]
+for 
+\(i=0,\dots,n\).
+Then define recursively for \(j=1,\dots,n\),
+\[
+\vect{Q}_i^{j}(t)
+=
+\frac{t_{i+j}-t}{t_{i+j}-t_i}\,\vect{Q}_i^{j-1}(t)
++
+\frac{t-t_i}{t_{i+j}-t_i}\,\vect{Q}_{i+1}^{j-1}(t)
+\]
+for \(i=0,\dots,n-j\).
+Lower degree curves are linearly blended to form higher degree curves, using affine combinations.
+The recursion can be visualized as follows:
+\[
+\begin{tikzpicture}[
+  >=Stealth,
+  x=0.6cm,
+  y=1cm,
+  font=\footnotesize,
+  every node/.style={inner sep=2pt},
+  lab/.style={midway, sloped, above, inner sep=1pt}
+]
+
+% --- nodes (coordinates chosen to match the geometry) ---
+\node (Q30) at (0,6) {$\vect{Q}^{n}_{0}(t) = \vect{P}(t)$};
+
+\node (Q20) at (-3,4) {$\vect{Q}^{n-1}_{0}(t)$};
+\node (Q21) at ( 3,4) {$\vect{Q}^{n-1}_{1}(t)$};
+
+\node (Q10) at (-6,2) {$\vect{Q}^{1}_{0}(t)$};
+\node (Q11) at ( 0,2) {$\cdots$};
+\node (Q12) at ( 6,2) {$\vect{Q}^{1}_{n-1}(t)$};
+
+\node (Q00) at (-9,0) {$\vect{Q}^{0}_{0}(t)=\vect{P}_{0}$};
+\node (Q01) at (-3,0) {$\vect{Q}^{0}_{1}(t)=\vect{P}_{1}$};
+\node (Q0m) at ( 0,0) {$\cdots$};
+\node (Q02) at ( 3,0) {$\vect{Q}^{0}_{n-1}(t)=\vect{P}_{n-1}$};
+\node (Q03) at ( 9,0) {$\vect{Q}^{0}_{n}(t)=\vect{P}_{n}$};
+
+% --- arrows (pointing upward) + edge labels ---
+\draw[->] (Q20) -- node[lab] {$t_{n}-t$} (Q30);
+\draw[->] (Q21) -- node[lab] {$t-t_{0}$} (Q30);
+
+\draw[-, dashed] (Q10) -- (Q20);
+\draw[-, dashed, shorten <=0.35cm] (Q11) --  (Q20);
+
+\draw[-, dashed, shorten <=0.35cm] (Q11) -- (Q21);
+\draw[-, dashed] (Q12) -- (Q21);
+
+\draw[->] (Q00) -- node[lab] {$t_{1}-t$} (Q10);
+\draw[->] (Q01) -- node[lab] {$t-t_{0}$} (Q10);
+
+\draw[-, dashed, shorten >=0.35cm] (Q01) -- (Q11);
+\draw[-, dashed, shorten >=0.35cm] (Q02) -- (Q11);
+
+\draw[->] (Q02) -- node[lab] {$t_{n}-t$} (Q12);
+\draw[->] (Q03) -- node[lab] {$t-t_{n-1}$} (Q12);
+
+\end{tikzpicture}
+\]
+Note that the common denominators of the affine weights are omitted for clarity.
+They are always obtained by summing the two weights, i.e. \(t_{i+j}-t_i = (t_{i+j}-t) + (t - t_i)\).
+
+\(\vect{Q}_0^{n}(t)\) is the interpolating polynomial curve evaluated at \(t\).
+The method costs \hl[6]{\(\mathcal{O}(n^2)\)} arithmetic operations.
+
+\begin{algorithm}[h]
+  % \caption{Neville's algorithm (evaluate interpolant at \(t\))}
+    \caption{Neville}
+  \label{alg:neville}
+  \begin{algorithmic}[1]
+    \Require data \((t_i,\vect{P}_i)\) for \(i=0,\dots,n\) with distinct \(t_i\), evaluation parameter \(t\in\R\)
+    \Ensure value \(\vect{P}(t)\) of the interpolating polynomial curve
+    \For{\(i = 0 \TO n\)}
+      \State \(\vect{Q}_i \gets \vect{P}_i\) \Comment{\(\vect{Q}_i\) stores \(\vect{Q}_i^{j}\) in-place}
+    \EndFor
+    \For{\(j = 1 \TO n\)}
+      \For{\(i = 0 \TO n-j\)}
+        % \State \(\alpha \gets \frac{t_{i+j}-t}{t_{i+j}-t_i}\), \(\beta \gets \frac{t-t_i}{t_{i+j}-t_i}\)
+        % \State \(\vect{Q}_i \gets \alpha\,\vect{Q}_i + \beta\,\vect{Q}_{i+1}\)
+        \State \(\vect{Q}_i \gets \frac{t_{i+j}-t}{t_{i+j}-t_i} \vect{Q}_i + \frac{t-t_i}{t_{i+j}-t_i} \vect{Q}_{i+1}\)
+      \EndFor
+    \EndFor
+    \State \Return \(\vect{Q}_0\)
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Lagrange Form}\label{subsec:lagrange}
+
+From \nameref{alg:neville}'s algorithm, we can derive an explicit representation of the interpolating polynomial,
+namely the
+\hl[2]{Lagrange form}
+\begin{equation}\label{eq:lagrange_form}
+\vect{P}(t)=\sum_{i=0}^{n} \vect{P}_i\,L_i^{n}(t)
+\end{equation}
+with Lagrange basis functions
+\[
+L_i^{n}(t)=\prod_{\substack{j=0\\ j\neq i}}^{n}\frac{t-t_j}{t_i-t_j}
+\]
+where \(i=0,\dots,n\).
+The interpolation points \(\vect{P}_0, \dots, \vect{P}_n\) thus act as coefficients with respect to 
+these Lagrange basis functions of degree \(n\) for parameter values \(t_0,\dots,t_n\).
+
+Like the monomials, 
+the \(L_i^{n}\) form a basis of \(\Pi_n\).
+They satisfy two important properties:
+% \begin{itemize}
+% \item Lagrange property: $L_i^n\left(t_j\right)=0$ for $j \neq i$ and $L_i^n\left(t_i\right)=1$
+% \item Partition of unity: $\sum_{i=0}^n L_i^n(t) \equiv 1$
+% \end{itemize}
+\newlength{\propw}
+\settowidth{\propw}{\textit{Partition of unity:}} % longest label
+\newlength{\propsep}
+\setlength{\propsep}{\propw + 2em} % label + space
+\begin{itemize}
+\item \makebox[\propsep][l]{Lagrange property:}
+      $L_i^n\left(t_j\right)=0$ for $j \neq i$ and $L_i^n\left(t_i\right)=1$
+\item \makebox[\propsep][l]{Partition of unity:}
+      $\sum_{i=0}^n L_i^n(t) \equiv 1$
+\end{itemize}
+
+The first property implies immediately that \(\vect{P}(t_i)=\vect{P}_i\).
+
+\subsection{Barycentric Form}\label{subsec:barycentric}
+
+Define
+\(
+L(t)=\prod_{i=0}^{n}(t-t_i)
+\)
+and
+\[
+w_i=\prod_{\substack{j=0\\ j\neq i}}^{n}\frac{1}{t_i-t_j}
+\]
+where \(i=0,\dots,n\).
+Then the interpolant \eqref{eq:lagrange_form}
+can be written as
+\[
+\vect{P}(t)
+=
+L(t)\sum_{i=0}^{n}\frac{w_i}{t-t_i}\,\vect{P}_i
+\]
+and since \(L(t)\sum_{i=0}^{n}\frac{w_i}{t-t_i}=\sum_{i=0}^{n} L_i^{n}(t) \equiv 1\), as
+\begin{equation}\label{eq:barycentric_interpolant}
+\vect{P}(t)
+=
+\frac{\sum_{i=0}^{n}\frac{w_i}{t-t_i}\,\vect{P}_i}{\sum_{i=0}^{n}\frac{w_i}{t-t_i}}
+\end{equation}
+This \hl[2]{barycentric form} is typically very stable in floating point arithmetic and yields an \hl[6]{\(\mathcal{O}(n)\)} evaluation (\autoref{alg:barycentric}) once the weights \(w_i\) are known.
+To compute them, it takes \(\mathcal{O}(n^2)\) operations.
+Since they depend only on the nodes \(t_i\), they can be precomputed and reused for different data \(\vect{P}_i\).
+
+\begin{algorithm}[h]
+  \caption{Barycentric evaluation of the interpolant}
+  \label{alg:barycentric}
+  \begin{algorithmic}[1]
+    \Require 
+    nodes \(t_0,\dots,t_n\) (distinct), 
+    data \(\vect{P}_0,\dots,\vect{P}_n\in\R^d\),
+     weights \(w_0,\dots,w_n\), 
+    % evaluation parameter 
+    \(t\in\R\)
+    \Ensure value \(\vect{P}(t)\)
+    \State \(\vect{N} \gets \vect{0}_d\), \(D \gets 0\)
+    \For{\(i = 0 \TO n\)}
+      \If{\(t=t_i\)}
+        \State \Return \(\vect{P}_i\)
+      \Else
+        \State \(W \gets \frac{w_i}{t-t_i}\)
+        \State \(\vect{N} \gets \vect{N} + W\,\vect{P}_i\)
+        \State \(D \gets D + W\)
+      \EndIf
+    \EndFor
+    \State \Return \(\vect{N}/D\)
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Newton Form and Divided Differences}\label{subsec:newton-divdiff}
+
+Another representation to write the interpolant \eqref{eq:lagrange_form} is the \hl[2]{Newton form}
+\begin{equation}\label{eq:newton_form}
+\vect{P}(t)=\sum_{i=0}^{n} \vect{B}_i\,N_i(t)
+\end{equation}
+with Newton basis functions
+\[
+N_i(t)=\prod_{j=0}^{i-1}(t-t_j)
+\]
+where \(i=0,\dots,n\).
+The Newton basis functions also form a basis of \(\Pi_n\).
+The coefficients \(\vect{B}_i=\vect{P}[t_0,\dots,t_i]\in\R^d\) are the \(i^\text{th}\) order \emph{divided differences} of the interpolation points \(\vect{P}_i\) with respect to the parameter values \(t_i\) and result from the recursive definition
+% \[
+% \vect{P}[t_i]=\vect{P}_i 
+% \]
+% where \(i=0,\dots,n\) and for \(j=1,\dots,n\),
+% \[
+% \vect{P}[t_i,\dots,t_{i+j}]
+% =
+% \frac{\vect{P}[t_{i+1},\dots,t_{i+j}] - \vect{P}[t_i,\dots,t_{i+j-1}]}{t_{i+j}-t_i}
+% \]
+\[
+\begin{aligned}
+\vect{P}[t_i]&=\vect{P}_i 
+&& i=0,\dots,n \\
+\vect{P}[t_i,\dots,t_{i+j}]
+&=
+\frac{\vect{P}[t_{i+1},\dots,t_{i+j}] - \vect{P}[t_i,\dots,t_{i+j-1}]}{t_{i+j}-t_i}
+&&  i=0,\dots,n-j, \quad j=1,\dots,n
+\end{aligned}
+\]
+
+As for the \nameref{subsec:barycentric}, the coefficients \(\vect{B}_i\) can be computed in \(\mathcal{O}(n^2)\) operations as a preprocessing step, and the 
+evaluation then requires \(\mathcal{O}(n)\) operations with a modified Horner scheme
+(\autoref{alg:newton-eval}).
+
+\begin{algorithm}[h]
+  \caption{modified Horner scheme to evaluate Newton form}
+  \label{alg:newton-eval}
+  \begin{algorithmic}[1]
+    \Require coefficients \(\vect{B}_0,\dots,\vect{B}_n\in\R^d\), nodes \(t_0,\dots,t_{n-1}\), evaluation parameter \(t\in\R\)
+    \Ensure value \(\vect{P}(t)=\sum_{i=0}^n \vect{B}_i N_i(t)\)
+    \State \(\vect{P} \gets \vect{B}_n\)
+    \For{\(i = n-1 \DOWNTO 0\)}
+      \State \(\vect{P} \gets \vect{P}\cdot (t-t_i) + \vect{B}_i\)
+    \EndFor
+    \State \Return \(\vect{P}\)
+  \end{algorithmic}
+\end{algorithm}
+
+
+
+% ======================
+%  Bézier & Spline Curves
+% ======================
+
+\clearpage
+
+\section{Bézier Curves and Splines}\label{sec:bezier-splines}
+
+Polynomial interpolation is often unsuitable for curve design:
+\begin{itemize}
+  \item monomial/Newton coefficients do not correspond intuitively to shape,
+  \item the interpolant can be unstable for (nearly) equidistant parameters,
+  \item changing one data point may affect the curve globally.
+\end{itemize}
+These issues motivate representing polynomial curves in the \emph{Bernstein basis}.
+
+\subsection{Bézier Curves}\label{subsec:bezier}
+
+% Let \(a<b\). 
+A Bézier curve \(\vect{F}:[a,b]\to\R^d\) of degree \(n\) is defined by control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\).
+It can be evaluated at \(t\in[a,b]\) by repeatedly computing convex combinations (de Casteljau):
+\[
+\vect{C}_i^{0}(t)=\vect{C}_i
+\]
+where \(i=0,\dots,n\)
+and for \(j=1,\dots,n\),
+\[
+\vect{C}_i^{j}(t)
+=
+\frac{b-t}{b-a}\,\vect{C}_i^{j-1}(t)
++
+\frac{t-a}{b-a}\,\vect{C}_{i+1}^{j-1}(t)
+\]
+where \(i=0,\dots,n-j\)
+and then \(\vect{F}(t)=\vect{C}_0^{n}(t)\).
+
+\begin{algorithm}[h]
+  \caption{de Casteljau algorithm (evaluate Bézier curve at \(t\))}
+  \label{alg:de-casteljau}
+  \begin{algorithmic}[1]
+    \Require control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\), interval \([a,b]\), parameter \(t\in[a,b]\)
+    \Ensure value \(\vect{F}(t)\)
+    \State \(\alpha \gets \frac{b-t}{b-a}\), \(\beta \gets 1-\alpha\)
+    \For{\(i = 0 \TO n\)}
+      \State \(\vect{D}_i \gets \vect{C}_i\)
+    \EndFor
+    \For{\(j = 1 \TO n\)}
+      \For{\(i = 0 \TO n-j\)}
+        \State \(\vect{D}_i \gets \alpha\,\vect{D}_i + \beta\,\vect{D}_{i+1}\)
+      \EndFor
+    \EndFor
+    \State \Return \(\vect{D}_0\)
+  \end{algorithmic}
+\end{algorithm}
+
+
+\paragraph{Bernstein form.}
+With the affine reparameterization \(s(t)=\frac{t-a}{b-a}\in[0,1]\), the same curve can be written explicitly as
+\[
+\vect{F}(t)=\sum_{i=0}^{n} \vect{C}_i\,B_i^{n}(s(t))
+% \qquad t\in[a,b]
+\]
+where \(t\in[a,b]\) and
+the Bernstein polynomials are
+\[
+B_i^{n}(s)=\binom{n}{i}s^i(1-s)^{n-i}
+\]
+where \(i=0,\dots,n\).
+\[
+\begin{tikzpicture}
+\begin{axis}[
+  width=7cm,
+  height=4cm,
+  scale only axis,
+  axis lines=left,
+  xmin=0, xmax=1,
+  ymin=0, ymax=1.05,
+  domain=0:1,
+  samples=60,
+  smooth,
+  thick,
+  tick align=outside,
+  xtick={0,0.2,0.4,0.6,0.8,1},
+  ytick={0,0.2,0.4,0.6,0.8,1},
+  xlabel={$s$},
+  ylabel={$B_i^n(s)$},
+  grid=none,
+  tick label style={font=\footnotesize},
+  label style={font=\footnotesize},
+]
+
+\def\n{5}
+
+\pgfmathdeclarefunction{bern}{3}{%
+  \pgfmathparse{(factorial(#1)/(factorial(#2)*factorial(#1-#2))) * (#3^#2) * ((1-#3)^(#1-#2))}%
+}
+
+\foreach \i in {0,...,\n}{
+  \addplot[no marks] {bern(\n,\i,x)};
+}
+
+\end{axis}
+\end{tikzpicture}
+\]
+
+
+\newcommand{\propitem}[2]{%
+  \item \makebox[\propsep][l]{#1}%
+  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{#2}%
+}
+\settowidth{\propw}{{Endpoint interpolation:}} % longest label in this list
+\setlength{\propsep}{\propw + 0.5em} % label + space
+
+
+Besides forming a basis for the space of polynomials of degree at most \(n\), they satisfy the following properties:
+\begin{itemize}
+
+  \propitem{{Partition of unity:}}{%
+    $ \sum_{i=0}^{n} B_i^n(s)\equiv 1$}
+  \propitem{{Positivity:}}{%
+    $B_i^n(s)\ge 0$ for $s\in[0,1]$}
+  \propitem{{Endpoints:}}{%
+    $B_i^n(0)=\delta_{i,0}$ and $B_i^n(1)=\delta_{i,n}$ (where $\delta_{i,j}$ is the Kronecker delta)}
+  \propitem{{Symmetry:}}{%
+    $B_i^n(s)=B_{n-i}^n(1-s)$}
+  \propitem{{Recursion formula:}}{%
+    $B_i^n(s)=sB_{i-1}^{n-1}(s)+(1-s)B_i^{n-1}(s)$}
+  \propitem{{Derivative:}}{%
+    $ \bigl(B_i^n\bigr)'(s)=n\bigl(B_{i-1}^{n-1}(s)-B_i^{n-1}(s)\bigr)$}
+  \propitem{{Locality:}}{%
+    $B_i^n$ has a local maximum at $s=i/n$}
+\end{itemize}
+
+These properties almost immediately ``translate'' to corresponding properties of B\'ezier curves:
+\begin{itemize}
+
+  \propitem{{Affine invariance:}}{%
+    $ \phi\!\left(\sum_{i=0}^n \vect{C}_iB_i^n(s)\right)
+      =\sum_{i=0}^n \phi(\vect{C}_i)B_i^n(s)$
+     for any affine mapping $\phi:\R^d\to\R^d$}
+  \propitem{{Convex hull:}}{%
+    $\vect{F}(t)\in\operatorname{conv}\{\vect{C}_0,\dots,\vect{C}_n\}$}
+  \propitem{{Endpoint interpolation:}}{%
+    $\vect{F}(a)=\vect{C}_0$ and $\vect{F}(b)=\vect{C}_n$}
+  \propitem{{Derivative:}}{%
+    $ \vect{F}'(t)=\frac{n}{b-a}\sum_{i=0}^{n-1}(\vect{C}_{i+1}-\vect{C}_i)B_i^{n-1}(s)$}
+  \propitem{{Endpoint tangent:}}{%
+    $ \vect{F}'(a)=\frac{n}{b-a}(\vect{C}_1-\vect{C}_0)$ and $\vect{F}'(b)=\frac{n}{b-a}(\vect{C}_n-\vect{C}_{n-1})$}
+  \propitem{{Symmetry:}}{%
+    $ \sum_{i=0}^n \vect{C}_iB_i^n(s)=\sum_{i=0}^n \vect{C}_{n-i}B_i^n(1-s)$}
+  \propitem{{Local control:}}{%
+    $\vect{C}_i$ influences $\vect{F}$ the most at $t=a+i(b-a)/n$}
+\end{itemize}
+
+% Another property, which does not follow that easily, is the \emph{variation diminishing property}
+% in \(\R^2\), which guarantees that for any line in the plane, the number of intersections with
+% the \emph{control polygon}, formed by connecting the control points \(\vect{C}_i\) with straight line
+% segments, is greater than or equal to the number of intersections with the curve \(\vect{F}\).
+% In a nutshell, this means that \(\vect{F}\) cannot have unexpected ``wiggles''.
+In \(\R^2\), Bézier curves satisfy the \emph{variation diminishing property}: any line intersects
+the curve \(\vect{F}\) no more often than it intersects its control polygon. 
+Therefore,
+\(\vect{F}\) cannot exhibit unexpected oscillations.
+
+
+% \paragraph{Degree elevation.}
+\begin{theorem}[Degree elevation of B\'ezier curves]\label{thm:bezier-degree-elevation}
+Let
+\[
+\vect{F}(t)=\sum_{i=0}^{n}\vect{C}_i\,B_i^{n}(s(t)),
+\qquad s(t)=\frac{t-a}{b-a}\in[0,1],
+\]
+be a B\'ezier curve of degree \(n\) with control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\).
+Then the same curve admits a representation of degree \(n+1\),
+\[
+\vect{F}(t)=\sum_{i=0}^{n+1}\vect{C}_i^{\ast}\,B_i^{n+1}(s(t)),
+\]
+where the elevated control points are
+\(
+\vect{C}_0^{\ast}=\vect{C}_0
+\),
+\(
+\vect{C}_i^{\ast}=\frac{i}{n+1}\vect{C}_{i-1}+\frac{n+1-i}{n+1}\vect{C}_i
+\), 
+\(i=1,\dots,n\),
+\(
+\vect{C}_{n+1}^{\ast}=\vect{C}_n
+\).
+\end{theorem}
+
+\begin{proof}
+Write \(s=s(t)\). Using \(B_i^n(s)=\binom{n}{i}s^i(1-s)^{n-i}\) and the binomial identities
+\[
+\binom{n}{i}=\frac{n+1-i}{n+1}\binom{n+1}{i},
+\qquad
+\binom{n}{i}=\frac{i+1}{n+1}\binom{n+1}{i+1},
+\]
+we obtain the two relations
+\[
+(1-s)B_i^n(s)=\frac{n+1-i}{n+1}\,B_i^{n+1}(s),
+\qquad
+sB_i^n(s)=\frac{i+1}{n+1}\,B_{i+1}^{n+1}(s).
+\]
+Hence
+\[
+B_i^n(s)=(1-s)B_i^n(s)+sB_i^n(s)
+=\frac{n+1-i}{n+1}B_i^{n+1}(s)+\frac{i+1}{n+1}B_{i+1}^{n+1}(s).
+\]
+Insert this into \(\vect{F}(t)=\sum_{i=0}^n \vect{C}_iB_i^n(s)\):
+\[
+\vect{F}(t)=\sum_{i=0}^n \frac{n+1-i}{n+1}\vect{C}_i\,B_i^{n+1}(s)
++\sum_{i=0}^n \frac{i+1}{n+1}\vect{C}_i\,B_{i+1}^{n+1}(s).
+\]
+Reindex the second sum by \(j=i+1\) (so \(j=1,\dots,n+1\)):
+\[
+\vect{F}(t)=\sum_{i=0}^n \frac{n+1-i}{n+1}\vect{C}_i\,B_i^{n+1}(s)
++\sum_{j=1}^{n+1} \frac{j}{n+1}\vect{C}_{j-1}\,B_{j}^{n+1}(s).
+\]
+Now collect the coefficients of \(B_k^{n+1}(s)\).
+For \(k=0\) and \(k=n+1\) we obtain \(\vect{C}_0^{\ast}=\vect{C}_0\) and \(\vect{C}_{n+1}^{\ast}=\vect{C}_n\).
+For \(k=1,\dots,n\), both sums contribute and yield
+\[
+\vect{C}_k^{\ast}=\frac{k}{n+1}\vect{C}_{k-1}+\frac{n+1-k}{n+1}\vect{C}_k,
+\]
+which proves the claim.
+\end{proof}
+
+\subsection{Bézier Splines}\label{subsec:bezier-splines}
+
+High-degree Bézier curves are rarely used in practice: evaluation (\(\mathcal{O}(n^2)\)) becomes slower and local control becomes weak.
+Instead, one typically joins several low-degree Bézier segments into a spline.
+
+Let \(\vect{F}_0:[t_0,t_1]\to\R^d\) and \(\vect{F}_1:[t_1,t_2]\to\R^d\) be Bézier curves of the same degree \(n\) with control points
+\(\vect{C}_{0,0},\dots,\vect{C}_{0,n}\) and \(\vect{C}_{1,0},\dots,\vect{C}_{1,n}\), respectively.
+
+\paragraph{\(C^0\) continuity.}
+Since \(\vect{F}_0(t_1)=\vect{C}_{0,n}\) and \(\vect{F}_1(t_1)=\vect{C}_{1,0}\), the curves join continuously iff
+\[
+\vect{C}_{0,n}=\vect{C}_{1,0}.
+\]
+
+\paragraph{\(C^1\) continuity.}
+Using the endpoint tangent formula (with intervals \([t_0,t_1]\) and \([t_1,t_2]\)), a sufficient and standard condition for \(C^1\) continuity is
+\[
+\frac{n}{t_1-t_0}\bigl(\vect{C}_{0,n}-\vect{C}_{0,n-1}\bigr)
+=
+\frac{n}{t_2-t_1}\bigl(\vect{C}_{1,1}-\vect{C}_{1,0}\bigr),
+\]
+equivalently,
+\[
+\vect{C}_{0,n-1},\ \vect{C}_{0,n}(=\vect{C}_{1,0}),\ \vect{C}_{1,1}\ \text{are collinear}
+\quad\text{and}\quad
+\vect{C}_{0,n}
+=
+(1-\lambda)\vect{C}_{0,n-1}+\lambda\,\vect{C}_{1,1},
+\]
+with
+\[
+\lambda=\frac{t_1-t_0}{t_2-t_0}
+\quad\Longleftrightarrow\quad
+t_1=(1-\lambda)t_0+\lambda t_2.
+\]
+
+\paragraph{Piecewise cubic \(C^1\) interpolating Bézier spline.}
+Given interpolation points \(\vect{P}_0,\dots,\vect{P}_m\in\R^d\) at parameters \(t_0<\cdots<t_m\) and tangents \(\vect{T}_0,\dots,\vect{T}_m\in\R^d\),
+define \(m\) cubic Bézier pieces \(\vect{F}_i:[t_i,t_{i+1}]\to\R^d\) by control points
+\[
+\begin{aligned}
+\vect{C}_{i,0}&=\vect{P}_i,\\
+\vect{C}_{i,1}&=\vect{P}_i+\frac{t_{i+1}-t_i}{3}\,\vect{T}_i,\\
+\vect{C}_{i,2}&=\vect{P}_{i+1}-\frac{t_{i+1}-t_i}{3}\,\vect{T}_{i+1},\\
+\vect{C}_{i,3}&=\vect{P}_{i+1},
+\end{aligned}
+\qquad i=0,\dots,m-1.
+\]
+Then \(\vect{F}\) interpolates both positions and tangents, and is \(C^1\) at the knots.
+
+\paragraph{Automatic tangent choices.}
+If tangents are not given, common interior choices (\(i=1,\dots,m-1\)) are:
+\begin{itemize}
+  \item \textbf{FMMI\!L tangents (finite difference):}
+  \[
+  \vect{T}_i=\frac{\vect{P}_{i+1}-\vect{P}_{i-1}}{t_{i+1}-t_{i-1}}.
+  \]
+  \item \textbf{Bessel tangents:} \(\vect{T}_i=\vect{Q}_i'(t_i)\), where \(\vect{Q}_i\) is the quadratic interpolant through
+  \((t_{i-1},\vect{P}_{i-1})\), \((t_i,\vect{P}_i)\), \((t_{i+1},\vect{P}_{i+1})\).
+\end{itemize}
+Endpoint tangents can be chosen via:
+\begin{itemize}
+  \item \textbf{Overhauser:} \(\vect{T}_0=\vect{Q}_1'(t_0)\), \(\vect{T}_m=\vect{Q}_{m-1}'(t_m)\),
+  \item \textbf{Natural end conditions (cubic):} \(\vect{F}_0''(t_0)=\vect{F}_{m-1}''(t_m)=\vect{0}\), which implies
+  \[
+  \vect{C}_{0,1}=\frac{\vect{C}_{0,0}+\vect{C}_{0,2}}{2},
+  \qquad
+  \vect{C}_{m-1,2}=\frac{\vect{C}_{m-1,1}+\vect{C}_{m-1,3}}{2}.
+  \]
+\end{itemize}
+For closed curves (\(\vect{P}_0=\vect{P}_m\)), endpoints are treated like interior points.
+
+\paragraph{\(C^2\) continuity and the A-frame condition (cubic).}
+Two cubic Bézier pieces \(\vect{F}_0\) and \(\vect{F}_1\) join \(C^2\) at \(t_1\) if, in addition to the \(C^1\) condition, there exists \(\vect{D}\in\R^d\) such that
+\[
+\vect{C}_{0,2}=(1-\lambda)\vect{C}_{0,1}+\lambda\,\vect{D},
+\qquad
+\vect{C}_{1,1}=(1-\lambda)\vect{D}+\lambda\,\vect{C}_{1,2},
+\]
+with the same \(\lambda=\frac{t_1-t_0}{t_2-t_0}\).
+This is the \emph{A-frame condition}.
+
+\subsection{B-Splines}\label{subsec:bsplines}
+
+B-splines provide piecewise polynomial curves with built-in smoothness and strong local control.
+
+\paragraph{de Boor evaluation.}
+Fix a degree \(n\ge 1\). A B-spline curve \(\vect{F}\) with \(m+1\) pieces is defined by control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\)
+and a nondecreasing knot vector \(t_0,\dots,t_{2n+m+1}\in\R\).
+The curve is defined on \([t_n,t_{n+m+1}]\).
+Given \(t\in[t_n,t_{n+m+1}]\), choose the index \(k\in\{0,\dots,m\}\) such that
+\[
+t_{n+k}\le t \le t_{n+k+1}.
+\]
+Initialize
+\[
+\vect{D}_i^{0}(t)=\vect{D}_i,\qquad i=k,\dots,k+n,
+\]
+and for \(j=1,\dots,n\),
+\[
+\vect{D}_i^{j}(t)
+=
+\frac{t_{n+i+1}-t}{t_{n+i+1}-t_{i+j}}\,\vect{D}_i^{j-1}(t)
++
+\frac{t-t_{i+j}}{t_{n+i+1}-t_{i+j}}\,\vect{D}_{i+1}^{j-1}(t),
+\qquad i=k,\dots,k+n-j.
+\]
+Then \(\vect{F}(t)=\vect{D}_k^{n}(t)\).
+
+\begin{algorithm}[h]
+  \caption{de Boor algorithm (evaluate B-spline curve at \(t\))}
+  \label{alg:de-boor}
+  \begin{algorithmic}[1]
+    \Require degree \(n\), control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\), knots \(t_0,\dots,t_{2n+m+1}\), parameter \(t\in[t_n,t_{n+m+1}]\)
+    \Ensure value \(\vect{F}(t)\)
+    \State \(k \gets 0\)
+    \While{\(t_{n+k+1} < t\)}
+      \State \(k \gets k+1\)
+    \EndWhile
+    \For{\(i = 0 \TO n\)}
+      \State \(\vect{E}_i \gets \vect{D}_{k+i}\)
+    \EndFor
+    \For{\(j = 1 \TO n\)}
+      \For{\(i = 0 \TO n-j\)}
+        \State \(\alpha \gets \frac{t_{n+k+i+1}-t}{t_{n+k+i+1}-t_{k+i+j}}\), \(\beta \gets 1-\alpha\)
+        \State \(\vect{E}_i \gets \alpha\,\vect{E}_i + \beta\,\vect{E}_{i+1}\)
+      \EndFor
+    \EndFor
+    \State \Return \(\vect{E}_0\)
+  \end{algorithmic}
+\end{algorithm}
+
+The algorithm costs \(\mathcal{O}(n^2)\), and in practice \(n\) is typically small (often \(2\le n\le 5\)).
+
+\paragraph{B-spline basis representation.}
+The curve can also be written as
+\[
+\vect{F}(t)=\sum_{i=0}^{n+m}\vect{D}_i\,N_i^{n}(t),
+\qquad t\in[t_n,t_{n+m+1}],
+\]
+where the basis functions \(N_i^{n}\) are defined recursively by
+\[
+N_i^{0}(t)=
+\begin{cases}
+1, & t\in[t_i,t_{i+1}),\\
+0, & \text{otherwise},
+\end{cases}
+\qquad i=0,\dots,2n+m,
+\]
+and for \(j=1,\dots,n\),
+\[
+N_i^{j}(t)=\frac{t-t_i}{t_{i+j}-t_i}N_i^{j-1}(t)+\frac{t_{i+j+1}-t}{t_{i+j+1}-t_{i+1}}N_{i+1}^{j-1}(t),
+\qquad i=0,\dots,2n+m-j,
+\]
+with the convention that a fraction with zero denominator is treated as \(0\) (i.e. the corresponding term is omitted).
+
+\paragraph{Properties of B-spline basis functions.}
+For \(j\ge 0\):
+\begin{itemize}
+  \item partition of unity: \(\sum_i N_i^{j}(t)=1\) on the interior knot span of definition,
+  \item positivity: \(N_i^{j}(t)>0\) for \(t\in(t_i,t_{i+j+1})\),
+  \item local support: \(N_i^{j}(t)=0\) for \(t\notin[t_i,t_{i+j+1}]\),
+  \item derivative:
+  \[
+  \frac{\dif}{\dif t}N_i^{j}(t)=\frac{j}{t_{i+j}-t_i}N_i^{j-1}(t)-\frac{j}{t_{i+j+1}-t_{i+1}}N_{i+1}^{j-1}(t).
+  \]
+\end{itemize}
+
+\paragraph{Consequences for B-spline curves.}
+Let \(t\in[t_{n+k},t_{n+k+1}]\). Then
+\begin{itemize}
+  \item \textbf{Convex hull:} \(\vect{F}(t)\in\operatorname{conv}\{\vect{D}_k,\dots,\vect{D}_{k+n}\}\).
+  \item \textbf{Local control:} \(\vect{F}(t)\) depends only on \(\vect{D}_k,\dots,\vect{D}_{k+n}\).
+  \item \textbf{Derivative:}
+  \[
+  \vect{F}'(t)=\sum_{i=1}^{n+m}\vect{D}'_i\,N_i^{n-1}(t),
+  \qquad
+  \vect{D}'_i=\frac{n}{t_{i+n}-t_i}\bigl(\vect{D}_i-\vect{D}_{i-1}\bigr).
+  \]
+  \item \textbf{Affine invariance:} \(\phi(\vect{F}(t))=\sum_i \phi(\vect{D}_i)N_i^{n}(t)\) for any affine \(\phi\).
+\end{itemize}
+In \(\R^2\), B-splines also satisfy a variation diminishing property (proof is more involved than for Bézier curves).
+
+\paragraph{B-spline interpolation.}
+Given points \(\vect{P}_0,\dots,\vect{P}_{m+1}\in\R^d\), a standard approach is to impose interpolation at the parameter values \(t_n,\dots,t_{n+m+1}\):
+\[
+\vect{F}(t_{n+i})=\vect{P}_i,\qquad i=0,\dots,m+1.
+\]
+This yields the linear system
+\[
+\matr{M}\,\vect{D}=\vect{P},
+\]
+with unknown control points \(\vect{D}=[\vect{D}_0,\dots,\vect{D}_{n+m}]^\top\) and
+\[
+\matr{M}=
+\begin{bmatrix}
+N_0^{n}(t_{n}) & N_1^{n}(t_{n}) & \cdots & N_{n+m}^{n}(t_{n})\\
+N_0^{n}(t_{n+1}) & N_1^{n}(t_{n+1}) & \cdots & N_{n+m}^{n}(t_{n+1})\\
+\vdots & \vdots & \ddots & \vdots\\
+N_0^{n}(t_{n+m+1}) & N_1^{n}(t_{n+m+1}) & \cdots & N_{n+m}^{n}(t_{n+m+1})
+\end{bmatrix}.
+\]
+Due to local support, \(\matr{M}\) is banded (sparse near the diagonal). The system is underdetermined by \(n-1\) degrees of freedom, so one adds extra end conditions (e.g. natural/clamped/periodic) to obtain a unique solution.
+
+\paragraph{Cubic case and natural end conditions.}
+For cubic splines (\(n=3\)), the interpolation matrix becomes tridiagonal after incorporating standard end constraints, and can be solved very efficiently.
+In the scalar case (\(d=1\)), the natural cubic spline interpolant minimizes the bending energy
+\[
+\|f''\|_2^2=\int_{t_3}^{t_{m+4}} (f''(t))^2\,\dif t
+\]
+among all \(C^2\) interpolants satisfying the same data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\section{Linear Least Squares}
+Let \(\matr{A} \in \R^{m \times n}\), \(\vect{b} \in \R^m\) and consider the system of equations
+\begin{equation}\label{eq:overdetermined-system}
+\matr{A}\vect{x} 
+=
+\vect{b}
+\end{equation}
+with \(m > n\) (overdetermined system). 
+If \(\vect{b}\) does not happen to lie in the hyperplane spanned by the columns of \(\matr{A}\), i.e. \(\vect{b} \notin \operatorname{im}(\matr{A})\), then there is no solution, i.e. it is inconsitent.
+
+For the optimal solution, we require that \(\vect{p} = \matr{A}\vect{x}^* \in \operatorname{im}(\matr{A})\) is as close as possible to \(\vect{b}\), which means that the residual \(\vect{r} = \vect{b} - \matr{A}\vect{x}^*\) is perpendicular to \(\operatorname{im}(\matr{A})\):
+\tdplotsetmaincoords{70}{200}%
+\[
+\begin{tikzpicture}[scale = 2.5, tdplot_main_coords, font=\footnotesize]
+\coordinate (A1) at (0,0,0);
+\coordinate (A2) at (2,0,0);
+\coordinate (A3) at (2,2,0);
+\coordinate (A4) at (0,2,0);
+
+\coordinate (O) at (0.5,0.5,0);
+
+\coordinate (b) at (0.5,3,1.5);
+\coordinate (P) at (1.15,1.15,0);
+\fill[fill=green!20] (A1) -- (A2) -- (A3)  -- (A4) -- cycle;
+\node at (O) [right] {\(O\)};
+\draw[black, -latex] (O) -- (b);
+\draw[black!80, -latex] (O) -- (P);
+\draw[thick, black!50, densely dotted, latex-] (b) -- (P);
+\node[above right] at (b) {$\vect{b} \in \R^m$};
+% \node[below] at (P) {$\hat{u} = \mathcal{P} x$};
+\node[anchor=north west] at (P) {$
+% \vect{p} \in \operatorname{im}(\matr{A})
+\begin{aligned}
+\vect{p} 
+&= \matr{A}\vect{x}^* \\[-3pt]
+&\in \operatorname{im}(\matr{A}) 
+\end{aligned}
+$};
+
+% small right angle marker at P between residual (P--b) and plane normal
+\def\r{0.1} % size of right angle marker
+\draw[tdplot_main_coords] ($(P) + (0,0,\r)$) -- ($ (P) + (0,0,\r) + (\r,0,0) $) -- ($ (P) + (\r,0,0) $);
+
+\node[left] at ($0.5*($(b)+(P)$)$) {\(\vect{r}\)}; %{\(\vect{r} = \vect{b} - \vect{p}\)};
+
+ \draw[black] (2.3,2.3,0.4) node[above] 
+ {\(\operatorname{im}(\matr{A}) = \{\matr{A}\vect{x} : \vect{x} \in \R^n\} \subset \R^m\)} to [out=-90,in=90] ($(A3)+(-0.2,-0.2,0)$);
+\end{tikzpicture}
+\]
+
+Note that \(\vect{p} \in \operatorname{im}(\matr{A})\) iff  \(\vect{p} = \matr{A}\vect{x}^*\) for some \(\vect{x}^* \in \R^n\) and that
+\[
+\begin{aligned}
+\text{\(\vect{b} - \vect{p}\) perpendicular to \(\operatorname{im}(\matr{A})\)} & \Longleftrightarrow  (\vect{b} - \matr{A}\vect{x}^*) \perp \{\matr{A}\vect{x} : \vect{x} \in \R^n\} \\
+& \Longleftrightarrow  (\matr{A}\vect{x})^\top (\vect{b} - \matr{A}\vect{x}^*) = 0 \quad \forall \vect{x} \in \R^n \\
+& \Longleftrightarrow  \vect{x}^\top \matr{A}^\top (\vect{b} - \matr{A}\vect{x}^*) = 0 \quad \forall \vect{x} \in \R^n \\
+& \Longleftrightarrow  \matr{A}^\top (\vect{b} - \matr{A}\vect{x}^*) = \vect{0}_n \\
+& \Longleftrightarrow  \matr{A}^\top \vect{b} - \matr{A}^\top \matr{A}\vect{x}^* = \vect{0}_n
+\end{aligned}
+\]
+implying that the least-squares solution satisfies the normal equations
+\begin{equation}\label{eq:normal-equations}
+{\color{Red}\boxed{\color{black}
+\matr{A}^\top \matr{A}\vect{x}^* = \matr{A}^\top \vect{b}
+}}
+\end{equation}
+
+The residual \(\vect{r} = \vect{b} - \matr{A}\vect{x}^*\) is usually measured in 3 ways:
+\begin{itemize}
+  \item \(2\)-norm: \(\|\vect{r}\|_2 = \sqrt{\sum_{i=1}^{m} r_i^2}\)
+  \item squared error: \(\text{SE} = \|\vect{r}\|_2^2 = \sum_{i=1}^{m} r_i^2\)
+  \item root mean squared error: \(\text{RMSE} = \sqrt{\frac{1}{m} \sum_{i=1}^{m} r_i^2} = \frac{\|\vect{r}\|_2}{\sqrt{m}}\)
+\end{itemize}
+
+
+
+\subsection{Data Fitting (Functional Models)}
+
+One important application of least squares is data fitting, where we want to fit a model to given data points.
+
+Suppose we are given \(m\) data points \((t_1,y_1), \dots, (t_m,y_m)\), typically coming from measurements or simulations and may contain measurement noise or numerical errors.
+We want to choose a model \(y = f(t)\) that depends linearly on parameters \(c_1,\dots,c_n\), i.e., 
+\[
+f(t) = \sum_{j=1}^n c_j \varphi_j(t)
+\]
+for some given basis functions \(\varphi_1,\dots,\varphi_n : \R \to \R\).
+The data fitting workflow can be split into four steps:
+
+\begin{enumerate}
+  \item \textbf{Model choice:} 
+  Pick a model \(y = f(t)\) with parameters \(\vect{c} = (c_1,\dots,c_n)^\top\) that is reasonable from a modeling point of view.
+
+  \item \textbf{Force the model to match the data.} 
+  Plug the data into the model
+  \(
+  y_i = f(t_i) = \sum_{j=1}^n c_j \varphi_j(t_i)
+  \),
+  \(
+  i = 1,\dots,m
+  \),
+  and write this as a linear system
+  \[
+  \matr{A}\vect{c} =   
+  \begin{bmatrix}
+  \varphi_1(t_1) & \dots & \varphi_n(t_1) \\
+  \vdots         &       & \vdots         \\
+  \varphi_1(t_m) & \dots & \varphi_n(t_m)
+  \end{bmatrix}
+  \begin{bmatrix}
+  c_1 \\ \vdots \\ c_n
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  y_1 \\ \vdots \\ y_m
+  \end{bmatrix}
+  =
+  \vect{b}
+  \]
+  where
+  \(
+  \matr{A} \in \R^{m \times n}
+  \),
+  \( 
+  \vect{c} \in \R^n
+  \),
+  \(
+  \vect{b} \in \R^m
+  \).
+
+  \item \textbf{Solve the normal equations:} Find the vector \(\vect{c}^*\) that solves
+  \(
+  \matr{A}^\top \matr{A} \vect{c}^* = \matr{A}^\top \vect{b}
+  \)
+  or use a numerically more stable method (see \autoref{sec:qr-factorization}).
+
+  \item \textbf{Report an error measure:} Compute the residual
+  \(
+  \vect{r} = \vect{b} - \matr{A}\vect{c}^*
+  \)
+  and one of the standard error measures.
+\end{enumerate}
+
+
+
+
+\subsection{Curve Fitting (Parametric Models)}
+
+The previous setting fits \emph{functions} \(y = f(t)\). 
+In many geometric applications, however, we want to fit a \emph{parametric curve} in \(\R^d\) to points \(\vect{P}_0,\dots,\vect{P}_m \in \R^d\).
+
+\begin{enumerate}
+\item \textbf{Model choice:} 
+Choose basis functions \(B_0,\dots,B_n : \R \to \R\) (for example monomials, Bernstein polynomials, or B-spline basis functions) and consider the parametric curve
+\[
+\vect{F}(t) = \sum_{i=0}^n \vect{C}_i B_i(t)
+\]
+where \(\vect{C}_i \in \R^d\). 
+Pick some parameter values \(t_0,\dots,t_m\).
+
+\item \textbf{Force the model to match the data:} 
+Consider the \(m+1\) equations \(\vect{P}_k = \vect{F}(t_k)\).
+Define the matrices
+\[
+\matr{B} =
+\begin{bmatrix}
+B_0(t_0) & \dots & B_n(t_0) \\
+\vdots   &       & \vdots   \\
+B_0(t_m) & \dots & B_n(t_m)
+\end{bmatrix}
+\in \R^{(m+1)\times (n+1)}
+\]
+and \(
+\matr{C} =
+[
+\vect{C}_0,
+\ldots,
+\vect{C}_n
+]^\top
+\in \R^{(n+1)\times d}
+\),
+\(
+\matr{P} =
+[
+\vect{P}_0,
+\ldots,
+\vect{P}_m
+]^\top
+\in \R^{(m+1)\times d}
+\).
+Then the fitting conditions \(\vect{P}_k \approx \vect{F}(t_k)\) can be written compactly as
+\(
+\matr{B}\matr{C} \approx \matr{P}
+\).
+
+\item \textbf{Solve the normal equations:} 
+% Find the matrix \(\matr{C}^*\) that solves the normal equations
+% \(
+% \matr{B}^\top \matr{B} \matr{C}^* = \matr{B}^\top \matr{P}
+% \),
+% which can be done independently for the \(d\) columns of \(\matr{C}\) and \(\matr{P}\).
+We now have a matrix-valued least squares problem
+\[
+\min_{\matr{C}} \|\matr{P} - \matr{B}\matr{C}\|_F^2
+\]
+where \(\|\cdot\|_F\) is the Frobenius norm
+\begin{equation}\label{eq:frobenius-norm}
+\|\matr{R}\|_F^2 = \sum_{i,j} R_{i,j}^2
+\end{equation}
+The normal equations become
+\(
+\matr{B}^\top \matr{B}\,\matr{C}^* = \matr{B}^\top \matr{P}
+\)
+and this decouples into \(d\) standard least squares problems, one for each component of the curve.
+
+\item \textbf{Report an error measure:} compute the residual matrix 
+\(
+\matr{R} = \matr{P} - \matr{B}\matr{C}^* \in \R^{(m+1)\times d}
+\) and one of the standard error measures, where the \(2\)-norm is now replaced by the Frobenius norm \eqref{eq:frobenius-norm}.
+
+\end{enumerate}
+
+
+\paragraph{Initial parameterization.}
+
+We still have to choose parameter values \(t_0,\dots,t_m\). A common choice is
+\[
+t_0 = 0, 
+\qquad
+t_i = t_{i-1} + \|\vect{P}_i - \vect{P}_{i-1}\|^\alpha,\quad i=1,\dots,m,
+\]
+for some exponent \(\alpha \ge 0\). Typical choices are:
+\begin{itemize}
+  \item \(\alpha = 0\): uniform parameterization
+  \item \(\alpha = \tfrac12\): centripetal parameterization
+  \item \(\alpha = 1\): chord length parameterization
+\end{itemize}
+In practice, centripetal and chord length parameterizations often yield better fits than uniform parameterization.
+
+\paragraph{Parameter correction.}
+
+Even with a good parameterization, the residual vectors
+\[
+\vect{e}_i = \vect{P}_i - \vect{F}(t_i)
+\]
+usually do not measure the minimal distance between the data point \(\vect{P}_i\) and the curve \(\vect{F}\), since the error vectors \(\vect{e}_i\)
+are \emph{not} necessarily orthogonal to the curve.
+Our goal is now to modify the parameters such that the \(\vect{e}_i\) become orthogonal to the curve \(\vect{F}\).
+
+A simple improvement is to locally linearize \(\vect{F}\) at \(t_i\) by a first order Taylor expansion
+\[
+\vect{F}(t) \approx \vect{F}(t_i) + (t - t_i)\vect{F}'(t_i) = \vect{G}_i(t).
+\]
+We then choose a corrected parameter \(t_i^*\) such that the vector from \(\vect{P}_i\) to \(\vect{G}_i(t_i^*)\) is orthogonal to the tangent \(\vect{F}'(t_i)\). This leads to the update
+\[
+t_i^* = t_i + \frac{(\vect{P}_i - \vect{F}(t_i))^\top \vect{F}'(t_i)}{\|\vect{F}'(t_i)\|^2}
+\]
+Replacing \(t_i\) by \(t_i^*\) (and re-solving the least squares problem) usually reduces the distances \(\|\vect{P}_i - \vect{F}(t_i)\|\) and improves the overall fit. 
+In practice, one often performs several iterations of curve fitting plus parameter correction.
+
+
+
+\subsection{QR Factorization}\label{sec:qr-factorization}
+
+The normal equations \(\matr{A}^\top \matr{A}\vect{x}^* = \matr{A}^\top \vect{b}\) can be numerically problematic, since the condition number of \(\matr{A}^\top \matr{A}\) is approximately the square of that of \(\matr{A}\). 
+A more sophisticated method is to compute the least-squares solution directly from \(\matr{A}\) without forming \(\matr{A}^\top \matr{A}\).
+This can be done via the \emph{QR factorization} of \(\matr{A}\).
+
+\subsubsection{Classical Gram-Schmidt}
+
+Let \(\matr{A} = (\vect{a}_1,\dots,\vect{a}_n) \in \R^{m \times n}\) with linearly independent columns. The Gram--Schmidt process constructs orthonormal vectors \(\vect{q}_1,\dots,\vect{q}_n \in \R^m\) spanning the same subspace:
+\[
+\vect{y}_j = \vect{a}_j - \sum_{k=1}^{j-1} (\vect{a}_j^\top \vect{q}_k)\,\vect{q}_k, \quad \vect{q}_j = \frac{\vect{y}_j}{\|\vect{y}_j\|}
+\]
+If we set
+\(
+r_{k,j} = \vect{a}_j^\top \vect{q}_k
+\), \(k < j\) and
+\(
+r_{j,j} = \|\vect{y}_j\|
+\),
+then we can write
+\[
+\matr{A} = \matr{Q}\matr{R}
+\]
+where \(\matr{Q} = (\vect{q}_1,\dots,\vect{q}_n) \in \R^{m \times n}\) has orthonormal columns and \(\matr{R} \in \R^{n \times n}\) is upper triangular. 
+This is the \emph{reduced} QR factorization and can be computed using \autoref{alg:classical-gram-schmidt}.
+
+\begin{algorithm}[h]
+    \caption{Classical Gram-Schmidt orthogonalization}
+    \label{alg:classical-gram-schmidt}
+    \begin{algorithmic}[1]
+      \Require  matrix \(\matr{A} \in \R^{m \times n}\), where \(\vect{A}_j\), \(j=1,\dots,n\) are linearly independent
+      \Ensure reduced QR factorization \(\matr{A} = \matr{Q}\matr{R}\) with \(\matr{Q} \in \R^{m \times n}\), \(\matr{R} \in \R^{n \times n}\)
+      \For{\(j = 1 \TO n\)} 
+        \State \(\vect{y} \gets \vect{A}_j\)
+        \For{\(i = 1 \TO j-1\)}
+          \State \(r_{i,j} \gets \vect{q}_i^\top \vect{A}_j\) \label{line:gs-dotproduct}
+          \State \(\vect{y} \gets \vect{y} - r_{i,j} \vect{q}_i\) \Comment{subtract projection of \(\vect{A}_j\) onto \(\vect{q}_i\)}
+        \EndFor
+        \State \(r_{j,j} \gets \|\vect{y}\|_2\)
+        \State \(\vect{q}_j \gets \vect{y} / r_{j,j}\) \Comment{normalize to unit length}
+      \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+
+When the method is successful, it is customary to fill out the matrix of orthogonal unit vectors \(\matr{Q}\) to a complete basis of \(\R^m\), to achieve the \emph{full} QR factorization. 
+This can be done, for example, by adding \(m-n\) extra vectors to the \(\vect{A}_j\), so that the \(m\) vectors span \(\R^m\), and carrying out the Gram-Schmidt method. 
+In terms of the basis of \(\R^m\) formed by \(q_1, \ldots, q_m\), the original vectors can be expressed as
+\[
+\matr{A} = \matr{Q}\matr{R}
+\]
+where \(\matr{Q} \in \R^{m \times m}\) and \(\matr{R} \in \R^{m \times n}\) with zeros below the \(n\times n\) upper triangular block.
+
+\begin{definition}\label{def:orthogonal-matrix}
+A square matrix \(\matr{Q}\) is orthogonal if \(\matr{Q}^\top = \matr{Q}^{-1}\)
+\end{definition}
+\begin{fact}
+An orthogonal matrix \(\matr{Q} \in \R^{m \times m}\) satisfies
+\begin{itemize}
+  \item \(\matr{Q}^\top\) also orthogonal
+  \item preserves the Euclidian norm of a vector: 
+  \begin{equation}\label{eq:orthogonal-matrix-norm-preservation}
+  \|\matr{Q}\vect{x}\|_2 
+  = \sqrt{(\matr{Q}\vect{x})^\top (\matr{Q}\vect{x})}
+  = \sqrt{\vect{x}^\top \matr{Q}^\top \matr{Q} \vect{x}}
+  = \sqrt{\vect{x}^\top \vect{x}}
+  = \|\vect{x}\|_2
+  \end{equation}
+  for all \(\vect{x} \in \R^m\)
+  \item product of two orthogonal matrices is orthogonal
+  \item condition number \(\kappa_2(\matr{Q}) = 1\)
+  \item \(\kappa_2(\matr{A}) = \kappa_2(\matr{Q}\matr{A}) = \kappa_2(\matr{A}\matr{Q})\)
+  \qedhere
+\end{itemize}
+\end{fact}
+
+
+\subsubsection{Solving least squares problems} 
+For an overdetermined system \(\matr{A}\vect{x} = \vect{b}\),
+\[
+\|\underbrace{\matr{A}\vect{x} - \vect{b}}_{=: \vect{r}}\|_2
+= 
+\|\matr{Q}\matr{R}\vect{x} - \vect{b}\|_2
+= 
+\|\matr{Q}(\matr{R}\vect{x} - \matr{Q}^\top \vect{b})\|_2
+\overset{\eqref{eq:orthogonal-matrix-norm-preservation}}{=} 
+\|\underbrace{\matr{R}\vect{x} - \matr{Q}^\top \vect{b}}_{=: \vect{e}}\|_2
+\]
+since \(\matr{Q}\) is orthogonal. 
+Minimizing the norm of \(\vect{r} \in \R^m\) is therefore equivalent to minimizing the norm of \(\vect{e} \in \R^m\).
+Writing out \(\vect{e}\) as
+\NiceMatrixOptions { 
+  custom-line = {
+    command= H, 
+    tikz= { 
+      densely dotted, shorten >= 2pt, shorten <= 2pt 
+    },
+    width= 0.4mm
+  }, 
+}
+\[
+\vect{e}
+=
+\begin{bNiceArray}{c}
+e_1 \\
+\vdots \\
+e_n \\
+\H
+e_{n+1} \\
+\vdots \\
+e_m
+\end{bNiceArray}
+=
+\begin{bNiceArray}{ccc}
+r_{1,1} &  \dots & r_{1,n} \\
+& \ddots & \vdots \\
+0 &        & r_{n,n} \\
+\H 
+0 & \dots & 0 \\
+\vdots &        & \vdots \\
+0 & \dots & 0
+\end{bNiceArray}
+\begin{bNiceArray}{c}
+x_1 \\
+\vdots \\
+x_n
+\end{bNiceArray}
+-
+\begin{bNiceArray}{c}
+{d}_1 \\
+\vdots \\
+{d}_n \\
+\H
+{d}_{n+1} \\
+\vdots \\
+{d}_{m}
+\end{bNiceArray}
+=
+\matr{R}\vect{x} - \vect{d}
+\]
+where \(\vect{d} = \matr{Q}^\top \vect{b}\), we notice that the last \(m-n\) components of \(\vect{e}\) are always \(-{d}_{n+1}, \dots, -{d}_m\), regardless of \(\vect{x}\).
+So, all we can do to minimize the norm of \(\vect{e}\) is to make the first \(n\) components as small as possible.
+But we can actually make them zero by solving
+\begin{equation}\label{eq:qr-least-squares-solution}
+\hat{\matr{R}}\vect{x}^* = \hat{\vect{d}}
+\end{equation}
+where \(\hat{\vect{d}} = [{d}_1, \dots, {d}_n]^\top\) and \(\hat{\matr{R}} \in \R^{n \times n}\) is the upper triangular part of \(\matr{R}\).
+Hence, \(\vect{x}^*\) of \eqref{eq:qr-least-squares-solution} is the least-squares solution of \(\matr{A}\vect{x} = \vect{b}\), and the squared error of the residual is
+\(
+\|\vect{r}\|_2^2 = \|\vect{e}\|_2^2 = d_{n+1}^2 + \dots + d_m^2
+\).
+
+
+\subsubsection{Modified Gram--Schmidt and Householder}
+An improvement in stability can be achieved by replacing \(\vect{A}_j\) in line \ref{line:gs-dotproduct} of \autoref{alg:classical-gram-schmidt} by the current \(\vect{y}\) vector, which is mathematically equivalent since
+\[
+r_{i,j} = \vect{q}_i^\top \vect{y}
+= \vect{q}_i^\top \left( \vect{A}_j - \sum_{k=1}^{i-1} r_{k,j} \vect{q}_k \right)
+= \vect{q}_i^\top \vect{A}_j - \sum_{k=1}^{i-1} r_{k,j} \underbrace{\vect{q}_i^\top \vect{q}_k}_{=0}
+= \vect{q}_i^\top \vect{A}_j
+\]
+
+
+
+For even better stability and efficiency, QR is often computed with Householder reflections.
+
+
+
+\subsection{Weighted Least Squares}
+
+
+While the least squares solution \(\vect{x}^*\)) minimizes the \(2\)-norm of the residual \(\vect{r} = \vect{b} - \matr{A}\vect{x}\), that is,
+\[
+\vect{x}^* 
+= \argmin_{\vect{x}} \|\vect{r}\|_2
+= \argmin_{\vect{x}} \|\vect{r}\|_2^2
+= \argmin_{\vect{x}} \sum_{i=1}^m |r_i|^2
+\]
+where \(r_i = b_i - (\matr{A}\vect{x})_i\), 
+some of the residual errors \(r_i\) can be rather big, while others are very small.
+But sometimes we want to emphasize some data points more than others. 
+If we want, for example, to guarantee some error tolerance, then it might be better to reduce the \emph{maximum} error and search for
+\begin{equation}\label{eq:minimax-least-squares}
+\vect{x}^\star
+= \argmin_{\vect{x}} \|\vect{r}\|_\infty
+= \argmin_{\vect{x}} \max_{i=1,\dots,m} |r_i|
+\end{equation}
+where \(r_i = b_i - (\matr{A}\vect{x})_i\).
+This can be done by solving a \emph{linear programming} problem, but also via \emph{weighted} least squares.
+The main idea is to give more importance to the data with big residuals when minimizing the norm of the residual and consider a weighted norm instead,
+\begin{equation}\label{eq:weighted-least-squares}
+\vect{x}^* = \argmin_{\vect{x}} \sum_{i=1}^m w_i |b_i - (\matr{A}\vect{x})_i|^2
+\end{equation}
+given weights \(w_1,\dots,w_m > 0\). The sum can be written in matrix form as
+\[
+\sum_{i=1}^m w_i | b_i - (\matr{A}\vect{x})_i |^2
+= \left\|\matr{W}^{1/2}(\vect{b} - \matr{A}\vect{x})\right\|_2^2
+\]
+where \(\matr{W} = \operatorname{diag}(w_1,\dots,w_m)\). The corresponding normal equations are
+\[
+\matr{A}^\top \matr{W} \matr{A}\,\vect{x}^* = \matr{A}^\top \matr{W}\vect{b}
+\]
+
+If we want to find a solution of \eqref{eq:minimax-least-squares}, it is not enough to just solve the weighted least squares problem once \eqref{eq:weighted-least-squares} with some fixed weights \(w_i\)
+Instead, we have to iteratively re-weigh the data by updating the weights according to 
+\begin{equation}\label{eq:weight-update}
+w_i^* = w_i |b_i - (\matr{A}\vect{x}^*)_i|
+\end{equation}
+for \(i=1,\dots,m\), thus increasing the importance of the data with big residuals and decreasing the weight for data with small residuals.
+After a few iterations of solving \eqref{eq:weighted-least-squares} and correcting the weights as in \eqref{eq:weight-update}, we get the optimal solution \(\vect{x}^\star\) of \eqref{eq:minimax-least-squares}.
+This solution is characterized by the fact that the corresponding residual \(\vect{r}^\star = \vect{b} - \matr{A}\vect{x}^\star\) has at least \(n+1\) alternating extremal components.
+
+
+\subsection{Least-Norm Solutions}
+
+If \(\matr{A} \in \R^{m \times n}\) with \(m < n\), then the system \(\matr{A}\vect{x} = \vect{b}\) is \emph{underdetermined} and typically has infinitely many solutions. 
+
+Among all solutions, we are often interested in the one with smallest 2-norm:
+\[
+\vect{x}_* = \argmin \bigl\{ \|\vect{x}\|_2 : \matr{A}\vect{x} = \vect{b} \bigr\}
+\]
+
+Since the set \(P = \{\vect{x} \in \R^n : \matr{A}\vect{x} = \vect{b}\}\) of all solutions can be seen geometrically as an affine subspace (a hyperplane) in \(\R^n\), this particular least-norm solution \(\vect{x}_*\) is the point in \(P\) that is closest to the origin, which is equivalent to saying that \(\vect{x}_*\) is orthogonal to \(\vect{y} - \vect{x}_*\) for any \(\vect{y} \in P\):
+\[
+\begin{tikzpicture}[>=Latex, font=\footnotesize, scale=1.2]
+\draw [] (-2,0)--(2,0);
+\draw [] (0,-1)--(0,1.7);
+\draw[thick, draw=green!60, shorten <=-1cm] (-1.5,0)--(1.5,1.5) node [right] {$P = \{\vect{x} \in \R^n : \matr{A}\vect{x} = \vect{b}\} \subset \R^n$};
+\coordinate (x_star) at (-0.3, 0.6);
+\node[circle, fill=black, inner sep=0.9pt] at (x_star) {};
+\draw[densely dotted] (0,0) -- (x_star) node [above, outer sep=3pt, inner sep=0pt] {$\vect{x}_*$};
+\def\r{0.06}
+\draw[] ($(x_star) - (2*\r, \r)$) -- ($(x_star) - (2*\r, \r) + (\r, -2*\r)$) -- ($(x_star) + (\r, -2*\r)$);
+\end{tikzpicture}
+\]
+
+
+Assuming \(\matr{A}\) has full row rank, then \(\vect{x}_*\) is given by
+\[
+\vect{x}_* = \matr{A}^\top (\matr{A}\matr{A}^\top)^{-1}\vect{b}
+\]
+and it is not hard to verify that this choice satisfies indeed the aforementioned orthogonality condition,
+\[
+\begin{aligned}
+(\vect{y} - \vect{x}_*)^\top \vect{x}_*
+=& 
+(\vect{y} - \vect{x}_*)^\top \matr{A}^\top (\matr{A}\matr{A}^\top)^{-1}\vect{b} \\
+= &
+(\matr{A}(\vect{y} - \vect{x}_*))^\top (\matr{A}\matr{A}^\top)^{-1}\vect{b} \\
+= &
+(\matr{A}\vect{y} - \matr{A}\vect{x}_*)^\top (\matr{A}\matr{A}^\top)^{-1}\vect{b} \\
+= & 0
+\end{aligned}
+\]
+for all \(\vect{y} \in P\), since \(\vect{x}_*, \vect{y} \in P\) imply that \(\matr{A}\vect{x}_* = \matr{A}\vect{y} = \vect{b}\).
+One can view \(\vect{x}_*\) as the orthogonal projection of the origin onto the hyperplane \(P\).
+
+
+
+
+\subsection{Pseudoinverse}
+
+Both the least-squares solution \(\vect{x}^*\) and least-norm solution \(\vect{x}_*\) can be expressed nicely using the \emph{pseudoinverse} \(\matr{A}^\dagger \in \R^{n \times m}\) of \(\matr{A} \in \R^{m \times n}\):
+\begin{itemize}
+  \item If \(m > n\) and \(\matr{A}\) has full column rank \(n\), then
+  \[
+  \matr{A}^\dagger = (\matr{A}^\top \matr{A})^{-1}\matr{A}^\top
+  \]
+  and \(\vect{x}^* = \matr{A}^\dagger\vect{b}\) is the least-squares solution of \(\matr{A}\vect{x} \approx \vect{b}\).
+
+  \item If \(m < n\) and \(\matr{A}\) has full row rank \(m\), then
+  \[
+  \matr{A}^\dagger = \matr{A}^\top (\matr{A}\matr{A}^\top)^{-1}
+  \]
+  and \(\vect{x}_* = \matr{A}^\dagger\vect{b}\) is the least-norm solution of \(\matr{A}\vect{x} = \vect{b}\).
+\end{itemize}
+
+In both cases, if we consider the singular value decomposition 
+\[
+\matr{A} = \matr{U}\matr{\Sigma}\matr{V}^\top
+\]
+of \(\matr{A}\) and define the pseudoinverse of \(\matr{\Sigma} \in \R^{m \times n}\) to be the matrix \(\matr{\Sigma}^\dagger \in \R^{n \times m}\) with the reciprocals \(1/\sigma_i\), \(i=1,\dots,r\), on the diagonal, where \(r = \min(m,n)\) is the rank of \(\matr{A}\) and \(\matr{\Sigma}\), then
+\[
+\matr{A}^\dagger = \matr{V}\matr{\Sigma}^\dagger \matr{U}^\top
+\]
+
+This definition of the pseudoinverse \(\matr{A}^\dagger\) works even if \(\matr{A}\) is not a full rank matrix, and in that case \(\vect{x} = \matr{A}^\dagger \vect{b}\) is among all vectors that minimize \(\|\vect{b} - \matr{A}\vect{x}\|_2\) the one with least norm.
+
+
+
+
+
+
+
+
+\clearpage
+
+
+
+
+
+\section{Nonlinear Least Squares}
+
+Suppose we are given \(m\) functions
+\(
+r_i : \R^n \to \R
+\),
+\(i = 1,\dots,m
+\)
+with \(m > n\) and would like to simultaneously solve the \(m\) equations
+\begin{equation}\label{eq:nls-residuals}
+% \vect{r}(\vect{x}) =
+\begin{bmatrix}
+r_1(\vect{x}) \\
+\vdots        \\
+r_m(\vect{x})
+\end{bmatrix}
+=
+\vect{0}_m
+\end{equation}
+in the \(n\) unknowns \(x_1,\ldots,x_n\).
+As in the case of linear least squares, this is not possible in general, but we can minimize instead the energy \(E : \R^n \to \R\), which is given as the sum of squares
+\begin{equation}\label{eq:nls-energy}
+E(\vect{x})
+=
+\sum_{i=1}^m r_i(\vect{x})^2
+=
+\vect{r}(\vect{x})^\top \vect{r}(\vect{x})
+\ge 0
+\end{equation}
+where \(\vect{r} = [r_1,\dots,r_m]^\top : \R^n \to \R^m\).
+If there exists a point \(\vect{x}\) with \(\vect{r}(\vect{x}) = \vect{0}_m\), then \(E(\vect{x}) = 0\) and the minimum is zero; otherwise, any minimizer \(\vect{x}^*\) of \eqref{eq:nls-energy} is called a \emph{nonlinear least squares solution} of the system \eqref{eq:nls-residuals}.
+
+To minimize \(E\), we set the gradient \(\nabla E : \R^n \to \R^n\) to zero,
+\[
+\nabla E(\vect{x})
+=
+2\,\matr{J}_{\vect{r}}(\vect{x})^\top \vect{r}(\vect{x})
+= \vect{0}_n
+\]
+where
+\[
+\matr{J}_{\vect{r}}(\vect{x})
+=
+\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})
+=
+\begin{bmatrix}
+\frac{\partial r_1(\vect{x})}{\partial x_1} & \dots & \frac{\partial r_1(\vect{x})}{\partial x_n} \\
+\vdots                                       &       & \vdots                                   \\
+\frac{\partial r_m(\vect{x})}{\partial x_1} & \dots & \frac{\partial r_m(\vect{x})}{\partial x_n}
+\end{bmatrix}
+\in \R^{m \times n}
+\]
+denotes the Jacobian of \(\vect{r}\).
+It is convenient to define
+\begin{equation}\label{eq:nls-F-def}
+\vect{F}(\vect{x})
+=
+\frac{1}{2}\,\nabla E(\vect{x})
+=
+\matr{J}_{\vect{r}}(\vect{x})^\top \vect{r}(\vect{x})
+\in \R^n
+\end{equation}
+since nonlinear least squares can then be seen as the problem of finding a zero of \(\vect{F}\),
+which can be done with the multivariate Newton method.
+Let
+\(
+\matr{J}_{\vect{F}}(\vect{x})
+=
+\frac{\partial}{\partial \vect{x}} \vect{F}(\vect{x})
+\in \R^{n \times n}
+\)
+denote the Jacobian of \(\vect{F}\).
+Given a current iterate \(\vect{x}^{(k)}\), a Newton step \(\vect{s}^{(k)}\) is obtained by
+\begin{equation}\label{eq:nls-newton-step}
+\vect{x}^{(k+1)} = \vect{x}^{(k)} 
+-
+\left(\matr{J}_{\vect{F}}(\vect{x}^{(k)})\right)^{-1}
+\vect{F}(\vect{x}^{(k)})
+\end{equation}
+where, using \eqref{eq:nls-F-def} and applying the product rule, we have
+% \begin{equation}\label{eq:nonlinear-least-squares}
+\[
+\begin{aligned}
+\matr{J}_{\vect{F}}(\vect{x}) 
+&=
+\frac{\partial}{\partial \vect{x}} \left( \left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})\right)^{\top} \vect{r}(\vect{x}) \right) \\
+&=
+\left(\frac{\partial}{\partial \vect{x}}\left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x}) \right)^{\top} \right) \vect{r}(\vect{x}) + \left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})\right)^{\top} \left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})\right) \\
+&={
+\underbrace{\left(\frac{\partial^2}{\partial \vect{x}^2} \vect{r}(\vect{x}) \right)}_{\in \R^{m\times (n \times n)}}}^{\top} \vect{r}(\vect{x}) + \left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})\right)^{\top} \left(\frac{\partial}{\partial \vect{x}} \vect{r}(\vect{x})\right) \\
+% &=
+% \begin{bmatrix}
+% \matr{H}_{r_1}(\vect{x}) & \cdots & \matr{H}_{r_m}(\vect{x})
+% \end{bmatrix}
+% \begin{bmatrix}
+% r_1(\vect{x}) \\
+% \vdots \\
+% r_m(\vect{x})
+% \end{bmatrix}
+% +
+% \matr{J}_{\vect{r}}(\vect{x})^{\top} \matr{J}_{\vect{r}}(\vect{x}) \\
+&=
+\underbrace{
+\left[
+\matr{H}_{r_1}(\vect{x}), \ldots, \matr{H}_{r_m}(\vect{x})
+\right]
+}_{\in \R^{(n \times n) \times m}}
+\left[
+\begin{smallmatrix}
+r_1(\vect{x}) \\
+\vdots \\
+r_m(\vect{x})
+\end{smallmatrix}
+\right]
++
+\matr{J}_{\vect{r}}(\vect{x})^{\top} \matr{J}_{\vect{r}}(\vect{x}) \\
+&=
+\sum_{i=1}^{m} r_i(\vect{x}) \matr{H}_{r_i}(\vect{x}) + \matr{J}_{\vect{r}}(\vect{x})^{\top} \matr{J}_{\vect{r}}(\vect{x})
+% &=
+% \begin{bmatrix}
+% \begin{bmatrix}
+% \frac{\partial^2 r_1(\vect{x})}{\partial x_1 \partial x_1} & \cdots & \frac{\partial^2 r_1(\vect{x})}{\partial x_1 \partial x_n} \\
+% \vdots & \ddots & \vdots \\
+% \frac{\partial^2 r_1(\vect{x})}{\partial x_n \partial x_1} & \cdots & \frac{\partial^2 r_1(\vect{x})}{\partial x_n \partial x_n} 
+% \end{bmatrix}
+% &
+% \cdots
+% &
+% \begin{bmatrix}
+% \frac{\partial^2 r_m(\vect{x})}{\partial x_n \partial x_1} & \cdots & \frac{\partial^2 r_m(\vect{x})}{\partial x_n \partial x_n} \\
+% \vdots & \ddots & \vdots \\
+% \frac{\partial^2 r_m(\vect{x})}{\partial x_n \partial x_1} & \cdots & \frac{\partial^2 r_m(\vect{x})}{\partial x_n \partial x_n}  
+% \end{bmatrix}
+% \end{bmatrix}
+% \begin{bmatrix}
+% r_1(\vect{x}) \\
+% \vdots \\
+% r_m(\vect{x})
+% \end{bmatrix} \\
+% &+
+\end{aligned}
+\]
+% \end{equation}
+where \(\matr{H}_{r_i}(\vect{x}) \in \R^{n \times n}\) is the Hessian of \(r_i\).
+Computing \(\matr{J}_{\vect{F}}\) exactly involves the calculation of \(m n^2\) second derivatives of the residuals \(r_i\), which can be expensive.
+The \nameref{alg:gauss-newton} simplifies Newton's method by replacing \(\matr{J}_{\vect{F}}\) with the first order approximation
+\begin{equation}\label{eq:gauss-newton-approx}
+\matr{J}_{\vect{F}}(\vect{x})
+\approx
+\matr{J}_{\vect{r}}(\vect{x})^\top \matr{J}_{\vect{r}}(\vect{x})
+\end{equation}
+
+Replacing \(\matr{J}_{\vect{F}}\) in \eqref{eq:nls-newton-step} by the approximation \eqref{eq:gauss-newton-approx}, we obtain a linear least squares problem which can be solved with the same techniques as in the linear case (normal equations, QR factorization, etc.).
+
+\begin{algorithm}[h]
+  \caption{Gauss-Newton method}
+  \label{alg:gauss-newton}
+  \begin{algorithmic}[1]
+    \Require residual function \(\vect{r} : \R^n \to \R^m\), \(\vect{x}^{(0)}\), \(k_{\max}\), \(\varepsilon_{\text{tol}} > 0\)
+    \Ensure approximation \(\vect{x}^*\) that (locally) minimizes \(E(\vect{x}) = \|\vect{r}(\vect{x})\|_2^2\)
+    \For{\(k = 0 \TO k_{\max}-1\)}
+      \State \(\vect{r}^{(k)} \gets \vect{r}(\vect{x}^{(k)})\)
+      \State \(\matr{J}^{(k)} \gets \matr{J}_{\vect{r}}(\vect{x}^{(k)})\)
+      \State solve
+      \(
+      \matr{J}^{(k)\top}\matr{J}^{(k)} \vect{s}^{(k)}
+      =
+      \matr{J}^{(k)\top} \vect{r}^{(k)}
+      \)
+      for \(\vect{s}^{(k)}\)
+      \State \(\vect{x}^{(k+1)} \gets \vect{x}^{(k)} - \vect{s}^{(k)}\)
+      \If{\(\|\vect{s}^{(k)}\|_2 < \varepsilon_{\text{tol}}\)}
+        \State \textbf{break}
+      \EndIf
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{remark}
+If each residual is linear in \(\vect{x}\), say \(r_i(\vect{x}) = b_i - \vect{a}_i^\top \vect{x}\), then
+\(
+\vect{r}(\vect{x}) = \vect{b} - \matr{A}\vect{x}
+\)
+with \(\matr{A}\) having rows \(\vect{a}_i^\top\), and
+\(
+\matr{J}_{\vect{r}}(\vect{x}) = -\matr{A}
+\)
+is constant.
+In this case, the Gauss--Newton step reduces to the normal equations
+\(
+\matr{A}^\top \matr{A}\vect{x}^* = \matr{A}^\top \vect{b}
+\),
+and the method converges in a single iteration to the linear least-squares solution.
+\end{remark}
+
+Depending on the initial guess \(\vect{x}^{(0)}\), \autoref{alg:gauss-newton} may converge very slowly.
+This can be improved, either by adding a ``regularization term'', which is known as the \emph{Levenberg-Marquardt} method, or by using the exact derivative \(\matr{J}_{\vect{F}}\).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

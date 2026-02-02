@@ -1,0 +1,1400 @@
+% author: Fabian Bosshard % © CC BY 4.0
+
+\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+\usepackage{ifthen}
+\usepackage{iftex}
+\usepackage{csquotes}
+
+\usepackage[T1]{fontenc}     % handle accented glyphs properly
+\usepackage[english]{babel}  % load the hyphenation patterns you need
+
+
+
+\usepackage[automark]{scrlayer-scrpage}
+% \clearpairofpagestyles
+% \ofoot{\pagemark} % für ein einseitiges Dokument: \ofoot platziert den Inhalt in der äußeren Fußzeile (unten rechts)
+\pagestyle{scrheadings}
+
+% \renewcommand{\familydefault}{\sfdefault} % sans serif font for text (math font is still serif)
+
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1
+ {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN
+   { \c{\(} (.*?) \c{\)} } % look for \(...\) (lazily)
+   { \cM\$ \1 \cM\$ }      % replace with $...$
+   \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl % do the usual
+ }
+\ExplSyntaxOff
+
+% save soul's \hl under a private name
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
+
+% punchy highlighter colors
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+
+
+% master highlight macro: \hl[level]{text}, default = green
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+
+
+
+
+
+
+
+% \usepackage[left=20mm, right=20mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=25mm, right=25mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=30mm, right=30mm, top=20mm, bottom=30mm]{geometry}
+% \usepackage[left=20mm, right=60mm, top=20mm, bottom=30mm]{geometry}
+\usepackage[left=35mm, right=35mm, top=20mm, bottom=30mm]{geometry}
+
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+\usepackage{accents}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+\usepackage{caption, subcaption}
+
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+\usepackage{pifont}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings}
+\usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
+\usepackage{tikz-3dplot}
+\usepackage{tikzpagenodes}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz/]
+\usepackage{pgfplots}
+
+
+
+\usetikzlibrary{shapes,arrows,positioning,calc,chains,scopes}
+
+% colors
+\definecolor{snowymint}{HTML}{E3F8D1}
+\definecolor{wepeep}{HTML}{FAD2D2}
+\definecolor{portafino}{HTML}{F5EE9D}
+\definecolor{plum}{HTML}{DCACEF}
+\definecolor{sail}{HTML}{A3CEEE}
+\definecolor{highland}{HTML}{6D885A}
+
+\tikzstyle{signal}=[arrows={-latex},draw=black,line width=1.5pt,rounded corners=4pt]
+
+% RNN
+\tikzstyle{block}=[draw=black,line width=1.0pt]
+\tikzstyle{cell}=[style=block,draw=highland,fill=snowymint,
+    rounded corners]
+\tikzstyle{celllayer}=[style=block,draw,fill=portafino,
+    inner sep=1pt,outer sep=0,
+    minimum width=28pt, minimum height=14pt]
+\tikzstyle{pointwise}=[style=block,circle,fill=wepeep,
+    inner sep=0pt,outer sep=0, minimum size=11pt]
+
+\def\iolen{24pt}
+\def\intergape{2pt}
+
+% MLP and CNN
+\tikzstyle{netnode}=[circle, inner sep=0pt, text width=22pt, align=center, line width=1.0pt]
+\tikzstyle{inputnode}=[netnode, fill=sail,draw=black]
+\tikzstyle{hiddennode}=[netnode, fill=snowymint,draw=black]
+\tikzstyle{outputnode}=[netnode, fill=plum,draw=black]
+
+% Architecture
+\def\layerwidth{90pt}
+\def\layerheight{14pt}
+
+\tikzstyle{layer}=[style=block, draw, fill=black!20!white,
+    inner sep=1pt,outer sep=0, font=\footnotesize,
+    text centered, 
+    minimum width=\layerwidth, minimum height=\layerheight]
+
+\tikzstyle{fc}=[style=layer, fill=blue!30!white]
+\tikzstyle{conv}=[style=layer, fill=green!30!white]
+\tikzstyle{activation}=[style=layer, fill=orange!30!white]
+\tikzstyle{pool}=[style=layer, fill=red!30!white]
+\tikzstyle{bn}=[style=layer, fill=cyan!30!white]
+\tikzstyle{recurrent}=[style=layer, fill=purple!30!white]
+\tikzstyle{softmax}=[style=layer, fill=yellow!30!white]
+\tikzstyle{point}=[]
+\tikzstyle{branch}=[coordinate]
+
+\def\vlayerwidth{30pt}
+\def\vlayerheight{3pt}
+\def\vblockheight{28pt}
+
+\tikzstyle{vlayer}=[minimum width=\vlayerwidth, minimum height=\vlayerheight]
+\tikzstyle{vblock}=[minimum width=\vlayerwidth, minimum height=\vblockheight, text width=1cm, align=center]
+
+
+% Precision, Recall
+\colorlet{fn}{gray!90!green!30!white}
+\colorlet{tp}{green!40!white}
+\colorlet{fp}{red!40!white}
+\colorlet{tn}{gray!90!red!20!white}
+
+
+% define colors
+\definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{mypurple}{rgb}{128, 0, 128} 
+\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+% \renewcommand{\emph}[1]{\textcolor{highlightpurple}{#1}}
+% \renewcommand{\emph}[1]{\textsl{#1}}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+\usepackage{thmtools}
+
+\newlength{\thmspace}
+\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+% ===== main assertion-style family (Theorem, Lemma, etc.) =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\vartriangleleft},
+  postheadspace=1em
+]{assertionstyle}
+
+\declaretheorem[
+  style=assertionstyle,
+  name=Theorem,
+  numberwithin=section   % <-- resets in each section
+]{theorem}
+
+\declaretheorem[style=assertionstyle, name=Lemma,       sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle, name=Corollary,   sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle, name=Proposition, sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle, name=Conjecture,  sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
+
+
+% ===== definitions =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{definitionstyle}
+
+\declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
+
+% ===== exercises, solutions =====
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ding{45},
+  postheadspace=1em
+]{exercisestyle}
+\declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
+\declaretheoremstyle[
+  headfont=\bfseries\color{red},
+  bodyfont=\normalfont,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{red}\blacktriangleleft},
+  postheadspace=1em
+]{solutionstyle}
+\declaretheorem[style=solutionstyle, name=Solution, numbered=no]{solution}
+
+% ===== proofs =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\square},
+  postheadspace=1em
+]{proofstyle}
+
+\let\proof\relax
+\let\endproof\relax
+\declaretheorem[style=proofstyle, name=Proof,    numbered=no]{proof}
+
+
+% ===== remarks, cautions, examples =====
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\blacktriangleleft},
+  postheadspace=1em
+]{remarkstyle}
+
+\declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{funblue},
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{funblue}\blacktriangleleft},
+  postheadspace=1em
+]{examplestyle}
+
+\declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+
+
+\declaretheoremstyle[
+  headfont=\color{alizarincrimsonred}\bfseries,
+  bodyfont=\normalfont\normalsize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},
+  postheadspace=1em
+]{cautionstyle}
+
+\declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
+
+\declaretheoremstyle[
+  headfont=\bfseries,
+  bodyfont=\normalfont\footnotesize,
+  spaceabove=\thmspace,
+  spacebelow=\thmspace,
+  postheadspace=1em
+]{smallremarkstyle}
+
+\declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
+
+
+\declaretheoremstyle[
+  headfont=\bfseries\color{amethyst},
+  bodyfont=\normalfont,
+  spaceabove=6pt,
+  spacebelow=6pt,
+  qed=\ensuremath{\color{amethyst}\blacktriangleleft},
+  postheadspace=1em
+]{digressionstyle}
+
+\declaretheorem[style=digressionstyle, name=Digression, sibling=remark]{digression}
+
+
+\numberwithin{equation}{section} % equations numbered within sections
+
+
+
+
+
+
+\newenvironment{verticalhack}
+  {\begin{array}[b]{@{}c@{}}\displaystyle}
+  {\\\noalign{\hrule height0pt}\end{array}} % to make qed symbol aligned
+
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
+
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+% commands for functions etc.
+\newcommand{\im}{\operatorname{Im}}
+
+% commands for vectors and matrices
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{%
+  \mspace{\matrspace}%
+  \underline{%
+    \mspace{-\matrspace}%
+    \smash[b]{\boldsymbol{#1}}%
+    \mspace{-\matrspace}%
+  }%
+  \mspace{\matrspace}%
+}
+
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
+
+% commands for derivatives
+\newcommand{\dif}{\mathrm{d}}
+
+\DeclareMathOperator{\sigm}{\sigma}
+\newcommand{\diff}{\mathop{}\!\mathrm{d}}
+
+% commands for number sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+% commands for probability
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
+
+% algorithm helpers
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
+
+\title{Deep Learning}
+\author{Fabian Bosshard}
+\date{\today}
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Deep Learning - Course Notes},
+  pdfkeywords={USI, deep learning, course notes, informatics},
+  colorlinks=false,  
+  pdfborder={0.0 0.0 0.0},      
+  linkbordercolor={0 0.6 1},      % internal links
+  urlbordercolor={0 0.6 1},       % URLs
+  citebordercolor={0 0.6 1}       % citations
+]{hyperref}
+
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+\makeatletter
+\newlength\FB@toclinkht
+\newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+\usepackage[
+  type     = {CC},
+  modifier = {by},
+  version  = {4.0},
+]{doclicense}
+\usepackage{cleveref}
+
+\makeatletter
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+\makeatother
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+
+
+\clearpage
+
+\section{Assignment 1: Polynomial Regression with Gradient Descent}
+
+\subsubsection{Setup \& notation}
+
+\begin{itemize}
+  \item Polynomial: \(p(z) = \sum_{k=0}^4 w_k z^k\).
+  \item Feature vector: \(\vect{x} = [1, z, z^2, z^3, z^4]^T\).
+  \item Model: \(\hat y = \vect{x}^T \vect{w}\).
+  \item Dataset: \(y_i = p(z_i) + \varepsilon_i\) with \(\varepsilon_i \sim \mathcal N(0,\sigma^2)\).
+  \item Design matrix \(\matr{X}\): each row is \(\vect{x}_i^T\).
+\end{itemize}
+
+\subsubsection{Gradient descent basics}
+
+\begin{itemize}
+  \item Loss (MSE): 
+  \[
+    \mathcal{L}(\vect{w}) = \frac{1}{N}\sum_{i=1}^N (y_i - \vect{x}_i^T \vect{w})^2.
+  \]
+  \item Gradient:
+  \[
+    \nabla_{\vect{w}} \mathcal{L}(\vect{w}) = -\frac{2}{N} \matr{X}^T \bigl(\vect{y} - \matr{X}\vect{w}\bigr).
+  \]
+  \item GD update:
+  \[
+    \vect{w}^{(t+1)} = \vect{w}^{(t)} - \eta \,\nabla_{\vect{w}} \mathcal{L}(\vect{w}^{(t)}).
+  \]
+\end{itemize}
+
+\subsubsection{Learning rate}
+
+\begin{itemize}
+  \item \textbf{What is the learning rate?}  
+  Scalar \(\eta > 0\) that scales the gradient step size.
+  \item \textbf{Why important?}  
+  Controls convergence speed and stability.
+  \item \textbf{Too small \(\eta\):}  
+  Very slow convergence, many steps to reach a good minimum.
+  \item \textbf{Too large \(\eta\):}  
+  Loss oscillates or diverges; training unstable.
+  \item In code: chose \(\eta = 0.01\) as a compromise: smooth decrease, reaches near noise level in reasonable steps.
+\end{itemize}
+
+\subsubsection{Bias in \texttt{nn.Linear}}
+
+\begin{itemize}
+  \item Inputs \(\vect{x} = [1, z, z^2, z^3, z^4]\) already contain a constant feature.
+  \item With \texttt{bias = False}:
+  \[
+    \hat y = \vect{w}^T \vect{x}, 
+  \]
+  and \(w_0\) acts as the bias term.
+  \item If \texttt{bias = True} \emph{and} we keep the constant feature, we effectively have two biases, which is redundant.
+\end{itemize}
+
+\subsubsection{Steps vs epochs}
+
+\begin{itemize}
+  \item \textbf{Step:} one parameter update (one batch through model + \texttt{optimizer.step()}).
+  \item \textbf{Epoch:} one full pass over the training set.
+  \item Mini–batch training: 
+  \[
+    \text{steps per epoch} = \frac{\text{num\_samples}}{\text{batch\_size}}.
+  \]
+\end{itemize}
+
+\subsubsection{\texttt{optimizer.zero\_grad()} and \texttt{optimizer.step()}}
+
+\begin{itemize}
+  \item \textbf{\texttt{zero\_grad()}:}  
+  PyTorch accumulates gradients; this clears the old ones so each backward pass uses only the current batch.
+  \item \textbf{\texttt{step()}:}  
+  Reads stored gradients and updates parameters according to the chosen rule (here: SGD update).
+\end{itemize}
+
+\subsubsection{Validation set, overfitting}
+
+\begin{itemize}
+  \item \textbf{Validation set:}  
+  Held-out data (no gradient updates), used to monitor generalization and tune hyperparameters.
+  \item \textbf{Why use it?}  
+  Detect overfitting; choose learning rate, steps, model size etc. without touching the test set.
+  \item \textbf{Overfitting:}  
+  Training loss \(\downarrow\), validation loss \(\uparrow\); good fit to train data but poor generalization.
+  \item \textbf{Ways to reduce overfitting (general):}
+  \begin{itemize}
+    \item Simpler model, fewer parameters.
+    \item Explicit regularization (e.g. weight decay, \(L_2\)).
+    \item More data, data augmentation.
+    \item Early stopping based on validation loss.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Expected loss at optimum}
+
+\begin{itemize}
+  \item If the model recovers the true parameters \(\vect{w}^*\):
+  \[
+    y = \vect{x}^T \vect{w}^* + \varepsilon, 
+    \quad \varepsilon \sim \mathcal N(0,\sigma^2).
+  \]
+  \item At \(\vect{w}^*\):
+  \[
+    \Exp\bigl[(y - \vect{x}^T \vect{w}^*)^2\bigr] 
+      = \Exp[\varepsilon^2] 
+      = \Var[\varepsilon] 
+      = \sigma^2.
+  \]
+  \item With \(\sigma = 0.5\): expected MSE at optimum \(\approx 0.25\).
+\end{itemize}
+
+\subsubsection{Classification loss functions}
+
+\begin{itemize}
+  \item Typical choices:
+  \begin{itemize}
+    \item Binary classification: binary cross-entropy.
+    \item Multi-class: cross-entropy loss.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Adaptive optimizers}
+
+\begin{itemize}
+  \item \textbf{Idea:} per-parameter learning rates that adapt based on past gradients.
+  \item Examples: AdaGrad, RMSProp, Adam.
+  \item SGD (used here): fixed learning rate, simple, often good baseline.
+\end{itemize}
+
+
+\pagebreak
+\section{Assignment 2: CNN on CIFAR-10}
+
+\subsection{Dataset \& basics}
+
+\begin{itemize}
+  \item CIFAR-10: 50k train, 10k test, RGB images of size \(3 \times 32 \times 32\), 10 classes.
+  \item Normalization: per-channel mean and standard deviation so inputs have roughly mean 0 and variance 1.
+  \item Train/val split: original test set split into validation and final test.
+\end{itemize}
+
+\subsection{Where are the CNN parameters?}
+
+\begin{itemize}
+  \item Convolutional layers: filter weight tensors +\tikzmark{convline} optional bias vectors.
+  \item Fully connected layers: weight matrices \(\matr{W}\) + bias vectors.
+  \item BatchNorm: scale \(\gamma\) and shift \(\beta\) parameters.
+  \item All trainable parameters are in \texttt{model.parameters()} (tensors on the chosen device).
+\end{itemize}
+
+
+\begin{tikzpicture}[remember picture,overlay, font=\footnotesize, ann/.style={Stealth-,rounded corners=2pt,line cap=round}]
+  % start point: at the end of the "Convolutional layers" line
+  \coordinate (start) at ($(pic cs:convline)+(0,0.2)$);
+
+  % place the handwritten-style note up-right
+  \node[anchor=west] (note) at ($(start)+(1,0.6)$)
+  {
+    \(\#\text{params}=(k_w k_h\,C_{\text{in}} \,+\tikzmarknode{plusone}{1}\,)\,C_{\text{out}}\)
+  };
+
+  % curvy arrow up-right
+  \draw[-{Stealth[length=2mm]}]
+    (start) .. controls +(0.9,0.1) and +(-1.2,0.1) .. (note.west);
+
+
+  % ---- padding (numerator): go UP then RIGHT
+  \coordinate (biasA) at ($(plusone.north) + (0,3mm)$);    % vertical end
+  \coordinate (biasB) at ($(biasA) + (10mm,0)$);        % right end (tip)
+  \draw[ann] (plusone.north) -- (biasA) -- (biasB);
+  \node[anchor=west,inner sep=1pt] at (biasB) {bias};
+\end{tikzpicture}
+
+\vspace{1em}
+\[
+n_{\text{out}}
+=
+\left\lfloor
+\frac{
+n_{\text{in}}
++2\tikzmarknode{pad}{p}
+-d\bigl(\tikzmarknode{ker}{k}-1\bigr)
+-1
+}{
+\tikzmarknode{str}{s}
+}
++1
+\right\rfloor
+% --- reserve space so annotations fit nicely
+% \vphantom{\rule{0pt}{16mm}}
+% \hphantom{\rule{32mm}{0pt}}
+\]
+
+\begin{tikzpicture}[overlay,remember picture, font=\footnotesize,
+  >={Stealth[length=2mm]},
+  ann/.style={Stealth-,rounded corners=2pt,line cap=round}
+]
+  % ---- padding (numerator): go UP then RIGHT
+  \coordinate (padA) at ($(pad.north) + (0,6mm)$);    % vertical end
+  \coordinate (padB) at ($(padA) + (10mm,0)$);        % right end (tip)
+  \draw[ann] (pad.north) -- (padA) -- (padB);
+  \node[anchor=west,inner sep=1pt] at (padB) {padding};
+
+  % ---- kernel size (numerator): go UP then RIGHT
+  \coordinate (kerA) at ($(ker.north) + (0,3mm)$);
+  \coordinate (kerB) at ($(kerA) + (14mm,0)$);
+  \draw[ann] (ker.north) -- (kerA) -- (kerB);
+  \node[anchor=west,inner sep=1pt] at (kerB) {kernel size};
+
+  % ---- stride (denominator): go DOWN then RIGHT
+  \coordinate (strA) at ($(str.south) + (0,-4mm)$);
+  \coordinate (strB) at ($(strA) + (10mm,0)$);
+  \draw[ann] (str.south) -- (strA) -- (strB);
+  \node[anchor=west,inner sep=1pt] at (strB) {stride};
+\end{tikzpicture}
+
+\subsection{Why convolutional layers instead of fully connected?}
+
+\begin{itemize}
+  \item \textbf{Local receptive fields:} exploit spatial locality in images; neurons see small patches.
+  \item \textbf{Weight sharing:} one filter reused across all spatial positions \(\Rightarrow\) far fewer parameters than a dense layer on raw pixels.
+  \item \textbf{Translation equivariance:} a shift in the input produces a corresponding shift in feature maps.
+  \item Fully connected directly on \(3 \times 32 \times 32\) would have a huge number of parameters and ignore spatial structure.
+\end{itemize}
+
+\subsection{Pooling layers}
+
+\begin{itemize}
+  \item \textbf{Role:}
+  \begin{itemize}
+    \item Downsample feature maps (e.g. max pool \(2 \times 2\)).
+    \item Increase effective receptive field of deeper layers.
+    \item Reduce activations before FC layers \(\Rightarrow\) fewer parameters, less overfitting.
+    \item Provide some invariance to small translations.
+  \end{itemize}
+  \item \textbf{If we remove pooling:}
+  \begin{itemize}
+    \item Feature maps stay large \(\Rightarrow\) more parameters and memory.
+    \item Higher overfitting risk, slower training.
+    \item Can compensate with strided convolutions or other downsampling.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Dropout \& Batch Normalization}
+
+\begin{itemize}
+  \item \textbf{Dropout:}
+  \begin{itemize}
+    \item Training: randomly zero activations with probability \(p\).
+    \item Forces different subsets of neurons to work \(\Rightarrow\) reduces co-adaptation.
+    \item Acts as regularizer, reduces overfitting.
+    \item Smaller \(p\) in conv blocks, larger \(p\) before dense output layer.
+  \end{itemize}
+  \item \textbf{Batch Normalization:}
+  \begin{itemize}
+    \item Normalizes activations in a mini-batch to roughly zero mean and unit variance, then applies learnable \(\gamma,\beta\).
+    \item More stable gradients, faster training, allows larger learning rates.
+    \item Adds some regularization due to batch noise.
+  \end{itemize}
+  \item \textbf{Other regularization techniques:}
+  \begin{itemize}
+    \item Weight decay (\(L_2\) penalty).
+    \item Data augmentation.
+    \item Early stopping.
+    \item Using a smaller CNN.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Data augmentation (Task 8)}
+
+\begin{itemize}
+  \item \texttt{RandomCrop(32, padding=4)}: small translations and zoom-like effects.
+  \item \texttt{RandomHorizontalFlip}: left–right invariance for many object classes.
+  \item \texttt{RandomPerspective}: mild geometric distortions.
+  \item Overall: effectively larger, more diverse training set; better generalization to val/test.
+\end{itemize}
+
+\subsection{GeLU vs ReLU}
+
+\begin{itemize}
+  \item ReLU: \(f(x) = \max(0,x)\), hard cutoff at 0, all negative values set to 0.
+  \item GeLU: smooth activation; negative values are not fully discarded, just down-weighted.
+  \item GeLU can give smoother optimization and sometimes a small accuracy boost on vision tasks.
+\end{itemize}
+
+\subsection{Learning rate, epochs, batch size (CNN)}
+
+\begin{itemize}
+  \item \textbf{Base model (Task 6):}
+  \begin{itemize}
+    \item LR \(\approx 0.03\): large enough to learn in about 5 epochs without exploding.
+    \item Epochs: 5; sufficient to reach \(\ge 65\%\) test accuracy, going much further starts to overfit with little regularization.
+    \item Batch size 32: standard setting, balance between noisy and stable gradients.
+  \end{itemize}
+  \item \textbf{Improved model (Task 8):}
+  \begin{itemize}
+    \item LR \(\approx 0.01\) with BatchNorm and scheduler: stable for deeper, regularized network.
+    \item Epochs: 40; strong regularization (dropout, augmentation, weight decay) allows longer training.
+    \item Batch size 64: more stable gradient estimates, efficient computation.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Momentum, weight decay, LR scheduler}
+
+\begin{itemize}
+  \item \textbf{Momentum (e.g. \(0.9\)):}
+  \begin{itemize}
+    \item Keeps an exponential moving average of past gradients.
+    \item Smoother updates, less oscillation, faster movement along consistent directions.
+  \end{itemize}
+  \item \textbf{Weight decay (e.g. \(10^{-6}\)):}
+  \begin{itemize}
+    \item Adds \(L_2\) penalty to weights.
+    \item Encourages smaller weights \(\Rightarrow\) milder overfitting.
+  \end{itemize}
+  \item \textbf{ReduceLROnPlateau:}
+  \begin{itemize}
+    \item Monitors validation loss; reduces LR when val loss stops improving.
+    \item Strategy: larger LR at the beginning, smaller LR later for fine-tuning.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Overfitting in the CNN experiment}
+
+\begin{itemize}
+  \item \textbf{Signs in Task 6:}
+  \begin{itemize}
+    \item Training loss keeps decreasing.
+    \item Validation loss flattens or slightly increases.
+    \item Clear gap between training and validation accuracies.
+  \end{itemize}
+  \item \textbf{Task 8 modifications:}
+  \begin{itemize}
+    \item Deeper CNN with more channels.
+    \item Data augmentation, dropout, BatchNorm, weight decay, LR scheduler.
+    \item Result: smaller train–val gap and significantly higher test accuracy.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Random seeds and variability (Task 9)}
+
+\begin{itemize}
+  \item Different seeds \(\Rightarrow\) different initial \(\vect{w}\) and different mini-batch orders.
+  \item Test accuracy changes by a few percentage points between runs, even with same architecture and hyperparameters.
+  \item Conclusion: training is stochastic; for fair comparison, one should average over multiple runs or at least be aware of variance.
+\end{itemize}
+
+
+
+
+
+
+
+
+\clearpage
+\section{Questions that were asked during the exam}
+\begin{itemize}
+\item 
+What is linear regression?
+\item 
+Why is the shape \((N, d+1)\) and \((N,)\) for training data? 
+
+\textcolor{red}{polynomial of degree \(d\) has \(d+1\) parameters}
+\item 
+In \texttt{model.weight.detach().cpu().numpy().flatten()} what does \texttt{.detach()} and \texttt{.flatten()} do? Why is it necessary? 
+
+\textcolor{red}{
+\texttt{.detach()} creates a tensor that shares storage with \texttt{model.weight} but does not require gradients.
+\texttt{.flatten()} removes the extra dimensions to get a 1D array of parameters, here it was \((1, 5) \to (5,)\).
+}
+\item 
+What is the shape of \texttt{X[:, i]}? 
+
+\textcolor{red}{\((N,)\) because it selects one column (feature) for all samples.}
+\item 
+What is the meaning of the shape \texttt{(50000, 32, 32, 3)}?
+
+\textcolor{red}{
+CIFAR-10 training set: 50,000 images, each of size \(32 \times 32\) pixels with 3 color channels (RGB).
+}
+\item 
+In \texttt{ax.imshow(img.permute(1, 2, 0))}, what does \texttt{.permute(1, 2, 0)} do and why is it necessary?
+
+\textcolor{red}{
+It changes the tensor shape from \((3, 32, 32)\) (channels, height, width) to \((32, 32, 3)\) (height, width, channels) which is the format expected by \texttt{imshow}.
+}
+
+\end{itemize}
+
+
+
+
+\clearpage
+
+\section{RNN vs LSTM}
+
+
+
+% \subsection{Core definitions (what to say in an oral exam)}
+
+\textbf{Sequence processing}:
+Given an input sequence $(\vect{x}_1,\dots,\vect{x}_T)$, a recurrent layer processes it \emph{step by step} while carrying a state forward in time.
+
+\subsection{RNN}
+
+\textbf{Hidden state (RNN)}:
+The \emph{hidden state} $\vect{h}_t\in\R^h$ is the internal state of a recurrent layer at time $t$.
+It summarizes past information and is used (i) to produce outputs and (ii) to influence the next state.
+
+\textbf{Vanilla RNN update rule}:
+A standard RNN layer is defined by one parameter set (shared across time):
+\[
+\vect{h}_t
+=
+\tanh\!\bigl(\matr{W}_{xh}\vect{x}_t+\matr{W}_{hh}\vect{h}_{t-1}+\vect{b}_h\bigr),
+\qquad
+\matr{W}_{xh}\in\R^{h\times d},\ \matr{W}_{hh}\in\R^{h\times h},\ \vect{b}_h\in\R^h.
+\]
+At the first step one initializes $\vect{h}_0$ (typically $\vect{0}$, sometimes learned).
+% RNN
+\[
+\begin{tikzpicture}[thick, node distance=30pt and 30pt, on grid, font=\small]
+    \node[cell, minimum width=200pt, minimum height=110pt, anchor=north west] (b) at (-2pt,0pt) {};
+    
+    \coordinate (hin) at (0pt,-20pt);
+    \draw[signal] (hin) +(-\iolen, 0pt) node[above] {$\vect{h}_{t-1}$} -- (hin);
+    \coordinate (hout) at (200pt,-20pt);
+    \draw[signal] (hout) -- +(\iolen,0pt) node[above left] {$\vect{h}_{t}$};
+    \coordinate (h) at (184pt,0pt);
+    \draw[signal] (h) -- +(0,\iolen) node[left] {$\vect{h}_{t}$};
+    \coordinate (x) at (14pt,-110pt);
+    \draw[signal, -] (x) +(0pt,-\iolen) node[left] {$\vect{x}_{t}$} -- (x);
+    
+    \node[celllayer] at (b) (a) {$\tanh$};
+    
+    \draw[signal, -] (a) |- (hout);
+    \draw[signal, -] (hout -| h) +(-10pt,0pt) -| (h);
+    \coordinate (hx) at (60pt,-100pt);
+    \draw[signal, -] (x) |- (hx);
+    \draw[signal, -] (hx) -| (a);
+    \draw[signal, -] (hin) +(-10pt,0pt) -| +(50pt,-50pt) |- (hx) +(10pt,0pt);
+\end{tikzpicture}
+\]
+\textbf{Unrolling and weight sharing}:
+A \emph{single} recurrent layer is \emph{unrolled} over timesteps:
+the boxes drawn at different $t$ are \emph{copies of the same layer}.
+Thus, $\matr{W}_{xh},\matr{W}_{hh},\vect{b}_h$ are \emph{shared across all timesteps}.
+(Weights are \emph{not} shared across \emph{stacked} layers.)
+
+
+
+\begin{itemize}
+    \item issue: exploding gradient. solution: gradient clipping.
+    \item issue: vanishing gradient. solution: LSTM.
+\end{itemize}
+
+
+
+
+\subsection{LSTM}
+
+\textbf{two states}:
+An LSTM keeps
+\[
+\vect{h}_t\in\R^h \quad\text{(hidden/output state; what is exposed)} ,
+\qquad
+\vect{c}_t\in\R^h \quad\text{(cell state; long-term memory)} .
+\]
+Initialize $(\vect{h}_0,\vect{c}_0)$ (typically $(\vect{0},\vect{0})$).
+% LSTM
+\[
+\begin{tikzpicture}[thick, node distance=30pt and 30pt, on grid, font=\small]
+    \node[cell, minimum width=200pt, minimum height=110pt, anchor=north west] (b) at (-2pt,0pt) {};
+    
+    \coordinate (cin) at (0pt,-20pt);
+    \draw[signal] (cin) +(-\iolen, 0pt) node[above] {$\vect{c}_{t-1}$} -- (cin);
+    \coordinate (cout) at (200pt,-20pt);
+    \draw[signal] (cout) -- +(\iolen,0pt) node[above left] {$\vect{c}_{t}$};
+    \coordinate (hin) at (0pt,-100pt);
+    \draw[signal] (hin) +(-\iolen, 0pt) node[above] {$\vect{h}_{t-1}$} -- (hin);
+    \coordinate (hout) at (200pt,-100pt);
+    \draw[signal] (hout) -- +(\iolen,0pt) node[above left] {$\vect{h}_{t}$};
+    \coordinate (h) at (184pt,0pt);
+    \draw[signal] (h) -- +(0,\iolen) node[left] {$\vect{h}_{t}$};
+    \coordinate (x) at (14pt,-110pt);
+    \draw[signal, -] (x) +(0pt,-\iolen) node[left] {$\vect{x}_{t}$} -- (x);
+    
+    \node[celllayer] (f) at (32pt,-80pt) {$\sigm$};
+    \node[celllayer, right=34pt of f] (i) {$\sigm$};
+    \node[celllayer, right=34pt of i] (c) {$\tanh$};
+    \node[celllayer, right=34pt of c] (o) {$\sigm$};
+    
+    \node[pointwise, above=60pt of f] (fm) {$\times$};
+    
+    \node[pointwise, above=30pt of c] (cm) {$\times$};
+    \node[pointwise, above=30pt of cm] (cmp) {$+$};
+    
+    \node[pointwise, above right=20pt and 20 pt of o] (om) {$\times$};
+    \node[pointwise, ellipse, above=20pt of om] (omt) {$\tanh$};
+    
+    \draw[signal] (f) edge node[near start,left] {$\vect{f}_t$} (fm);
+    
+    \draw[signal, -] (c) edge node[pos=0.5,left] {$\tilde{\vect{c}}_t$} (cm); 
+    \draw[signal] (cm) to (cmp);
+    \draw[signal] (i) |- (cm) node[near start,left] {$\vect{i}_t$};
+    
+    \draw[signal] (o) |- (om) node[pos=0.3,left] {$\vect{o}_t$};
+    
+    \draw[signal, -] (fm) -- (cmp);
+    
+    \draw[signal, -] (cmp) -| (omt);
+    \draw[signal, -] (omt) -- (om);
+    
+    \draw[signal] (cin) +(-\iolen, 0) node[above] {$\vect{c}_{t-1}$} -- +(0,0);
+    
+    \draw[signal, -] (cin) +(-10pt,0) -- (fm);
+    
+    \draw[signal] (hin) +(-\iolen, 0) node[above] {$\vect{h}_{t-1}$} -- +(0,0);
+    
+    \draw[signal, -] (hin) +(-10pt,0) -| (o);
+    \draw[signal, -] (hin) -| (c);
+    \draw[signal, -] (hin) -| (i);
+    \draw[signal, -] (hin) -| (f);
+    
+    \draw[signal] (cout) -- +(\iolen,0) node[above left] {$\vect{c}_{t}$};
+    
+    \draw[signal, -] (cmp) -- (cout);
+    
+    \draw[signal] (hout) -- +(\iolen,0) node[above left] {$\vect{h}_{t}$};
+        
+    \draw[signal, -] (om) |- (hout);
+    
+    \draw[signal, -, shorten >=\intergape] (h |- hout) +(-10pt,0) -| (h |- cout);
+    \draw[signal, shorten <=\intergape] (h |- cout) -- +(0,\iolen+20pt) node[left] {$\vect{h}_{t}$};
+    
+    \draw[signal, -] (x) |- (f |- hin);
+\end{tikzpicture}
+\]
+\textbf{LSTM gates and update}:
+Gates are elementwise values in $[0,1]$ (via $\sigm$) that control \emph{forget, write, expose}:
+\[
+\begin{aligned}
+\vect{f}_t &= \sigm(\matr{W}_{xf}\vect{x}_t+\matr{W}_{hf}\vect{h}_{t-1}+\vect{b}_f),\\
+\vect{i}_t &= \sigm(\matr{W}_{xi}\vect{x}_t+\matr{W}_{hi}\vect{h}_{t-1}+\vect{b}_i),\\
+\tilde{\vect{c}}_t &= \tanh(\matr{W}_{xc}\vect{x}_t+\matr{W}_{hc}\vect{h}_{t-1}+\vect{b}_c),\\
+\vect{o}_t &= \sigm(\matr{W}_{xo}\vect{x}_t+\matr{W}_{ho}\vect{h}_{t-1}+\vect{b}_o),
+\end{aligned}
+\qquad
+\begin{aligned}
+\vect{c}_t &= \vect{f}_t\odot \vect{c}_{t-1} + \vect{i}_t\odot \tilde{\vect{c}}_t,\\
+\vect{h}_t &= \vect{o}_t\odot \tanh(\vect{c}_t).
+\end{aligned}
+\]
+\emph{Forgetting} is $\vect{f}_t\odot\vect{c}_{t-1}$, \emph{adding/writing} is $\vect{i}_t\odot\tilde{\vect{c}}_t$.
+
+\textbf{Why LSTM helps vanishing gradients (one line)}:
+\[
+\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t),
+\]
+so if $\vect{f}_t\approx \vect{1}$, gradients can flow through many timesteps.
+
+
+
+
+\medskip
+long sequences could require too much memory\\
+\(\rightarrow\) truncated backpropagation through time (TBPTT):
+break sequences into chunks: fixed-length segments from the original sequences.
+TBPTT keeps dependencies within chunks while avoiding excessive memory usage.
+
+
+
+\section{Exam Q\&A cheat sheet (answers in key points)}
+
+\subsection{Hidden state in an RNN}
+$\vect{h}_t$ is the internal state at time $t$; it summarizes past inputs and is used to compute (i) outputs and (ii) the next hidden state. It is updated recurrently: $\vect{h}_t=f(\vect{x}_t,\vect{h}_{t-1})$ with shared weights across time.
+
+\subsection{Padding for variable-length sequences}
+Batches require equal tensor sizes, so shorter sequences are padded (usually with a special PAD token) to the max length in the batch.
+In practice one uses a \emph{mask} to ignore padded positions in loss/metrics/attention, or uses packed sequences (concept: process only true lengths, then unpack).
+
+\subsection{Stacked RNN}
+A stacked RNN has multiple recurrent layers.
+Layer $\ell$ takes input $\vect{h}^{(\ell-1)}_t$ (from the layer below at the same $t$) and its own previous state $\vect{h}^{(\ell)}_{t-1}$:
+\[
+\vect{h}^{(\ell)}_t = f^{(\ell)}\!\bigl(\vect{h}^{(\ell-1)}_t,\vect{h}^{(\ell)}_{t-1}\bigr).
+\]
+Why it helps: higher layers can learn more abstract / longer-range temporal features.
+Weights are shared across time \emph{within a layer}, but \emph{not shared across layers}.
+
+\subsection{Bidirectional RNN}
+A bidirectional RNN runs one RNN forward ($1\to T$) and one backward ($T\to 1$), then combines states (often concatenation):
+\[
+\vect{h}^{\text{bi}}_t = [\vect{h}^{\to}_t;\ \vect{h}^{\leftarrow}_t].
+\]
+Advantage when the whole sequence is available (tagging, classification).
+Not suitable for strictly causal/online prediction where future inputs are unknown.
+
+\subsection{Exploding gradients in RNNs}
+Backprop through time multiplies many Jacobians; norms can grow exponentially, causing unstable updates (very large gradients, NaNs/divergence).
+
+\subsection{Vanishing gradients (especially severe in RNNs)}
+The same repeated multiplication can make gradients shrink exponentially, so early timesteps get almost no learning signal.
+RNNs are particularly affected because the effective depth is the sequence length $T$.
+Mitigations: LSTM/GRU gating, careful initialization, normalization, residual connections, shorter BPTT windows.
+
+\subsection{Gradient clipping}
+Clip gradients to prevent exploding updates, e.g. clip global norm:
+\[
+\vect{g}\leftarrow \vect{g}\cdot \min\!\left(1,\frac{\tau}{\|\vect{g}\|}\right).
+\]
+Used commonly for RNN/LSTM training stability. (Helps exploding, not vanishing.)
+
+\subsection{Activation functions and vanishing/exploding}
+Sigmoid/tanh saturate: derivatives become small $\Rightarrow$ vanishing gradients in deep/time-unrolled networks.
+ReLU avoids saturation in the positive region (often helps in feedforward nets) but can still explode in recurrent settings.
+LSTMs use sigmoid/tanh but avoid catastrophic vanishing via the \emph{additive} cell update and the forget gate.
+
+\subsection{Truncated backpropagation through time (TBPTT)}
+Instead of backpropagating through all $T$ steps, backprop only through the last $K$ steps, detaching the graph periodically.
+Why: reduces memory/time and stabilizes training.
+Tradeoff: harder to learn dependencies longer than $K$.
+
+\subsection{One-hot encoding and limitations}
+Represent a token $w$ from a vocabulary of size $V$ as $\vect{e}_w\in\{0,1\}^V$ with exactly one 1.
+Limitations: high-dimensional and sparse; no notion of similarity between words; expensive for large $V$.
+
+\subsection{\texttt{nn.Embedding}}
+An embedding layer is a learnable lookup table $\matr{E}\in\R^{V\times d}$.
+Given token id $w$, it outputs the dense vector $\vect{x}=\matr{E}_{w,:}\in\R^d$.
+Preferred over one-hot: efficient and learns semantic similarity (nearby vectors for related words).
+
+\subsection{Gating mechanisms (LSTM/GRU)}
+Gates are elementwise controllers in $[0,1]$ (computed via $\sigm$) that decide how much information to keep, write, and expose.
+They allow context-dependent time scales (keep some components for long, overwrite others quickly).
+
+\subsection{How LSTM gates mitigate vanishing gradients}
+Core cell update:
+\[
+\vect{c}_t = \vect{f}_t\odot\vect{c}_{t-1} + \vect{i}_t\odot\tilde{\vect{c}}_t
+\quad\Rightarrow\quad
+\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t).
+\]
+If $\vect{f}_t\approx\vect{1}$ for relevant components, gradients can propagate through many timesteps; the model learns when to remember/forget.
+
+
+
+\clearpage
+\section{Assignment 3: Traveling Salesperson Problem (TSP) -- Heuristic with Transformers}
+
+\subsection{Problem setup (Euclidean TSP)}
+\begin{itemize}
+  \item Cities are points $p_i=(x_i,y_i)\in\R^2$.
+  \item Goal: shortest Hamiltonian cycle (visit each city once, return to start).
+  \item Edge costs: Euclidean distance
+  \[
+    w_{uv}=\|p_u-p_v\|_2.
+  \]
+  \item TSP is NP-hard $\Rightarrow$ use heuristics / learned approximations.
+\end{itemize}
+
+\subsection{Dataset structure (NetworkX graphs)}
+Each sample is a tuple $(G,\ \texttt{opt\_tour})$ where $G$ is a complete weighted graph and \texttt{opt\_tour} is the optimal cycle as a node list (starting/ending at 0).
+
+\begin{itemize}
+  \item Node attribute \texttt{pos}: $\texttt{pos}[i]=(x_i,y_i)$ = city coordinates $p_i\in\R^2$.
+  \item Edge attribute \texttt{weight}: $\texttt{weight}(u,v)=\|p_u-p_v\|_2$.
+  \item Boolean edge attribute \texttt{tour}: \texttt{True} iff edge $(u,v)$ lies on the provided optimal tour.
+\end{itemize}
+
+\subsection{Data pipeline (PyTorch view)}
+\begin{itemize}
+  \item Model input:
+  \[
+    \matr{X}\in\R^{n\times 2},\qquad
+    \matr{X}_{i,:}=(x_i,y_i).
+  \]
+  \item Target tour (closed cycle):
+  \[
+    \vect{y}\in\{0,\ldots,n-1\}^{n+1},\qquad y_0=y_n=0.
+  \]
+  \item Batch shapes: $\matr{X}\in\R^{B\times n\times 2}$, $\vect{y}\in\Z^{B\times(n+1)}$.
+\end{itemize}
+
+\subsection{Sinusoidal positional encoding}
+For $\mathrm{pos}\in\{0,\ldots,T-1\}$ and $i\in\{0,\ldots,\frac{d_{\text{model}}}{2}-1\}$:
+\[
+\mathrm{PE}_{\mathrm{pos},2i}
+=
+\sin \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right),
+\qquad
+\mathrm{PE}_{\mathrm{pos},2i+1}
+=
+\cos \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right).
+\]
+Purpose: attention alone is permutation-equivariant; positional information breaks symmetry so the model can represent a sequence/tour.
+
+\subsection{Transformer heuristic for TSP (encoder--decoder)}
+\begin{itemize}
+  \item Encoder builds context vectors for all cities from $(x_i,y_i)$ (often with an extra node-id embedding).
+  \item Decoder generates the tour autoregressively: given prefix $(y_0,\ldots,y_{t-1})$, predict $y_t$.
+  \item Causal mask in decoder self-attention blocks access to future steps.
+\end{itemize}
+
+\subsection{Training objective (teacher forcing)}
+Let $\vect{y}=[y_0,\ldots,y_n]$ be the optimal closed tour. Use
+\[
+\vect{y}^{\text{src}}=[y_0,\ldots,y_{n-1}],
+\qquad
+\vect{y}^{\text{tgt}}=[y_1,\ldots,y_n].
+\]
+Train with token-level cross-entropy (next-node prediction):
+\[
+\mathcal{L}
+=
+-\frac{1}{Bn}\sum_{b=1}^B\sum_{t=1}^{n}
+\log p_\theta\!\bigl(y^{(b)}_t \mid y^{(b)}_{<t}, \matr{X}^{(b)}\bigr).
+\]
+Best checkpoint selected by validation loss.
+
+\subsection{Inference (greedy autoregressive decoding)}
+\begin{itemize}
+  \item Start prefix $[0]$.
+  \item For $t=1,\ldots,n-1$: choose the highest-scoring unvisited node
+  \[
+    y_t=\argmax_{j\notin\{y_0,\ldots,y_{t-1}\}} \ \text{logit}_\theta(j \mid y_{<t},\matr{X}).
+  \]
+  \item Close the cycle by appending $0$.
+\end{itemize}
+
+\subsection{Evaluation metric}
+\begin{itemize}
+  \item Tour length:
+  \[
+    L(\text{tour})=\sum_{(u,v)\ \text{on tour}} w_{uv}.
+  \]
+  \item Gap vs optimum:
+  \[
+    \mathrm{gap}
+    =
+    \frac{L(\text{heuristic})-L(\text{opt})}{L(\text{opt})}.
+  \]
+  \item Baselines: random tour; greedy nearest-neighbor (NetworkX \texttt{greedy\_tsp}).
+\end{itemize}
+
+\subsection{Concept questions (answers in key points)}
+
+\subsubsection{Can we use this model for $n=50$? How improve it?}
+\begin{itemize}
+  \item As written: typically \emph{not directly} if you hard-code $n=20$ in
+  \texttt{nn.Embedding(n,\dots)} or in the output head dimension.
+  \item To support $n=50$ (and variable $n$):
+  \begin{itemize}
+    \item Train / finetune on $n=50$ or on variable $n$ with padding + masks.
+    \item Replace fixed $n$ output head with a \emph{pointer} / attention scoring:
+    score each city by compatibility with decoder state (works for variable $n$).
+    \item Improve decoding: beam search, sampling + best-of-$k$, and post-optimization (2-opt / local search).
+    \item Active search / test-time finetuning on each instance can further reduce tour length.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{What is attention and why is it core?}
+Attention computes content-dependent weighted averages: each token/node aggregates information from others via similarity scores.
+This enables long-range interactions without recurrence.
+
+\subsubsection{Multi-head vs single-head attention}
+\begin{itemize}
+  \item Single-head: one similarity notion in one subspace.
+  \item Multi-head: several attention heads in parallel (different learned projections), then concatenation.
+  \item Useful because different heads can capture different relations (local geometry, global structure, symmetries).
+\end{itemize}
+
+\subsubsection{Purpose of positional encodings}
+Without positions, attention is permutation-equivariant.
+Positional encodings inject order so the decoder can represent “step $t$ in the tour”.
+
+\subsubsection{Role of the feed-forward network (FFN)}
+A position-wise MLP adds nonlinearity and feature mixing within each token embedding:
+\[
+\mathrm{FFN}(\vect{h})
+=
+\matr{W}_2\,\phi(\matr{W}_1\vect{h}+\vect{b}_1)+\vect{b}_2.
+\]
+
+\subsubsection{Why LayerNorm instead of BatchNorm?}
+
+Given a feature vector
+\[
+\vect{h}=(h_1,\dots,h_d)\in\R^d,
+\]
+LayerNorm normalizes across the feature dimension.
+
+\paragraph{Mean and variance}
+\[
+\mu
+=
+\frac{1}{d}\sum_{i=1}^d h_i,
+\qquad
+\sigma^2
+=
+\frac{1}{d}\sum_{i=1}^d (h_i-\mu)^2.
+\]
+
+\paragraph{Normalization}
+\[
+\hat h_i
+=
+\frac{h_i-\mu}{\sqrt{\sigma^2+\varepsilon}},
+\qquad i=1,\dots,d.
+\]
+
+\paragraph{Affine re-scaling}
+\[
+\mathrm{LN}(\vect{h})
+=
+\vect{\gamma}\odot \hat{\vect{h}} + \vect{\beta},
+\qquad
+\vect{\gamma},\vect{\beta}\in\R^d.
+\]
+
+\paragraph{Sequence form (Transformer)}
+For $\matr{H}\in\R^{B\times T\times d}$, LayerNorm is applied independently to each token:
+\[
+\mathrm{LN}(\matr{H}_{b,t,:})
+=
+\vect{\gamma}\odot
+\frac{\matr{H}_{b,t,:}-\mu_{b,t}}
+{\sqrt{\sigma^2_{b,t}+\varepsilon}}
++
+\vect{\beta},
+\]
+with
+\[
+\mu_{b,t}
+=
+\frac{1}{d}\sum_{i=1}^d \matr{H}_{b,t,i},
+\qquad
+\sigma^2_{b,t}
+=
+\frac{1}{d}\sum_{i=1}^d
+(\matr{H}_{b,t,i}-\mu_{b,t})^2.
+\]
+\begin{itemize}
+  \item LayerNorm normalizes features within each token; independent of batch size.
+  \item Works well for variable-length sequences and autoregressive inference (often batch size 1).
+  \item BatchNorm depends on batch statistics; awkward/unstable in sequence models.
+\end{itemize}
+
+\subsubsection{What are Q, K, V? (with dimensions)}
+Given token embeddings $\matr{H}\in\R^{B\times T\times d}$ (per head $d_k$):
+\[
+\matr{Q}=\matr{H}\matr{W}_Q,\qquad
+\matr{K}=\matr{H}\matr{W}_K,\qquad
+\matr{V}=\matr{H}\matr{W}_V,
+\]
+with $\matr{Q},\matr{K},\matr{V}\in\R^{B\times T\times d_k}$ per head.
+Intuition: queries ask what to attend to; keys describe content; values are what gets aggregated.
+
+\subsubsection{Why scale by $\sqrt{d_k}$?}
+Dot products grow with $d_k$, making softmax saturate and gradients tiny.
+Scaling keeps logits in a sensible range.
+
+\subsubsection{Intuition behind causal masking}
+Block attention to future positions so that step $t$ depends only on $<t$:
+prevents information leakage and matches autoregressive factorization.
+
+\subsubsection{Training-time vs inference-time input; teacher forcing}
+\begin{itemize}
+  \item Training: feed ground-truth prefix $(y_0,\ldots,y_{t-1})$ to predict $y_t$ (teacher forcing).
+  \item Inference: feed model predictions (exposure bias can accumulate errors).
+  \item Teacher forcing stabilizes optimization and speeds up learning.
+\end{itemize}
+
+\subsubsection{Tokenization and why it matters (LLMs)}
+Tokenization maps text to discrete symbols.
+It affects sequence length, vocabulary size, and what the model can represent efficiently; hence it impacts quality and compute.
+
+\subsubsection{Pretraining vs finetuning}
+\begin{itemize}
+  \item Pretraining: large-scale generic objective (usually self-supervised) to learn broad representations.
+  \item Finetuning: adapt to a specific task/domain with task data/objective.
+\end{itemize}
+
+\subsubsection{Greedy decoding vs sampling vs beam search}
+\begin{itemize}
+  \item Greedy: choose $\argmax$ each step; fast, can be suboptimal.
+  \item Sampling: sample from the distribution (optionally temperature/top-$k$/top-$p$) for diversity.
+  \item Beam search: keep top $k$ partial sequences; better quality than greedy, more compute.
+\end{itemize}
+
+
+
+
+
+\end{document}
