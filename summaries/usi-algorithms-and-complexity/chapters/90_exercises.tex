@@ -1,0 +1,43 @@
+
+% \section{Appendix}
+
+% \subsection{Homework 2}
+
+
+% \begin{algorithm}[h]
+% \caption*{Find cross edges and odd cycles in an undirected graph using \nameref{alg:bfs}}\label{alg:bfs_detect_cross_edges_odd_cycles}
+% \begin{algorithmic}[1]
+% \Function{BFS}{$G,\,s$} \Comment{\(s\) is the source}
+%   \ForAll{$u\in V \setminus \{s\}$}
+%     \State $\attrib{u}{color},\attribnormal{u}{\delta},\attrib{u}{\pi}\gets \white,\infty,\nil$ \Comment{initialization}
+%   \EndFor
+%   % \State Initialize $\attrib{v}{color}\gets\white$, $\attribnormal{v}{\delta}\gets\infty$, $\attrib{v}{\pi}\gets\nil$ for all $v\in V$
+%   \State $\attrib{s}{color},\attribnormal{s}{\delta},\attrib{s}{\pi}\gets \gray,0,\nil$ \Comment{initialize source \(s\)}
+%   \State $Q\gets\emptyset$ \Comment{initialize empty queue for vertices to visit}
+%   \State \Call{Enqueue}{$Q,s$}
+%   \While{$Q\neq\emptyset$} 
+%     \State $u\gets$ \Call{Dequeue}{$Q$} \Comment{get next vertex from the frontier}
+%     \ForAll{$v\in\Gamma(u)$} 
+%       \If{$\attrib{v}{color}=\white$} \Comment{first time we have seen \(v\)?}
+%         \State $\attrib{v}{color}\gets\gray$ \Comment{mark it discovered}
+%         \State $\attribnormal{v}{\delta}\gets\attribnormal{u}{\delta}+1$ \Comment{set its distance from \(s\)}
+%         \State $\attrib{v}{\pi}\gets u$ \Comment{set its parent}
+%         \State \Call{Enqueue}{$Q,v$}
+%       \BeginBox[draw=red]
+%       \Else
+%         \If{$\attrib{v}{color} = \black \AND v \neq \attrib{u}{\pi}$} \Comment{\(2^\text{nd}\) time we see \((u, v)\)}
+%           \State add \((u,v)\) to the list of cross edges
+%         \EndIf
+%         \If{$\attribnormal{v}{\delta} = \attribnormal{u}{\delta}$} \Comment{\(u\) and \(v\) are in the same layer}
+%           \State odd cycle detected!
+%         \EndIf
+%       \EndIf
+%       \EndBox
+%     \EndFor
+%     \State $\attrib{u}{color}\gets\black$ \Comment{we are done with \(u\)}
+%   \EndWhile
+% \EndFunction
+% \end{algorithmic}
+% \end{algorithm}
+
+

@@ -1,0 +1,110 @@
+
+\section{Introduction and Basics}
+
+\subsection{Introduction}
+
+typically,
+\begin{itemize}%[nolistsep, noitemsep]
+\item numerical data \(\rightarrow\) numerical analysis 
+\item discrete data \(\rightarrow\) algorithm design and analysis
+\end{itemize} 
+
+\medskip
+
+two fundamental issues to consider: \emph{correctness}, \emph{efficiency}
+
+
+
+\subsection{Summations}
+
+Arithmetic series:
+$$
+\sum_{i=0}^n i=1+2+\cdots+n=\frac{n(n+1)}{2}=\Theta(n^2) 
+$$
+
+\medskip
+
+Geometric series:
+$$
+\sum_{i=0}^n c^i=1+c+c^2+\cdots+c^n=\frac{c^{(n+1)}-1}{c-1}
+$$
+\begin{itemize}
+\item if $0<c<1: \Theta(1)$
+\item if $c>1: \Theta(c^n)$ (entire sum proportional to the last element)
+\end{itemize}
+
+\medskip
+
+Quadratic series:
+$$
+\sum_{i=0}^n i^2=1+4+\cdots+n^2=\frac{2 n^3+3 n^2+n}{6}=\Theta(n^3)
+$$
+
+\medskip
+
+Linear-Geometric series:
+$$
+\sum_{i=0}^{n-1} i c^i=c+2 c^2+\cdots+n c^n=\frac{(n-1) c^{(n+1)}-n c^n+c}{(c-1)^2}=\Theta(n c^n) 
+$$
+
+\medskip
+
+Harmonic series:
+$$
+H_n=\sum_{i=0}^n \frac{1}{i}=1+\frac{1}{2}+\cdots+\frac{1}{n}=\ln n+O(1)=\Theta(\log n) 
+$$
+
+\medskip
+
+Summation with general bounds:
+\[
+\sum_{i=a}^b f(i)=\sum_{i=0}^b f(i)-\sum_{i=0}^{(a-1)} f(i)
+\]
+
+\medskip
+
+% Linearity of summation:
+% \[
+% \sum((f(i)+g(i)) h(i))=\sum(f(i) h(i))+\sum(g(i) h(i))
+% \]
+
+% \medskip
+
+Approximation using integrals:
+\[
+\int_0^n f(x) \dif x \leq \sum_{i=1}^n f(i) \leq \int_1^{n+1} f(x) \dif x
+\]
+(if $f(x)$ is monotonically increasing)
+
+
+
+
+
+\subsection{Recurrence Relations}
+
+\begin{theorem}[Simplified Master Theorem]\label{thm:simpl_master_theorem}
+Let $a \geq 1, b>1$ be constants and let $T(n)$ be the recurrence
+\begin{equation}\label{eq:master_theorem}
+T(n)=a T(n / b)+c n^k
+\end{equation}
+defined for $n \geq 0$.
+\begin{itemize}%[nolistsep, noitemsep]
+\item Case 1: $a>b^k$ then $T(n)$ is $\Theta(n^{\log _b a})$
+\item Case 2: $a=b^k$ then $T(n)$ is $\Theta(n^k \log n)$
+\item Case 3: $a<b^k$ then $T(n)$ is $\Theta(n^k)$
+\qedhere
+\end{itemize}
+\end{theorem}
+
+
+
+
+
+
+\subsection{Other}
+Stirling's approximation:
+\[
+n!
+\approx
+\sqrt{2\pi n}\left(\frac{n}{e}\right)^n
+\]

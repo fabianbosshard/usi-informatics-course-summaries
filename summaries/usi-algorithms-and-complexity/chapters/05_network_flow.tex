@@ -1,0 +1,1556 @@
+% !TEX root = ../algo-summary.tex
+
+\section{Network Flow}\label{sec:network_flow}
+
+restricted version of a more general optimization problem, called linear programming.
+
+\begin{definition}[Flow Network]\label{def:flow_network}
+Abstraction for stuff \emph{flowing} through the edges of a network.
+A flow network is a directed graph \(G = (V, E)\) with a \emph{source} and a \emph{sink} node \(s, t \in V\) (where flow originates and is consumed, respectively).
+Each edge \((u,v) \in E\) has a capacity \(c(u,v) \in \N_0\), where \(c(u,v) = 0\) if \((u,v) \notin E\).
+\end{definition}
+
+\begin{remark}
+Multiple sources/sinks can be modeled by adding a \emph{super-source} and \emph{super-sink} with infinite capacity.
+\end{remark}
+
+\begin{caution}
+If we have further restrictions, such as flow from certain sources can only go to certain sinks, we have the \emph{multi-commodity flow problem}, which is NP-hard.
+\end{caution}
+
+\subsection{Flows and Cuts}\label{sec:flows_cuts}
+
+Two rich algorithmic problems with a beautiful duality. 
+Cornerstones in combinatorial optimization.
+
+
+\begin{definition}[Flow]\label{def:flow}
+A \emph{\(s\)-\(t\) flow} is a function \(f : E \to \R_{\ge 0}\) that satisfies
+\begin{itemize}
+  \item \emph{Capacity:} For each \(e \in E\)
+  \begin{equation}\label{eq:capacity_constraints}
+    0 \le f(e) \le c(e)
+  \end{equation}
+  \item \emph{Conservation:} For each \(v \in V \setminus \{s,t\}\)
+  \begin{equation}\label{eq:flow_conservation}
+    \sum_{u \in V} f(u,v) = \sum_{w \in V} f(v,w)
+  \end{equation}
+\end{itemize}
+where \(s, t \in V\) are the source and sink nodes.
+\end{definition}
+
+\begin{convention*}\label{conv:extend_flow}
+We extend $f$ and $c$ to all ordered pairs $(u,v)\in V\times V$ by setting
+$f(u,v)=0$ and $c(u,v)=0$ whenever $(u,v)\notin E$.
+\end{convention*}
+
+\begin{definition}\label{def:flow_value}
+The \emph{value} \(v(f)\) (also denoted by \(|f|\)) of a flow \(f\) is
+\begin{equation}\label{eq:flow_value}
+  {\color{Red}\boxed{\color{black}
+  v(f) \coloneqq \sum_{w \in V} f(s,w) = \sum_{u \in V} f(u,t)
+  }}
+\end{equation}
+where equality follows from flow conservation.
+\end{definition}
+
+\begin{problem}[Max Flow]\label{prob:max_flow}
+Find an \(s\)-\(t\) flow \(f\) of maximum value \eqref{eq:flow_value}.
+\end{problem}
+
+% \begin{remark}
+% If all capacities \(c(u,v)\) are integers, there always exists a maximum flow \(f\) such that all \(f(u,v)\) are integers.
+% \end{remark}
+
+
+
+
+\begin{definition}\label{def:cut}
+An \emph{\(s\)-\(t\) cut} is a partition \((A,B)\) of \(V\) with \(s \in A\) and \(t \in B = V \setminus A\).
+\end{definition}
+\begin{definition}
+[Cut Capacity]
+\label{def:cut_capacity}
+The \emph{capacity} of the cut is
+  \begin{equation}\label{eq:cut_capacity}
+  {\color{Red}\boxed{\color{black}
+    c(A,B) \coloneqq \sum_{a \in A} \sum_{b \in B} c(a,b)
+  }}  
+  \end{equation}
+i.e. the summation of all edges going from \(A\) to \(B\).
+\end{definition}
+
+\begin{problem}[Min Cut]\label{prob:min_cut}
+Find an \(s\)-\(t\) cut \((A,B)\) of minimum capacity \eqref{eq:cut_capacity}.
+\end{problem}
+
+
+
+
+
+\begin{definition}\label{def:cut_flow}
+The \emph{net flow} across the cut is
+  \begin{equation}\label{eq:cut_flow}
+  {\color{Red}\boxed{\color{black}
+  f(A,B)
+  \coloneqq 
+  % \sum_{u \in A, v \in B} f(u,v) - \sum_{u \in B, v \in A} f(u,v) 
+  \sum_{u \in A} \sum_{v \in B} f(u,v) - \sum_{u \in B} \sum_{v \in A} f(u,v)
+  }}
+  \qedhere
+  \end{equation}
+\end{definition}
+
+
+
+\begin{lemma}[Flow Value]\label{lem:flow_value}
+Let \(f\) be any flow and \((A,B)\) be any cut. Then
+\begin{equation}\label{eq:flow_value_cut}
+  f(A,B)
+  = 
+  v(f)
+\end{equation}
+i.e. the \hl[2]{net flow across any cut equals the amount leaving \(s\)}. %value of the flow.
+\end{lemma}
+\begin{proof}
+\[
+\begin{verticalhack}
+\begin{aligned}
+  v(f) &\overset{\text{\eqref{eq:flow_value}}}{=} \sum_{v \in V} f(s,v) \\
+       &=\sum_{v \in V} f(s,v) + 0 \\
+       &\overset{\text{\eqref{eq:flow_conservation}}}{=} \sum_{v \in V} f(s,v) + \sum_{u \in A \setminus \{s\}} \left( \sum_{v \in V} f(u,v) - \sum_{v \in V} f(v,u) \right) \\
+        &= \sum_{u \in A} \left( \sum_{v \in V} f(u,v) - \sum_{v \in V} f(v,u) \right) \\
+       &= \sum_{u \in A} \sum_{v \in V} f(u,v) - \sum_{u \in A} \sum_{v \in V} f(v,u) \\
+        &= \sum_{u \in A} \left( \sum_{v \in A} f(u,v) + \sum_{v \in B} f(u,v) \right) - \sum_{u \in A} \left( \sum_{v \in A} f(v,u) + \sum_{v \in B} f(v,u) \right) \\
+        &= \cancel{\sum_{u \in A} \sum_{v \in A} f(u,v)} + \sum_{u \in A} \sum_{v \in B} f(u,v) - \cancel{\sum_{u \in A} \sum_{v \in A} f(v,u)} - \sum_{u \in A} \sum_{v \in B} f(v,u) \\
+        &= \sum_{u \in A} \sum_{v \in B} f(u,v) - \sum_{u \in B} \sum_{v \in A} f(u,v) \\
+        &= f(A,B) 
+\end{aligned}
+\end{verticalhack}
+\qedhere
+\]
+\end{proof}
+
+
+
+
+\begin{theorem}
+[Weak Duality]
+\label{lem:weak_duality_flow_capacity}
+Let \(f\) be any flow and \((A,B)\) be any cut. Then
+\begin{equation}\label{eq:weak_duality}
+{\color{Red}\boxed{\color{black}
+  v(f) \le c(A,B)
+}}
+\end{equation}
+i.e. the value of the flow is at most the capacity of the cut.
+\end{theorem}
+
+\begin{proof}\label{proof:weak_duality}
+\[
+\begin{verticalhack}
+\begin{aligned}
+  v(f) 
+  \overset{\text{\eqref{eq:flow_value_cut}}}{=} f(A,B) 
+  \overset{\text{\eqref{eq:cut_flow}}}{=}& \sum_{u \in A} \sum_{v \in B} f(u,v) - \sum_{u \in B} \sum_{v \in A} f(u,v) \\
+  \le& \sum_{u \in A} \sum_{v \in B} f(u,v) \\
+  \overset{\text{\eqref{eq:capacity_constraints}}}{\le}& \sum_{u \in A} \sum_{v \in B} c(u,v) \\
+  \overset{\text{\eqref{eq:cut_capacity}}}{=}& c(A,B)
+\end{aligned}
+\end{verticalhack}
+\qedhere
+\]
+\end{proof}
+\begin{corollary}[Certificate of Optimality]\label{cor:certificate_optimality}
+\hl{Let \(f\) be any flow and \((A,B)\) be any cut.
+If \(v(f) = c(A,B)\), then \(f\) is a \nameref{prob:max_flow} and \((A,B)\) is a \nameref{prob:min_cut}.}
+\end{corollary}
+\begin{observation}
+\label{obs:flow_equals_cut_flow}
+In addition, if \(v(f) = c(A,B)\), then
+\begin{equation}\label{eq:max_flow_in}
+f_{\text{in}}(A) \coloneqq  \sum_{u \in B} \sum_{v \in A} f(u,v) = 0
+\end{equation}
+and
+\begin{equation}\label{eq:max_flow_out}
+f_{\text{out}}(A) \coloneqq  \sum_{u \in A} \sum_{v \in B} f(u,v) = v(f) = c(A,B)
+\end{equation}
+i.e. all edges from \(A\) to \(B\) are saturated and all edges from \(B\) to \(A\) carry zero flow.
+\end{observation}
+\begin{proof}
+From the \autoref{proof:weak_duality} of \autoref{lem:weak_duality_flow_capacity}, we have
+\[
+v(f) = f_{\text{out}}(A) - f_{\text{in}}(A) \le f_{\text{out}}(A) \le c(A,B)
+\]
+but if \(v(f) = c(A,B)\), all inequalities must be equalities, yielding \eqref{eq:max_flow_in} and \eqref{eq:max_flow_out}.
+\end{proof}
+
+
+\begin{caution}
+  \nameref{sec:dynamic_programming} (\autoref{sec:dynamic_programming}) cannot be applied because the problem does not exhibit optimal substructure (\autoref{def:principle_of_optimality}).
+\end{caution}
+
+A na\"ive greedy strategy (\autoref{sec:greedy_algorithms}) will not work for \nameref{prob:max_flow} either, because local optimality does not imply global optimality.
+This happens, because once we send flow along an edge, we might later want to ``take it back'' to reroute it more efficiently, so in addition to increase flow along edges, we need the ability to \emph{reduce} it as well.
+
+We need the notion of a
+
+
+
+
+\subsection{Residual Network}\label{sec:residual_network}
+
+Given a flow $f$, each original edge $e=(u,v)\in E$ gives rise to up to two
+\emph{residual arcs}:
+\begin{itemize}
+\item a \emph{forward residual arc} $e^+$ from $u$ to $v$ with residual capacity
+\begin{equation}\label{eq:residual_capacity_forward}
+c_f(e^+) \coloneqq c(e)-f(e)
+\end{equation}
+included if $f(e)<c(e)$
+\item a \emph{backward residual arc} $e^-$ from $v$ to $u$ with residual capacity
+\begin{equation}\label{eq:residual_capacity_backward}
+c_f(e^-) \coloneqq f(e)
+\end{equation}
+included if $f(e)>0$
+\end{itemize}
+
+Each residual arc $a\in E_f$ arises from a unique original edge $e\in E$ (its \emph{parent edge}); denote this edge by $\pi(a)$.
+We indicate whether $a$ is \texttt{forward} or \texttt{backward} by \(\sign(a)\).
+We view a residual arc as a labeled object \(a=(e,\sigma)\) with \(\sigma\in\{\texttt{forward}, \texttt{backward}\}\), so its parent edge is \(\pi(a)=e\) and \(\sign(a)=\sigma\).
+
+\begin{definition}[Residual Network]\label{def:residual_network}
+The \emph{residual network} $G_f=(V,E_f)$ with respect to flow $f$ is the directed multigraph on vertex set $V$
+whose arc multiset $E_f$ contains exactly all residual arcs $e^+$ and $e^-$ with positive
+residual capacity, as defined in \eqref{eq:residual_capacity_forward}--\eqref{eq:residual_capacity_backward}.
+\end{definition}
+
+If both $(u,v)$ and $(v,u)$ are edges in $G$, then $G_f$ may contain two distinct residual arcs from $u$ to $v$; 
+hence we view $G_f$ as a directed multigraph.
+
+Since each edge of the original network \(G\) may result in the generation of at most two arcs in the residual network \(G_f\), 
+the latter is of the same asymptotic size as \(G\).
+% Also note that when \(v(f) = 0\), we have \(G_f = G\). % only true if there is no cycle
+% Note that when \(f \equiv 0\), we have \(G_f = G\). % not really the same objects
+Note that if $f\equiv 0$, then $G_f$ contains exactly the forward residual arc $e^+=(e,\texttt{forward})$
+for every $e=(u,v)\in E$, with residual capacity $c(e)$; in particular, $G_f$ has the same
+reachability structure as $G$.
+
+
+
+\begin{definition}[Augmenting Path]\label{def:augmenting_path}
+An \emph{augmenting path} is a simple \(s\)-\(t\) path \(P\) in the residual network \(G_f\).
+\end{definition}
+
+The \emph{bottleneck capacity} (also called {residual capacity}) of an \nameref{def:augmenting_path} \(P\) is
+\begin{equation}\label{eq:augmenting_path_capacity}
+  {\color{Red}\boxed{\color{black}
+  c_f(P) \coloneqq \min_{a \in P} c_f(a)
+  }}
+\end{equation}
+where the minimum is taken over all arcs on the path \(P\).
+Since all arcs in \(P\) have positive residual capacity, \(c_f(P) > 0\).
+
+
+% ```
+% Augment(f, c, P) {
+%     b \leftarrow bottleneck-capacity(P)
+%     foreach e \in P {
+%         if (e \in E) f(e) \leftarrow f(e) + b
+%         else f(eR) \leftarrow f(e) - b
+%     }
+%     return f
+% }
+% ```
+
+% forward edge reverse edge
+% ```
+% Ford-Fulkerson(G, s, t, c) {
+%     foreach e \in E f(e) \leftarrow 0
+%     Gf \leftarrow residual graph
+%     while (there exists an augmenting path P in }\mp@subsup{G}{f}{}\mathrm{ )
+% {
+%         f \leftarrow Augment (f, c, P) //Augment f by cap(P)
+%         update }\mp@subsup{G}{f}{
+%     }
+%     return f
+% }
+% ```
+
+\begin{algorithm}[h]
+\caption{Augment}\label{alg:augment}
+\begin{algorithmic}[1]
+\Function{Augment}{\(f, c, P\)}
+\State \(b \gets c_f(P)\) \Comment{bottleneck capacity \eqref{eq:augmenting_path_capacity}}
+% \ForAll{\(e \in P\)}
+%   \If{\(e \in E\)}
+%      \State \(f(e) \gets f(e) + b\) \Comment{forward arc: increase flow}
+%   \Else  \Comment{\(e \in E^\top\)}
+%      \State \(f(e^R) \gets f(e^R) - b\) \Comment{backward arc: decrease flow along original edge}
+%   \EndIf
+% \EndFor
+\ForAll{residual arc $a \in P$}
+  \State $e \gets \pi(a)$ \Comment{retrieve original edge}
+  \If{$\sign(a) = \texttt{forward}$} \Comment{$a$ is forward}
+     \State $f(e) \gets f(e) + b$
+  \Else \Comment{$a$ is backward}
+     \State $f(e) \gets f(e) - b$
+  \EndIf
+\EndFor
+\State \Return \(f\)
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Ford-Fulkerson Method}\label{alg:ford_fulkerson}
+\begin{algorithmic}[1]
+\Require Flow network \(G = (V,E)\), source \(s\), sink \(t\), capacities \(c\)
+\ForAll{\(e \in E\)} 
+ \State \(f(e) \gets 0\) \Comment{initial flow}
+\EndFor
+\State \(G_f \gets \text{\nameref{def:residual_network}}\) \Comment{initially only forward arcs with \(c_f(e^+) = c(e)\), since \(f \equiv 0\)}
+% \While{\(\exists P \subset G_f\)} \Comment{there is an \nameref{def:augmenting_path} in \nameref{def:residual_network}}
+ \While{there exists an \nameref{def:augmenting_path} \(P\) in \nameref{def:residual_network} \(G_f\)}
+  \State \(f \gets \Call{Augment}{f, c, P}\) \Comment{augment flow along \(P\)}
+  \State Update \(G_f\) based on new flow \(f\)
+\EndWhile
+\State \Return \(f\)
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+At the end of the \autoref{alg:ford_fulkerson}, the \nameref{def:residual_network} \(G_f\) contains no \nameref{def:augmenting_path}s.
+
+
+
+
+
+
+
+
+\subsection{Max-Flow Min-Cut Theorem}\label{sec:max_flow_min_cut_theorem}
+
+
+\begin{theorem}[Augmenting Path]\label{thm:augmenting_path}
+Flow \(f\) is a \nameref{prob:max_flow} iff there are no \nameref{def:augmenting_path}s in the \nameref{def:residual_network} \(G_f\).
+\end{theorem}
+
+\begin{theorem}[\nameref{prob:max_flow} / \nameref{prob:min_cut}, Ford-Fulkerson 1956]
+The value of the \nameref{prob:max_flow} is equal to the value of the \nameref{prob:min_cut}.
+\end{theorem}
+
+
+
+
+\begin{theorem}[\nameref{prob:max_flow} / \nameref{prob:min_cut}]\label{thm:max-flow-min-cut}
+Let $f$ be a flow in \(G\).
+The following 3 are equivalent:
+\begin{enumerate}[label=\textbf{(\roman*)}, itemindent=0.25cm, labelsep=0.25cm]
+  \item There is cut $(A,B)$ such that $v(f) = c(A,B)$.
+  \label{thm:mcmc-tight-cut}
+  \item $f$ is a \nameref{prob:max_flow} and $(A,B)$ is a \nameref{prob:min_cut}.
+  \label{thm:mcmc-maxflow-mincut}
+  \item The \nameref{def:residual_network} $G_f$ contains no \nameref{def:augmenting_path}s.
+  \label{thm:mcmc-no-augmenting-path}
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+We prove the implications in the following triangle:
+\(
+\newcommand{\scalefraction}{0.68}
+\begin{tikzcd}[column sep={\scalefraction*1cm,between origins},
+               row sep={\scalefraction*1.732050808cm,between origins},
+               arrows=Rightarrow]
+  & \ref{thm:mcmc-tight-cut}
+    \arrow[dr,""{pos=.5,sloped,overlay, inner sep=0pt,
+      label={[black]center:\hyperlink{proof:mcmc-1-2}{\phantom{\rule{10pt}{15pt}}}}}]
+  &
+  \\
+  \ref{thm:mcmc-no-augmenting-path}
+    \arrow[ur,""{pos=.5,sloped,overlay, inner sep=0pt,
+      label={[black]center:\hyperlink{proof:mcmc-3-1}{\phantom{\rule{10pt}{15pt}}}}}]
+  &
+  &
+  \ref{thm:mcmc-maxflow-mincut}
+    \arrow[ll,""{pos=.5,sloped,overlay, inner sep=0pt,
+      label={[black]center:\hyperlink{proof:mcmc-2-3}{\phantom{\rule{15pt}{5pt}}}}}]
+\end{tikzcd}
+\)
+
+\vspace{-2\baselineskip}
+\hypertarget{proof:mcmc-1-2}{
+\underline{\ref{thm:mcmc-tight-cut} $\Rightarrow$ \ref{thm:mcmc-maxflow-mincut}:}}
+
+\autoref{cor:certificate_optimality}.
+
+\hypertarget{proof:mcmc-2-3}{
+\underline{\ref{thm:mcmc-maxflow-mincut} $\Rightarrow$ \ref{thm:mcmc-no-augmenting-path} (contrapositive):}}
+
+If there were an augmenting path in \(G_f\), we could improve \(f\) by sending flow along this path.
+
+
+\hypertarget{proof:mcmc-3-1}{
+\underline{\ref{thm:mcmc-no-augmenting-path} $\Rightarrow$ \ref{thm:mcmc-tight-cut}:}}
+
+Let \(A\) be the set of vertices reachable from the source \(s\) in \(G_f\).
+By construction, \(s \in A\).
+Since \(G_f\) contains no augmenting path, \(t \notin A\).
+If we set \(B = V \setminus A\), then \((A,B)\) is a cut.
+%
+We now want to show again that the inqualities
+% \[
+% v(f) = f_{\text{out}}(A) - f_{\text{in}}(A) \le f_{\text{out}}(A) \le c(A,B)
+% \]
+in the \autoref{proof:weak_duality} of \autoref{lem:weak_duality_flow_capacity} are actually equalities.
+Let \(u \in A\) and \(v \in B\).
+% If \((u,v) \in E\), then \(f(u,v) = c(u,v)\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
+% If \((v,u) \in E\), then \(f(v,u) = 0\) because otherwise \((u,v)\) would be in \(G_f\) and \(v\) would be in \(A\).
+If $(u,v)\in E$ and $f(u,v)<c(u,v)$, 
+then the forward residual arc $(u,v)$ has positive residual capacity and is therefore present in $G_f$, 
+implying $v\in A$, a contradiction. 
+Hence $f(u,v)=c(u,v)$.
+Similarly, if $(v,u)\in E$ and $f(v,u)>0$, then the backward residual arc $(u,v)$ is present in $G_f$,
+again implying $v\in A$, a contradiction. 
+Hence $f(v,u)=0$.
+
+This closes the triangle of implications and proves \autoref{thm:max-flow-min-cut}.
+\end{proof}
+
+
+\begin{assumption}\label{ass:integer_capacities}
+All capacities are integers between \(1\) and \(C\).
+\end{assumption}
+
+\begin{invariant}\label{inv:integer_flows}
+Every flow value \(f(e)\) and every residual capacity \(c_f(e)\) remains an integer throughout the execution of \autoref{alg:ford_fulkerson}.
+\end{invariant}
+
+\begin{theorem}\label{thm:ford_fulkerson_iteration}
+\autoref{alg:ford_fulkerson} terminates in at most \(v(f^*)\) iterations, where \hl[7]{\(v(f^*) \leq nC\)} is the value of a maximum flow.
+\end{theorem}
+\begin{proof}
+Each \nameref{alg:augment} increases \(v(f)\) by at least 1 and \(v(f^*) \leq \deg^+(s) \cdot C \leq nC\).
+\end{proof}
+
+\begin{corollary}
+\autoref{alg:ford_fulkerson} runs in time \hl[8]{\(O(v(f^*) \cdot m)\)} (not polynomial in \(n\)\textcolor{red}{!}), since an \nameref{def:augmenting_path} can be found in \(O(m)\) time.
+\end{corollary}
+\begin{corollary}
+If \(C = 1\), \autoref{alg:ford_fulkerson} runs in \(O(n m)\) time.
+\end{corollary}
+
+\begin{theorem}[Integrality]\label{thm:integrality}
+If all capacities are integers (\autoref{ass:integer_capacities}), there exists a \nameref{prob:max_flow}, such that \(f(e)\) is an integer for all \(e \in E\).
+\end{theorem}
+\begin{proof}
+\autoref{alg:ford_fulkerson} terminates (\autoref{thm:ford_fulkerson_iteration}) and maintains \autoref{inv:integer_flows}.
+\end{proof}
+
+\begin{corollary}\label{cor:integral-flow-given-value}
+If all capacities are integers (\autoref{ass:integer_capacities}) and there exists a  flow of value $k$, there exists an \emph{integral} flow of value $k$.
+\end{corollary}
+\begin{proof}
+% Let $f^*$ be a \nameref{prob:max_flow}. By \autoref{thm:integrality}, $f^*$ is integral and $v(f^*) \ge k$.
+Deleting $v(f^*)-k$ unit augmenting paths from an integral \nameref{prob:max_flow} $f^*$.
+\end{proof}
+
+
+
+\subsection{Choosing Augmenting Paths}\label{sec:choosing_augmenting_paths}
+
+Running time of generic \nameref{alg:ford_fulkerson} is \emph{pseudo-polynomial}, not polynomial in size of the input \(n, m\).
+
+\textcolor{AccentBlue}{Use care when selecting \nameref{def:augmenting_path}s}:
+\begin{itemize}
+  \item Some choices lead to exponential algorithms.
+  \item Clever choices lead to polynomial algorithms (Edmonds-Karp).
+  \item If capacities are irrational, may not terminate!
+\end{itemize}
+
+
+
+Recall that for \(c(e) \in \N\), \autoref{alg:ford_fulkerson} halts (\autoref{thm:ford_fulkerson_iteration}).
+If we multiply all capacities by the same (positive) factor, the \nameref{prob:max_flow} increases proportionally.
+Thus, if \(c(e) \in \Q_{>0}\) for all \(e \in E\), \autoref{alg:ford_fulkerson} eventually halts.
+
+However, if we allow \(c(e) \in \R_{>0}\), \autoref{alg:ford_fulkerson} can loop forever, finding smaller and smaller \nameref{def:augmenting_path}s!
+Worse yet, it may not even converge to the \nameref{prob:max_flow}, or even to a significant fraction of it!
+One of the simplest examples of this effect is shown in \autoref{ex:zwick_network}.
+
+\begin{example}[Uri Zwick, 1993]\label{ex:zwick_network}
+Consider the following network
+\[
+\begin{tikzpicture}[
+  font=\footnotesize,
+  scale=0.6,
+  node/.style={circle, draw, minimum size=3mm, inner sep=0pt},
+  smallnode/.style={circle, draw, minimum size=2mm, inner sep=0pt},
+  edge/.style={-latex},
+  path/.style={-latex, thick, draw=orange!90!red},
+  lbl/.style={midway, fill=white, inner sep=1pt}
+]
+
+%======================
+% TOP NETWORK + PATH
+%======================
+
+% nodes
+\node[node] (s) at (0,2) {$s$};
+\node[node] (a) at (-3,0) {};
+\node[node] (u) at (-1,0) {};
+\node[node] (v) at (1,0) {};
+\node[node] (b) at (3,0) {};
+\node[node] (t) at (0,-2) {$t$};
+
+% % start / sink arrows
+% \draw[edge] (0,3) -- (s);
+% \draw[edge] (t) -- (0,-3);
+
+% outer black diamond edges
+\draw[edge] (s) -- node[lbl] {$x$} (a);
+\draw[edge] (s) -- node[lbl] {$x$} (b);
+\draw[edge] (a) -- node[lbl] {$x$} (t);
+\draw[edge] (b) -- node[lbl] {$x$} (t);
+
+% inner black edges
+\draw[edge] (u) -- node[lbl] {$1$} (a);
+\draw[edge] (b) -- node[lbl] {$\phi$} (v);
+
+% highlighted orange path (s -> u -> v -> t)
+\draw[path] (s) -- node[lbl] {$x$} (u);
+\draw[path] (u) -- node[lbl] {$1$} (v);
+\draw[path] (v) -- node[lbl] {$x$} (t);
+
+%======================
+% HELPER: base graph (no labels)
+%======================
+
+\newcommand{\basegraph}[6]{%
+  % #1..#6 are node names: S A U V B T
+
+  % nodes
+  \node[smallnode] (#1) at (0,2) {};
+  \node[smallnode] (#2) at (-3,0) {};
+  \node[smallnode] (#3) at (-1,0) {};
+  \node[smallnode] (#4) at (1,0) {};
+  \node[smallnode] (#5) at (3,0) {};
+  \node[smallnode] (#6) at (0,-2) {};
+
+  % % edge
+  % \draw[edge] (#1) -- (#2);
+  % \draw[edge] (#1) -- (#5);
+  % \draw[edge] (#2) -- (#6);
+  % \draw[edge] (#5) -- (#6);
+
+  % \draw[edge] (#3) -- (#2);
+  % \draw[edge] (#5) -- (#4);
+  % \draw[edge] (#1) -- (#3);
+  % \draw[edge] (#3) -- (#4);
+  % \draw[edge] (#4) -- (#6);
+}
+
+%======================
+% BOTTOM: PATH A
+%======================
+
+\begin{scope}[scale= 0.6, yshift=-7.25cm, xshift=-8cm]
+  \basegraph{sA}{aA}{uA}{vA}{bA}{tA}
+
+  % orange path A: top -> left side -> u -> v -> bottom
+  \draw[path] (sA) -- (aA);
+  \draw[path] (aA) -- (uA);
+  \draw[path] (uA) -- (vA);
+  \draw[path] (vA) -- (tA);
+
+  % other edges
+  \draw[edge] (sA) -- (bA);
+  \draw[edge] (sA) -- (uA);
+  \draw[edge] (bA) -- (vA);
+  \draw[edge] (aA) -- (tA);
+  \draw[edge] (bA) -- (tA);
+
+  \node at (2.75,-1.75) {$P_A$};
+\end{scope}
+
+%======================
+% BOTTOM: PATH B
+%======================
+
+\begin{scope}[scale= 0.6, yshift=-7.25cm]
+  \basegraph{sB}{aB}{uB}{vB}{bB}{tB}
+
+  % orange path B: top -> right side -> v -> u -> left side -> bottom
+  \draw[path] (sB) -- (bB);
+  \draw[path] (bB) -- (vB);
+  \draw[path] (vB) -- (uB);
+  \draw[path] (uB) -- (aB);
+  \draw[path] (aB) -- (tB);
+
+  % other edges
+  \draw[edge] (sB) -- (aB);
+  \draw[edge] (sB) -- (uB);
+  \draw[edge] (vB) -- (tB);
+  \draw[edge] (bB) -- (tB);
+
+  \node at (2.75,-1.75) {$P_B$};
+\end{scope}
+
+%======================
+% BOTTOM: PATH C
+%======================
+
+\begin{scope}[scale= 0.6, yshift=-7.25cm, xshift=8cm]
+  \basegraph{sC}{aC}{uC}{vC}{bC}{tC}
+
+  % orange path C: top -> u -> v -> right side -> bottom
+  \draw[path] (sC) -- (uC);
+  \draw[path] (uC) -- (vC);
+  \draw[path] (vC) -- (bC);
+  \draw[path] (bC) -- (tC);
+
+  % other edges
+  \draw[edge] (sC) -- (aC);
+  \draw[edge] (sC) -- (bC);
+  \draw[edge] (uC) -- (aC);
+  \draw[edge] (aC) -- (tC);
+  \draw[edge] (vC) -- (tC);
+
+  \node at (2.75,-1.75) {$P_C$};
+\end{scope}
+
+\end{tikzpicture}
+\]
+where \(\phi = \frac{\sqrt{5} - 1}{2} \approx 0.618\) denotes the golden ratio, satisfying \(\phi^2 + \phi = 1\).
+\(x\) is some large integer.
+
+To see how \autoref{alg:ford_fulkerson} can loop forever, we track the residual capacities of the three horizontal edges.
+
+
+Suppose the \nameref{alg:ford_fulkerson} starts by choosing the central augmenting path (shown in the large figure above), adding \(1\) to the flow.
+The 3 horizontal edges, now have residual capacities \(1\), \(0\), and \(\phi\) (from left to right).
+Suppose inductively that the horizontal residual capacities are \(\phi^{k - 1}\), \(0\), \(\phi^{k}\) for some positive integer \(k \in \N\).
+Then \nameref{alg:augment} along ...
+\begin{enumerate}[label={\roman*.}]
+  \item \(P_B\), adding \(\phi^k\) to the flow; the residual capacities are now \(\phi^{k+1}\), \(\phi^k\), \(0\)
+  \item \(P_C\), adding \(\phi^k\) to the flow; the residual capacities are now \(\phi^{k+1}\), \(0\), \(\phi^{k}\)
+  \item \(P_B\), adding \(\phi^{k+1}\) to the flow; the residual capacities are now \(0\), \(\phi^{k+1}\), \(\phi^{k+2}\)
+  \item \(P_A\), adding \(\phi^{k+1}\) to the flow; the residual capacities are now \(\phi^{k+1}\), \(0\), \(\phi^{k+2}\)
+\end{enumerate}
+implying by induction that after \(4n + 1\) \nameref{alg:augment}ations (\(n \in \N_0\)), the flow has value
+\[
+v(f) = 1 + 2 \sum_{i=1}^{2n} \phi^i
+\]
+and the horizontal edges have residual capacities \(\phi^{2n}\), \(0\), \(\phi^{2n + 1}\).
+
+As \(n\) (the number of \nameref{alg:augment}ations) goes to \(\infty\), the value of the flow converges to
+\[
+\lim_{n \to \infty} v(f) =
+1 + 2 \sum_{i=1}^{\infty} \phi^i = 1 + 2 \cdot \frac{\phi}{1 - \phi} = 2 + \sqrt{5}
+\]
+even though the \hyperref[def:flow_value]{Value} of the \nameref{prob:max_flow} clearly is \(v(f^*) = 2x + 1 \gg 2 + \sqrt{5}\).
+\end{example}
+
+Although computers cannot represent irrational numbers exactly, this limitation is an artifact of hardware 
+% - or, if one insists, of physical reality itself -
+rather than an inherent property of the underlying problem. 
+Restricting capacities to integers is therefore artificial. 
+Moreover, considering irrational inputs is practically illuminating: 
+it reveals pathological worst-case behavior of algorithms under floating-point arithmetic, 
+where round-off errors can cause a careless implementation of the \nameref{alg:ford_fulkerson} to fail to terminate.
+
+\medskip
+Goal: Choose augmenting paths so that:
+\begin{itemize}
+  \item can find augmenting paths efficiently
+  \item result in few iterations
+\end{itemize}
+
+\medskip
+
+Strategies:
+\begin{itemize}
+  \item max bottleneck capacity (dependency on \(C\))
+  \item sufficiently large bottleneck capacity \textcolor{AccentGray}{[Dinitz 1970]}. reduce dependency on \(C\) to \(\log C\). Time \(O(m^2 \log C)\).
+  \item simple idea: \\
+  don't do anything fancy with capacities, just choose the path with fewest number of edges \textcolor{AccentGray}{[Edmonds-Karp 1972]}. Polynomial time algorithm. Time \(O(n m^2)\).
+\end{itemize}
+
+
+\subsubsection{Edmonds-Karp}
+
+\emph{Idea}: Always choose an augmenting path with the \hl{minimum number of edges} in the residual network.
+
+\begin{itemize}
+  \item Implemented by running \nameref{alg:bfs} in \(G_f\)
+  \item Each augmentation increases the shortest path distance
+  \item Total number of iterations: \(O(nm)\), so total running time is \hl[2]{\(O(n m^2)\)}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\subsection{Applications}
+\subsubsection{Bipartite Matching}\label{sec:bipartite_matching}
+
+\begin{definition}[Matching]\label{def:graph-matching}
+Given an undirected graph \(G = (V,E)\), \(M \subseteq E\) is a \emph{matching} if each node appears in at most one edge in \(M\).
+\end{definition}
+
+\begin{definition}[Bipartite Matching]\label{def:graph-bipartite-matching}
+A \emph{bipartite matching} is a \nameref{def:graph-matching} in an undirected, bipartite graph \(G = (L \cup R, E)\).
+\end{definition}
+
+\begin{problem}[Max Bipartite Matching]\label{prob:max_bipartite_matching}
+Find a \nameref{def:graph-bipartite-matching} of maximum cardinality.
+\end{problem}
+
+\hypertarget{formulation:max_bipartite_matching_as_max_flow}{
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:max_bipartite_matching}}:
+\begin{itemize}
+  \item create digraph \(G' = (L \cup R \cup \{s,t\}, E')\)
+  \item direct all edges from \(L\) to \(R\) and assign infinite (or unit) capacitiy
+  \item add \textcolor{AccentRed}{unit capacity} edges from \(s\) to all nodes in \(L\)
+  \item add \textcolor{AccentRed}{unit capacity} edges from all nodes in \(R\) to \(t\)
+\end{itemize}
+}
+
+\begin{theorem}\label{thm:matching_flow_equivalence}
+a bipartite graph \(G\) has a \nameref{def:graph-matching} of size \(k\) iff the network formulation \(G'\) has a flow of value \(k\).
+\end{theorem}
+or equivalently:
+\begin{theorem}\label{thm:max_matching_via_max_flow}
+max cardinality matching in \(G\) = value of \nameref{prob:max_flow} in \(G'\).
+\end{theorem}
+
+% \begin{proof}
+% `\(\leq\)' (\(|M|=k\), then \(G'\) has a flow of value \(k\)):
+% \begin{itemize}
+%   \item 
+%   given a max matching \(M\) of \(G\) with \(|M| = k\); 
+%   consider a flow \(f\) that sends 1 unit along each edge in \(M\): 
+%   \begin{itemize}
+%     \item for each \((u,v) \in M\), set \(f(s,u) = 1\), \(f(u,v) = 1\), \(f(v,t) = 1\)
+%     \item all other edges have flow \(f(e) = 0\)
+%   \end{itemize}
+%   \item \(f\) is a valid flow: consider a \(x \in L \cup R\):
+%   \begin{itemize}
+%     \item if \(x\) is incident to \(M\): \(f_{\text{in}}(x) = 1 = f_{\text{out}}(x)\) since \(M\) is a \nameref{def:graph-matching}
+%     \item if \(x\) is not incident to \(M\): \(f_{\text{in}}(x) = 0 = f_{\text{out}}(x)\)
+%   \end{itemize}
+%   \item value of flow \(f\): \(v(f) = |M| = k \leq v(f^*)\), where \(f^*\) is a \nameref{prob:max_flow}
+%   \qedhere
+% \end{itemize}
+% \end{proof}
+
+% \begin{proof}
+% `\(\geq\)' (\(v(f^*) \leq k = |M|\), where \(M\) is a max matching):
+% \begin{itemize}
+%   \item 
+%   let \(f\) be a \nameref{prob:max_flow} in \(G'\) with value \(r = v(f) = v(f^*)\)
+%   \item 
+%   apply \nameref{thm:integrality} theorem:
+%   \(r\) is integral, thus can assume \(f\) is \(\{0,1\}\)-valued
+%   \item 
+%   let \(M\) be the set of edges from \(L\) to \(R\) with \(f(e) = 1\).
+%   \item 
+%   \(v(f^*) = r\), thus \(r\) edges out of \(s\) carry flow 1; thus, \(r\) nodes in \(L\) are picked for \(M\); by conservation constraint, \(r\) incident \(L\)-\(R\) edges are picked. 
+%   Thus, \(r \leq |M|\).
+%   \item 
+%   By the conservation constraint, no two edges out of one node \(x \in L\) can be picked in \(M\); thus, \(M\) is a \nameref{def:graph-matching}.
+%   \qedhere
+% \end{itemize}
+% \end{proof}
+
+\begin{proof}[``$\le$'']
+Let $M$ be a max matching in $G$ with $|M|=k$. 
+Define a flow $f$ in $G'$ by
+\(f(s,u)=1\), \(f(u,v)=1\), \(f(v,t)=1\) 
+for each \((u,v)\in M\),
+and $f(e)=0$ for all other edges. 
+Capacity constraints \eqref{eq:capacity_constraints} hold since all used edges have capacity at least \(1\).
+For any vertex $x\in L\cup R$, 
+either $x$ is incident to no edge of $M$ (then $f_{\mathrm{in}}(x) = f_{\mathrm{out}}(x)=0$), 
+or to exactly one edge of $M$ (then $f_{\mathrm{in}}(x) = f_{\mathrm{out}}(x)=1$);
+hence flow conservation \eqref{eq:flow_conservation} holds. 
+Thus $f$ is a valid flow in $G'$ and
+\(
+v(f)=\sum_{u\in L} f(s,u) = |M| = k
+\).
+In particular, if $f^*$ is a max flow in $G'$, then $v(f^*) \ge v(f) = k$.
+\end{proof}
+
+\begin{proof}[``$\ge$'']
+Let $f$ be a max flow in $G'$ with $v(f) = r$. 
+By integrality (\autoref{thm:integrality}), we may assume $f$ is integral, 
+hence $f(e) \in \{0,1\}$ by capacity constraints \eqref{eq:capacity_constraints}.
+Define
+\(
+M \coloneqq \{(u,v)\in E \mid u\in L, v\in R, f(u,v) = 1\}
+\).
+For each $u \in L$ we have $\sum_{v \in R} f(u,v) = f(s,u) \le 1$ by flow conservation \eqref{eq:flow_conservation} at $u$, 
+so at most one edge of $M$ is incident to $u$.
+Similarly, 
+for each $v \in R$ we have $\sum_{u \in L} f(u,v) = f(v,t) \le 1$, so at most one edge of $M$ is incident to $v$.
+Thus $M$ is a matching in $G$ and
+\(
+|M| = \sum_{u \in L} \sum_{v \in R} f(u,v) = \sum_{u \in L} f(s,u) = v(f) = r
+\).
+In particular, if $M^*$ is a max matching in $G$, then $|M^*| \ge |M| = r$.
+\end{proof}
+
+The edges of the matching are the ones that carry flow from \(L\) to \(R\).
+
+
+\medskip
+
+
+We reduced the problem `\nameref{prob:max_bipartite_matching}' to the known problem `\nameref{prob:max_flow}'.
+
+
+
+
+\begin{definition}[Perfect Matching]\label{def:perfect_matching}
+A matching \(M \subseteq E\) is perfect if each node appears in exactly one edge in \(M\).  
+\end{definition}
+
+A necessary condition for a \nameref{def:perfect_matching} in a bipartite graph is \(|L| = |R|\).
+
+\medskip
+
+\textcolor{AccentBlue}{To compute a perfect matching (if one exists), compute a max cardinality matching}:
+\begin{itemize}
+  \item if cardinality \( = n = |L| = |R|\), then the matching is perfect
+  \item if cardinality \(< n\), then no perfect matching exists
+\end{itemize}
+
+\medskip
+
+\hl{A cut with capacity \(< n\) provides a \emph{certificate} that no perfect matching exists!}
+
+\begin{notation}[Neighborhood]\label{not:neighborhood}
+For a subset \(S \subseteq V\) of nodes in a graph \(G=(V,E)\), we write 
+\begin{equation}
+  N(S) \coloneqq \bigcup_{u \in S} \Gamma(u) %= \{ v \in V : \exists u \in S \text{ with } (u,v) \in E \}
+\end{equation}
+for the set of nodes adjacent to at least one node in \(S\).
+In order to avoid ambiguity, sometimes a subscript is added to indicate the graph, e.g., \(N_G(S)\).
+\end{notation}
+
+\begin{definition}[Deficiency]\label{def:deficiency}
+Let \(G = V, E\) be a graph and \(U\) be an \nameref{prob:independent-set} of vertices in \(G\).
+The \emph{deficiency} of \(U\) is defined as
+\begin{equation}\label{eq:deficiency}
+  \mathrm{def}_G(U) \coloneqq |U| - |N_G(U)|
+\end{equation}
+
+Suppose \(G\) is bipartite with bipartition \(L \cup R\).
+The \emph{deficiency} of \(G\) with respect to one of its parts is the maximum deficiency of any subset of that part, i.e.,
+\begin{equation}\label{eq:graph-deficiency}
+  \mathrm{def}(G; X) \coloneqq \max_{U \subseteq X} \mathrm{def}_G(U)
+\end{equation}
+where \(X \in \{L, R\}\).
+Sometimes this quantitiy is called the \emph{critical difference} of \(G\).
+\end{definition}
+
+% \begin{remark}
+% In a bipartite graph, every subset \(U\subseteq L\) (or \(U\subseteq R\)) is automatically an independent set, so the restriction “\(U\) independent” is redundant here.
+% Also note that \(\mathrm{def}(G;X)\ge 0\) since \(\mathrm{def}_G(\varnothing)=0\).
+% \end{remark}
+
+
+\begin{observation}\label{obs:hall-necessity}
+If a bipartite graph \(G = (L \cup R, E)\) has a \nameref{def:perfect_matching}, then \(|N(S)| \ge |S|\) for all subsets \(S \subseteq L\).
+\end{observation}
+\begin{proof}
+Suppose \(G\) has a perfect matching.
+Then each node in any \(S \subseteq L\) is matched to a different node in \(N(S)\).
+Thus, \(|S| \le |N(S)|\).
+\end{proof}
+
+\begin{theorem}[Marriage \textcolor{AccentGray}{[Frobenius 1917, Hall 1935]}]\label{thm:hall-marriage}
+Let \(G = (L \cup R, E)\) be a bipartite graph with \(|L| = |R|\).
+Then, \(G\) has a perfect matching iff \(|N(S)| \ge |S|\) for all subsets \(S \subseteq L\).
+\end{theorem}
+
+\begin{proof}[`$\Rightarrow$']
+\autoref{obs:hall-necessity}.
+\end{proof}
+
+% \begin{proof}[`$\Leftarrow$']
+% Suppose G does not have a perfect matching 
+% \begin{itemize}
+% \item Formulate $\mathrm{G}^{\prime}$ as max flow problem and let $({A}, {B})$ be min cut in ${G}^{\prime}$.
+% \item Since no perfect matching, $v\left(f^*\right)<n$ and $\operatorname{cap}({A}, {B})<{n}(|L|=n)$
+% \item Define $L_A=L \cap A, L_B=L \cap B, R_A=R \cap A$.
+% \item Since min cut can't use $\infty$ edges, no edge from $L$ to $R$ can be in cut; only edges from $s$ to $B\left(L_B\right)+$ edges from $A$ to $t\left(R_A\right)$
+% \item Thus, $\operatorname{cap}(A, B)=\left|L_B\right|+\left|R_A\right|$. Similarly, $N\left(L_A\right) \subseteq R_A$.
+% \item $\left|N\left(L_A\right)\right| \leq\left|R_A\right|=\operatorname{cap}(A, B)-\left|L_B\right|<|L|-\left|L_B\right|=\left|L_A\right|$.
+% \item $\left|N\left(L_A\right)\right|<\left|L_A\right|$. Chose $S=L_A$.
+% \qedhere
+% \end{itemize}
+% \end{proof}
+\begin{proof}[`$\Leftarrow$']
+We prove the contrapositive, i.e.
+\[
+\text{\(G\) has no perfect matching} \; \implies \; \exists S \subseteq L: |N(S)| < |S|
+\]
+
+Suppose \(G\) does not have a perfect matching 
+\begin{itemize}
+\item 
+Formulate ${G}^{\prime}$ as \nameref{prob:max_flow} problem and let $({A}, {B})$ be \nameref{prob:min_cut} in ${G}^{\prime}$.
+\item 
+Since no perfect matching, 
+value of \nameref{prob:max_flow} $v\left(f^*\right)<n$ (\autoref{thm:max_matching_via_max_flow})
+and therefore (by \autoref{thm:max-flow-min-cut}),
+capacity of the \nameref{prob:min_cut} $\operatorname{cap}({A}, {B})<{n}=|L|$.
+\item 
+Define $L_A=L \cap A$,  $L_B=L \cap B$, $R_A=R \cap A$, $R_B=R \cap B$.
+\item 
+Since \nameref{prob:min_cut} can't use $\infty$ edges (otherwise the cut capacity would be \(\infty\)), no edge from $L$ to $R$ can be in cut; 
+only edges from $s$ to $B$ ($L_B$) and edges from $A$ to $t$ ($R_A$).
+\item 
+Since all these edges have unit capacity, $\operatorname{cap}(A, B)=\left|L_B\right|+\left|R_A\right|$. 
+Furthermore, no edge from $L_A$ to $R_B$ implies $N(L_A) \subseteq R_A$.
+\item 
+$\left|N(L_A)\right| \leq\left|R_A\right|=\operatorname{cap}(A, B)-\left|L_B\right|<|L|-\left|L_B\right|=\left|L_A\right|$.
+\item 
+$\left|N(L_A)\right|<\left|L_A\right|$. 
+Choose $S=L_A$.
+\qedhere
+\end{itemize}
+\end{proof}
+
+\begin{theorem}[Hall]\label{thm:hall}
+Let \(G=(L\cup R,E)\) be bipartite and let \(X\in\{L,R\}\).
+Then, \(G\) has a \(X\)-saturating matching iff \(|N(S)| \ge |S|\) for all subsets \(S \subseteq X\), i.e., \(\mathrm{def}(G;X) = 0\).
+\end{theorem}
+
+
+\begin{theorem}[quantitative Hall]\label{thm:quantitative_hall}
+% Let \(G=(L\cup R,E)\) be a bipartite graph.
+% Then \(G\) has a matching that leaves exactly 
+% \[
+% \mathrm{def}(G;X) \overset{\text{Def \ref{def:deficiency}}}{=} \max_{U \subseteq X} \bigl( |U| - |N_G(U)| \bigr)
+% \] 
+% vertices of \(X\) unmatched, where \(X \in \{L,R\}\).
+% Equivalently, \(G\) has a maximum matching of size 
+% \[
+% |X|-\mathrm{def}(G;X) = \min_{U \subseteq X} \bigl( |X| - \bigl( |U| - |N_G(U)| \bigr) \bigr)
+% \]
+% where \(X \in \{L,R\}\).
+Let \(G=(L\cup R,E)\) be bipartite and let \(X\in\{L,R\}\).
+Then the maximum matching size is
+\[
+\nu(G)=
+|X|-\mathrm{def}(G;X)
+% =|X|-\max_{U\subseteq X}\bigl(|U|-|N_G(U)|\bigr)
+=\min_{U\subseteq X}\Bigl(|X|-\bigl(|U|-|N_G(U)|\bigr)\Bigr)
+\]
+
+Equivalently, there exists a maximum matching that leaves exactly \(\mathrm{def}(G;X)\) vertices of \(X\) unmatched.
+\end{theorem}
+
+\begin{remark}
+Hall's condition appears in increasing generality:
+\[
+\begin{aligned}
+& \quad \text{\autoref{thm:hall-marriage}}  \quad \text{(balanced perfect matching)} \\
+\Leftarrow & \quad \text{\autoref{thm:hall}} \quad \text{(\(X\)-saturating matching)} \\
+\Leftarrow & \quad \text{\autoref{thm:quantitative_hall}}  \quad \text{(exact maximum size via deficiency)}
+\end{aligned}
+\]
+Also note that
+\autoref{thm:hall} and \autoref{thm:quantitative_hall} do not require \(|L| = |R|\).
+\end{remark}
+
+
+
+% \bigskip
+
+\textcolor{AccentBlue}{Which max flow algorithm to use for \nameref{def:graph-bipartite-matching}?}
+\begin{itemize}
+  \item Generic augmenting path: \(O(m \cdot \text{val}(f^*)) = O(mn)\), since \(\text{val}(f^*) \leq n\)
+  \item \textcolor{gray}{Capacity scaling: \(O(m^2 \log C) = O(m^2)\)}
+  \item Shortest augmenting path: \(O(m \sqrt{n})\)
+\end{itemize}
+
+\medskip
+
+\textcolor{AccentBlue}{Non-bipartite \nameref{def:graph-matching}}:
+\begin{itemize}
+  \item Structure of non-bipartite graphs is more complicated, but well-understood \textcolor{AccentGray}{[Tutte-Berge, Edmonds-Galai]}
+  \item Blossom algorithm: \(O(n^4)\) \textcolor{AccentGray}{[Edmonds 1965]}
+  \item Best known: \(O(m \sqrt{n})\) \textcolor{AccentGray}{[Micali-Vazirani 1980]}
+\end{itemize}
+
+
+
+
+% \subsubsubsection{\(k\)-regular Bipartite Graphs}\label{sec:k-regular_bipartite_graphs}
+
+\begin{definition}\label{def:k-regular-graph}
+A graph is said to be \(k\)-regular if every node has degree \(k\).
+\end{definition}
+\begin{lemma}\label{lemma:regular-bipartite-graphs-balanced}
+Let \(G = (L \cup R, E)\) be a \(k\)-regular bipartite graph with \(k \geq 1\).
+Then \(|L| = |R|\) (i.e. \(G\) is balanced).
+\end{lemma}
+\begin{proof}
+We count \(|E|\) in two different ways.
+Because \(G\) is bipartite with partite sets \(L\) and \(R\), 
+every edge is incident with exactly one vertex of \(L\) and exactly one vertex of \(R\). 
+Hence, summing degrees over either \(L\) or \(R\) counts each edge exactly once.
+Since \(\deg(v) = k\) for all \(v \in L \cup R\), 
+we have \(k|L|=|E|=k|R|\), and since \(k \geq 1\), we have \(|L| = |R|\).
+\end{proof}
+
+\begin{theorem}\label{thm:regular-bipartite-graphs-perfect-matching}
+Every \(k\)-regular bipartite graph with \(k \geq 1\) has a \nameref{def:perfect_matching}.
+\end{theorem}
+\begin{proof}
+Let \(G=(L\cup R,E)\) be a \(k\)-regular bipartite graph with \(k\ge 1\). 
+By \autoref{lemma:regular-bipartite-graphs-balanced}, \(|L|=|R|=n\).
+
+Add the source \(s\) and sink \(t\) to 
+construct the usual network \(G'\) with unit capacities (as described \hyperlink{formulation:max_bipartite_matching_as_max_flow}{Above}).
+
+Define a (fractional) flow \(f\) by 
+\[
+f(e) =
+\begin{cases}
+\frac{1}{k} & \text{if \(e\) is from \(L\) to \(R\)} \\
+1 & \text{otherwise}
+\end{cases}
+\]
+It is easy to verify that \(f\) satisfies capacity constraints \eqref{eq:capacity_constraints} and flow conservation \eqref{eq:flow_conservation}.
+Hence, \(f\) is a valid flow in \(G'\) with value \(v(f) = n\).
+
+All capacities are integral, and there exists a flow of value \(n\); thus by \autoref{cor:integral-flow-given-value} there exists an integral flow \(f'\) with \(v(f')=n\).
+Since all capacities are \(1\), we have \(f'(e)\in\{0,1\}\) for all arcs.
+
+Let \(M\coloneqq \{(u,v)\in E \mid f'(u,v)=1\}\).
+Because \(v(f')=n\), all arcs \((s,u)\) and \((v,t)\) are saturated. % i.e. \(f'(s,u)=1\) for all \(u\in L\) and \(f'(v,t)=1\) for all \(v\in R\).
+By conservation, each \(u\in L\) has exactly one outgoing arc \((u,v)\) with flow \(1\), and each \(v\in R\) has exactly one incoming arc \((u,v)\) with flow \(1\).
+Therefore every vertex is incident to exactly one edge of \(M\), so \(M\) is a perfect matching.
+\end{proof}
+
+
+
+% \subsubsubsection{\((k_1,k_2)\)-semi-regular Bipartite Graphs}\label{sec:k1k2-semi-regular_bipartite_graphs}
+\begin{definition}\label{def:k1k2-semi-regular-graph}
+A bipartite graph \(G = (L \cup R, E)\) is \((k_L,k_R)\)-semi-regular if every node in \(L\) has degree \(k_L\) and every node in \(R\) has degree \(k_R\).
+\end{definition}
+
+Note that in a \((k_L,k_R)\)-semi-regular bipartite graph, we have
+\[
+|E| = k_L |L| = k_R |R| 
+\implies
+\frac{|L|}{|R|} = \frac{k_R}{k_L}
+\]
+
+\begin{theorem}\label{thm:k1k2-semi-regular-bipartite-graphs-saturating-matching}
+A \((k_L,k_R)\)-semi-regular bipartite graph \(G = (L \cup R, E)\) has a \(X\)-saturating matching where \(X\) denotes the part with larger degree, i.e. \(k_X = \max\{k_L, k_R\}\).
+\end{theorem}
+\begin{proof}
+Denote by \(Y\) the other part, i.e. \(k_Y = \min\{k_L, k_R\}\).
+Consider any subset \(S \subseteq X\) and its neighborhood \(N(S) \subseteq Y\).
+Denote by \(E(S, N(S))\) the set of edges with one endpoint in \(S\) and the other in \(N(S)\).
+Counting the edges in \(E(S, N(S))\) by their endpoints in \(S\) gives
+\[|E(S, N(S))| = k_X |S|
+\]
+since each node in \(S\) has degree \(k_X\).
+Counting the edges in \(E(S, N(S))\) by their endpoints in \(N(S)\) gives
+\[|E(S, N(S))| \le k_Y |N(S)|
+\]
+since each node in \(N(S)\) has degree \(k_Y\) and there may be edges from \(N(S)\) to nodes outside of \(S\).
+Combining these two equations gives
+\[k_X |S| \le k_Y |N(S)|
+\]
+or equivalently
+\[|N(S)| \ge \frac{k_X}{k_Y} |S| \ge |S|
+\]
+since \(k_X \ge k_Y\).
+By \autoref{thm:hall}, there exists a \(X\)-saturing matching.    
+\end{proof}
+
+
+
+
+
+
+\subsubsection{Edge Disjoint Paths}\label{sec:edge_disjoint_paths}
+
+\begin{definition}[Edge Disjoint Paths]\label{def:edge_disjoint_paths}
+Two paths are \textcolor{AccentRed}{edge disjoint} if they have no edge in common.
+\end{definition}
+
+\begin{problem}[Max Edge Disjoint Paths]\label{prob:max_edge_disjoint_paths}
+Given a directed graph \(G = (V,E)\) and two nodes \(s,t \in V\), find the maximum number of edge disjoint \(s\)-\(t\) paths.
+\end{problem}
+
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:max_edge_disjoint_paths}}:
+assign unit capacity to each edge in \(G\).
+
+
+\begin{theorem}\label{thm:max_edge_disjoint_paths_max_flow_equivalence}
+\(G\) has \(k\) edge-disjoint \(s\)-\(t\) paths iff \(G'\) has a flow of value \(k\).
+\end{theorem}
+
+\begin{theorem}\label{thm:k_edge_disjoint_paths_k_flow_equivalence}
+Max number of edge-disjoint \(s\)-\(t\) paths equals value of \nameref{prob:max_flow}.
+\end{theorem}
+
+
+\begin{proof}[``$\le$'']
+Let \(P_1, \ldots, P_k\) be \(k\) edge disjoint \(s\)-\(t\) paths.
+Create a flow \(f\) as follows:
+Make each path \(P_i\) carry 1 unit of flow from \(s\) to \(t\),
+i.e. set \(f(e) = 1\) if \(e\) participates in some path \(P_i\), and \(f(e) = 0\) otherwise.
+Since the paths are edge disjoint, no edge carries more than 1 unit of flow,
+so capacity constraints \eqref{eq:capacity_constraints} are satisfied.
+Flow conservation \eqref{eq:flow_conservation} is satisfied since at an internal node, each path has exactly one incoming and one outgoing edge.
+The value of the flow is \(v(f) = k\) (\(k\) edges out of \(s\) carry flow one unit of flow).
+\end{proof}
+
+\begin{proof}[``$\ge$'']
+Let \(f\) be a flow of value \(k\).
+By \nameref{thm:integrality}, there exists a 0-1 flow \(f\) of value \(k\).
+Consider an edge \((s,u)\) with \(f(s,u) = 1\).
+By flow conservation \eqref{eq:flow_conservation}, there exists an edge \((u,v)\) with \(f(u,v) = 1\).
+Continue until reaching \(t\), always choosing a new edge with flow 1.
+Once reaching \(t\) we found one path.
+Remove all edges of this path from the graph and repeat \(k\) times.
+We obtain \(k\) (not necessarily sim\tikzmark{simple}ple) edge disjoint \(s\)-\(t\) paths (one for each edge our of \(s\) with flow 1).
+\end{proof}
+\newcommand{\annotdropcycle}{0.5cm}  % how far below the text the note sits
+\newcommand{\arrowpadcycle}{0.1cm}   % small offset between mark and arrow target
+\begin{tikzpicture}[remember picture,overlay, font=\scriptsize]
+
+  \node[anchor = north west] (note1) at ($(pic cs:simple)+(0.4,-\annotdropcycle)$) {can eliminate cycles to get simple paths if desired}; % depth arrow
+  \draw[->, outer sep=0cm, inner sep=0cm] (note1.west) -- ($(pic cs:simple)+(0,-\arrowpadcycle)$);  % offset label
+
+\end{tikzpicture}
+% \vspace{\dimexpr\annotdrop-0.1cm\relax}
+
+
+We reduced the problem `\nameref{prob:max_edge_disjoint_paths}' to the known problem `\nameref{prob:max_flow}'.
+
+
+
+
+
+\subsubsection{Network Connectivity}\label{sec:network_connectivity}
+
+\begin{definition}
+A set of edges \(F \subseteq E\) \textcolor{AccentRed}{disconnects \(t\) from \(s\)} if all \(s\)-\(t\) paths use at least one edge in \(F\).
+\end{definition}
+
+\begin{problem}[Network Connectivity]\label{prob:network_connectivity}
+Given a directed graph \(G = (V,E)\) and two nodes \(s,t \in V\), 
+find the minimum number of edges whose removal disconnects \(t\) from \(s\).
+\end{problem}
+
+We can solve \autoref{prob:network_connectivity} by finding a \nameref{prob:min_cut} in a network with unit capacities on all edges.
+
+\begin{theorem}[\textcolor{AccentGray}{[Menger, 1927]}]\label{thm:network_connectivity_max_edge_disjoint_paths_equivalence}
+The max number of edge disjoint \(s\)-\(t\) paths is equal to the min number of edges whose removal disconnects \(t\) from \(s\).
+\end{theorem}
+
+Special case of \nameref{thm:max-flow-min-cut} (\autoref{thm:max-flow-min-cut}):
+\begin{itemize}
+  \item derive a \nameref{def:flow_network} with unit capacities
+  \item min number of edges whose removal disconnects \(t\) from \(s\) = \nameref{prob:max_flow}
+  \item max number of edge disjoint \(s\)-\(t\) paths = \nameref{prob:max_flow}
+\end{itemize}
+
+
+
+
+
+\subsection{Extensions}\label{sec:extensions-max-flow}
+
+\subsubsection{Circulation with Demands}\label{sec:circulation_with_demands}
+
+\begin{definition}[Circulation with Demands]\label{def:circulation_with_demands}
+directed graph \(G = (V,E)\) with 
+\begin{itemize}
+\item edge capacities \(c(e)\), \(e \in E\)
+\item node supply and demands \(d(v)\), \(v \in V\)
+\end{itemize}
+where demand if \(d(v) > 0\), supply if \(d(v) < 0\), and transshipment node if \(d(v) = 0\).
+\end{definition}
+
+\begin{definition}[Circulation]\label{def:circulation}
+A \emph{circulation} is a function \(f\) that satisfies
+\begin{itemize}
+  \item \emph{Capacity}: For each \(e \in E\):
+  \begin{equation}\label{eq:capacity_constraints_circulation}
+    0 \le f(e) \le c(e)
+  \end{equation}
+  \item `\emph{Conservation}': For each \(v \in V\):
+  \begin{equation}\label{eq:flow_conservation_circulation}
+    \sum_{(u, v) \in E} f(u,v) - \sum_{(v, w) \in E} f(v,w) = d(v)
+    \qedhere
+  \end{equation}
+\end{itemize}
+\end{definition}
+
+\begin{problem}[Circulation]\label{prob:circulation}
+Given \(V, E, c, d\), does there exist a circulation \(f\)?  
+\end{problem}
+\autoref{prob:circulation} is a feasibility (decision) problem (not an optimization one).
+
+
+\begin{observation}\label{obs:circulation_necessary_condition}
+A \textcolor{AccentBlue}{necessary condition} for the existence of a \nameref{def:circulation} is
+\begin{equation}\label{eq:circulation_necessary_condition}
+\sum_{v \in T} d(v) = \sum_{v \colon d(v) > 0} d(v) = - \sum_{v \colon d(v) < 0} d(v) = -\sum_{v \in S} d(v) =: D
+\end{equation}
+or
+\begin{equation}\label{eq:circulation_necessary_condition_allnodes}
+\sum_{v \in V} d(v) = 0
+\end{equation}
+where \(S\) denotes the supply nodes and \(T\) the demand nodes.
+\end{observation}
+
+
+
+\textcolor{AccentBlue}{\nameref{prob:max_flow} formulation of \autoref{prob:circulation}}:
+\begin{itemize}
+  \item can assume \eqref{eq:circulation_necessary_condition} holds; otherwise answer \texttt{no} immediately
+  \item add a new source \(s\) and sink \(t\)
+  \item for each \(v\) with \(d(v) < 0\), add edge \((s,v)\) with capacity \(-d(v)\) (supply)
+  \item for each \(v\) with \(d(v) > 0\), add edge \((v,t)\) with capacity \(d(v)\) (demand)
+\end{itemize}
+
+\begin{claim}\label{clm:circulation_max_flow_equivalence}
+\(G\) has a \nameref{prob:circulation} iff \(G'\) has \nameref{prob:max_flow} of value \(D\).
+\end{claim}
+
+% \begin{proof}[`$\Rightarrow$']
+% Suppose \(G\) has a circulation \(f\) with value \(D\).
+% \begin{itemize}
+% \item create a flow \(f'\) in \(G'\) of value \(D\):
+% \begin{itemize}
+% \item saturate all edges coming out of \(s\) and going into \(t\): \(f'(e) = c(e)\) for all \(e\) incident to \(s\) or \(t\)
+% \item \(f'(e) = f(e)\) for every other edge of \(G'\)
+% \end{itemize}
+% \item \(f'\) is a valid flow:
+% \begin{itemize}
+% \item satisfies capacity constraints \eqref{eq:capacity_constraints} 
+% \item satisfies conservation constraints \eqref{eq:flow_conservation} at each node \(v\):
+% \begin{itemize}
+% \item 
+% \(v \in S\): 
+% \begin{itemize}
+%   \item \(\text{in-flow}(v) = \text{in-circ}(v) + \text{in-source}(v) = \text{in-circ}(v) + |d(v)|\) (by construction, \(\text{in-source}(v) = |d(v)|\))
+%   \item \(\text{out-flow}(v) = \text{out-circ}(v) = \text{in-circ}(v) + |d(v)|\) (by circulation conservation \eqref{eq:flow_conservation_circulation})
+% \end{itemize}
+% \item 
+% \(v \in T\):
+% \begin{itemize}
+%   \item \(\text{out-flow}(v) = \text{out-circ}(v) + \text{out-sink}(v) = \text{out-circ}(v) + d(v)\)
+%   \item \(\text{in-flow}(v) = \text{in-circ}(v) = \text{out-circ}(v) + d(v)\)
+% \end{itemize}
+% \item 
+% \(v \in V \setminus (S \cup T)\): \(d(v) = 0\): \(f' = f\) for every incident edge, thus, \(\text{in-flow} = \text{out-flow}\) (by circulation conservation \eqref{eq:flow_conservation_circulation})
+% \qedhere
+% \end{itemize}
+% \end{itemize}
+% \end{itemize}
+% \end{proof}
+
+% \begin{proof}[`$\Leftarrow$']
+% Suppose \(G'\) has a flow \(f'\) of value \(D\).
+% \begin{itemize}
+% \item 
+% since \(v(f') = D\), all edges leaving \(s\) and all edges entering \(t\) are saturated.
+% \item
+% by flow conservation \eqref{eq:flow_conservation}, all demand and supply nodes achieve their supply/demand quotas in \(f\).
+% \item
+% by flow conservation \eqref{eq:flow_conservation} at every node of \(G\), we have a valid circulation (ignore the flows along edges incident to \(s\) and \(t\)).
+% \qedhere
+% \end{itemize}
+% \end{proof}
+
+
+\begin{proof}[`$\Rightarrow$']
+Assume $G$ has a circulation $f$%
+% , i.e. $0 \le f(e) \le c(e)$ and $\sum_{(u,v)\in E} f(u,v)-\sum_{(v,w)\in E} f(v,w)=d(v)$ for all $v$%
+.
+Define an $s$-$t$ flow $f'$ in $G'$ by setting $f'(e)\coloneqq f(e)$ for all original edges $e\in E$, and by saturating the new edges:
+$f'(s,v)\coloneqq -d(v)$ for $v\in S$ and $f'(v,t)\coloneqq d(v)$ for $v\in T$.
+Capacities are satisfied by construction, and flow conservation in $G'$ holds at every $v\in V$ because 
+the extra inflow $-d(v)$ (resp. extra outflow $d(v)$) exactly cancels the imbalance $f_{\text{in}}(v)-f_{\text{out}}(v)=d(v)$.
+Finally,
+\(
+v(f')=\sum_{v\in V} f'(s,v)=\sum_{v\in S}(-d(v))=D
+\).
+\end{proof}
+
+\begin{proof}[`$\Leftarrow$']
+Assume $G'$ has an $s$-$t$ flow $f'$ with $v(f')=D$.
+Since $\sum_{v\in S} c(s,v)=\sum_{v\in S}(-d(v))=D$, the value bound $v(f')\le \sum_{v\in S} c(s,v)$ forces every edge $(s,v)$ to be saturated, 
+i.e.\ $f'(s,v)=-d(v)$ for all $v\in S$; similarly $f'(v,t)=d(v)$ for all $v\in T$.
+Now restrict $f'$ to the original edges $E$ and call this restriction $f$.
+Then $f$ satisfies $0\le f(e)\le c(e)$, and for each $v\in V$ the flow-conservation equation in $G'$, 
+after subtracting the (now fixed) contribution from $(s,v)$ or $(v,t)$, 
+becomes exactly $f_{\text{in}}(v)-f_{\text{out}}(v)=d(v)$, so $f$ is a valid circulation in $G$.
+\qedhere
+\end{proof}
+
+
+We reduced the problem `\nameref{prob:circulation}' to the known problem `\nameref{prob:max_flow}'.
+
+\begin{theorem}[Integrality for Circulations]\label{thm:integrality_circulation}
+If all capacities \(c(e)\) and demands \(d(v)\) are integers and there exists a \nameref{def:circulation}, then there exists one that is integer-valued.  
+\end{theorem}
+\begin{proof}
+Follows from \nameref{prob:max_flow} formulation and standard \nameref{thm:integrality} theorem.
+\end{proof}
+
+
+
+
+\subsubsection{Circulation with Demands and Lower Bounds}\label{sec:circulation_with_demands_and_lower_bounds}
+
+\begin{definition}[Circulation with Demands and Lower Bounds]\label{def:circulation_with_demands_and_lower_bounds}
+directed graph \(G = (V,E)\) with 
+\begin{itemize}
+\item edge capacities \(c(e)\) \textcolor{red}{and lower bounds \(\ell(e)\)}, \(e \in E\)
+\item node supply and demands \(d(v)\), \(v \in V\)
+\end{itemize}
+where demand if \(d(v) > 0\), supply if \(d(v) < 0\), and transshipment node if \(d(v) = 0\).
+\end{definition}
+
+\begin{definition}[Circulation]\label{def:circulation_with_lower_bounds}
+A \emph{circulation} is a function \(f\) that satisfies
+\begin{itemize}
+  \item \emph{Capacity}: For each \(e \in E\):
+  \begin{equation}\label{eq:capacity_constraints_circulation_with_lower_bounds}
+    \textcolor{red}{\ell(e)} \le f(e) \le c(e)
+  \end{equation}
+  \item `\emph{Conservation}': For each \(v \in V\):
+  \begin{equation}\label{eq:flow_conservation_circulation_with_lower_bounds}
+    \sum_{(u, v) \in E} f(u,v) - \sum_{(v, w) \in E} f(v,w) = d(v)
+    \qedhere
+  \end{equation}
+\end{itemize}
+\end{definition}
+
+\begin{problem}[Circulation with Lower Bounds]\label{prob:circulation_with_lower_bounds}
+Given \(V, E, \ell, c, d\), does there exist a circulation \(f\)?  
+\end{problem}
+
+\textcolor{AccentBlue}{Idea} is to reduce \autoref{prob:circulation_with_lower_bounds} to \autoref{prob:circulation} (with no lower bounds)
+% \begin{itemize}
+%   \item model lower bounds as node demands (add to original demands)
+%   \item send \(\ell(e)\) units of flow along edge \(e\) 
+%   \item convert lower bounds to node demands. \(L(v) = \ell_{\text{in}}(v) - \ell_{\text{out}}(v)\)% = \sum_{(u,v) \in E} \ell(u,v) - \sum_{(v,w) \in E} \ell(v,w)\)
+%   \item \(f_0\): initial (invalid) flow based on lower bounds (to add at the end)
+%   \item build a residual circulation problem \(G'\) (use \(L(v)\))
+%   \item compute the circulation \(f_1\) on \(G'\)
+%   \item let the final circulation on \(G\) be: \(f_0 + f_1\)
+% \end{itemize}
+\begin{itemize}
+  \item generate an initial (invalid) circulation \(f_0\) based on \(\ell(e)\): 
+  
+  \indent \(f_0(u,v) = \ell(u,v)\) 
+
+  \item compute \(L(v)\) for each node \(v\) (\(L(v)\) is the excess flow coming into \(v\) (because of lower bounds), it may be negative (flow deficit)):
+
+  \indent \(L(v) = f_{0,\text{in}}(v) - f_{0,\text{out}}(v) = \sum_{(u,v) \in E} \ell(u,v) - \sum_{(v,w) \in E} \ell(v,w)\)
+
+  \item build residual circulation network \(G'\):
+  \begin{itemize}
+    \item same vertices as \(G\)
+    \item capacity for edges: \(c'(u,v) = c(u,v) - \ell(u,v)\)
+    \item demands for nodes: \(d'(v) = d(v) - L(v)\) (remainder demand)
+  \end{itemize}
+  \item compute a valid circulation \(f_1\) on \(G'\)
+  \item final circulation on \(G\) is: \(f = f_0 + f_1\)
+\end{itemize}
+
+\begin{theorem}\label{thm:circulation_with_lower_bounds_equivalence}
+There exists a circulation in \(G\) iff there exists a circulation in \(G'\).
+And if all demands, capacities, and lower bounds are integers, then there is an integer-valued circulation.
+\end{theorem}
+\begin{proof}
+ \(f\) is a circulation in \(G\) iff \(f'\), where \(f'(e) = f(e) - \ell(e)\) for every \(e \in E\), is a circulation in \(G'\).
+
+ `$\Rightarrow$':
+ \begin{itemize}
+\item suppose there is a circulation \(f\) in \(G\)
+\item define \(f'\) in \(G'\) by \(f'(e) = f(e) - \ell(e)\)
+\item \(f'\) satisfies capacity \eqref{eq:capacity_constraints_circulation_with_lower_bounds} and conservation \eqref{eq:flow_conservation_circulation_with_lower_bounds} in \(G'\)
+\end{itemize}
+
+ `$\Leftarrow$':
+ \begin{itemize}
+\item suppose there is a circulation \(f'\) in \(G'\)
+\item define \(f\) in \(G\) by \(f(e) = f'(e) + \ell(e)\)
+\item \(f\) satisfies capacity \eqref{eq:capacity_constraints_circulation} and conservation \eqref{eq:flow_conservation_circulation} in \(G\)
+\qedhere
+\end{itemize}
+\end{proof}
+
+
+
+\begin{example}[Table Rounding]\label{ex:table_rounding}
+Given an \(m\times n\) table \((x_{ij})\) with row sums \(r_i\coloneqq \sum_{j=1}^n x_{ij}\) and column sums \(c_j\coloneqq \sum_{i=1}^m x_{ij}\),
+we want to round each entry \(x_{ij}\) to an integer \(y_{ij}\in\{\lfloor x_{ij}\rfloor,\lceil x_{ij}\rceil\}\) such that
+\(\sum_{j=1}^n y_{ij}\in\{\lfloor r_i\rfloor,\lceil r_i\rceil\}\) for all rows \(i\) and \(\sum_{i=1}^m y_{ij}\in\{\lfloor c_j\rfloor,\lceil c_j\rceil\}\) for all columns \(j\).
+
+% \medskip
+
+We can model this as a \nameref{prob:circulation_with_lower_bounds}:
+Create nodes \(R_1,\dots,R_m\) (rows), \(C_1,\dots,C_n\) (columns), and two nodes \(s,t\).
+Add edges
+% \((s,R_i)\) with bounds \(\ell(s,R_i)=\lfloor r_i\rfloor\), \(c(s,R_i)=\lceil r_i\rceil\),
+% \((R_i,C_j)\) with bounds \(\ell(R_i,C_j)=\lfloor x_{ij}\rfloor\), \(c(R_i,C_j)=\lceil x_{ij}\rceil\),
+% \((C_j,t)\) with bounds \(\ell(C_j,t)=\lfloor c_j\rfloor\), \(c(C_j,t)=\lceil c_j\rceil\),
+% and one extra edge \((t,s)\) with \(\ell(t,s)=0\) and \(c(t,s) = \infty\).
+\((s,R_i)\) with bounds \([\lfloor r_i\rfloor, \lceil r_i\rceil]\),
+\((R_i,C_j)\) with bounds \([\lfloor x_{ij}\rfloor, \lceil x_{ij}\rceil]\),
+\((C_j,t)\) with bounds \([\lfloor c_j\rfloor, \lceil c_j\rceil]\),
+and one extra edge \((t,s)\) with bounds \([0, \infty]\).
+Set all node demands to \(0\).
+
+
+
+% You can still keep m,n as “parameters” for the text,
+% but the drawing will show: R1, R2, …, R_m and C1, C2, …, C_n.
+\newcommand{\m}{m}
+\newcommand{\n}{n}
+\[
+\begin{tikzpicture}[
+  scale=0.7,
+  >=Stealth,
+  font=\footnotesize,
+  v/.style={circle, fill=black, inner sep=1.2pt},
+  edge/.style={->},
+  lab/.style={font=\footnotesize, align=center, inner sep=1pt}
+]
+\useasboundingbox (0,-3) rectangle (9.5,3);
+
+% --- geometry ---
+\def\xS{0}
+\def\xR{3.0}
+\def\xC{6.6}
+\def\xT{9.5}
+\def\ySep{1.15}
+
+% We draw only "representative" nodes:
+% rows:  R1, R2, (dots), Rm
+% cols:  C1, C2, (dots), Cn
+\coordinate (RowTop) at (\xR,  1.5*\ySep);
+\coordinate (RowBot) at (\xR, -1.5*\ySep);
+\coordinate (ColTop) at (\xC,  1.5*\ySep);
+\coordinate (ColBot) at (\xC, -1.5*\ySep);
+
+% source/sink
+\node[v,label=left:$s$]  (s) at (\xS,0) {};
+\node[v,label=right:$t$] (t) at (\xT,0) {};
+
+% --- row side: R1, R2, ..., Rm ---
+\node[v,label=above:$R_{1}$] (R1) at ($(RowTop)+(0,0)$) {};
+\node[v,label=above:$R_{2}$] (R2) at ($(RowTop)+(0,-1*\ySep)$) {};
+\node[font=\large] (Rdots) at ($(RowTop)+(0,-2*\ySep)$) {$\vdots$};
+\node[v,label=below:$R_{\m}$] (Rm) at ($(RowTop)+(0,-3*\ySep)$) {};
+
+% --- column side: C1, C2, ..., Cn ---
+\node[v,label=above:$C_{1}$] (C1) at ($(ColTop)+(0,0)$) {};
+\node[v,label=above:$C_{2}$] (C2) at ($(ColTop)+(0,-1*\ySep)$) {};
+\node[font=\large] (Cdots) at ($(ColTop)+(0,-2*\ySep)$) {$\vdots$};
+\node[v,label=below:$C_{\n}$] (Cn) at ($(ColTop)+(0,-3*\ySep)$) {};
+
+% --- edges ---
+% s -> rows
+\foreach \R in {R1,R2,Rm}{
+  \draw[edge] (s) -- (\R);
+}
+
+% rows -> cols (draw a readable “abstract” subset)
+\foreach \R in {R1,R2,Rm}{
+  \foreach \C in {C1,C2,Cn}{
+    \draw[edge,opacity=0.35] (\R) -- (\C);
+  }
+}
+
+% cols -> t
+\foreach \C in {C1,C2,Cn}{
+  \draw[edge] (\C) -- (t);
+}
+
+% extra edge t -> s with [0,∞]
+\draw[edge,out=-60,in=-120,looseness=1.2]
+  (t) to node[lab,above, outer sep = 2pt] {$[0,\infty]$} (s);
+
+% --- “bundle” labels (bounds) ---
+\node[lab] at ($(s)!0.55!(R1) + (-0.2,1.0)$)
+  {$(s,R_i)$\\$[\lfloor r_i\rfloor, \lceil r_i\rceil]$};
+
+\node[lab] at ($(R1)!0.5!(C1) + (0,0.8)$)
+  {$(R_i,C_j)$\\$[\lfloor x_{ij}\rfloor, \lceil x_{ij}\rceil]$};
+
+\node[lab] at ($(C1)!0.55!(t) + (0.2,1.0)$)
+  {$(C_j,t)$\\$[\lfloor c_j\rfloor, \lceil c_j\rceil]$};
+
+\end{tikzpicture}
+\]
+
+\begin{claim*}
+There is a consistent rounding iff the above network has an \emph{integral} valid circulation.
+\end{claim*}
+
+\begin{proof}
+Each edge except \((t,s)\) corresponds to one displayed number in the table (entries and row/column aggregates).
+Given an integral circulation \(f\), round each number to the integer \(f(e)\).
+Flow conservation at each \(R_i\) enforces that the rounded row entries sum to the rounded row total, and conservation at each \(C_j\) enforces the analogous column condition.
+Conversely, any consistent rounding defines integer values on all edges except \((t,s)\); setting \(f(t,s)\) to the total rounded sum makes conservation hold at \(s\) and \(t\).
+All bounds are respected because every rounded value lies in \(\{\lfloor\cdot\rfloor,\lceil\cdot\rceil\}\).
+\end{proof}
+
+
+% \paragraph{Feasibility / integrality.}
+All lower/upper bounds are integers, so by \autoref{thm:circulation_with_lower_bounds_equivalence}, % (applied after the standard reduction from lower bounds),
+% if a valid circulation exists then an integral one exists; hence the decision reduces to checking feasibility of the circulation with lower bounds (via the reduction in \autoref{sec:circulation_with_demands_and_lower_bounds}).
+if a valid circulation exists then an integral one exists.
+Since the entries from the original table induce a valid circulation (by setting \(f(e) = x_{ij}\) or \(f(e) = r_i\) or \(f(e) = c_j\) on the corresponding edges),
+a valid circulation always exists, and hence also a consistent rounding always exists.
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
