@@ -1,5 +1,29 @@
 % author: Fabian Bosshard % © CC BY 4.0
 
+
+
+\begin{filecontents}[overwrite]{\jobname.bib}
+@book{multererSDA,
+  author    = {Michael Multerer},
+  title     = {Scattered Data Approximation},
+  year      = {2025},
+  publisher = {Universit{\`a} della Svizzera italiana},
+  url       = {https://muchip.github.io/resources/SDA_notes.pdf},
+}
+@book{arens2022mathematik,
+  author    = {Tilo Arens and Frank Hettlich and Christian Karpfinger and Ulrich Kockelkorn and Klaus Lichtenegger and Hellmuth Stachel},
+  title     = {Mathematik},
+  publisher = {Springer Spektrum},
+  year      = {2022},
+  edition   = {5},
+  % isbn      = {978-3-662-64389-1},
+  % doi       = {10.1007/978-3-662-64389-1},
+  url       = {https://link.springer.com/book/10.1007/978-3-662-64389-1},
+}
+\end{filecontents}
+
+
+
 \documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
 \usepackage{ifthen}
 \usepackage{iftex}
@@ -99,7 +123,7 @@
 
 \usepackage{caption, subcaption}
 
-\usepackage[backend=biber,style=numeric]{biblatex}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 \addbibresource{\jobname.bib}
 
 \usepackage{pifont}
@@ -323,7 +347,6 @@
 \usepackage{algorithmicx}
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
 
-\newcommand*{\algorithmautorefname}{Algorithm}
 
 % The algopseudocodex package uses TikZ internally. The easiest solution would be to disable the externalization for the algorithmic environment by doing
 % \AddToHook{env/algorithmic/begin}{\tikzexternaldisable} 
@@ -505,7 +528,7 @@
   modifier = {by},
   version  = {4.0},
 ]{doclicense}
-\usepackage{cleveref}
+% \usepackage{cleveref}
 
 % after \usepackage{hyperref} and \numberwithin{equation}{section}
 \makeatletter
@@ -549,6 +572,47 @@
             nonumberlist          % omit page list in the printed glossary
            ]{glossaries-extra}
 
+
+
+
+
+% autoref names ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\renewcommand{\definitionautorefname}{Definition}
+\renewcommand{\lemmaautorefname}{Lemma}
+\renewcommand{\theoremautorefname}{Theorem}
+\renewcommand{\corollaryautorefname}{Corollary}
+\renewcommand{\propositionautorefname}{Proposition}
+\renewcommand{\conjectureautorefname}{Conjecture}
+\renewcommand{\claimautorefname}{Claim}
+\renewcommand{\exampleautorefname}{Example}
+\renewcommand{\remarkautorefname}{Remark}
+
+\renewcommand{\cautionautorefname}{Caution}
+\renewcommand{\digressionautorefname}{Digression}
+
+
+\makeatletter
+\def\thmt@dummyctrautorefname~#1\null{Proof\null}
+\makeatother
+
+
+\makeatletter
+\patchcmd{\ALG@step}{\addtocounter{ALG@line}{1}}{\refstepcounter{ALG@line}}{}{}
+\newcommand{\ALG@lineautorefname}{Line}
+\makeatother
+\newcommand{\algorithmautorefname}{Algorithm}
+
+
+
+\AtBeginDocument{%
+  \renewcommand{\sectionautorefname}{Section}%
+  \renewcommand{\subsectionautorefname}{Section}%
+  \renewcommand{\subsubsectionautorefname}{Section}%
+}
+
+
+
 % choose how the first appearance looks:
 \setabbreviationstyle[acronym]{long-short}
 
@@ -560,14 +624,48 @@
 \newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
 
 
+\setcounter{tocdepth}{1}
 
 \begin{document}
+
+\pagenumbering{roman}
 
 \maketitle
 
 \tableofcontents
 
+
+
+
+
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
+
+
+This document contains unofficial student-made notes for the course 
+\href{https://search.usi.ch/courses/35275498/scattered-data-approximation}{Scattered Data Approximation} 
+taught by 
+\href{https://muchip.github.io}{Michael Multerer} 
+with the assistance of \href{https://search.usi.ch/en/people/41cc6fa578d8e9a32c12472007ae5ee9/quizi-jacopo}{Jacopo Quizi}
+in Winter 2025/2026 at the 
+\href{https://www.usi.ch/it}{Università della Svizzera italiana}.
+It is mainly based on ~\cite{multererSDA}.
+\autoref{sec:functional_analysis} is summarized from \cite{arens2022mathematik}.
+If you spot an error, please report it to \href{mailto:fabianlucasbosshard@gmail.com}{fabianlucasbosshard@gmail.com}.
+The \LaTeX{} source is available at \url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
+
+\doclicenseThis
+
+
+\let\emphoriginal\emph           % save original meaning
+\renewcommand{\emph}[1]{\textcolor{black}{#1}}
+\printbibliography[heading=bibintoc,title={References}]
+\let\emph\emphoriginal           % restore original meaning
+
+
+
 \clearpage
+\pagenumbering{arabic}
 
 \section{Matrix Basics}
 
@@ -576,13 +674,16 @@
 % using Fabian's macros: \R, \matr{}, \vect{}
 %========================================================
 \subsection{Derivatives}
-Let $n\in\N$ and let $\vect{x}\in\R^n$ be a column vector. For a scalar-valued function
-$f:\R^n\to\R$ we use the \emph{Jacobian (numerator-layout)} convention
+% Let $n\in\N$ and let $\vect{x}\in\R^n$ be a column vector. 
+For a scalar-valued function
+$f:\R^n\to\R$ 
+we use the {Jacobian (numerator-layout)} convention
 \[
 \frac{\partial f}{\partial \vect{x}}\in\R^{1\times n}
 \]
-i.e.\ a row vector. (The column-gradient is obtained by transposition:
-$\nabla_{\vect{x}} f = \big(\frac{\partial f}{\partial \vect{x}}\big)^\top$)
+i.e.\ a row vector. 
+The column-gradient is obtained by transposition:
+$\nabla_{\vect{x}} f = \big(\frac{\partial f}{\partial \vect{x}}\big)^\top$
 
 \paragraph{Linear form.}
 For $f(\vect{x})=\vect{b}^\top \vect{x}$ with $\vect{b}\in\R^n$,
@@ -650,8 +751,8 @@ Collecting these components into a row vector gives
 \end{aligned}
 \]
 
-\paragraph{Quadratic form (symmetric matrix).}
-If $\matr{A}=\matr{A}^\top$, then
+% \paragraph{Quadratic form (symmetric matrix).}
+If furthermore $\matr{A}=\matr{A}^\top$, then
 \[
 \frac{\partial}{\partial \vect{x}}\bigl(\vect{x}^\top \matr{A}\,\vect{x}\bigr)
 =2\vect{x}^\top \matr{A}
@@ -1269,7 +1370,7 @@ Duchon's thin plate splines \(K(\vect{x}) = \|\vect{x}\|^{2\beta} \log(\|\vect{x
 
 
 \clearpage
-\section{Functional Analysis}
+\section{Functional Analysis}\label{sec:functional_analysis}
 
 \subsection{Norm, Completeness, Inner product}
 \begin{definition}[Norm]\label{def:norm}
@@ -2114,25 +2215,25 @@ If \(\mathcal{H}\) exhibits a reproducing kernel, we call it a reproducing kerne
 
 % OUTER: Vector space
 \draw[line width=1pt,rounded corners=12pt,fill=outerbg] (0,0) rectangle (\W,\H);
-\node[anchor=west,gray!50!black] at (0.6,0.3) { Vector Space \(\rightarrow\) linear combinations};
+\node[anchor=west,gray!50!black, text=black] at (0.6,0.3) { Vector Space \(\rightarrow\) linear combinations};
 
 % INNER: Normed space
 \path let \p1 = (0,0), \p2=(\W,\H) in node[anchor=south west,inner sep=0pt,outer sep=0pt] (NS) at (\inpad,2*\inpad) {};
 \def\nW{\W-2*\inpad} \def\nH{\H-3*\inpad}
 \draw[line width=1pt,rounded corners=18pt,fill=normbg,draw=yellow!40!brown] (NS) rectangle ++(\nW,\nH);
-\node[anchor=west] at (\inpad+0.6,1.2) { \hyperref[def:norm]{Normed Space} \(\rightarrow\) length, distance, convergence};
+\node[anchor=west, text=black] at (\inpad+0.6,1.2) { \hyperref[def:norm]{Normed Space} \(\rightarrow\) length, distance, convergence};
 
 % Overlapping ellipses (Banach vs IPS)
 \def\elW{4.9} \def\elH{2.25}
 % Banach (left)
 \path (NS) ++(5.3,3.2) node (Bctr) {};
 \fill[banach,opacity=0.7, draw=banach!60!black, line width=0.8pt] (Bctr) ellipse ({\elW} and {\elH});
-\node[align=center, text=blue!60!black, ] at ($(Bctr)+(-2.4,0.8)$) {Banach Space\\{\tiny \(\rightarrow\) completeness}};
+\node[align=center, text=black, ] at ($(Bctr)+(-2.4,0.8)$) {Banach Space\\{\tiny \(\rightarrow\) completeness}};
 % Inner Product Space (right)
 \path (NS) ++(10,3.2) node (IPctr) {};
 \draw[ips!80!black,line width=0.9pt] (IPctr) ellipse ({\elW} and {\elH});
 \fill[ips,opacity=0.3] (IPctr) ellipse ({\elW} and {\elH});
-\node[align=center, text=ips!80!black, ] at ($(IPctr)+(2.4,0.8)$) {\hyperref[def:inner_product]{Inner Product Space}\\{\tiny\(\rightarrow\) angle, orthogonality}};
+\node[align=center, text=black, ] at ($(IPctr)+(2.4,0.8)$) {\hyperref[def:inner_product]{Inner Product Space}\\{\tiny\(\rightarrow\) angle, orthogonality}};
 % Hilbert space label (over the overlap)
 \begin{scope}
   \clip (Bctr) ellipse ({\elW} and {\elH});
@@ -2142,11 +2243,11 @@ If \(\mathcal{H}\) exhibits a reproducing kernel, we call it a reproducing kerne
   \clip (IPctr) ellipse ({\elW} and {\elH});
   \draw[hilb!80!black, line width=0.8pt] (Bctr) ellipse ({\elW} and {\elH});
 \end{scope}
-\node[align=center, text=hilb] (HilbertLabel) at ($0.5*(Bctr)+0.5*(IPctr)+(0,1.1)$) {\hyperref[def:hilbert_space]{Hilbert Space}\\{\tiny \(\rightarrow\) \hyperref[theorem:orthogonal_projection]{projection}, \hyperref[def:orthonormal_basis]{ONB}, \hyperref[theorem:riesz_representation_theorem]{Riesz}}};
+\node[align=center, text=black] (HilbertLabel) at ($0.5*(Bctr)+0.5*(IPctr)+(0,1.1)$) {\hyperref[def:hilbert_space]{Hilbert Space}\\{\tiny \(\rightarrow\) \hyperref[theorem:orthogonal_projection]{projection}, \hyperref[def:orthonormal_basis]{ONB}, \hyperref[theorem:riesz_representation_theorem]{Riesz}}};
 % RKHS blob in the middle of the overlap
 \path let \p1=($(Bctr)!0.5!(IPctr) - (0,0.7)$) in node (RK) at (\x1,\y1) {};
 \draw[rkhs!90!black, fill=rkhs!50!white] (RK) ellipse (1.5 and 0.9);
-\node[anchor=south, rkhs, align=center, text=rkhs] at ($(RK)-(0,0.3)$) {\nameref{def:rkhs}\\{\tiny \(\rightarrow\) \hyperref[item:reproducing_property]{\(\langle K_{\vect{x}}, f \rangle = f(\vect{x})\)}}};
+\node[anchor=south, rkhs, align=center, text=black] at ($(RK)-(0,0.3)$) {\nameref{def:rkhs}\\{\tiny \(\rightarrow\) \hyperref[item:reproducing_property]{\(\langle K_{\vect{x}}, f \rangle = f(\vect{x})\)}}};
 
 % % Callout for RKHS
 % \draw[rkhs, line width=1.0pt, -{Stealth[length=3.5pt]}] ($(RK)+(0,1.15)$) to[out=90,in=260] ($(HilbertLabel)+(2.9,3.0)$);
