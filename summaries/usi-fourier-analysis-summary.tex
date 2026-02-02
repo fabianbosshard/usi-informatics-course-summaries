@@ -1,0 +1,804 @@
+% author: Fabian Bosshard % © CC BY 4.0
+\documentclass[9pt,headings=standardclasses,parskip=half]{scrartcl}
+
+% ===================== basics =====================
+\usepackage{ifthen,iftex,csquotes}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% ===================== page style =====================
+\usepackage[automark]{scrlayer-scrpage}
+\pagestyle{scrheadings}
+
+% ===================== graphics / color =====================
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{caption,subcaption}
+\usepackage[left=38mm,right=38mm,top=20mm,bottom=30mm]{geometry}
+
+% ===================== math =====================
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathdots,accents}
+\numberwithin{equation}{section}
+
+% ===================== lists =====================
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+% ===================== bibliography =====================
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+% ===================== symbols =====================
+\usepackage{pifont}
+
+% ===================== TikZ / plots =====================
+\usepackage{tikz}
+\usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings}
+\usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
+\usepackage{pgfplots}
+
+% ===================== highlighting (SOUL + math-safe \hl) =====================
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1 {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN { \c{\(} (.*?) \c{\)} } { \cM\$ \1 \cM\$ } \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl
+}
+\ExplSyntaxOff
+
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}}
+
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+% ===================== colors / emphasis =====================
+\definecolor{funblue}{rgb}{0.10,0.35,0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85,0.17,0.11}
+\definecolor{amethyst}{rgb}{0.6,0.4,0.8}
+\definecolor{mypurple}{rgb}{0.5,0,0.5}
+\definecolor{highlightpurple}{rgb}{0.6,0,0.6}
+\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+
+% ===================== theorem environments =====================
+\usepackage{thmtools}
+
+\newlength{\thmspace}\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem,numberwithin=section]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle,name=Fact,sibling=theorem]{fact}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition,numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle,name=Problem,sibling=definition]{problem}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
+\declaretheorem[style=exercisestyle,name=Exercise,numberwithin=section]{exercise}
+\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
+\declaretheorem[style=solutionstyle,name=Solution,numbered=no]{solution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\square},postheadspace=1em]{proofstyle}
+\let\proof\relax \let\endproof\relax
+\declaretheorem[style=proofstyle,name=Proof,numbered=no]{proof}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark,numberwithin=section]{remark}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example,sibling=remark]{example}
+
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=\thmspace,spacebelow=\thmspace,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression,sibling=remark]{digression}
+
+% ===================== misc helpers =====================
+\newenvironment{verticalhack}{\begin{array}[b]{@{}c@{}}\displaystyle}{\\\noalign{\hrule height0pt}\end{array}}
+
+% ===================== algorithms =====================
+\usepackage{algorithm,algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex}
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+% ===================== operators / notation =====================
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\re}{\operatorname{Re}}
+
+\newcommand*\matrspace{0.8mu}
+\newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
+\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\eu}{\mathrm{e}}
+\newcommand{\iu}{\mathrm{i}}
+\newcommand{\sign}{\operatorname{sgn}}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\#\,}}
+\newcommand{\blackheight}{\operatorname{bh}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}}
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}}
+
+% ===================== metadata / hyperlinks =====================
+\title{Fourier Analysis}
+\author{Fabian Bosshard}
+\date{\today}
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Fourier Analysis - Course Notes},
+  pdfkeywords={USI, Fourier analysis, course notes, informatics},
+  colorlinks=false,
+  pdfborder={0 0 0},
+  linkbordercolor={0 0.6 1},
+  urlbordercolor={0 0.6 1},
+  citebordercolor={0 0.6 1}
+]{hyperref}
+
+% ToC entries: dotted leaders + full-width clickable line
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+
+\makeatletter
+\newlength\FB@toclinkht \newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+% hyperref anchor uniqueness for section-relative numbering
+\makeatletter
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+\makeatother
+
+% ===================== license / cleveref =====================
+\usepackage[type={CC},modifier={by},version={4.0}]{doclicense}
+\usepackage{cleveref}
+
+% ===================== acronyms =====================
+\usepackage[acronym,nomain,toc,nonumberlist]{glossaries-extra}
+\setabbreviationstyle[acronym]{long-short}
+\makeglossaries
+\newacronym{rbf}{RBF}{radial basis function}
+\newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
+
+\begin{document}
+
+
+\maketitle
+
+\tableofcontents
+
+\clearpage
+\section{Preliminaries}
+
+
+
+\paragraph{Greek letters}
+\renewcommand{\arraystretch}{1.15}
+\newcommand{\latinlike}[1]{\textcolor{gray}{\mathrm{#1}}}
+\[
+\begin{array}{@{}l@{\qquad}c@{\quad}c@{\quad}c@{}}
+\textbf{Name} & \textbf{Low.} & \textbf{Var.} & \textbf{Upp.} \\
+\hline
+\text{alpha}   & \alpha   &              & \latinlike{A} \\
+\text{beta}    & \beta    &              & \latinlike{B} \\
+\text{gamma}   & \gamma   &              & \Gamma \\
+\text{delta}   & \delta   &              & \Delta \\
+\text{epsilon} & \epsilon & \varepsilon  & \latinlike{E} \\
+\text{zeta}    & \zeta    &              & \latinlike{Z} \\
+\text{eta}     & \eta     &              & \latinlike{H} \\
+\text{theta}   & \theta   & \vartheta    & \Theta \\
+\text{iota}    & \iota    &              & \latinlike{I} \\
+\text{kappa}   & \kappa   & \varkappa    & \latinlike{K} \\
+\text{lambda}  & \lambda  &              & \Lambda \\
+\text{mu}      & \mu      &              & \latinlike{M} \\
+\text{nu}      & \nu      &              & \latinlike{N} \\
+\text{xi}      & \xi      &              & \Xi \\
+\text{omicron} & \latinlike{o}        &  & \latinlike{O} \\
+\text{pi}      & \pi      & \varpi       & \Pi \\
+\text{rho}     & \rho     & \varrho      & \latinlike{P} \\
+\text{sigma}   & \sigma   & \varsigma    & \Sigma \\
+\text{tau}     & \tau     &              & \latinlike{T} \\
+\text{upsilon} & \upsilon &              & \Upsilon \\
+\text{phi}     & \phi     & \varphi      & \Phi \\
+\text{chi}     & \chi     &              & \latinlike{X} \\
+\text{psi}     & \psi     &              & \Psi \\
+\text{omega}   & \omega   &              & \Omega
+\end{array}
+\]
+
+
+% aligned label + content
+\newlength{\propw}
+\newlength{\propsep}
+\newcommand{\propitem}[2]{%
+  \item \makebox[\propsep][l]{#1}%
+  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{#2}%
+}
+\settowidth{\propw}{{Distributive:}}
+\setlength{\propsep}{\propw + 1.5em}
+
+\newlength{\formw}
+\settowidth{\formw}{$(a\circ b)\circ c = a\circ(b\circ c)$} % longest formula (adjust if needed)
+\newlength{\formsep}
+\setlength{\formsep}{\formw + 1.5em}
+
+\paragraph{Algebraic properties}
+\begin{itemize}
+\propitem{{Associative:}}{%
+  \makebox[\formsep][l]{$(a\circ b)\circ c = a\circ(b\circ c)$}%
+  \emph{parentheses (grouping) do not matter}}
+\propitem{{Commutative:}}{%
+  \makebox[\formsep][l]{$a\circ b = b\circ a$}%
+  \emph{order does not matter}}
+\propitem{{Distributive:}}{%
+    $a\cdot(b+c)=a\cdot b+a\cdot c$\\
+    $(a+b)\cdot c=ac+bc$}
+\end{itemize}
+
+
+
+
+\paragraph{Trigonometric identities}
+\begin{itemize}
+    \item \(\cos( - y) = \cos(y)\)
+    \item \(\sin( - y) = - \sin(y)\)
+    \item \(\cos(a + b) = \cos(a) \cos(b) - \sin(a) \sin(b)\)
+    \item \(\sin(a + b) = \sin(a) \cos(b) + \cos(a) \sin(b)\)
+\end{itemize}
+
+\paragraph{Complex functions}
+If \(f: \R \to \C\), we may write \(f(x) = \Re(f(x)) + \iu \Im(f(x))\).
+We have \(|f(x)|^2 = f(x) \overline{f(x)}\), where \(\overline{f(x)} = \Re(f(x)) - \iu \Im(f(x))\).
+
+
+\subsection{Lebesgue integration}
+
+\(\mathcal{R}([a,b])\) denotes the class of Riemann integrable functions on \([a,b]\).
+\begin{theorem}
+Let \(f: [a,b] \to \R\) be bounded.
+\begin{itemize}
+\item 
+If \(f \in \mathcal{R}([a,b])\), then the Lebesgue integral of \(|f|\) is finite.
+Moreover, the Riemann integral of \(f\) equals the Lebesgue integral of \(f\).
+\item 
+\(f \in \mathcal{R}([a,b])\) if and only if \(f\) is continuous except on a set of measure zero.
+\qedhere
+\end{itemize}
+\end{theorem}
+
+The motivation for replacing Riemann with Lebesgue theory is that Lebesgue integrals are particularly well-suited for interchanginng limits and integration,
+the order of integration and derivatives and integration.
+
+
+\subsection{Complex analysis}
+
+
+We define the curve integral of a function \(f: \C \to \C\) along a curve \(C\) parametrized by \(z(t)\), \(t \in [a,b]\) as
+\begin{equation}\label{eq:curve-integral}
+\int_C f(z) \dif z := \int_a^b f( z(t)) z'(t) \dif t
+\end{equation}
+
+For a positively oriented circle \(C\) centered at \(z_0\) with radius \(R\), we have
+\begin{equation}\label{eq:central-integral}
+\int_C (z - z_0)^n \dif z 
+=
+\begin{cases}
+    0 & n \neq -1 \\
+    2 \pi \iu & n = -1
+\end{cases}
+\end{equation}
+
+
+\subsection{Function spaces}
+
+Classically, functions are classified in terms of their regularity.
+We write \(C(\R)\) for the space of continuous functions from \(\R\) to \(\C\).
+For \(k \in \N\), we write \(C^k(\R)\) for the space of functions from \(\R\) to \(\C\) whose first \(k\) derivatives exist and are continuous.
+
+% Recall that
+% \[
+% \begin{aligned}
+% \text{$f$ continuous}             &\;\Leftarrow& \text{$f$ differentiable}        &\;\Leftarrow& \text{$f$ continuously differentiable} \\
+% \phantom{\text{$f$ continuous}}   &\;\Leftarrow& \text{$f$ twice differentiable}  &\;\Leftarrow& \text{$f$ twice continuously differentiable} \\
+% \phantom{\text{$f$ continuous}}   &\;\Leftarrow& \text{$f$ 3-times differentiable}&\;\Leftarrow& \dots \;\Leftarrow\; \text{$f$ smooth}
+% \end{aligned}
+% \]
+% Recall that
+% \[
+% \begin{aligned}
+% \text{$f$ continuous}           &\Leftarrow & \text{$f$ differentiable}         &\Leftarrow & \text{$f$ continuously differentiable} \\
+% \phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ twice differentiable}   &\Leftarrow & \text{$f$ twice continuously differentiable} \\
+% \phantom{\text{$f$ continuous}} &\Leftarrow & \text{$f$ 3-times differentiable} &\Leftarrow & \dots \;\Leftarrow\; \text{$f$ smooth}
+% \end{aligned}
+% \]
+
+\begin{example}
+  The function \(f(x) = x^k \sign(x)\) is in \(C^{k-1}(\R)\) but not in \(C^k(\R)\).
+\end{example}
+
+
+The revolution in modern analysis is that functions are classified in terms of their integrability.
+For \(1 \leq p < \infty\), we write \(f \in L^p(\R)\) if
+\begin{equation}\label{eq:Lp-norm}
+{\color{Red}\boxed{\color{black}
+\| f \|_p  := \left( \int_{-\infty}^{\infty} |f(x)|^p \dif x \right)^{1/p} 
+}}
+\end{equation}
+is finite.
+To be precise, we also need the requierement that \(f: \R \to \C\) is measurable.
+
+\begin{remark}
+There is also a definition of \(L^{\infty}(\R)\), where \(f \in L^{\infty}(\R)\) if
+\begin{equation}\label{eq:Linf-norm}
+{\color{Red}\boxed{\color{black}
+\| f \|_{\infty} := \operatorname{ess\,sup}_{x \in \R} |f(x)|
+}}
+\end{equation}
+is finite.
+The essential supremum is basically a supremum out of a set of measure zero.
+\end{remark}
+\begin{remark}
+Strictly speaking, \eqref{eq:Lp-norm} is not a norm on functions defined pointwise, but on equivalence classes of functions that are equal almost everywhere.
+\end{remark}
+
+We write \(f \in C_b(\R)\) if \(f \in C(\R)\) and there exists \(M > 0\) such that \(|f(x)| \leq M\) for all \(x \in \R\) (i.e., \(f\) is bounded).
+Observe that \hl[2]{\(C_b(\R)  = L^{\infty}(\R) \cap C(\R)\)}.
+
+If \(f \in C_b(\R)\), then \(\|f\|_{\infty} = \max_{x \in \R} |f(x)|\).
+
+% In general, $L^p(\R)$ is not closed under pointwise products: even if $f,g\in L^p(\R)$, it may happen that $fg\notin L^p(\R)$.
+% For $1\le p\le \infty$, the \emph{conjugate exponent} $p'$ is defined by
+% \[
+% \frac{1}{p}+\frac{1}{p'}=1,
+% \qquad \text{with } \frac{1}{\infty}:=0 \text{ and } \frac{1}{0}:=\infty.
+% \]
+% If $f\in L^p(\R)$ and $g\in L^{p'}(\R)$, then $fg\in L^1(\R)$ and H\"older's inequality holds:
+% \[
+% \|fg\|_1 \le \|f\|_p\,\|g\|_{p'}.
+% \]
+
+% A subspace $Y\subseteq X$ of a normed space $(X,\|\cdot\|_X)$ is \emph{dense} in $X$ if for every $x\in X$ and every $\varepsilon>0$ there exists $y\in Y$ such that
+% \[
+% \|x-y\|_X<\varepsilon.
+% \]
+% The space
+% \[
+% C_c^\infty(\R):=\{f\in C^\infty(\R): \exists R>0 \text{ such that } f(x)=0 \text{ for } |x|>R\}
+% \]
+% is dense in $L^p(\R)$ for every $1\le p<\infty$. Hence, many statements can be proved first for $C_c^\infty(\R)$ and then extended to $L^p(\R)$ by approximation.
+
+
+
+
+\clearpage
+\section{Fourier Series}
+
+We write $f \in L^2([-\pi, \pi])$ if $f: \R \rightarrow \mathbb{C}$ is $2 \pi$-periodic and
+\begin{equation}\label{eq:L2-norm}
+{\color{Red}
+% \setlength{\fboxrule}{1pt}
+\boxed{ 
+\color{black}
+\|f\|_2=\left(\frac{1}{2 \pi} \int_{-\pi}^\pi|f(x)|^2 \dif x\right)^{\frac{1}{2}}
+}}
+\end{equation}
+is finite, i.e. \(\|f\|_2 < \infty\).
+
+Functions in $L^2([-\pi, \pi])$ are called finite-energy signals, the norm $\|f\|_2$ is the energy of $f$. 
+Observe that we normalized the integral in \eqref{eq:L2-norm} by means of the factor $\frac{1}{2 \pi}$. 
+% In this way, we normalized the length of $[-\pi, \pi]$:
+% $$
+% \operatorname{length}([-\pi, \pi])=\frac{1}{2 \pi} \int_{-\pi}^\pi 1 \dif x
+% =
+% 1
+% $$
+Loosely speaking, we change the unit of measurement so that the length of $[-\pi, \pi]$ becomes $1$.
+
+% see Figure 2.1.
+% Differently from the other $L^p$ spaces, the space $L^2([-\pi, \pi])$ has the additional structure provided by the (sesquilinear) inner product:
+
+% $$
+% \langle f, g\rangle_{L^2}=\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \overline{g(x)} d x, \quad f, g \in L^2([-\pi, \pi]) .
+% $$
+
+
+% For the benefit of the reader, we recall the definition of inner product, that reflects the usual definition of inner product on $\R^d$, with the necessary precaution needed when working in the complex framework.
+
+
+
+
+% Here, we used the component-wise continuity of $\langle\cdot, \cdot\rangle_{L^2}$ to intertwine series and inner products. 
+For every $f \in L^2([-\pi, \pi])$,
+\begin{equation}\label{eq:fourier-series}
+  f(x) \stackrel{L^2}{=} \sum_{n=-\infty}^{\infty} \hat{f}(n) \eu^{\iu n x}
+\end{equation}
+where, for \(n \in \Z\),
+\begin{equation}\label{eq:fourier-coefficient}
+{\color{Red}\boxed{\color{black}
+\hat{f}(n)
+=
+\left\langle f, e_n\right\rangle_{L^2}
+=
+\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \eu^{-\iu n x} \dif x
+}}
+\end{equation}
+is the $n$-th Fourier coefficient of $f$. 
+\eqref{eq:fourier-series} is the Fourier series of $f$.
+
+
+For every \(f \in L^2([-\pi,\pi])\), we have 
+\begin{equation}\label{eq:parseval}
+\|f\|_2^2=\sum_{n=-\infty}^{\infty}|\hat{f}(n)|^2
+\end{equation}
+which is known as \hl{Parseval's theorem}.
+
+
+
+
+\clearpage
+
+\section{Fourier Transform}
+
+
+
+For $f \in L^1(\R)$ the Fourier transform
+\begin{equation}\label{eq:fourier-transform}
+{\color{Red}\boxed{\color{black}
+\hat{f}(\xi)=\int_{-\infty}^{\infty} f(x) \eu^{-2 \pi \iu \xi x} \dif x
+}}
+\end{equation}
+converges for every $\xi \in \R$. 
+Moreover,
+\[
+|\hat{f}(\xi)| \leq \int_{-\infty}^{\infty}|f(x)| \dif x=\|f\|_1
+\]
+for any \(\xi \in \R\),
+\hl[2]{implying that $\hat{f}$ is in $L^{\infty}(\R)$} and the operator 
+\[
+\mathcal{F}: f \in L^1(\R) \mapsto \hat{f} \in L^{\infty}(\R)
+\]
+is bounded with
+\(
+\|\hat{f}\|_{\infty} \leq\|f\|_1 
+\).
+
+\begin{definition}
+The operator $\mathcal{F}$ defined above is called Fourier transform, and the function $\hat{f}$ is the Fourier transform of $f$.
+\end{definition}
+
+Recall that a function $f: \R \rightarrow \mathbb{C}$ is uniformly continuous on $\R$ if for every $\varepsilon>0$ there exists $\delta>0$ depending only on $\varepsilon$ such that
+$$
+|x-y|<\delta \quad \Longrightarrow \quad|f(x)-f(y)|<\varepsilon 
+$$
+
+
+\begin{fact}
+The Fourier transform is a bounded operator from $L^1(\R)$ to $L^{\infty}(\R)$. Moreover, $\hat{f}$ is a uniformly continuous function on $\R$ for every $f \in L^1(\R)$.
+\end{fact}
+
+
+
+
+
+
+
+
+% So for \( \xi \neq 0\),
+% \[
+% \hat{f}(\xi) = \frac{1}{2 \pi \xi} 2 \sin( \pi \xi A) = \frac{\sin( \pi \xi A)}{\pi \xi}
+% \]
+% In conclusion
+% \[
+% \hat{f}(\xi) =
+% \begin{cases}
+%     \frac{\sin( \pi \xi A)}{\pi \xi}, & \xi \neq 0, \\
+%     A, & \xi = 0.
+% \end{cases}
+% \]
+
+% Oberserve that \(\hat{f}\) is indeed in \(\mathcal{C}_b(\R)\) 
+
+% \(\frac{\sin( \pi \xi A)}{\pi \xi}\) is a continuous at every \(\xi \neq 0\) and
+% \[
+% \lim_{\xi \to 0} \frac{\sin( \pi \xi A)}{\pi \xi} = A = \hat{f}(0)
+% \]
+% by definition.
+\begin{example}[Characteristic function]
+Let 
+\begin{equation}\label{eq:characteristic-function}
+f(x) = \chi_{[-A/2, A/2]}(x):=
+\begin{cases}
+1, & x \in [-A/2, A/2] \\
+0, & \text{otherwise}
+\end{cases}
+\end{equation}
+be the characteristic function of the interval \([-A/2, A/2]\), with \(A > 0\).
+Then for every \(\xi \ne 0\),
+\[
+\hat{f}(\xi) 
+=
+\frac{\sin( \pi A \xi)}{\pi \xi}
+\]
+and \(\hat{f}(0) = A\).
+\[
+\begin{tikzpicture}[scale=1.2, font=\footnotesize]
+  \tikzset{>=latex}
+  \colorlet{myblue}{green!80!black}
+  \colorlet{mydarkblue}{myblue!80!black}
+  \tikzstyle{xline}=[myblue,thick]
+  \def\tick#1#2{\draw[thick] (#1) ++ (#2:0.1) --++ (#2-180:0.2)}
+
+  % -------- parameters (feel free to tweak axes) ----------
+  \def\xmax{4.5}
+  \def\ymin{-0.4}
+  \def\ymax{1.4}
+  \def\Aparam{1.0} % this is the "A" in sin(pi*A*xi)/(pi*xi)
+  % --------------------------------------------------------
+
+  \draw[->,thick] (0,\ymin) -- (0,\ymax);% node[left] {$\hat f(\xi)$};
+  \draw[->,thick] (-\xmax,0) -- (\xmax+0.1,0) node[below=1,right=0.05] {$\xi$};
+
+  % plot: sin(pi*A*xi)/(pi*xi), trig in pgf is degrees -> use deg(...)
+  \draw[xline,samples=200,smooth,variable=\t,domain=-0.94*\xmax:0.94*\xmax]  plot(\t,{ (abs(\t)<0.01) ? (\Aparam) : (sin(deg(pi*\Aparam*\t))/(pi*\t)) });
+
+  % zeros at xi = k/A
+  \tick{-4/\Aparam,0}{90} node[below=0,scale=1] {$-\frac{4}{A}$};
+  \tick{-3/\Aparam,0}{90} node[below=0,scale=1] {$-\frac{3}{A}$};
+  \tick{-2/\Aparam,0}{90} node[below=0,scale=1] {$-\frac{2}{A}$};
+  \tick{-1/\Aparam,0}{90} node[below=0,scale=1] {$-\frac{1}{A}$};
+  \tick{ 1/\Aparam,0}{90} node[below=0,scale=1] {$ \frac{1}{A}$};
+  \tick{ 2/\Aparam,0}{90} node[below=0,scale=1] {$ \frac{2}{A}$};
+  \tick{ 3/\Aparam,0}{90} node[below=0,scale=1] {$ \frac{3}{A}$};
+  \tick{ 4/\Aparam,0}{90} node[below=0,scale=1] {$ \frac{4}{A}$};
+
+  % peak value
+  \tick{0,\Aparam}{0} node[left=0.05,scale=0.9] {$A$};
+
+  \node[mydarkblue,right,scale=0.95] at (0.15*\xmax,0.85*\Aparam) {$\displaystyle \hat{f}(\xi)=\frac{\sin(\pi A \xi)}{\pi \xi}$};
+\end{tikzpicture}
+\]
+Thus we conclude that \(\hat{f}(\xi) = \frac{\sin( \pi A \xi)}{\pi \xi}\), where we implicitly consider its continuous continuation.
+In particular, for \(A = 1\), we have
+\[
+\hat{f}(\xi) = \frac{\sin( \pi \xi)}{\pi \xi}
+=:
+\operatorname{sinc}(\xi)
+\]
+which is called \emph{cardinal sine} or \emph{sinc function}.
+\end{example}
+
+
+\begin{example}[Gaussian]
+The Fourier transform of \(f(x) = \eu^{-\pi x^2}\) is \(\hat{f}(\xi) = \eu^{-\pi \xi^2}\).
+\end{example}
+\begin{example}
+The Fourier transform of \(f(x) = \eu^{-2 |x|}\) is \(\hat{f}(\xi) = \frac{1}{1 + \pi^2 \xi^2}\).
+\end{example}
+
+
+% --- operators (as in the notes) ---
+\subsection{Important operators in harmonic analysis}
+\begin{definition}\label{def:harmonic-operators}
+\begin{align}
+% {\color{Red}\boxed{\color{black}
+&\qquad& &\text{\textcolor{red}{translation}:}& T_{x_0} f(x) &= f(x-x_0),                 & x_0 &\in \R \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{modulation}:}& M_{\xi_0} f(x) &= \eu^{2\pi \iu \xi_0 x} f(x), & \xi_0 &\in \R \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{upper dilation}:}& f^{\lambda}(x) &= f(\lambda x),     & \lambda &> 0 \quad &\quad&\\
+&\qquad& &\text{\textcolor{red}{lower dilation}:}& f_{\lambda}(x) &= \frac{1}{\lambda} f(x/\lambda), & \lambda &> 0 \quad &\quad&%%
+\end{align}
+% }}
+\end{definition}
+
+
+% \begin{theorem}[Duality]\label{thm:duality-dilations}
+\subsubsection{Duality}
+Let \(f \in L^1(\R)\) and \(\lambda > 0\).
+
+Translation/Modulation:
+% {\color{Red}\boxed{\color{black}
+\begin{align}
+\widehat{(T_{x_0} f)}(\xi)
+&= M_{-x_0}\hat f(\xi)\\
+% = \eu^{-2\pi \iu x_0 \xi}\hat f(\xi)\\[0.4em]
+\widehat{(M_{\xi_0} f)}(\xi)
+&= T_{\xi_0}\hat f(\xi)
+% = \hat f(\xi-\xi_0)
+\end{align}
+% }}
+
+
+Dilation:
+% {\color{Red}\boxed{\color{black}
+\begin{align}
+\widehat{(f^{\lambda})}(\xi)
+&= (\hat f)_{\lambda}(\xi)\\
+% = \frac{1}{\lambda}\hat f(\xi/\lambda)\\[0.4em]
+\widehat{(f_{\lambda})}(\xi)
+&= (\hat f)^{\lambda}(\xi)
+% = \hat f(\lambda \xi)
+\end{align}
+% }}
+
+% \end{itemize}
+% \end{theorem}
+
+Compressing a function in the time domain causes its Fourier transform to expand in the frequency domain and vice versa.
+
+
+
+\subsection{Convolution}
+\begin{equation}\label{eq:convolution}\
+  {\color{Red}\boxed{\color{black}
+  (f * g)(x) := \int_{-\infty}^{\infty} f(y) g(x - y) \dif y
+  }}
+\end{equation}
+
+If \(f, g \in L^1(\R)\), then \(f * g \in L^1(\R)\) and \(\|f * g\|_1 \leq \|f\|_1 \|g\|_1\).
+
+The Fourier transform turns convolution into pointwise multiplication:
+\begin{equation}\label{eq:convolution-theorem}
+% {\color{Red}\boxed{\color{black}
+\widehat{(f * g)}(\xi) = \hat{f}(\xi) \cdot \hat{g}(\xi)
+% }}
+\end{equation}
+
+
+\subsection{Riemann-Lebesgue lemma}
+\begin{theorem}[Riemann-Lebesgue lemma]
+If \(f \in L^1(\R)\), then \(\hat{f}(\xi) \in C_0(\R)\), i.e., \(\hat{f}\) is continuous and vanishes outside a certain interval.
+\end{theorem}
+
+\subsection{Inversion formula}
+\begin{theorem}\label{thm:inversion}
+Let \(f \in L^1(\R)\).
+Assume that \(\hat{f} \in L^1(\R)\).
+Then,
+\begin{equation}\label{eq:inversion}
+{\color{Red}\boxed{\color{black}
+f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+}}
+\end{equation}
+for every \(x \in \R\), outside a set of measure zero.
+If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
+\end{theorem}
+
+
+
+
+\clearpage
+
+\section{PDE}
+
+Let \(f \in L^1(\R)\) and assume that \(f'\) exists and is in \(L^1(\R)\).
+Then,
+\begin{equation}\label{eq:fourier-derivative}
+{\color{Red}\boxed{\color{black}
+\widehat{(f')}(\xi) = 2\pi \iu \xi \cdot \hat{f}(\xi)
+}}
+\end{equation}
+
+
+
+
+
+\end{document}
