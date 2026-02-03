@@ -334,15 +334,15 @@
 \newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
 \newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
 
-\title{Scattered Data Approximation}
+\title{Natural Language Processing}
 \author{Fabian Bosshard}
 \date{\today}
 
 \usepackage[
   linktoc=none,
   pdfauthor={Fabian Bosshard},
-  pdftitle={USI - Scattered Data Approximation - Course Notes},
-  pdfkeywords={USI, scattered data approximation, course notes, informatics},
+  pdftitle={USI - Natural Language Processing - summary},
+  pdfkeywords={USI, natural language processing, nlp, course notes, informatics},
   colorlinks=false,  
   pdfborder={0.0 0.0 0.0},      
   linkbordercolor={0 0.6 1},      % internal links
@@ -422,12 +422,6 @@
 \renewcommand{\theHdigression}{\theHremark}
 \makeatother
 
-\usepackage[acronym, nomain, toc, nonumberlist]{glossaries-extra}
-\setabbreviationstyle[acronym]{long-short}
-\makeglossaries
-
-\newacronym{rbf}{RBF}{radial basis function}
-\newacronym{rkhs}{RKHS}{reproducing kernel Hilbert space}
 
 \begin{document}
 
@@ -507,66 +501,92 @@ Cosine similarity between two vectors $\vect{A}$ and $\vect{B}$:
 
 
 
-
+\clearpage
 % --- Slide 2 ---------------------------------------------------------------
 \section{Text Classification} % Slide 2
 
 \subsection{Text preprocessing}
 
-Prior to tokenisation:
+Prior to tokenization:
 \begin{itemize}
-  \item Remove markup (non-content information), e.g.\ \texttt{<HTML>} tags
-  \item Lowercase the text
-  \item Remove punctuation
+  \item remove markup (non-content information), e.g.\ \texttt{<HTML>} tags
+  \item lowercase text to reduce vocabulary size (can lose information: e.g. "WHO" vs "who")
+  \item remove punctuation
 \end{itemize}
 
-After tokenisation:
+\medskip
+
+After tokenization:
 \begin{itemize}
-  \item Remove stopwords (extremely high-frequency words)
-  \item Remove low-frequency words
-  \item Perform stemming or lemmatisation to reduce vocabulary size, e.g.\ fishing $\mapsto$ fish, thought $\mapsto$ think, etc.
-  \item Perform spelling correction
+  \item remove stopwords\footnote{high-frequency terms in language, e.g. "the", "is", "and"} (convey little information about the topic of a text)
+  \item remove low-frequency words (since insufficient information present to determine correlation between word presence and class)
 \end{itemize}
 
-ASCII encoding keyboard $\to [1,128]$, UTF-8 encoding very vast (160 languages, 149k Unicode characters).\\
+\medskip
+less common activities:
+\begin{itemize}
+  \item stemming or lemmatization to reduce vocabulary size
+  \item spelling correction
+\end{itemize}
+
+\medskip
+
+ASCII encoding keyboard $\to [1,128]$
+
+UTF-8 encoding very vast (160 languages, 149k Unicode characters)
 
 \begin{definition}[Morpheme]
 Smallest linguistic unit that has semantic meaning.
 \end{definition}
 
-Tokenisation, but there are problems with other languages etc.\\
-Regular expression search for patterns in documents; check info if more is needed.
-
 \subsection{Bag of words}
-Vocabulary of document provides most important signal; \# occurrences of words provides further information.\\
+Vocabulary of document provides most important signal; \# occurrences of words provides further information.
+
 Bag-of-words model:
 \begin{itemize}
   \item represent documents as vectors of word counts
-  \item massively sparse representation (long vector with many zeros)
+  \item sparse representation (long vector with many zeros)
   \item completely ignores word order
-  \item can use $n$-gram: more dimensions but maybe better performance $\to$ more features than documents $\to$ strong regularisation needed
+  \item extension to include $n$-grams can increase performance: but greatly increases number of dimensions, so more data is then needed
+\end{itemize}
+
+usually have far fewer documents than vocabulary terms, which means fewer examples than features
+\begin{itemize}
+  \item means multiple settings of parameters can explain observed class labels
+  \item strong regularization needed to prevent overfitting
 \end{itemize}
 
 \subsubsection{Heaps' law}
-Vocabulary grows with approximately the square root of document/collection length.
+Vocabulary grows with approximately the square root of document/collection length:
+\[
+\boxed{
+  V(l) \propto l^{\beta}, \quad \beta \approx 0.5
+}
+\]
 
 \subsubsection{Zipf's law}
-Token frequency is approximately proportional to the inverse of its rank.\\
-Most common word occurs approximately twice as often as the next common one, three times as often as the third most common, and so on.
+Define as the collection term frequency \(\operatorname{ctf}_t\) of a token \(t\) (``token frequency'') as the number of times it occurs in the entire corpus:
+\[
+  \operatorname{ctf}_t := \sum_{d \in \mathcal{D}} \operatorname{count}(t,d)
+\]
 
-\subsection{Linear models}
-\subsubsection{Naive Bayes}
-\subsubsection{Logistic regression}
+Token frequency approximately proportional to the inverse of its rank:
+\[
+\boxed{
+  \operatorname{ctf}_t \propto \frac{1}{\operatorname{rank}(t)^s}, \quad s \approx 1
+}
+\]
+Most common word occurs approximately twice as often as the next common one, three times as often as the third most common, and so on.
 
 \subsection{Evaluating text classifiers}
 
 \subsubsection{Evaluating a Binary Text Classifier}
 
+First thing to investigate is the confusion matrix:
 \definecolor{myblue}{RGB}{0,90,135}
 \definecolor{mygreen}{RGB}{205,232,170}
 \definecolor{myred}{RGB}{245,135,135}
 \definecolor{framegray}{gray}{0.65}
-
 \[
 \begin{tikzpicture}[font=\footnotesize, line cap=round, line join=round, scale=0.35]
 
@@ -636,7 +656,7 @@ Most common word occurs approximately twice as often as the next common one, thr
     % =
     % \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision}+\text{Recall}}
   \]
-  \item AUC = area under the ROC curve; single measure that doesn’t depend on the confidence threshold used to make predictions with the model
+  \item AUC = area under the ROC curve is often used as a single measure that doesn't depend on the confidence threshold used to make predictions with the model
 \end{itemize}
 
 
@@ -653,13 +673,9 @@ if there are \(n\) classes,
 \end{itemize}
 
 
-
-% --- Slide 3 ---------------------------------------------------------------
-\section{Text search and clustering} % Slide 3
-
-\subsection{RAG}
-RAG is method that allows us to give an LLM external knowledge sources.\\
-Often you have to retrieve the documents.
+\clearpage
+% --- Slides 3 ---------------------------------------------------------------
+\section{Text search and clustering} 
 
 \subsection{tf-idf: term frequency - inverse document frequency}
 \begin{definition}[inverse document frequency]\label{def:idf}
@@ -668,11 +684,10 @@ Often you have to retrieve the documents.
 =
 \log\frac{N}{ \operatorname{df}_{t}}
 \end{equation}
-where $\operatorname{df}_{t}$ is the number of documents in the corpus which contains $t$, 
+where $\operatorname{df}_{t}$ is the number of documents in the corpus which contains $t$ (document frequency), 
 while $N$ is the number of documents in total (corpus size). 
 \end{definition}
-High idf $\Rightarrow$ few documents matching. \\
-$0$ if in every document: $\log 1 = 0$.
+high idf $\Rightarrow$ few documents matching;  $\operatorname{idf}_t=0$ \(\Rightarrow\) \(t\) is in every document ($\log 1 = 0$).
 
 \begin{definition}[term frequency]
 \begin{equation}\label{eq:term-frequency}
@@ -696,6 +711,7 @@ if it occurs 10 times, \(\operatorname{tf}_{t,d} = 1 + \log_{10}(10) = 2\); and 
 \end{definition}
 
 \begin{definition}[BM25]
+goto method for term-based text retrieval...
 \[
   \sum_{t\in q} \operatorname{idf}_t\;
   \frac{\operatorname{tf}_{t,d}}{\operatorname{tf}_{t,d}+k\Bigl(1-b+b\frac{\lvert d\rvert}{d_{\operatorname{avg}}}\Bigr)}
@@ -710,16 +726,29 @@ if it occurs 10 times, \(\operatorname{tf}_{t,d} = 1 + \log_{10}(10) = 2\); and 
 \end{itemize}
 \end{definition}
 
-Vector interpretation: $\vect v=\{w_{1},\dots,w_{n}\}$ where $w_{i}$ is importance of term $i$ (BM25).\\
-Then you do a query vector $\vect q$ which most likely has $1$ for terms it has and $0$ for terms it doesn’t have (BM25 of each term).\\
-Then compute cosine:
+
+\subsubsection{Scoring documents}
+% Vector interpretation: $\vect v=\{w_{1},\dots,w_{n}\}$ where $w_{i}$ is importance of term $i$ (BM25).
+% Then you do a query vector $\vect q$ which most likely has $1$ for terms it has and $0$ for terms it doesn't have (BM25 of each term).
+% Then compute cosine:
+Vector space model treates \(\operatorname{tf-idf}\) values for all terms in document as a vector representation:
 \[
-  \cos(\vect q,\vect v)
-  = \frac{\vect q}{\lVert \vect q\rVert}\cdot \frac{\vect v}{\lVert \vect v\rVert}.
+\vect{d} = \bigl[\operatorname{tf-idf}(t_1,d), \operatorname{tf-idf}(t_2,d), \ldots, \operatorname{tf-idf}(t_n,d)\bigr]
 \]
 
-\subsection{Crawlers}
-A crawler starts from one or more initial web pages, often called seed URLs. It retrieves the content of those pages, analyses them to find hyperlinks inside, then visits those linked pages, and then the links inside them, and so on. In this way it explores the web graph. It’s used to compute search engine scores etc.
+similarity between query vector \(\vect{q}\) and document vector \(\vect{d}\) computed using cosine similarity:
+\[
+\operatorname{score}(q, d)
+=
+  \cos(\vect q,\vect d)
+  = 
+  \frac{\vect q}{\lVert \vect q\rVert}\cdot \frac{\vect d}{\lVert \vect d\rVert}
+\]
+
+% \subsection{Crawlers}
+% A crawler starts from one or more initial web pages, often called seed URLs. 
+% It retrieves the content of those pages, analyses them to find hyperlinks inside, then visits those linked pages, and then the links inside them, and so on. 
+% In this way it explores the web graph. It's used to compute search engine scores etc.
 
 \subsection{Evaluating search engines}
 \begin{itemize}
@@ -731,7 +760,7 @@ A crawler starts from one or more initial web pages, often called seed URLs. It 
     =
     \frac{1}{\bigl((1/P@k+1/R@k)/2\bigr)}
   \]
-  \item AveP = MAP: mean average precision (compute area under precision/recall curve)
+  \item AveP = MAP: mean average precision (estimate area under precision/recall curve)
   \[
     \operatorname{AveP}
     =
@@ -742,40 +771,74 @@ A crawler starts from one or more initial web pages, often called seed URLs. It 
   \end{itemize}
 \end{itemize}
 
-\subsection{Clustering}
-boh it exists
 
 
 % --- Slide 4 ---------------------------------------------------------------
 \section{Language models and word embeddings} % Slide 4
 
-\subsection{Language models}
-Predict next word. Use fixed number of words before (Markov model). Longer means better prediction but less chances of finding the exact same sequence.
+
+\subsection{Markov model}
 \[
   \Prob(\text{croquet}\mid \text{play})
   = \frac{N(\text{play croquet})}{N(\text{play})},
   \qquad
   \Prob(\text{croquet}\mid \text{to play})
-  = \frac{N(\text{to play croquet})}{N(\text{to play})}.
-\]
-Smoothing = add a small constant to everything ($+1$ up and therefore $+V$ at denom).\\
-Backoff: if an $n$-gram is unknown, use $(n-1)$-gram.\\
-Interpolate between $n$-grams:
+  = \frac{N(\text{to play croquet})}{N(\text{to play})}
+  \]
+  
+Longer \(n\)-grams give better prediction but also less chance of finding the exact same sequence.
+
+Smoothing: add a small constant to all counts before estimating probabilities, e.g. Laplace (with bigram assumption):
 \[
-  \lambda_{1}\Prob(\text{croquet}\mid \text{play})
-  +\lambda_{2}\Prob(\text{croquet}\mid \text{to play})
-  +\dots,
-  \qquad
-  \sum_{i}\lambda_{i}=1.
+\Prob_\text{Laplace}(w_n \mid w_{n-1}) 
+=
+\frac{\operatorname{count}(w_{n-1} \, w_n) + 1}
+     {\sum_w (\operatorname{count}(w_{n-1} \, w) + 1)}
+=
+\frac{\operatorname{count}(w_{n-1} \, w_n) + 1}
+     {\operatorname{count}(w_{n-1}) + V} 
 \]
-Can be used to generate next word knowing $n$-gram and having access to corpus (e.g.\ Shakespeare to generate sonnets etc).
 
-\subsubsection{Evaluating}
-Use it on a task like spelling corrector and assess performance.\\
-Train on train dataset, performance on test.\\
-Use likelihood that model would produce the new data to evaluate how well it is doing (?whut).
 
-\textbf{Perplexity} measures how unlikely the observed data is under the model.
+Backoff: if an $n$-gram is unknown, use $(n-1)$-gram
+
+Interpolate between $n$-grams, e.g. trigram-bigram-unigram:
+\[
+\Prob(w_n\mid w_{n-1} \, w_{n-2})
+=
+  \lambda_{1}\Prob(w_n\mid w_{n-1} \, w_{n-2})
+  +
+  \lambda_{2}\Prob(w_n\mid w_{n-1})
+  +
+  \lambda_{3}\Prob(w_n),
+  \qquad
+  \sum_{i}\lambda_{i}=1
+\]
+choose lambdas that maximize probability on held-out \textbf{development} data
+
+\subsection{Evaluating}
+
+\textbf{extrinsic}: use model in a downstream task (e.g. as a spelling corrector) and evaluate performance on that task 
+
+\textbf{intrinsic}:
+\begin{itemize}
+\item train parameters of model on training set and test model performance on held -out dataset\tikzmark{arrowstart}
+\item use likelihood that model would produce the new data to evaluate how well it is doing\tikzmark{arrowend}
+\end{itemize}
+
+\subsubsection{Perplexity} 
+of language model quantifies level of surprise/confusion at seeing new text
+\begin{itemize}\item measures how unlikely the observed data is under the model \end{itemize}
+Calculating perplexity:
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[->, thick, myblue, >=stealth] 
+    ($(pic cs:arrowstart)+(0.05cm,0.1cm)$) 
+    % The 'controls' command defines the curve.
+    % +(5cm,0) means: go 5cm to the right of the start...
+    % and +(5cm,0) means: ...approach the end from 5cm to the right.
+    .. controls +(1cm,0.2cm) and +(1cm,0) .. 
+    ($(pic cs:arrowend)+(0.05cm,0.1cm)$);
+\end{tikzpicture}
 \begin{enumerate}
   \item \emph{compute probability} of observed sequence $\Prob(w_1,w_2,\dots,w_n)$ under model
   \begin{itemize}
@@ -799,13 +862,14 @@ Use likelihood that model would produce the new data to evaluate how well it is 
     \sqrt[n]{\frac{1}{\Prob(w_1,w_2,\dots,w_n)}}
   \]
 \end{enumerate}
-Problem: higher $n$-gram = harder to find; smaller $n$-gram backoff reduces performance.
+
+
 
 \subsection{Embeddings}
 To overcome the problem of data sparsity in $n$-gram language models it would be good to have a similar representation for similar words.
 \medskip
 
-\subsubsection{1st try: WordNet}
+\subsubsection{WordNet}
 \textbf{WordNet} organizes lexical information in terms of word meanings (senses), rather than word forms (actual words). 
 In that respect, WordNet resembles a thesaurus more than a dictionary.
 \begin{itemize}
@@ -818,7 +882,7 @@ no longer SOTA, since difficult to build, language-specific, incomplete, still d
 \end{itemize}
 \medskip
 
-\subsubsection{2nd try: Distributional hypothesis of Harris (1968)}
+\subsubsection{Distributional hypothesis of Harris (1968)}
 \textcolor{red}{words that occur in the same contexts tend to have similar meanings.}
 \begin{itemize}
 \item
@@ -827,21 +891,18 @@ We can find similar words by comparing their distribution over contexts.
 \item Count how often words appear in several contexts; 
 contexts become dimensions and target words $w,v$ become vectors $\vect w,\vect v$, then compute $\cos(\vect w,\vect v)$.
 gives a value in $[0,1]$ of similarity.
-\item Then apply dimensionality reduction (SVD / Latent Semantic Analysis): reducing millions of contexts to hundreds of dimensions, while keeping as much of the info as possible (now it’s \textbf{dense} embedding).
+\item Then apply dimensionality reduction (SVD / Latent Semantic Analysis): 
+reducing millions of contexts to hundreds of dimensions, while keeping as much of the info as possible (now it's \textbf{dense} embedding).
 \end{itemize}
 
-Why is called sparse? Because tf-idf vectors are long and full of $0$s (sparse), while learnt vectors are shorter and with full of non-$0$ (dense).
-
-
-Embeddings have nice properties, clustered semantically, queen--king etc.
-
+While tf-idf vectors are very long and full of $0$s (sparse), learnt vectors are shorter and with full of non-$0$ (dense).
 
 
 \subsubsection{Sparse versus dense vectors}
 
 
 Count-based (or tf-idf) vectors are
-\begin{itemize}[nosep,topsep=0pt, before=\vspace{-\parskip}]
+\begin{itemize}%[nosep,topsep=0pt, before=\vspace{-\parskip}]
 \item \textbf{long} (length $|V|\tikzmark{cb} = 20{,}000$ to $50{,}000$)%
 % --- bubble + pointer (overlay) ---%
 \begin{tikzpicture}[remember picture,overlay]%
@@ -865,8 +926,8 @@ Count-based (or tf-idf) vectors are
 \end{itemize}
 
 Alternative: learn vectors which are
-\begin{itemize}[nosep,topsep=0pt, before=\vspace{-\parskip}]
-\item \textbf{short} (length 50--1000)
+\begin{itemize}%[nosep,topsep=0pt, before=\vspace{-\parskip}]
+\item \textbf{short} (length =  50 to 1000)
 \item \textbf{dense} (most elements are non-zero)
 \end{itemize}
 \medskip
@@ -883,9 +944,9 @@ Why dense vectors?
 \subsection{Word2vec}
 Train a classifier on a binary prediction task: “Is word $w$ likely to show up in context $c$?”
 
-SELF-SUPERVISED!!!
+We don't care about the task, but we take learned classifier weights as word embeddings.
 
-We don't care about the task, but we take the model weights as embeddings.
+big idea: \textbf{\textcolor{blue}{self-supervision}}
 
 % Sigmoid maps $\R \to [0,1]$:
 % \[
@@ -896,13 +957,12 @@ Different versions, we focus on \textbf{skip-gram} with negative sampling (SGNS)
 
 Skip-gram: given the central word, predict context.
 
-
-
-How do we compute $P(+\mid w,c)$, i.e.\ probability that word $w$ appears in context $c$?
-We have lots of context words. We'll assume independence and just multiply them:
+One context word \(c\):
 $$
 P(+\mid w, c)=\sigma(\vect c \cdot \vect w) =\frac{1}{1+\exp (-\vect c \cdot \vect w)}
 $$
+
+We have lots of context words. We'll assume independence and just multiply them:
 $$
 P\left(+\mid w, c_{1: L}\right)  =\prod_{i=1}^L \sigma\left(\vect c_i \cdot \vect w\right)
 $$
@@ -925,7 +985,7 @@ over the entire training set.
 
 SGNS learns 2 sets of embeddings:\tikzmark{w2v}%
 \begin{tikzpicture}[scale=0.6, font=\footnotesize, remember picture, overlay]%
-\begin{scope}[shift={($(pic cs:cb)+(14cm,1cm)$)}]
+\begin{scope}[shift={($(pic cs:cb)+(12cm,8cm)$)}]
         
   % geometry
   \def\xL{0}
@@ -1008,7 +1068,39 @@ SGNS learns 2 sets of embeddings:\tikzmark{w2v}%
 it is common to just add them together, \\
 representing word $i$ as $\vect{w}_i + \vect{c}_i$.
 
+
 \bigskip
+
+Fasttext
+\begin{itemize}
+  \item addresses problem of unknown words
+  \item imagine language with a lot of morphology
+  \item uses subword segmentation to deal with this
+\end{itemize}
+
+\subsection{Properties of Word Embeddings}
+
+many interesting and somewhat surprising properties
+
+
+semantic clustering:
+\begin{itemize}
+  \item neighbors in embedding space are semantically related to one another
+\end{itemize}
+
+provide dense distributed representation
+\begin{itemize}
+  \item where individual dimensions aren't usually interpretable
+\end{itemize}
+
+but translation in the space is meaningful
+\begin{itemize}
+  \item certain directions in the space have meaning
+  \item which means that semantics is often additive
+  \item and analogies are encoded in the embedding: e.g. \texttt{man} is to \texttt{woman} as \texttt{king} is to \texttt{queen}
+\end{itemize}
+
+
 
 % \textbf{Causal models}:
 % \begin{itemize}
@@ -1027,97 +1119,83 @@ representing word $i$ as $\vect{w}_i + \vect{c}_i$.
 % \end{itemize}
 
 
-
+\clearpage
 % --- Slide 5 ---------------------------------------------------------------
 \section{Sequence classification and labelling} % Slide 5
 
-\textbf{Hidden Markov models}: naive Bayes.\\
-\textbf{CRF}: conditional random fields.\\
-\textbf{Part of speech}: assigning to each word a word class (noun, verb etc), so a map from words to classes. Naively tagging words with their most common use performs already very well (e.g.\ back can be noun, but in back seat is adj etc; you take the most common). You can also tag with an RNN using softmax over target classes.
+\textbf{CRF}: conditional random fields.
 
-\subsection{Named entity recognition}
-As POS but instead of noun etc classes like \enquote{person}, \enquote{organisation}, etc.\\
+\textbf{Part of speech (POS)}: 
+assigning to each word a word class (noun, verb etc), so a map from words to classes. 
+
+
+\subsection{Named entity recognition (NER)}
+Similar to POS but instead of noun etc classes like \enquote{person}, \enquote{organisation}, etc.
+
 NER can be hard because of:
 \begin{itemize}
   \item \emph{segmentation}: in POS tagging each word gets one tag, while in NER entities can be phrases
   \item \emph{type ambiguity}: same word/phrase can have many types depending on context
 \end{itemize}
-\textbf{B.I.O.}: begin-inside-outside tags given to each part of the text (?ok and...?)\\
-Then you can go from name to actual entity usually with Wikipedia database, if there’s one entry for it. Otherwise custom DB.\\
-
-\subsection{Why you need an RNN for sentiment analysis?}
-IDK the answer; is not in the slides. LSTM helps with issues from RNN tho.
 
 
+\clearpage
 % --- Slide 6 ---------------------------------------------------------------
-\section{Sequence-to-sequence models \& Transformers} % Slide 6
+\section{Sequence-to-sequence model} % Slide 6
 
-\subsection{Types}
-\subsubsection{Decoder-only (GPT)}
-Takes input of tokens and predicts words left to right.\\
-Generate from a model by computing the probability of the next token $w_i$ from the prior context:
+
+Soft-Attention produces weighted average over input embeddings:
 \[
-  \Prob(w_i\mid w_{<i}),
-\]
-then sampling from that distribution to generate a token.\\
-Many tasks can become next-sentence generation, like \enquote{what’s the sentiment of $x$} and see what it predicts next.\\
-Few-shots: don’t change the weights but context (in-context learning).\\
-For LLM like Claude it can be a lot of context to prevent sharing info about building nuclear bombs.
-
-\subsubsection{Encoder-only (BERT)}
-\subsubsection{Encoder-decoder}
-Good for mapping languages.
-
-\subsection{Sequence-to-sequence models}
-RNN/LSTM were so good that were adopted in text-in text-out tasks (translation, summarisation etc).\\
-Encoder--decoder.\\
-However a lot of text can be too much to pass to the decoder, so encoder inserts \textbf{attention} notes.
-
-What information flows into the decoder is controlled by previous state of decoder.\\
-What is the state of decoder (???)\\
-Similarity:
-\[
-  w_{i,j}=\Prob(j\mid i)=\operatorname{softmax}\bigl(\operatorname{similarity}(h_{i-1}, e_{j})\bigr),
+  w_{i,j}=\Prob(j\mid i)=\operatorname{softmax}\bigl(\operatorname{similarity}(\vect{h}_{i-1}, \vect{e}_{j})\bigr),
   \qquad
-  z_{i}=\sum_{j} w_{i,j}\, e_{j}.
+  \vect{z}_{i}=\sum_{j} w_{i,j}\, \vect{e}_{j}
 \]
-How similarity is computed:
+
+
+Calculating similarity:
 \begin{itemize}
-  \item \textbf{additive} attention: concatenate decoder state and encoder embedding in a feedforward network (?)
-  \item \textbf{multiplicative} attention: dot product of encoder vector and decoder previous state, divided by $\sqrt{d}$ where $d$ is document length (so we get std = $1$)
+  \item \textbf{additive} attention: concatenate decoder state and encoder embedding in a feedforward network:
+  \[
+    \operatorname{similarity}(\vect{h}_{i-1}, \vect{e}_{j})
+    =
+    \operatorname{FFNN}(\vect{h}_{i-1} \mathbin{\|} \vect{e}_{j})
+  \]
+  \item \textbf{multiplicative} attention: dot product of encoder vector and decoder previous state,
+  \[
+    \operatorname{similarity}(\vect{h}_{i-1}, \vect{e}_{j})
+    =
+    \frac{\vect{h}_{i-1} \cdot \vect{e}_{j}}{\sqrt{d}}
+  \]
+  where \(d\) is the embedding size. 
+  \begin{itemize}
+    \item we divide by \(\sqrt{d}\) so that the standard deviation remains \(1\):
+    \[
+    \begin{aligned}
+    & \text { if } a_i, b_i \sim \mathcal{N}(0,1) \Rightarrow \Var [a_i b_i]=1 \\
+    & \Rightarrow \Var[ \vect{a} \cdot \vect{b}]=\sum\nolimits_{i=1}^d \Var[a_i b_i] = d
+    \end{aligned}
+    \]
+  \end{itemize}
 \end{itemize}
 
-I think the following is just self-attention and not soft-attention.\\
-Generalise with queries (what is being looked up), keys (index of what to find), values (stored information at key):
+
+Generalizing the notation with queries (what is being looked up), keys (index of what to find), values (stored information at key):
 \[
-  z_i=\sum_{j}\operatorname{softmax}\!\Bigl(\frac{q_i\cdot k_j}{\sqrt{d}}\Bigr)\,v_j,
+  \vect{z}_i=\sum_{j}\operatorname{softmax}\!\Bigl(\frac{\vect{q}_i\cdot \vect{k}_j}{\sqrt{d}}\Bigr)\,\vect{v}_j
 \]
-where
+where the queries, keys, and values are usually obtained by a linear transformation:
 \[
-  q_i=\matr W_q h_{i-1},\qquad
-  k_i=\matr W_k e_j,\qquad
-  v_j=\matr W_v e_j,
+  \vect{q}_i=\matr W_q \vect{h}_{i-1},\qquad
+  \vect{k}_i=\matr W_k \vect{e}_j,\qquad
+  \vect{v}_j=\matr W_v \vect{e}_j,
   \qquad
-  \matr W_{q,k,v}\in \R^{d\times d}.
+  \matr W_{q,k,v}\in \R^{d\times d}
 \]
-
-Here’s an ass attempt at explaining what’s going on:
-
-
-Hypothetical example:
-\begin{itemize}
-  \item \textbf{query}: what is being looked up\\
-  \textcolor{red}{need adjective that describes a person}
-  \item \textbf{key: }index of what to find\\
-  \textcolor{red}{have adjective that describes people \& animals}
-  \item \textbf{value}: stored information at key\\
-  \textcolor{red}{word is ``friendly'', which in Italian could be translated to ``simpatico''}
-\end{itemize}
 
 
 \[
 \begin{tikzpicture}[
-    scale=0.7,
+    scale=0.6,
   font=\footnotesize,
   >=Stealth,
   node distance=14mm,
@@ -1228,130 +1306,18 @@ node[pos=0.76, redbox] (qi) {$\vect{q}_i$}
 \end{tikzpicture}
 \]
 
-Here’s a better one: (see \Cref{fig:attention-ass} and \Cref{fig:transformer-arch} for context).
 
-\subsection{Self-attention}
-For each input token embedding $\vect x_i$ the model computes three learned linear projections:
+
+Interpreting queries, keys, values with a hypothetical example:
 \begin{itemize}
-  \item query $\vect q_i=\matr W_q \vect x_i$
-  \item key $\vect k_i=\matr W_k \vect x_i$
-  \item value $\vect v_i=\matr W_v \vect x_i$
-\end{itemize}
-The $\matr W$ are learnable matrices.\\
-To compute how much token $i$ attends to token $j$:
-\[
-  \operatorname{score}(i,j)=\frac{\vect q_i\cdot \vect k_j}{\sqrt{d_k}}.
-\]
-Attention weights:
-\[
-  a_{i,j}=\operatorname{softmax}(\operatorname{score}(i,j))
-  =\frac{\exp(\operatorname{score}(i,j))}{\sum_t \exp(\operatorname{score}(i,t))}.
-\]
-Output representation is the weighted sum of the values (what’s inside, weighted by the similarity between what you are looking for and what is inside for real).
-
-\subsubsection{Attention vs.\ self-attention}
-Attention was an optional improvement on encoder--decoder RNN to help them reference source better. It analyses sequence step by step and not all at once like in self-attention; in attention, attention happens at each time step over already-processed hidden states.
-
-\subsection{Transformer architecture}
-\begin{figure}[tbp]
-  \centering
-%   \includegraphics[width=\linewidth]{Screenshot 2026-01-16 alle 17.15.01.png}
-  \caption{Transformer block overview.}
-  \label{fig:transformer-arch}
-\end{figure}
-
-\begin{enumerate}
-  \item each token is first mapped to a vector using an embedding matrix; this gives a vector in $\R^{d_{\operatorname{model}}}$
-  \item transformer block processes all tokens in parallel; two main sublayers, each wrapped with a residual connection and layer normalisation
-  \item for each token, its query is compared with keys of all tokens using dot products; after scaling and softmax, this produces attention weights; all head outputs are concatenated and mixed, giving a vector of size $d_{\operatorname{model}}$
-  \item add the resulting vector to the original one and normalise
-  \item MLP to each token independently; ReLU introduces nonlinearity
-  \[
-    \operatorname{FFNN}(\vect z)=\matr W_2\,\operatorname{ReLU}(\matr W_1 \vect z)
-  \]
-  $\matr W_1$ expands dimensionality (typically $d\to 4d$), then $\matr W_2$ brings it back to $d$; papers say this layer is very important to store $n$-gram pattern--prediction pairs, e.g.\ attention builds \enquote{the eiffel tower height}, MLP adds \enquote{300 m}
-  \item add to input and normalise again
-  \item stack transformer blocks until softmax produces probabilities
-\end{enumerate}
-
-\subsubsection{Deep learning}
-Performs well but requires GPU and toolkit PyTorch. Before: stacking LSTM; now we’re using transformers.
-
-\subsection{Feeding a transformer}
-Depends on context: genome character level; other cases word level.\\
-Sub-word level: replace common sequences of words with one token.\\
-Also need info on the order of input (self-attention is permutation-invariant): pair a number to each token to say its position. Use sinusoids to map (pos, dimension) to a unique id:
-\[
-  P_{k,2i}=\sin\left(\frac{k}{10000^{\frac{2i}{d}}}\right)
-  \qquad
-  P_{k,2i+1}=\cos\left(\frac{k}{10000^{\frac{2i}{d}}}\right)
-\]
-In encoders attention sees everything; in decoders next tokens are masked.
-
-\subsection{Pretraining}
-Pretraining = getting information about language etc.\\
-Fine-tuning/training on a specific task. Variants can be pretrained in different domain corpora and fine-tuned for different tasks.\\
-BERT is pretrained by masking with \texttt{[MASK]} token a word and having access to Wikipedia.\\
-GPT-2 is trained on 40\,GB upvoted posts.
-
-
-% --- Slide 7 ---------------------------------------------------------------
-\section{Applications of transformers} % Slide 7
-
-\begin{itemize}
-  \item encoder--decoder (original transformer (2017) for translation)
-  \item encoder-only (like BERT)
-  \item decoder-only (like GPT-2, autoregressive which predicts next token) (?)
+  \item \textbf{query}: what is being looked up\\
+  \textcolor{red}{need adjective that describes a person}
+  \item \textbf{key: }index of what to find\\
+  \textcolor{red}{have adjective that describes people \& animals}
+  \item \textbf{value}: stored information at key\\
+  \textcolor{red}{word is ``friendly'', which in Italian could be translated to ``simpatico''}
 \end{itemize}
 
-\texttt{[CLS]} is simply another token added with its own learned embedding vector. It does not have semantic meaning like real words but it has a dedicated embedding that is optimised during pretraining and finetuning. During fine-tune for classification for example you teach the model to produce class label at \texttt{[CLS]}.\\
-Attention allows each position to read information from every other position in the sequence so \texttt{[CLS]} can attend to all other tokens and all other tokens can attend to \texttt{[CLS]}. The final hidden vector at the \texttt{[CLS]} position contains information influenced by lexical content of all tokens. NB: I think SBERT and modern don’t just use \texttt{[CLS]} embeddings; rather they perform a pooling over all token embeddings.
-
-\subsection{Finetuning BERT}
-Add a task-specific component $g$ to the loss, then compute $L(f(x),y)$ where
-\[
-  f(x)=g_{\omega}(h_{\theta}(x)),
-\]
-then backpropagate w.r.t.\ both sets of parameters.\\
-Attention patterns and hidden states at \texttt{[CLS]} shift to become sensitive to task-relevant relations. All the weights change w.r.t.\ the new task.\\
-This way BERT can be used to rerank documents by fine-tuning, feeding query--document pairs and classify in relevant / not relevant / slightly relevant etc.\\
-Use \texttt{[SEP]} token to separate query and document on input; usually it’s a token helpful to determine end of sequences.\\
-An even better approach is to compute score right? Well yes, but it’s also very costly, therefore too slow for answering queries in real time; solution is \textbf{pre-computing} but one would require query to compute similarity.
-
-\textbf{Solution 1}: two-step, lexical search first to find candidates, then use BERT to re-rank them.\\
-\textbf{Solution 2}: precompute document embeddings; finetune so that \texttt{[CLS]} as representation of each document optimised for similarity; cosine/dot product is used.
-
-\subsection{Contrastive loss}
-Used so \texttt{[CLS]} embeddings are useful to determine similarity.\\
-Train model to predict similar / not similar for doc pairs.
-\begin{enumerate}
-  \item create batch of relevant docs and queries
-  \item compute a matrix of similarities between all the queries and docs; diagonal must be high as it’s the chosen pairs
-  \item softmax of dot product over column/row tells us how well it sets relevant apart from not relevant; cross entropy is used to finetune the model but it’s called contrastive because
-\end{enumerate}
-SBERT comes already fine-tuned on this; precompute encodings of each doc; when query arrives, encode the query then compute cosine/dot product.
-
-% cross refs: figures \Cref{fig:models-overview,fig:attention-ass,fig:transformer-arch}
-
-
-
-
-\section{Large Language Models}
-
-\section{LLM Deployment \& Architectures}
-
-
-\section{AgenticAI and Model Distillation}
-
-
-\section{Speech Detection \& Generation}
-
-\section{Spoken Dialogue}
-
-
-\section{Additional Topics}
-
-\section{Ethics and Multilingual NLP}
 
 
 
