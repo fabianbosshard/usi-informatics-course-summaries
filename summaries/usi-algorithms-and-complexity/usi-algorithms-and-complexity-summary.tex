@@ -213,7 +213,7 @@
 \usepackage{makecell}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, backgrounds, chains, svg.path, hobby}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, backgrounds, chains, svg.path, hobby, decorations.markings}
 \usepackage{forest}
 \usepackage{tikz-cd}
 \usepackage{tikz-3dplot}
@@ -450,7 +450,7 @@
 
 \usepackage{caption, subcaption}
 
-\usepackage[backend=biber,style=numeric]{biblatex}
+\usepackage[backend=biber,style=numeric, sorting=none]{biblatex}
 \addbibresource{\jobname.bib}
 
 
@@ -670,6 +670,42 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+\makeatletter
+\newcommand{\FBcleartoevenorodd}{% name irrelevant; see next macro
+  \clearpage
+  \if@twoside
+    \ifodd\value{page}\else
+      \hbox{}%
+      \vfill
+      \begin{center}\slshape
+        This page is intentionally left blank.
+      \end{center}
+      \vfill
+      \thispagestyle{empty}%
+      \newpage
+    \fi
+  \fi
+}
+
+% nicer name: “start next content on odd/right page”
+\renewcommand{\cleardoublepage}{\FBcleartoevenorodd}
+\makeatother
+
+
+
+
+
 % \title{Algorithms \& Complexity -- Summary}
 \title{Algorithms \& Complexity}
 \author{Fabian Bosshard}
@@ -705,16 +741,44 @@
 \thispagestyle{scrheadings}
 \tableofcontents
 
+\cleardoublepage 
+
 \section*{Preface}
 \addcontentsline{toc}{section}{Preface}
 
 This document is an unofficial student-made summary of the course
-\href{https://search.usi.ch/courses/35275486/algorithms-complexity}{Algorithms \& Complexity} taught by \href{http://usi.to/i3c}{Evanthia Papadopoulou} in Winter 2025/2026 at the \href{https://www.usi.ch/en}{Università della Svizzera italiana}.
-It is based on the lecture slides and other course materials.
+\href{https://search.usi.ch/courses/35275486/algorithms-complexity}{Algorithms \& Complexity} 
+taught by \href{http://usi.to/i3c}{Evanthia Papadopoulou} 
+in Winter 2025/2026 at the 
+\href{https://www.usi.ch/en}{Università della Svizzera italiana}.
+It is primarily based on the lecture slides, supplemented by \cite{%
+mountCMSC451Fall2015,%
+mountCMSC451Spring2025,%
+kleinbergTardosAlgorithmDesign%
+}.
+Selected material has been adapted from 
+\cite{%
+mtl776Biconnected,%
+chinHouckUpdatingMST,%
+zwickFordFulkersonFail,%
+setCoverSC,%
+chakrabartyGreedySetCover,%
+maxflowGoldenRatio%
+}.
 If you find any errors, please report them to \href{mailto:fabianlucasbosshard@gmail.com}{{fabianlucasbosshard@gmail.com}}.
 The \LaTeX{} source code is available on \url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
 
 \doclicenseThis
+
+
+
+
+\let\emphoriginal\emph           % save original meaning
+\renewcommand{\emph}[1]{\textcolor{black}{#1}}
+\printbibliography[heading=bibintoc,title={References}]
+\let\emph\emphoriginal           % restore original meaning
+
+
 
 % ----- Keep the following commands unchanged -------------------
 % \renewcommand{\emph}[1]{\textcolor{black}{#1}}

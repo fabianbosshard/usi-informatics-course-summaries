@@ -281,7 +281,7 @@ many graph problems become:
 \end{itemize}
 
 \begin{theorem}\label{thm:bipartite_odd_cycle}
-  a graph \(G\) is bipartite iff it contains no odd length cycle.
+  \hl[2]{a graph \(G\) is bipartite iff it contains no odd length cycle}.
 \end{theorem}
 
 
@@ -351,7 +351,7 @@ For `\(\Leftarrow\)' of \autoref{thm:bipartite_odd_cycle}, we use the layers of 
   \leavevmode
   \begin{itemize}
   \item \(G\) has no odd cycle iff no edge joins two nodes of the same \nameref{alg:bfs} layer
-  \item \(G\) is bipartite iff no edge joins two nodes of the same \nameref{alg:bfs} layer
+  \item \hl[2]{\(G\) is bipartite iff no edge joins two nodes of the same \nameref{alg:bfs} layer}
   \qedhere
   \end{itemize}
 \end{corollary}
@@ -369,14 +369,14 @@ z = \operatorname{lca}(x, y)
 be the lowest level common ancestor in the \nameref{alg:bfs} tree and let \(L_i\) be the layer of \(z\).
 
 \[
-\begin{tikzpicture}[every node/.style={circle,draw,minimum size=3.4mm,inner sep=0pt},>=stealth, scale=0.45, font=\footnotesize]
+\begin{tikzpicture}[every node/.style={circle,draw,minimum size=3.4mm,inner sep=0pt},>=stealth, scale=0.55, font=\footnotesize]
   % layers
   \usetikzlibrary{shapes.symbols}
   \definecolor{blob}{RGB}{190,190,190}
   \tikzset{
     fixedcloud/.style={
       cloud, cloud puffs=16, cloud puff arc=120,
-      minimum width=2.8cm, minimum height=1cm,
+      minimum width=3.4cm, minimum height=1cm,
       inner sep=0pt, draw=none, fill=blob
     }
   }
@@ -551,7 +551,7 @@ If it is a back edge, then \(\attribnormal{u}{f} \le \attribnormal{v}{f}\).
 \end{proof}
 
 \begin{lemma}\label{lem:digraph-cycle-back-edge}
-A directed graph has a cycle iff the \nameref{alg:dfs} forest has a back edge.
+\hl[2]{A directed graph has a cycle iff the \nameref{alg:dfs} forest has a back edge}.
 \end{lemma}
 \begin{proof}
 `\(\Leftarrow\)' easy: If there is a back edge then there is a cycle.
@@ -778,7 +778,7 @@ This is a TO for \(G\) since \(v\) has no incoming edges.~\textcolor{Green}{\din
 \end{algorithm}
 
 \begin{theorem}
-\autoref{alg:topological_sort_recursive} finds a TO in \(O(n + m)\) time.
+\autoref{alg:topological_sort_recursive} finds a TO in \hl[2]{\(O(n + m)\)} time.
 \end{theorem}
 \begin{proof}
 Maintain the following information:
@@ -1023,7 +1023,6 @@ highest up we can reach from the subtree rooted at \(v\) (via back edges):
   % % \setlength{\fboxrule}{1pt}
   % \boxed{ 
   % \color{black}
-\begin{verticalhack}
 \attrib{v}{low}
 := \min\biggl(
 \{\attribnormal{v}{d}\} \cup
@@ -1034,10 +1033,8 @@ highest up we can reach from the subtree rooted at \(v\) (via back edges):
 \end{aligned}
 \Bigr\}
 \biggr)
-\end{verticalhack}
-\qedhere
-% }}
 \]
+where ``nonproper'' means that \(x\) can be \(v\) itself.
 \end{definition}
 
 Once \(\attrib{v}{low}\) is computed for all vertices \(v\), we can test wether a given non-root vertex \(u\) is a cut vertex by \autoref{lem:cut_vertex_internal} as follows:
@@ -1160,7 +1157,7 @@ Instead, we output a component \emph{after returning from a recursive call} at a
 \(
   \attrib{v}{low} \ge \attribnormal{u}{d}
 \).
-This condition means that the subtree rooted at \(v\) has no back edge to a \emph{proper} ancestor of \(u\).
+This condition means that the subtree rooted at \(v\) has no back edge to a \emph{proper} ancestor of \(u\) (``proper'' means excluding \(u\)).
 Consequently, all edges pushed onto the edge stack \(\mathcal{S}\) since traversing the tree edge \((u,v)\) belong to a single biconnected component, and they appear \emph{consecutively} on \(\mathcal{S}\).
 Hence we can pop edges until \((u,v)\) to obtain exactly that component.
 

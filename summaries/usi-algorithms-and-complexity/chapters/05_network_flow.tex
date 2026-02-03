@@ -326,6 +326,21 @@ Since all arcs in \(P\) have positive residual capacity, \(c_f(P) > 0\).
 
 At the end of the \autoref{alg:ford_fulkerson}, the \nameref{def:residual_network} \(G_f\) contains no \nameref{def:augmenting_path}s.
 
+\textcolor{AccentBlue}{Min cut} (at the end of \nameref{alg:ford_fulkerson}):
+% \begin{itemize}
+%   \item Let \(A\) be the set of vertices reachable from the source \(s\) in residual network \(G_f\).
+%   \begin{itemize}
+%     \item by definition of \(A\), \(s \in A\)
+%     \item since \(G_f\) contains no augmenting path, \(t \notin A\)
+%   \end{itemize}
+%   \item \((A,B)\) with \(B = V \setminus A\) is a cut
+%   \item \((A,B)\) is a \nameref{prob:min_cut} by \autoref{thm:max-flow-min-cut}.
+% \end{itemize}
+Let \(A\) be the set of vertices reachable from the source \(s\) in residual network \(G_f\).
+By definition of \(A\), \(s \in A\).
+Since \(G_f\) contains no augmenting path, \(t \notin A\).
+\((A,B)\) with \(B = V \setminus A\) is a cut.
+\((A,B)\) is a \nameref{prob:min_cut} by \autoref{thm:max-flow-min-cut}.
 
 
 
@@ -440,8 +455,11 @@ Each \nameref{alg:augment} increases \(v(f)\) by at least 1 and \(v(f^*) \leq \d
 \end{proof}
 
 \begin{corollary}
-\autoref{alg:ford_fulkerson} runs in time \hl[8]{\(O(v(f^*) \cdot m)\)} (not polynomial in \(n\)\textcolor{red}{!}), since an \nameref{def:augmenting_path} can be found in \(O(m)\) time.
+\autoref{alg:ford_fulkerson} runs in time \hl[1]{\(O(v(f^*) \cdot m)\)} (not polynomial in \(n\)\textcolor{red}{!}), since an \hl[8]{\nameref{def:augmenting_path} can be found in \(O(m)\) time}.
 \end{corollary}
+
+Since \(v(f^*) \leq nC\), we also have that \autoref{alg:ford_fulkerson} runs in time \hl[2]{\(O(n C m)\)}.
+
 \begin{corollary}
 If \(C = 1\), \autoref{alg:ford_fulkerson} runs in \(O(n m)\) time.
 \end{corollary}
@@ -683,15 +701,22 @@ Strategies:
 \end{itemize}
 
 
-\subsubsection{Edmonds-Karp}
+\subsubsection{Edmonds-Karp (BFS)}
 
 \emph{Idea}: Always choose an augmenting path with the \hl{minimum number of edges} in the residual network.
 
 \begin{itemize}
   \item Implemented by running \nameref{alg:bfs} in \(G_f\)
+  \begin{itemize}
+    \item with \nameref{alg:bfs}, we take the least number of edges
+    \item with \nameref{alg:dfs}, we do not have that property\textcolor{red}{!}
+    \item \nameref{alg:bfs}: \(O(m + n) = O(m)\), since \(m \geq n - 1\) 
+  \end{itemize}
   \item Each augmentation increases the shortest path distance
   \item Total number of iterations: \(O(nm)\), so total running time is \hl[2]{\(O(n m^2)\)}
 \end{itemize}
+
+\hl[3]{So we went from \(O(n C)\) iterations to \(O(n m)\) iterations!}
 
 
 

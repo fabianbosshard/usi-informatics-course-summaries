@@ -575,12 +575,18 @@ Maintain a priority queue of unexplored nodes, prioritized by \(d_S(v)\).
     ChangeKey  & $m$ & $1$ & $\log n$ & $\log_{d} n$ & $1$ \\
     IsEmpty    & $n$ & $1$ & $1$ & $1$ & $1$ \\
     \midrule
-    \textbf{Total} &  & $n^{2}$ & $m \log n$ & $m \log_{m/n} n$ & $m + n \log n$ \\
+    \textbf{Total} &  & $n^{2}$ & $m \log n$ & $m \log_{m/n} n$ & \tikzmarknode{ell}{$m + n \log n$} \\
     \bottomrule
   \end{tabular}
   \vspace{0.5em}
   {\footnotesize \hypertarget{table_footnote}{$^{\dagger}$ Individual operations are amortized bounds.}}
-\end{table}
+\end{table}%
+\begin{tikzpicture}[remember picture,overlay, font=\footnotesize]%
+  \node[draw=red,thick,ellipse,
+    inner xsep=0pt,   % left/right padding  (smaller => thinner)
+    inner ysep=2pt,    % top/bottom padding  (bigger => taller)
+    fit=(ell)] {};
+\end{tikzpicture}%
 
 
 \begin{algorithm}[h]
@@ -642,13 +648,13 @@ We use the same variable/attribute \(\attrib{u}{\delta}\) to store both \(d_S(u)
 Only once a vertex \(u\) is extracted from the queue \(Q\) in Line \ref{line:dijkstra_extract_min} (which means it is added to \(S\)), we are guaranteed that \(\attrib{u}{\delta} = \delta(s, u)\).
 \end{caution}
 
-\begin{theorem}\label{thm:dijkstra_correctness}
+\begin{invariant}\label{thm:dijkstra_correctness}
 For all \(u \in S\) we have
 \[
 \attrib{u}{\delta} = \delta(s, u)
 \]
 i.e. it is the length of the shortest \(s\)-\(u\) path.
-\end{theorem}
+\end{invariant}
 
 \begin{proof}[Induction on \(|S|\)]\label{proof:dijkstra_correctness}
 \leavevmode
