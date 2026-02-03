@@ -2343,38 +2343,43 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
   \item compute a \nameref{def:mst} \(T\) of \(G\) efficiently, e.g. using \nameref{alg:kruskal}
   \item find some way to convert the \nameref{def:mst} \(T\) into a \nameref{prob:graph-tsp} tour \(H\) while increasing its cost by a constant factor
 \end{itemize}
-
-
 \[
-\pgfmathsetmacro{\nodesize}{0.35} % node diameter
-\pgfmathsetmacro{\off}{0.15} % offset distance from each tree edge
-\pgfmathsetmacro{\R}{\nodesize/2 + \off}   % rounding radius around each node
+\pgfmathsetmacro{\shiftamount}{7.5}      % panel spacing (TikZ units)
+\pgfmathsetmacro{\nodesize}{0.2}     % node diameter (cm)
+\pgfmathsetmacro{\off}{0.2}          % offset distance from each tree edge
+\pgfmathsetmacro{\R}{\nodesize+\off}% rounding radius around each node
+\tikzset{mytri/.tip={Triangle[length=1.0mm,width=0.8mm]}}
 \begin{tikzpicture}[
-  x=1.05cm,y=1.05cm,
-  font=\tiny,
-  v/.style={circle,draw,thick,minimum size=\nodesize cm,inner sep=0pt, font=\tiny},
-  e/.style={thick,line cap=round},
+  font=\footnotesize,
+  x=0.45cm,y=0.45cm,
+  v/.style={thick, circle,draw,minimum size=\nodesize cm,inner sep=0pt},
+  e/.style={thick, line cap=round},
+  % your triangle arrow
+  % directed edges: SAME triangle arrow
+  dir/.style={thick, -{mytri},line cap=round},
+  % dotted tour + repeated triangle arrows along the path
   tour/.style={
-    thick, densely dotted,
+    thick,
+    densely dotted,
     postaction={decorate},
     decoration={
       markings,
-      mark=at position 0.08 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.26 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.38 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.51 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.615 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.77 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 0.88 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
-      mark=at position 1.0 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.08  with {\arrow{mytri}},
+      mark=at position 0.26  with {\arrow{mytri}},
+      mark=at position 0.4  with {\arrow{mytri}},
+      mark=at position 0.5  with {\arrow{mytri}},
+      mark=at position 0.595 with {\arrow{mytri}},
+      mark=at position 0.73  with {\arrow{mytri}},
+      mark=at position 0.895  with {\arrow{mytri}},
+      mark=at position 1.0   with {\arrow{mytri}},
     }
   },
   font=\large
 ]
 
-
 % ------------------------------------------------------------
-% Tree (nodes + edges)
+% Tree (nodes + edges): CV-extracted centers (affine-fixed)
+% A=(0,0), B=(2,0), y up, |AB|=2
 % ------------------------------------------------------------
 \def\placevertices{%
   \node[v] (A) at ( 0.000,  0.000) {};
@@ -2398,6 +2403,7 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 
 % ------------------------------------------------------------
 % Geometry: right-offset intersection with circle radius R
+% (used for the continuous twice-around tour)
 % ------------------------------------------------------------
 \newcommand{\RightEndCoord}[3]{% u v name  (incoming to v)
   \path let
@@ -2422,41 +2428,31 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
     coordinate (#3) at ($(\p1)+(\off*\n6,\off*\n7)+(\n8*\n4,\n8*\n5)$);
 }
 
-% ------------------------------------------------------------
 % Angle helpers
-% ------------------------------------------------------------
 \newcommand{\AngleAt}[2]{%
   \pgfmathanglebetweenpoints{\pgfpointanchor{#1}{center}}{\pgfpointanchor{#2}{center}}%
 }
-
 \newcommand{\ArcCCW}[3]{% V P Q -> \angStart, \deltaCCW in [0,360)
   \AngleAt{#1}{#2}\xdef\angStart{\pgfmathresult}%
   \AngleAt{#1}{#3}\xdef\angEnd{\pgfmathresult}%
   \pgfmathparse{mod(\angEnd-\angStart,360)}%
   \xdef\deltaCCW{\pgfmathresult}%
 }
-
 \newcommand{\ArcShort}[3]{% V P Q -> \angStart, \deltaShort in (-180,180]
   \AngleAt{#1}{#2}\xdef\angStart{\pgfmathresult}%
   \AngleAt{#1}{#3}\xdef\angEnd{\pgfmathresult}%
   \pgfmathparse{mod(\angEnd-\angStart+180,360)-180}%
   \xdef\deltaShort{\pgfmathresult}%
 }
-
 \newcommand{\MakeLongFromShort}[2]{% short -> macro name
   \pgfmathparse{(#1>0)?(#1-360):(#1+360)}%
   \xdef#2{\pgfmathresult}%
 }
-
 \newcommand{\SnapArcStart}[3]{% center V, startAngle, coordName
   \path coordinate (#3) at ([shift={(#2:\R)}]#1);
 }
 
-% ------------------------------------------------------------
 % Turn macros
-% Each turn defines the arc at the middle vertex and returns:
-%   start angle a, delta angle d, and arc-start coordinate S
-% ------------------------------------------------------------
 \newcommand{\TurnNormal}[7]{% u v w  aMacro dMacro  Scoord  scratch
   \RightEndCoord{#1}{#2}{#7in}%
   \RightStartCoord{#2}{#3}{#7out}%
@@ -2481,13 +2477,22 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
   \SnapArcStart{#2}{#3}{#5}%
 }
 
-% ------------------------------------------------------------
-% Main
-% ------------------------------------------------------------
-\begin{scope}
+% ============================================================
+% Panel 1: MST
+% ============================================================
+\begin{scope}[shift={(0,0)}]
   \placevertices
   \mstedges
-  \node[anchor=east, font=\tiny] at ($(A)+(-0.2,0)$) {start};
+  \node[font=\footnotesize] at (1.5,-5) {MST};
+\end{scope}
+
+% ============================================================
+% Panel 2: Twice-around tour (YOUR fixed continuous construction)
+% ============================================================
+\begin{scope}[shift={(\shiftamount,0)}]
+  \placevertices
+  \mstedges
+  \node[anchor=east, font=\scriptsize] at ($(A)+(-0.2,0)$) {start};
 
   % Start at A and go to C first (A->C->D ...)
   \RightStartCoord{A}{C}{P0tmp}
@@ -2495,55 +2500,22 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
   \SnapArcStart{A}{\aZero}{S0}
 
   % Tour (by turns, starting at A->C->D):
-  % A->C->D, C->D->C, D->C->E, C->E->C, E->C->A, C->A->B, A->B->F, B->F->G, F->G->F, G->F->H, F->H->F, H->F->B, F->B->A, B->A->C  (last arc omitted)
-
-  
-  % 1) at C: A->C->D
   \TurnNormal{A}{C}{D}{\aOne}{\dOne}{S1}{P1}
-
-  % 2) leaf at D: C->D->C
   \TurnLeaf{C}{D}{\aTwo}{\dTwo}{S2}{P2}
-
-  % 3) at C: D->C->E
   \TurnNormal{D}{C}{E}{\aThree}{\dThree}{S3}{P3}
-
-  % 4) leaf at E: C->E->C
   \TurnLeaf{C}{E}{\aFour}{\dFour}{S4}{P4}
-
-  % 5) at C: E->C->A  (+360 special)
   \TurnNormalPlus{E}{C}{A}{\aFive}{\dFive}{S5}{P5}
-
-  % 6) at A: C->A->B
   \TurnNormal{C}{A}{B}{\aSix}{\dSix}{S6}{P6}
-
-  % 7) at B: A->B->F
   \TurnNormal{A}{B}{F}{\aSeven}{\dSeven}{S7}{P7}
-
-  % 8) at F: B->F->G
   \TurnNormal{B}{F}{G}{\aEight}{\dEight}{S8}{P8}
-
-  % 9) leaf at G: F->G->F
   \TurnLeaf{F}{G}{\aNine}{\dNine}{S9}{P9}
-
-  % 10) at F: G->F->H
   \TurnNormal{G}{F}{H}{\aTen}{\dTen}{S10}{P10}
-
-  % 11) leaf at H: F->H->F
   \TurnLeaf{F}{H}{\aEleven}{\dEleven}{S11}{P11}
-
-  % 12) at F: H->F->B  (+360 special)
   \TurnNormalPlus{H}{F}{B}{\aTwelve}{\dTwelve}{S12}{P12}
-
-  % 13) at B: F->B->A  (+360 special)
   \TurnNormalPlus{F}{B}{A}{\aThirteen}{\dThirteen}{S13}{P13}
-
-  % 14) at A: B->A->C  (compute, but we will OMIT drawing this arc)
   \TurnNormal{B}{A}{C}{\aFourteen}{\dFourteen}{S14}{P14}
 
-  % ----------------------------------------------------------
-  % Draw: always "-- (S_i) arc(...)".
-  % Omit the very last arc (turn #14 at A) by stopping at S14.
-  % ----------------------------------------------------------
+  % draw (omit last arc, stop at S14)
   \draw[tour]
     (S0)
     -- (S1)  arc[start angle=\aOne,      delta angle=\dOne,      radius=\R]
@@ -2560,17 +2532,51 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
     -- (S12) arc[start angle=\aTwelve,   delta angle=\dTwelve,   radius=\R]
     -- (S13) arc[start angle=\aThirteen, delta angle=\dThirteen, radius=\R]
     -- (S14);
-    % arc[start angle=\aFourteen, delta angle=\dFourteen, radius=\R]
-    % -- cycle;
 
+  \node[font=\footnotesize] at (1.5,-5) {Twice-around tour};
 \end{scope}
+
+% ============================================================
+% Panel 3: Shortcut tour
+% ============================================================
+\begin{scope}[shift={({2*\shiftamount},0)}]
+  \placevertices
+  \node[anchor=east, font=\scriptsize] at ($(A)+(-0.2,0)$) {start};
+
+  % A -> C -> D -> E -> B -> F -> G -> H -> A
+  \draw[dir] (A) -- (C);
+  \draw[dir] (C) -- (D);
+  \draw[dir] (D) -- (E);
+  \draw[dir] (E) -- (B);
+  \draw[dir] (B) -- (F);
+  \draw[dir] (F) -- (G);
+  \draw[dir] (G) -- (H);
+  \draw[dir] (H) -- (A);
+
+  \node[font=\footnotesize] at (1.5,-5) {Shortcut tour};
+\end{scope}
+
+% ============================================================
+% Panel 4: Optimum tour
+% ============================================================
+\begin{scope}[shift={({3*\shiftamount},0)}]
+  \placevertices
+
+  % B -> A -> C -> D -> E -> G -> H -> F -> B
+  \draw[dir] (B) -- (A);
+  \draw[dir] (A) -- (C);
+  \draw[dir] (C) -- (D);
+  \draw[dir] (D) -- (E);
+  \draw[dir] (E) -- (G);
+  \draw[dir] (G) -- (H);
+  \draw[dir] (H) -- (F);
+  \draw[dir] (F) -- (B);
+
+  \node[font=\footnotesize] at (1.5,-5) {Optimum tour};
+\end{scope}
+
 \end{tikzpicture}
 \]
-
-
-
-
-
 
 
 \begin{remark}
@@ -2629,6 +2635,12 @@ This is not true for \nameref{prob:set-cover}\textcolor{red}{!}
 
 
 
+\autoref{alg:set-cover-greedy-approx} is a greedy heuristic that at each stage selects the set that covers the greatest number of uncovered elements.
+
+
+The \nameref{alg:set-cover-greedy-approx} can be ``fooled'' into picking the wrong set over and over again, as the following example shows.
+
+
 \begin{algorithm}[h]
 \caption{Greedy heuristic for \nameref{prob:set-cover}}
 \label{alg:set-cover-greedy-approx}
@@ -2647,10 +2659,6 @@ This is not true for \nameref{prob:set-cover}\textcolor{red}{!}
 \end{algorithm}
 
 
-\autoref{alg:set-cover-greedy-approx} is a greedy heuristic that at each stage selects the set that covers the greatest number of uncovered elements.
-
-
-The \nameref{alg:set-cover-greedy-approx} can be ``fooled'' into picking the wrong set over and over again, as the following example shows.
 \begin{example}\label{ex:greedy-can-be-fooled}
 Consider the following instance of \nameref{prob:set-cover}:
 \[
