@@ -2346,46 +2346,45 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 
 
 \[
+\pgfmathsetmacro{\nodesize}{0.35} % node diameter
+\pgfmathsetmacro{\off}{0.15} % offset distance from each tree edge
+\pgfmathsetmacro{\R}{\nodesize/2 + \off}   % rounding radius around each node
 \begin{tikzpicture}[
   x=1.05cm,y=1.05cm,
-  % node/edge styles
-  v/.style={circle,draw,thick,minimum size=3.5mm,inner sep=0pt},
+  font=\tiny,
+  v/.style={circle,draw,thick,minimum size=\nodesize cm,inner sep=0pt, font=\tiny},
   e/.style={thick,line cap=round},
-  % the dotted directed tour (multiple arrows along the path)
   tour/.style={
     thick, densely dotted,
     postaction={decorate},
     decoration={
       markings,
-      mark=at position 0.08 with {\arrow{Stealth[length=2.2mm]}},
-      mark=at position 0.23 with {\arrow{Stealth[length=2.2mm]}},
-      mark=at position 0.38 with {\arrow{Stealth[length=2.2mm]}},
-      mark=at position 0.53 with {\arrow{Stealth[length=2.2mm]}},
-      mark=at position 0.68 with {\arrow{Stealth[length=2.2mm]}},
-      mark=at position 0.83 with {\arrow{Stealth[length=2.2mm]}}
+      mark=at position 0.08 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.26 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.38 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.51 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.615 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.77 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 0.88 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
+      mark=at position 1.0 with {\arrow{Triangle[length=1.2mm, width=0.8mm]}},
     }
   },
   font=\large
 ]
 
-% ------------------------------------------------------------
-% Parameters
-% ------------------------------------------------------------
-\pgfmathsetmacro{\off}{0.22} % offset distance from each tree edge
-\pgfmathsetmacro{\R}{0.50}   % rounding radius around each node
 
 % ------------------------------------------------------------
 % Tree (nodes + edges)
 % ------------------------------------------------------------
 \def\placevertices{%
-  \node[v] (A) at ( 0.000,  0.000) {A};
-  \node[v] (B) at ( 2.000,  0.000) {B};
-  \node[v] (C) at ( 0.000, -1.496) {C};
-  \node[v] (D) at (-1.008, -2.992) {D};
-  \node[v] (E) at ( 0.992, -4.000) {E};
-  \node[v] (F) at ( 3.008, -1.496) {F};
-  \node[v] (G) at ( 2.000, -2.504) {G};
-  \node[v] (H) at ( 4.000, -2.992) {H};
+  \node[v] (A) at ( 0.000,  0.000) {};
+  \node[v] (B) at ( 2.000,  0.000) {};
+  \node[v] (C) at ( 0.000, -1.496) {};
+  \node[v] (D) at (-1.008, -2.992) {};
+  \node[v] (E) at ( 0.992, -4.000) {};
+  \node[v] (F) at ( 3.008, -1.496) {};
+  \node[v] (G) at ( 2.000, -2.504) {};
+  \node[v] (H) at ( 4.000, -2.992) {};
 }
 \def\mstedges{%
   \draw[e] (A)--(B);
@@ -2398,20 +2397,14 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 }
 
 % ------------------------------------------------------------
-% Geometry primitives
+% Geometry: right-offset intersection with circle radius R
 % ------------------------------------------------------------
-% For a directed segment u->v:
-%  - take the line parallel to u--v, shifted to the RIGHT by distance \off
-%  - intersect it with the circle of radius \R around the endpoint
-%
-% The intersection has a closed-form: offset along the right normal by \off
-% plus a tangential component of length sqrt(R^2-off^2).
 \newcommand{\RightEndCoord}[3]{% u v name  (incoming to v)
   \path let
     \p1=(#1), \p2=(#2),
     \n1={\x2-\x1}, \n2={\y2-\y1},
     \n3={veclen(\n1,\n2)},
-    \n4={\n1/\n3}, \n5={\n2/\n3}, % unit direction d_hat
+    \n4={\n1/\n3}, \n5={\n2/\n3}, % unit direction
     \n6={\n5}, \n7={-\n4},        % unit right normal
     \n8={sqrt(max(0,(\R)^2-(\off)^2))}
   in
@@ -2429,56 +2422,49 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
     coordinate (#3) at ($(\p1)+(\off*\n6,\off*\n7)+(\n8*\n4,\n8*\n5)$);
 }
 
-% Angle of point P around center V (degrees)
-\newcommand{\AngleAt}[2]{% V P -> stores result in \pgfmathresult
+% ------------------------------------------------------------
+% Angle helpers
+% ------------------------------------------------------------
+\newcommand{\AngleAt}[2]{%
   \pgfmathanglebetweenpoints{\pgfpointanchor{#1}{center}}{\pgfpointanchor{#2}{center}}%
 }
 
-% CCW delta angle from P to Q around center V in [0,360)
-\newcommand{\ArcCCW}[3]{% V P Q -> \angStart, \deltaCCW
+\newcommand{\ArcCCW}[3]{% V P Q -> \angStart, \deltaCCW in [0,360)
   \AngleAt{#1}{#2}\xdef\angStart{\pgfmathresult}%
   \AngleAt{#1}{#3}\xdef\angEnd{\pgfmathresult}%
   \pgfmathparse{mod(\angEnd-\angStart,360)}%
   \xdef\deltaCCW{\pgfmathresult}%
 }
 
-% Signed "short" delta in (-180,180]
-\newcommand{\ArcShort}[3]{% V P Q -> \angStart, \deltaShort
+\newcommand{\ArcShort}[3]{% V P Q -> \angStart, \deltaShort in (-180,180]
   \AngleAt{#1}{#2}\xdef\angStart{\pgfmathresult}%
   \AngleAt{#1}{#3}\xdef\angEnd{\pgfmathresult}%
   \pgfmathparse{mod(\angEnd-\angStart+180,360)-180}%
   \xdef\deltaShort{\pgfmathresult}%
 }
 
-% For leaf backtracking u->v->u: use the *long* arc (wrap around the leaf).
 \newcommand{\MakeLongFromShort}[2]{% short -> macro name
   \pgfmathparse{(#1>0)?(#1-360):(#1+360)}%
   \xdef#2{\pgfmathresult}%
 }
 
-% Snap start point of an arc to the *exact* circle point
-% (prevents tiny straight “connector” segments from numeric mismatch).
 \newcommand{\SnapArcStart}[3]{% center V, startAngle, coordName
   \path coordinate (#3) at ([shift={(#2:\R)}]#1);
 }
 
 % ------------------------------------------------------------
-% Turn macros (this is where the code becomes readable)
+% Turn macros
+% Each turn defines the arc at the middle vertex and returns:
+%   start angle a, delta angle d, and arc-start coordinate S
 % ------------------------------------------------------------
-% NORMAL turn: u -> v -> w
-% computes:
-%   - \aX (start angle), \dX (delta angle) for the rounding arc at v
-%   - SX : exact start coordinate on the circle around v
-\newcommand{\TurnNormal}[7]{% u v w  aMacro dMacro  Scoord  scratchIn scratchOut
+\newcommand{\TurnNormal}[7]{% u v w  aMacro dMacro  Scoord  scratch
   \RightEndCoord{#1}{#2}{#7in}%
   \RightStartCoord{#2}{#3}{#7out}%
   \ArcCCW{#2}{#7in}{#7out}%
   \xdef#4{\angStart}\xdef#5{\deltaCCW}%
   \SnapArcStart{#2}{#4}{#6}%
 }
-
-% NORMAL turn, but force the “other” arc by adding 360 (your working special cases)
-\newcommand{\TurnNormalPlus}[7]{% u v w  aMacro dMacro  Scoord  scratchIn scratchOut
+\newcommand{\TurnNormalPlus}[7]{% u v w  aMacro dMacro  Scoord  scratch
   \RightEndCoord{#1}{#2}{#7in}%
   \RightStartCoord{#2}{#3}{#7out}%
   \ArcCCW{#2}{#7in}{#7out}%
@@ -2486,9 +2472,7 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
   \pgfmathparse{\deltaCCW+360}\xdef#5{\pgfmathresult}%
   \SnapArcStart{#2}{#4}{#6}%
 }
-
-% LEAF backtrack: u -> v -> u
-\newcommand{\TurnLeaf}[6]{% u v  aMacro dMacro  Scoord scratch
+\newcommand{\TurnLeaf}[6]{% u v  aMacro dMacro  Scoord  scratch
   \RightEndCoord{#1}{#2}{#6in}%
   \RightStartCoord{#2}{#1}{#6out}%
   \ArcShort{#2}{#6in}{#6out}%
@@ -2498,94 +2482,86 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 }
 
 % ------------------------------------------------------------
-% Main drawing
+% Main
 % ------------------------------------------------------------
 \begin{scope}
   \placevertices
   \mstedges
-  \node[anchor=east] at ($(A)+(-0.9,0.35)$) {start};
+  \node[anchor=east, font=\tiny] at ($(A)+(-0.2,0)$) {start};
 
-  % Start point: take the outgoing offset on edge A->B and snap to A's circle
-  \RightStartCoord{A}{B}{P0tmp}
+  % Start at A and go to C first (A->C->D ...)
+  \RightStartCoord{A}{C}{P0tmp}
   \AngleAt{A}{P0tmp}\xdef\aZero{\pgfmathresult}
   \SnapArcStart{A}{\aZero}{S0}
 
-
-  % The tour (sequence of turns):
-  % A->B->F, B->F->G, F->G->F, G->F->H, F->H->F, H->F->B, F->B->A, B->A->C, A->C->D, C->D->C, D->C->E, C->E->C, E->C->A, C->A->B
+  % Tour (by turns, starting at A->C->D):
+  % A->C->D, C->D->C, D->C->E, C->E->C, E->C->A, C->A->B, A->B->F, B->F->G, F->G->F, G->F->H, F->H->F, H->F->B, F->B->A, B->A->C  (last arc omitted)
 
   
-  % at B: A->B->F
-  \TurnNormal{A}{B}{F}{\aOne}{\dOne}{S1}{P1}
+  % 1) at C: A->C->D
+  \TurnNormal{A}{C}{D}{\aOne}{\dOne}{S1}{P1}
 
-  % at F: B->F->G
-  \TurnNormal{B}{F}{G}{\aTwo}{\dTwo}{S2}{P2}
+  % 2) leaf at D: C->D->C
+  \TurnLeaf{C}{D}{\aTwo}{\dTwo}{S2}{P2}
 
-  % leaf at G: F->G->F
-  \TurnLeaf{F}{G}{\aThree}{\dThree}{S3}{P3}
+  % 3) at C: D->C->E
+  \TurnNormal{D}{C}{E}{\aThree}{\dThree}{S3}{P3}
 
-  % at F: G->F->H
-  \TurnNormal{G}{F}{H}{\aFour}{\dFour}{S4}{P4}
+  % 4) leaf at E: C->E->C
+  \TurnLeaf{C}{E}{\aFour}{\dFour}{S4}{P4}
 
-  % leaf at H: F->H->F
-  \TurnLeaf{F}{H}{\aFive}{\dFive}{S5}{P5}
+  % 5) at C: E->C->A  (+360 special)
+  \TurnNormalPlus{E}{C}{A}{\aFive}{\dFive}{S5}{P5}
 
-  % at F: H->F->B  (your proven +360 special case)
-  \TurnNormalPlus{H}{F}{B}{\aSix}{\dSix}{S6}{P6}
+  % 6) at A: C->A->B
+  \TurnNormal{C}{A}{B}{\aSix}{\dSix}{S6}{P6}
 
-  % at B: F->B->A  (your proven +360 special case)
-  \TurnNormalPlus{F}{B}{A}{\aSeven}{\dSeven}{S7}{P7}
+  % 7) at B: A->B->F
+  \TurnNormal{A}{B}{F}{\aSeven}{\dSeven}{S7}{P7}
 
-  % at A: B->A->C
-  \TurnNormal{B}{A}{C}{\aEight}{\dEight}{S8}{P8}
-  \path coordinate (T8) at ([shift={({\aEight+\dEight}:\R)}]A);
+  % 8) at F: B->F->G
+  \TurnNormal{B}{F}{G}{\aEight}{\dEight}{S8}{P8}
 
-  % at C: A->C->D
-  \TurnNormal{A}{C}{D}{\aNine}{\dNine}{S9}{P9}
+  % 9) leaf at G: F->G->F
+  \TurnLeaf{F}{G}{\aNine}{\dNine}{S9}{P9}
 
-  % leaf at D: C->D->C
-  \TurnLeaf{C}{D}{\aTen}{\dTen}{S10}{P10}
+  % 10) at F: G->F->H
+  \TurnNormal{G}{F}{H}{\aTen}{\dTen}{S10}{P10}
 
-  % at C: D->C->E
-  \TurnNormal{D}{C}{E}{\aEleven}{\dEleven}{S11}{P11}
+  % 11) leaf at H: F->H->F
+  \TurnLeaf{F}{H}{\aEleven}{\dEleven}{S11}{P11}
 
-  % leaf at E: C->E->C
-  \TurnLeaf{C}{E}{\aTwelve}{\dTwelve}{S12}{P12}
+  % 12) at F: H->F->B  (+360 special)
+  \TurnNormalPlus{H}{F}{B}{\aTwelve}{\dTwelve}{S12}{P12}
 
-  % at C: E->C->A  (your proven +360 special case)
-  \TurnNormalPlus{E}{C}{A}{\aThirteen}{\dThirteen}{S13}{P13}
+  % 13) at B: F->B->A  (+360 special)
+  \TurnNormalPlus{F}{B}{A}{\aThirteen}{\dThirteen}{S13}{P13}
 
-  % at A: C->A->B
-  \TurnNormal{C}{A}{B}{\aFourteen}{\dFourteen}{S14}{P14}
+  % 14) at A: B->A->C  (compute, but we will OMIT drawing this arc)
+  \TurnNormal{B}{A}{C}{\aFourteen}{\dFourteen}{S14}{P14}
 
   % ----------------------------------------------------------
-  % Draw the tour as one path: straight segments between arc starts,
-  % then rounded arc at each vertex.
+  % Draw: always "-- (S_i) arc(...)".
+  % Omit the very last arc (turn #14 at A) by stopping at S14.
   % ----------------------------------------------------------
-  % ... up to the segment that reaches S8 stays the same
-\draw[tour]
-  (S0)
-  -- (S1) arc[start angle=\aOne,   delta angle=\dOne,   radius=\R]
-  -- (S2) arc[start angle=\aTwo,   delta angle=\dTwo,   radius=\R]
-  -- (S3) arc[start angle=\aThree, delta angle=\dThree, radius=\R]
-  -- (S4) arc[start angle=\aFour,  delta angle=\dFour,  radius=\R]
-  -- (S5) arc[start angle=\aFive,  delta angle=\dFive,  radius=\R]
-  -- (S6) arc[start angle=\aSix,   delta angle=\dSix,   radius=\R]
-  -- (S7) arc[start angle=\aSeven, delta angle=\dSeven, radius=\R]
-  -- (S8);
-
-% jump (gap) from S8 to T8 by NOT drawing anything:
-\path (T8) coordinate (ResumeAfterA);
-
-% continue drawing from the arc-endpoint as if the arc had been drawn
-\draw[tour]
-  (ResumeAfterA)
-  -- (S9)  arc[start angle=\aNine,     delta angle=\dNine,     radius=\R]
-  -- (S10) arc[start angle=\aTen,      delta angle=\dTen,      radius=\R]
-  -- (S11) arc[start angle=\aEleven,   delta angle=\dEleven,   radius=\R]
-  -- (S12) arc[start angle=\aTwelve,   delta angle=\dTwelve,   radius=\R]
-  -- (S13) arc[start angle=\aThirteen, delta angle=\dThirteen, radius=\R]
-  -- (S14) arc[start angle=\aFourteen, delta angle=\dFourteen, radius=\R];
+  \draw[tour]
+    (S0)
+    -- (S1)  arc[start angle=\aOne,      delta angle=\dOne,      radius=\R]
+    -- (S2)  arc[start angle=\aTwo,      delta angle=\dTwo,      radius=\R]
+    -- (S3)  arc[start angle=\aThree,    delta angle=\dThree,    radius=\R]
+    -- (S4)  arc[start angle=\aFour,     delta angle=\dFour,     radius=\R]
+    -- (S5)  arc[start angle=\aFive,     delta angle=\dFive,     radius=\R]
+    -- (S6)  arc[start angle=\aSix,      delta angle=\dSix,      radius=\R]
+    -- (S7)  arc[start angle=\aSeven,    delta angle=\dSeven,    radius=\R]
+    -- (S8)  arc[start angle=\aEight,    delta angle=\dEight,    radius=\R]
+    -- (S9)  arc[start angle=\aNine,     delta angle=\dNine,     radius=\R]
+    -- (S10) arc[start angle=\aTen,      delta angle=\dTen,      radius=\R]
+    -- (S11) arc[start angle=\aEleven,   delta angle=\dEleven,   radius=\R]
+    -- (S12) arc[start angle=\aTwelve,   delta angle=\dTwelve,   radius=\R]
+    -- (S13) arc[start angle=\aThirteen, delta angle=\dThirteen, radius=\R]
+    -- (S14);
+    % arc[start angle=\aFourteen, delta angle=\dFourteen, radius=\R]
+    % -- cycle;
 
 \end{scope}
 \end{tikzpicture}
