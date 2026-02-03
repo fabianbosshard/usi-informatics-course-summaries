@@ -453,7 +453,7 @@ or, entrywise,
 \end{definition}
 
 \begin{fact}[multi-hop propagation]\label{prop:multi_hop_propagation}
-The entry $(\hat{\matr{A}}^{k})_{vu}$ can be computed explicitly as follows:
+The entry $[\hat{\matr{A}}^{k}]_{vu}$ can be computed explicitly as follows:
 \begin{equation}\label{eq:multi_hop_propagation}
     [\hat{\matr{A}}^{k}]_{vu}
     =
@@ -520,7 +520,7 @@ Then
     % &=
     % \frac{1}{\sqrt{d_v d_u}} \prod_{i=1}^{r-1} \frac{1}{d_{u_i}}
     % \end{aligned}
-    (\hat{\matr{A}}^{r})_{vu}
+    [\hat{\matr{A}}^{r}]_{vu}
     =
     \frac{1}{\sqrt{d_v d_{u_{1}}}} \cdot
     \prod_{i=1}^{r-2} \frac{1}{\sqrt{d_{u_{i}} d_{u_{i+1}}}} \cdot
@@ -862,7 +862,7 @@ Note that \(\mess\) and \(\up\) are often parametric (e.g. MLPs).
 a_{ij} \vect{x}_j \matr{\Theta}
 \Bigr)
 \]
-with $a_{ij}=\tilde{\matr{A}}_{ij}$.
+with $a_{ij}=[\tilde{\matr{A}}]_{ij}$.
 So it fits into \autoref{def:message_passing} with 
 \(
 \mess(\vect{x}_i,\vect{x}_j,\vect{e}_{ji}) = a_{ij} \vect{x}_j \matr{\Theta}
