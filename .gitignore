@@ -7,7 +7,6 @@ summaries/build/
 summaries/usi-algorithms-and-complexity/build
 
 
-*.bib
 *.dat
 *.lua
 
