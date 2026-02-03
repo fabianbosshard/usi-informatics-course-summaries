@@ -2349,7 +2349,7 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 \begin{tikzpicture}[
   x=1.05cm,y=1.05cm,
   % node/edge styles
-  v/.style={circle,draw,thick,minimum size=6.5mm,inner sep=0pt},
+  v/.style={circle,draw,thick,minimum size=3.5mm,inner sep=0pt},
   e/.style={thick,line cap=round},
   % the dotted directed tour (multiple arrows along the path)
   tour/.style={
@@ -2538,6 +2538,7 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
 
   % at A: B->A->C
   \TurnNormal{B}{A}{C}{\aEight}{\dEight}{S8}{P8}
+  \path coordinate (T8) at ([shift={({\aEight+\dEight}:\R)}]A);
 
   % at C: A->C->D
   \TurnNormal{A}{C}{D}{\aNine}{\dNine}{S9}{P9}
@@ -2561,23 +2562,30 @@ Thus, cost min \nameref{prob:graph-tsp} tour \(\geq\) cost \nameref{def:mst}.
   % Draw the tour as one path: straight segments between arc starts,
   % then rounded arc at each vertex.
   % ----------------------------------------------------------
-  \draw[tour]
-    (S0)
-    -- (S1)  arc[start angle=\aOne,      delta angle=\dOne,      radius=\R]
-    -- (S2)  arc[start angle=\aTwo,      delta angle=\dTwo,      radius=\R]
-    -- (S3)  arc[start angle=\aThree,    delta angle=\dThree,    radius=\R]
-    -- (S4)  arc[start angle=\aFour,     delta angle=\dFour,     radius=\R]
-    -- (S5)  arc[start angle=\aFive,     delta angle=\dFive,     radius=\R]
-    -- (S6)  arc[start angle=\aSix,      delta angle=\dSix,      radius=\R]
-    -- (S7)  arc[start angle=\aSeven,    delta angle=\dSeven,    radius=\R]
-    -- (S8)  arc[start angle=\aEight,    delta angle=\dEight,    radius=\R]
-    -- (S9)  arc[start angle=\aNine,     delta angle=\dNine,     radius=\R]
-    -- (S10) arc[start angle=\aTen,      delta angle=\dTen,      radius=\R]
-    -- (S11) arc[start angle=\aEleven,   delta angle=\dEleven,   radius=\R]
-    -- (S12) arc[start angle=\aTwelve,   delta angle=\dTwelve,   radius=\R]
-    -- (S13) arc[start angle=\aThirteen, delta angle=\dThirteen, radius=\R]
-    -- (S14) arc[start angle=\aFourteen, delta angle=\dFourteen, radius=\R]
-    -- cycle;
+  % ... up to the segment that reaches S8 stays the same
+\draw[tour]
+  (S0)
+  -- (S1) arc[start angle=\aOne,   delta angle=\dOne,   radius=\R]
+  -- (S2) arc[start angle=\aTwo,   delta angle=\dTwo,   radius=\R]
+  -- (S3) arc[start angle=\aThree, delta angle=\dThree, radius=\R]
+  -- (S4) arc[start angle=\aFour,  delta angle=\dFour,  radius=\R]
+  -- (S5) arc[start angle=\aFive,  delta angle=\dFive,  radius=\R]
+  -- (S6) arc[start angle=\aSix,   delta angle=\dSix,   radius=\R]
+  -- (S7) arc[start angle=\aSeven, delta angle=\dSeven, radius=\R]
+  -- (S8);
+
+% jump (gap) from S8 to T8 by NOT drawing anything:
+\path (T8) coordinate (ResumeAfterA);
+
+% continue drawing from the arc-endpoint as if the arc had been drawn
+\draw[tour]
+  (ResumeAfterA)
+  -- (S9)  arc[start angle=\aNine,     delta angle=\dNine,     radius=\R]
+  -- (S10) arc[start angle=\aTen,      delta angle=\dTen,      radius=\R]
+  -- (S11) arc[start angle=\aEleven,   delta angle=\dEleven,   radius=\R]
+  -- (S12) arc[start angle=\aTwelve,   delta angle=\dTwelve,   radius=\R]
+  -- (S13) arc[start angle=\aThirteen, delta angle=\dThirteen, radius=\R]
+  -- (S14) arc[start angle=\aFourteen, delta angle=\dFourteen, radius=\R];
 
 \end{scope}
 \end{tikzpicture}
