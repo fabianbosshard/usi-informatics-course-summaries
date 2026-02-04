@@ -1181,12 +1181,12 @@ Calculating similarity:
 
 Generalizing the notation with queries (what is being looked up), keys (index of what to find), values (stored information at key):
 \[
-  \vect{z}_i=\sum_{j}\operatorname{softmax}\!\Bigl(\frac{\vect{q}_i\cdot \vect{k}_j}{\sqrt{d}}\Bigr)\,\vect{v}_j
+  \vect{z}_i=\sum_{j}\operatorname{softmax}\Bigl(\frac{\vect{q}_i\cdot \vect{k}_j}{\sqrt{d}}\Bigr)\,\vect{v}_j
 \]
 where the queries, keys, and values are usually obtained by a linear transformation:
 \[
   \vect{q}_i=\matr W_q \vect{h}_{i-1},\qquad
-  \vect{k}_i=\matr W_k \vect{e}_j,\qquad
+  \vect{k}_j=\matr W_k \vect{e}_j,\qquad
   \vect{v}_j=\matr W_v \vect{e}_j,
   \qquad
   \matr W_{q,k,v}\in \R^{d\times d}
