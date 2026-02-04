@@ -503,140 +503,80 @@
 
 \clearpage
 
-\section{Assignment 1: Polynomial Regression with Gradient Descent}
+\section{Polynomial Regression with Gradient Descent}
 
-\subsubsection{Setup \& notation}
-
+\subsection{Model and data}
 \begin{itemize}
-  \item Polynomial: \(p(z) = \sum_{k=0}^4 w_k z^k\).
-  \item Feature vector: \(\vect{x} = [1, z, z^2, z^3, z^4]^T\).
-  \item Model: \(\hat y = \vect{x}^T \vect{w}\).
-  \item Dataset: \(y_i = p(z_i) + \varepsilon_i\) with \(\varepsilon_i \sim \mathcal N(0,\sigma^2)\).
-  \item Design matrix \(\matr{X}\): each row is \(\vect{x}_i^T\).
+  \item Polynomial model $p(z)=\sum_{k=0}^4 w_k z^k$.
+  \item Feature vector $\vect{x}=[1, z, z^2, z^3, z^4]^T$ and prediction $\hat y=\vect{x}^T\vect{w}$.
+  \item Data generation $y_i=p(z_i)+\varepsilon_i$ with $\varepsilon_i\sim\mathcal N(0,\sigma^2)$.
+  \item Design matrix $\matr{X}$ contains rows $\vect{x}_i^T$.
 \end{itemize}
 
-\subsubsection{Gradient descent basics}
-
+\subsection{Gradient descent and implementation details}
 \begin{itemize}
-  \item Loss (MSE): 
+  \item Mean-squared error
   \[
-    \mathcal{L}(\vect{w}) = \frac{1}{N}\sum_{i=1}^N (y_i - \vect{x}_i^T \vect{w})^2.
+    \mathcal{L}(\vect{w})=\frac{1}{N}\sum_{i=1}^N \bigl(y_i-\vect{x}_i^T\vect{w}\bigr)^2
   \]
-  \item Gradient:
+  \item Gradient in matrix form
   \[
-    \nabla_{\vect{w}} \mathcal{L}(\vect{w}) = -\frac{2}{N} \matr{X}^T \bigl(\vect{y} - \matr{X}\vect{w}\bigr).
+    \nabla_{\vect{w}}\mathcal{L}(\vect{w})=-\frac{2}{N}\matr{X}^T\bigl(\vect{y}-\matr{X}\vect{w}\bigr)
   \]
-  \item GD update:
+  \item Update rule
   \[
-    \vect{w}^{(t+1)} = \vect{w}^{(t)} - \eta \,\nabla_{\vect{w}} \mathcal{L}(\vect{w}^{(t)}).
+    \vect{w}^{(t+1)}=\vect{w}^{(t)}-\eta\,\nabla_{\vect{w}}\mathcal{L}\bigl(\vect{w}^{(t)}\bigr)
   \]
-\end{itemize}
 
-\subsubsection{Learning rate}
+  \item Learning rate $\eta>0$ sets the step size.
+  Too small $\eta$ gives slow convergence.
+  Too large $\eta$ yields oscillation or divergence.
+  In code, $\eta=0.01$ gave a smooth decrease and reached near noise-level MSE in reasonable steps.
 
-\begin{itemize}
-  \item \textbf{What is the learning rate?}  
-  Scalar \(\eta > 0\) that scales the gradient step size.
-  \item \textbf{Why important?}  
-  Controls convergence speed and stability.
-  \item \textbf{Too small \(\eta\):}  
-  Very slow convergence, many steps to reach a good minimum.
-  \item \textbf{Too large \(\eta\):}  
-  Loss oscillates or diverges; training unstable.
-  \item In code: chose \(\eta = 0.01\) as a compromise: smooth decrease, reaches near noise level in reasonable steps.
-\end{itemize}
+  \item Bias handling in \texttt{nn.Linear}:
+  since $\vect{x}$ already contains a constant feature, using \texttt{bias=False} makes $w_0$ act as the bias.
+  If \texttt{bias=True} is used while keeping the constant feature, the model has two redundant bias terms.
 
-\subsubsection{Bias in \texttt{nn.Linear}}
-
-\begin{itemize}
-  \item Inputs \(\vect{x} = [1, z, z^2, z^3, z^4]\) already contain a constant feature.
-  \item With \texttt{bias = False}:
-  \[
-    \hat y = \vect{w}^T \vect{x}, 
-  \]
-  and \(w_0\) acts as the bias term.
-  \item If \texttt{bias = True} \emph{and} we keep the constant feature, we effectively have two biases, which is redundant.
-\end{itemize}
-
-\subsubsection{Steps vs epochs}
-
-\begin{itemize}
-  \item \textbf{Step:} one parameter update (one batch through model + \texttt{optimizer.step()}).
-  \item \textbf{Epoch:} one full pass over the training set.
-  \item Mini–batch training: 
-  \[
-    \text{steps per epoch} = \frac{\text{num\_samples}}{\text{batch\_size}}.
-  \]
-\end{itemize}
-
-\subsubsection{\texttt{optimizer.zero\_grad()} and \texttt{optimizer.step()}}
-
-\begin{itemize}
-  \item \textbf{\texttt{zero\_grad()}:}  
-  PyTorch accumulates gradients; this clears the old ones so each backward pass uses only the current batch.
-  \item \textbf{\texttt{step()}:}  
-  Reads stored gradients and updates parameters according to the chosen rule (here: SGD update).
-\end{itemize}
-
-\subsubsection{Validation set, overfitting}
-
-\begin{itemize}
-  \item \textbf{Validation set:}  
-  Held-out data (no gradient updates), used to monitor generalization and tune hyperparameters.
-  \item \textbf{Why use it?}  
-  Detect overfitting; choose learning rate, steps, model size etc. without touching the test set.
-  \item \textbf{Overfitting:}  
-  Training loss \(\downarrow\), validation loss \(\uparrow\); good fit to train data but poor generalization.
-  \item \textbf{Ways to reduce overfitting (general):}
+  \item Training bookkeeping:
   \begin{itemize}
-    \item Simpler model, fewer parameters.
-    \item Explicit regularization (e.g. weight decay, \(L_2\)).
-    \item More data, data augmentation.
-    \item Early stopping based on validation loss.
+    \item A \textbf{step} is one parameter update (one batch forward/backward plus \texttt{optimizer.step()}).
+    \item An \textbf{epoch} is one full pass over the training set.
+    \item For mini-batches, steps per epoch equal $\text{num\_samples}/\text{batch\_size}$.
+  \end{itemize}
+
+  \item Optimizer calls:
+  \begin{itemize}
+    \item \texttt{optimizer.zero\_grad()} clears accumulated gradients.
+    \item \texttt{optimizer.step()} updates parameters using the stored gradients (here, the SGD rule).
   \end{itemize}
 \end{itemize}
 
-\subsubsection{Expected loss at optimum}
-
+\subsection{Generalization, expected optimum loss, and common losses}
 \begin{itemize}
-  \item If the model recovers the true parameters \(\vect{w}^*\):
+  \item Validation set:
+  held-out data (no gradient updates) to monitor generalization and tune hyperparameters without touching the test set.
+  Overfitting appears as training loss decreasing while validation loss increases.
+  Typical countermeasures are smaller models, explicit regularization such as weight decay ($L_2$), more data or augmentation, and early stopping.
+
+  \item Expected MSE at the optimum:
+  if the model recovers $\vect{w}^*$ and $y=\vect{x}^T\vect{w}^*+\varepsilon$ with $\varepsilon\sim\mathcal N(0,\sigma^2)$ then
   \[
-    y = \vect{x}^T \vect{w}^* + \varepsilon, 
-    \quad \varepsilon \sim \mathcal N(0,\sigma^2).
+    \Exp\bigl[\bigl(y-\vect{x}^T\vect{w}^*\bigr)^2\bigr]=\sigma^2
   \]
-  \item At \(\vect{w}^*\):
-  \[
-    \Exp\bigl[(y - \vect{x}^T \vect{w}^*)^2\bigr] 
-      = \Exp[\varepsilon^2] 
-      = \Var[\varepsilon] 
-      = \sigma^2.
-  \]
-  \item With \(\sigma = 0.5\): expected MSE at optimum \(\approx 0.25\).
+  with $\sigma=0.5$ giving an expected optimum MSE of about $0.25$.
+
+  \item Classification losses:
+  binary cross-entropy for binary classification and cross-entropy for multi-class classification.
+
+  \item Adaptive optimizers use per-parameter learning rates based on past gradients.
+  Examples are AdaGrad, RMSProp, and Adam.
+  SGD uses a fixed learning rate and is a simple baseline.
 \end{itemize}
-
-\subsubsection{Classification loss functions}
-
-\begin{itemize}
-  \item Typical choices:
-  \begin{itemize}
-    \item Binary classification: binary cross-entropy.
-    \item Multi-class: cross-entropy loss.
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{Adaptive optimizers}
-
-\begin{itemize}
-  \item \textbf{Idea:} per-parameter learning rates that adapt based on past gradients.
-  \item Examples: AdaGrad, RMSProp, Adam.
-  \item SGD (used here): fixed learning rate, simple, often good baseline.
-\end{itemize}
-
 
 \pagebreak
-\section{Assignment 2: CNN on CIFAR-10}
+\section{Convolutional Neural Networks}
 
-\subsection{Dataset \& basics}
+\subsection{Dataset \& Basics}
 
 \begin{itemize}
   \item CIFAR-10: 50k train, 10k test, RGB images of size \(3 \times 32 \times 32\), 10 classes.
@@ -644,7 +584,7 @@
   \item Train/val split: original test set split into validation and final test.
 \end{itemize}
 
-\subsection{Where are the CNN parameters?}
+\subsection{Parameters}
 
 \begin{itemize}
   \item Convolutional layers: filter weight tensors +\tikzmark{convline} optional bias vectors.
@@ -659,24 +599,24 @@
   \coordinate (start) at ($(pic cs:convline)+(0,0.2)$);
 
   % place the handwritten-style note up-right
-  \node[anchor=west] (note) at ($(start)+(1,0.6)$)
+  \node[anchor=west, color=funblue] (note) at ($(start)+(1,0.6)$)
   {
     \(\#\text{params}=(k_w k_h\,C_{\text{in}} \,+\tikzmarknode{plusone}{1}\,)\,C_{\text{out}}\)
   };
 
   % curvy arrow up-right
-  \draw[-{Stealth[length=2mm]}]
+  \draw[-{Stealth[length=2mm]}, funblue]
     (start) .. controls +(0.9,0.1) and +(-1.2,0.1) .. (note.west);
 
 
   % ---- padding (numerator): go UP then RIGHT
   \coordinate (biasA) at ($(plusone.north) + (0,3mm)$);    % vertical end
   \coordinate (biasB) at ($(biasA) + (10mm,0)$);        % right end (tip)
-  \draw[ann] (plusone.north) -- (biasA) -- (biasB);
-  \node[anchor=west,inner sep=1pt] at (biasB) {bias};
+  \draw[ann, funblue] (plusone.north) -- (biasA) -- (biasB);
+  \node[anchor=west,inner sep=1pt, color=funblue] at (biasB) {bias};
 \end{tikzpicture}
 
-\vspace{1em}
+
 \[
 n_{\text{out}}
 =
@@ -703,201 +643,94 @@ n_{\text{in}}
   % ---- padding (numerator): go UP then RIGHT
   \coordinate (padA) at ($(pad.north) + (0,6mm)$);    % vertical end
   \coordinate (padB) at ($(padA) + (10mm,0)$);        % right end (tip)
-  \draw[ann] (pad.north) -- (padA) -- (padB);
-  \node[anchor=west,inner sep=1pt] at (padB) {padding};
+  \draw[ann, funblue] (pad.north) -- (padA) -- (padB);
+  \node[anchor=west,inner sep=1pt, color=funblue] at (padB) {padding};
 
   % ---- kernel size (numerator): go UP then RIGHT
   \coordinate (kerA) at ($(ker.north) + (0,3mm)$);
   \coordinate (kerB) at ($(kerA) + (14mm,0)$);
-  \draw[ann] (ker.north) -- (kerA) -- (kerB);
-  \node[anchor=west,inner sep=1pt] at (kerB) {kernel size};
+  \draw[ann, funblue] (ker.north) -- (kerA) -- (kerB);
+  \node[anchor=west,inner sep=1pt, color=funblue] at (kerB) {kernel size};
 
   % ---- stride (denominator): go DOWN then RIGHT
   \coordinate (strA) at ($(str.south) + (0,-4mm)$);
   \coordinate (strB) at ($(strA) + (10mm,0)$);
-  \draw[ann] (str.south) -- (strA) -- (strB);
-  \node[anchor=west,inner sep=1pt] at (strB) {stride};
+  \draw[ann, funblue] (str.south) -- (strA) -- (strB);
+  \node[anchor=west,inner sep=1pt, color=funblue] at (strB) {stride};
 \end{tikzpicture}
 
-\subsection{Why convolutional layers instead of fully connected?}
+\subsection{Architecture choices and training practice}
 
+\paragraph{Why convolutional layers instead of fully connected}
 \begin{itemize}
-  \item \textbf{Local receptive fields:} exploit spatial locality in images; neurons see small patches.
-  \item \textbf{Weight sharing:} one filter reused across all spatial positions \(\Rightarrow\) far fewer parameters than a dense layer on raw pixels.
-  \item \textbf{Translation equivariance:} a shift in the input produces a corresponding shift in feature maps.
-  \item Fully connected directly on \(3 \times 32 \times 32\) would have a huge number of parameters and ignore spatial structure.
+  \item Local receptive fields exploit spatial locality (neurons see small patches).
+  \item Weight sharing reuses each filter across spatial positions, giving far fewer parameters than a dense layer on raw pixels.
+  \item Translation equivariance means a shift in the input induces a corresponding shift in feature maps.
+  \item A fully connected model on $3\times 32\times 32$ inputs would have a huge number of parameters and would ignore spatial structure.
 \end{itemize}
 
-\subsection{Pooling layers}
-
+\paragraph{Pooling layers}
 \begin{itemize}
-  \item \textbf{Role:}
-  \begin{itemize}
-    \item Downsample feature maps (e.g. max pool \(2 \times 2\)).
-    \item Increase effective receptive field of deeper layers.
-    \item Reduce activations before FC layers \(\Rightarrow\) fewer parameters, less overfitting.
-    \item Provide some invariance to small translations.
-  \end{itemize}
-  \item \textbf{If we remove pooling:}
-  \begin{itemize}
-    \item Feature maps stay large \(\Rightarrow\) more parameters and memory.
-    \item Higher overfitting risk, slower training.
-    \item Can compensate with strided convolutions or other downsampling.
-  \end{itemize}
+  \item Role:
+  downsample feature maps (e.g. max pool $2\times 2$), increase the effective receptive field in deeper layers, reduce activations before fully connected layers, and provide some invariance to small translations.
+  \item If pooling is removed:
+  feature maps stay large, which increases parameters and memory, raises overfitting risk, and slows training.
+  A common substitute is strided convolutions or other downsampling.
 \end{itemize}
 
-\subsection{Dropout \& Batch Normalization}
-
+\paragraph{Dropout, BatchNorm, and other regularization}
 \begin{itemize}
-  \item \textbf{Dropout:}
-  \begin{itemize}
-    \item Training: randomly zero activations with probability \(p\).
-    \item Forces different subsets of neurons to work \(\Rightarrow\) reduces co-adaptation.
-    \item Acts as regularizer, reduces overfitting.
-    \item Smaller \(p\) in conv blocks, larger \(p\) before dense output layer.
-  \end{itemize}
-  \item \textbf{Batch Normalization:}
-  \begin{itemize}
-    \item Normalizes activations in a mini-batch to roughly zero mean and unit variance, then applies learnable \(\gamma,\beta\).
-    \item More stable gradients, faster training, allows larger learning rates.
-    \item Adds some regularization due to batch noise.
-  \end{itemize}
-  \item \textbf{Other regularization techniques:}
-  \begin{itemize}
-    \item Weight decay (\(L_2\) penalty).
-    \item Data augmentation.
-    \item Early stopping.
-    \item Using a smaller CNN.
-  \end{itemize}
+  \item Dropout during training zeros activations with probability $p$.
+  It reduces co-adaptation and overfitting.
+  Typically $p$ is smaller in convolutional blocks and larger before the final dense output layer.
+  \item Batch Normalization normalizes mini-batch activations to roughly zero mean and unit variance and then applies learnable scale and shift parameters $\gamma$ and $\beta$.
+  It stabilizes gradients, speeds up training, allows larger learning rates, and adds some regularization due to batch noise.
+  \item Additional regularization includes weight decay ($L_2$ penalty), data augmentation, early stopping, and using a smaller CNN.
 \end{itemize}
 
-\subsection{Data augmentation (Task 8)}
-
+\paragraph{Data augmentation}
 \begin{itemize}
-  \item \texttt{RandomCrop(32, padding=4)}: small translations and zoom-like effects.
-  \item \texttt{RandomHorizontalFlip}: left–right invariance for many object classes.
-  \item \texttt{RandomPerspective}: mild geometric distortions.
-  \item Overall: effectively larger, more diverse training set; better generalization to val/test.
+  \item \texttt{RandomCrop(32, padding=4)} introduces small translations and zoom-like effects.
+  \item \texttt{RandomHorizontalFlip} encourages left--right invariance.
+  \item \texttt{RandomPerspective} adds mild geometric distortions.
+  \item Overall, augmentation makes the effective training set larger and more diverse and improves validation and test generalization.
 \end{itemize}
 
-\subsection{GeLU vs ReLU}
-
+\paragraph{Activation functions}
 \begin{itemize}
-  \item ReLU: \(f(x) = \max(0,x)\), hard cutoff at 0, all negative values set to 0.
-  \item GeLU: smooth activation; negative values are not fully discarded, just down-weighted.
-  \item GeLU can give smoother optimization and sometimes a small accuracy boost on vision tasks.
+  \item ReLU uses $f(x)=\max(0,x)$ with a hard cutoff at $0$.
+  \item GeLU is smooth and down-weights negative values rather than discarding them.
+  \item GeLU can yield smoother optimization and sometimes a small accuracy gain in vision settings.
 \end{itemize}
 
-\subsection{Learning rate, epochs, batch size (CNN)}
-
+\paragraph{Optimization settings in the experiment}
 \begin{itemize}
-  \item \textbf{Base model (Task 6):}
-  \begin{itemize}
-    \item LR \(\approx 0.03\): large enough to learn in about 5 epochs without exploding.
-    \item Epochs: 5; sufficient to reach \(\ge 65\%\) test accuracy, going much further starts to overfit with little regularization.
-    \item Batch size 32: standard setting, balance between noisy and stable gradients.
-  \end{itemize}
-  \item \textbf{Improved model (Task 8):}
-  \begin{itemize}
-    \item LR \(\approx 0.01\) with BatchNorm and scheduler: stable for deeper, regularized network.
-    \item Epochs: 40; strong regularization (dropout, augmentation, weight decay) allows longer training.
-    \item Batch size 64: more stable gradient estimates, efficient computation.
-  \end{itemize}
+  \item Base model: learning rate about $0.03$, training for $5$ epochs, batch size $32$.
+  This learns quickly (reaching at least $65\%$ test accuracy) but tends to overfit if trained much longer without strong regularization.
+  \item Improved model: learning rate about $0.01$ together with BatchNorm and a scheduler, training for $40$ epochs, batch size $64$.
+  Strong regularization (dropout, augmentation, weight decay) makes longer training beneficial.
 \end{itemize}
 
-\subsection{Momentum, weight decay, LR scheduler}
-
+\paragraph{Momentum, weight decay, and learning-rate scheduling}
 \begin{itemize}
-  \item \textbf{Momentum (e.g. \(0.9\)):}
-  \begin{itemize}
-    \item Keeps an exponential moving average of past gradients.
-    \item Smoother updates, less oscillation, faster movement along consistent directions.
-  \end{itemize}
-  \item \textbf{Weight decay (e.g. \(10^{-6}\)):}
-  \begin{itemize}
-    \item Adds \(L_2\) penalty to weights.
-    \item Encourages smaller weights \(\Rightarrow\) milder overfitting.
-  \end{itemize}
-  \item \textbf{ReduceLROnPlateau:}
-  \begin{itemize}
-    \item Monitors validation loss; reduces LR when val loss stops improving.
-    \item Strategy: larger LR at the beginning, smaller LR later for fine-tuning.
-  \end{itemize}
+  \item Momentum (e.g. $0.9$) keeps an exponential moving average of gradients, giving smoother updates, less oscillation, and faster progress along consistent directions.
+  \item Weight decay (e.g. $10^{-6}$) adds an $L_2$ penalty and encourages smaller weights, which reduces overfitting.
+  \item \texttt{ReduceLROnPlateau} monitors validation loss and decreases the learning rate when validation performance stops improving.
+  A common strategy is a larger learning rate early and a smaller one later for fine-tuning.
 \end{itemize}
 
-\subsection{Overfitting in the CNN experiment}
-
+\paragraph{Overfitting and run-to-run variability}
 \begin{itemize}
-  \item \textbf{Signs in Task 6:}
-  \begin{itemize}
-    \item Training loss keeps decreasing.
-    \item Validation loss flattens or slightly increases.
-    \item Clear gap between training and validation accuracies.
-  \end{itemize}
-  \item \textbf{Task 8 modifications:}
-  \begin{itemize}
-    \item Deeper CNN with more channels.
-    \item Data augmentation, dropout, BatchNorm, weight decay, LR scheduler.
-    \item Result: smaller train–val gap and significantly higher test accuracy.
-  \end{itemize}
+  \item If training loss decreasing while validation loss flattens or increases \(\Rightarrow\) overfitting.
+  \item Try using a deeper network with more channels and add augmentation, dropout, BatchNorm, weight decay, scheduler.
+  This reduces the train-validation gap and substantially improves test accuracy.
+  \item Different random seeds change initialization $\vect{w}$ and mini-batch order.
+  Test accuracy can vary by a few percentage points, so comparisons should average over runs or at least account for variance.
 \end{itemize}
-
-\subsection{Random seeds and variability (Task 9)}
-
-\begin{itemize}
-  \item Different seeds \(\Rightarrow\) different initial \(\vect{w}\) and different mini-batch orders.
-  \item Test accuracy changes by a few percentage points between runs, even with same architecture and hyperparameters.
-  \item Conclusion: training is stochastic; for fair comparison, one should average over multiple runs or at least be aware of variance.
-\end{itemize}
-
-
-
-
-
-
-
-
-\clearpage
-\section{Questions that were asked during the exam}
-\begin{itemize}
-\item 
-What is linear regression?
-\item 
-Why is the shape \((N, d+1)\) and \((N,)\) for training data? 
-
-\textcolor{red}{polynomial of degree \(d\) has \(d+1\) parameters}
-\item 
-In \texttt{model.weight.detach().cpu().numpy().flatten()} what does \texttt{.detach()} and \texttt{.flatten()} do? Why is it necessary? 
-
-\textcolor{red}{
-\texttt{.detach()} creates a tensor that shares storage with \texttt{model.weight} but does not require gradients.
-\texttt{.flatten()} removes the extra dimensions to get a 1D array of parameters, here it was \((1, 5) \to (5,)\).
-}
-\item 
-What is the shape of \texttt{X[:, i]}? 
-
-\textcolor{red}{\((N,)\) because it selects one column (feature) for all samples.}
-\item 
-What is the meaning of the shape \texttt{(50000, 32, 32, 3)}?
-
-\textcolor{red}{
-CIFAR-10 training set: 50,000 images, each of size \(32 \times 32\) pixels with 3 color channels (RGB).
-}
-\item 
-In \texttt{ax.imshow(img.permute(1, 2, 0))}, what does \texttt{.permute(1, 2, 0)} do and why is it necessary?
-
-\textcolor{red}{
-It changes the tensor shape from \((3, 32, 32)\) (channels, height, width) to \((32, 32, 3)\) (height, width, channels) which is the format expected by \texttt{imshow}.
-}
-
-\end{itemize}
-
-
-
 
 \clearpage
 
-\section{RNN vs LSTM}
+\section{Recurrent models (RNN and LSTM)}
 
 
 
@@ -917,10 +750,9 @@ A standard RNN layer is defined by one parameter set (shared across time):
 \[
 \vect{h}_t
 =
-\tanh\!\bigl(\matr{W}_{xh}\vect{x}_t+\matr{W}_{hh}\vect{h}_{t-1}+\vect{b}_h\bigr),
-\qquad
-\matr{W}_{xh}\in\R^{h\times d},\ \matr{W}_{hh}\in\R^{h\times h},\ \vect{b}_h\in\R^h.
+\tanh \bigl(\matr{W}_{xh}\vect{x}_t+\matr{W}_{hh}\vect{h}_{t-1}+\vect{b}_h\bigr)
 \]
+where \(\matr{W}_{xh}\in\R^{h\times d},\ \matr{W}_{hh}\in\R^{h\times h},\ \vect{b}_h\in\R^h\).
 At the first step one initializes $\vect{h}_0$ (typically $\vect{0}$, sometimes learned).
 % RNN
 \[
@@ -966,11 +798,13 @@ Thus, $\matr{W}_{xh},\matr{W}_{hh},\vect{b}_h$ are \emph{shared across all times
 
 \textbf{two states}:
 An LSTM keeps
-\[
-\vect{h}_t\in\R^h \quad\text{(hidden/output state; what is exposed)} ,
-\qquad
-\vect{c}_t\in\R^h \quad\text{(cell state; long-term memory)} .
-\]
+\(
+\vect{h}_t\in\R^h
+\) (hidden/output state; what is exposed),
+and
+\(
+\vect{c}_t\in\R^h 
+\) (cell state; long-term memory).
 Initialize $(\vect{h}_0,\vect{c}_0)$ (typically $(\vect{0},\vect{0})$).
 % LSTM
 \[
@@ -1045,22 +879,22 @@ Initialize $(\vect{h}_0,\vect{c}_0)$ (typically $(\vect{0},\vect{0})$).
 Gates are elementwise values in $[0,1]$ (via $\sigm$) that control \emph{forget, write, expose}:
 \[
 \begin{aligned}
-\vect{f}_t &= \sigm(\matr{W}_{xf}\vect{x}_t+\matr{W}_{hf}\vect{h}_{t-1}+\vect{b}_f),\\
-\vect{i}_t &= \sigm(\matr{W}_{xi}\vect{x}_t+\matr{W}_{hi}\vect{h}_{t-1}+\vect{b}_i),\\
-\tilde{\vect{c}}_t &= \tanh(\matr{W}_{xc}\vect{x}_t+\matr{W}_{hc}\vect{h}_{t-1}+\vect{b}_c),\\
-\vect{o}_t &= \sigm(\matr{W}_{xo}\vect{x}_t+\matr{W}_{ho}\vect{h}_{t-1}+\vect{b}_o),
+\vect{f}_t &= \sigm(\matr{W}_{xf}\vect{x}_t+\matr{W}_{hf}\vect{h}_{t-1}+\vect{b}_f)\\
+\vect{i}_t &= \sigm(\matr{W}_{xi}\vect{x}_t+\matr{W}_{hi}\vect{h}_{t-1}+\vect{b}_i)\\
+\tilde{\vect{c}}_t &= \tanh(\matr{W}_{xc}\vect{x}_t+\matr{W}_{hc}\vect{h}_{t-1}+\vect{b}_c)\\
+\vect{o}_t &= \sigm(\matr{W}_{xo}\vect{x}_t+\matr{W}_{ho}\vect{h}_{t-1}+\vect{b}_o)
 \end{aligned}
 \qquad
 \begin{aligned}
-\vect{c}_t &= \vect{f}_t\odot \vect{c}_{t-1} + \vect{i}_t\odot \tilde{\vect{c}}_t,\\
-\vect{h}_t &= \vect{o}_t\odot \tanh(\vect{c}_t).
+\vect{c}_t &= \vect{f}_t\odot \vect{c}_{t-1} + \vect{i}_t\odot \tilde{\vect{c}}_t\\
+\vect{h}_t &= \vect{o}_t\odot \tanh(\vect{c}_t)
 \end{aligned}
 \]
 \emph{Forgetting} is $\vect{f}_t\odot\vect{c}_{t-1}$, \emph{adding/writing} is $\vect{i}_t\odot\tilde{\vect{c}}_t$.
 
 \textbf{Why LSTM helps vanishing gradients (one line)}:
 \[
-\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t),
+\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t)
 \]
 so if $\vect{f}_t\approx \vect{1}$, gradients can flow through many timesteps.
 
@@ -1075,8 +909,6 @@ TBPTT keeps dependencies within chunks while avoiding excessive memory usage.
 
 
 
-\section{Exam Q\&A cheat sheet (answers in key points)}
-
 \subsection{Hidden state in an RNN}
 $\vect{h}_t$ is the internal state at time $t$; it summarizes past inputs and is used to compute (i) outputs and (ii) the next hidden state. It is updated recurrently: $\vect{h}_t=f(\vect{x}_t,\vect{h}_{t-1})$ with shared weights across time.
 
@@ -1088,7 +920,7 @@ In practice one uses a \emph{mask} to ignore padded positions in loss/metrics/at
 A stacked RNN has multiple recurrent layers.
 Layer $\ell$ takes input $\vect{h}^{(\ell-1)}_t$ (from the layer below at the same $t$) and its own previous state $\vect{h}^{(\ell)}_{t-1}$:
 \[
-\vect{h}^{(\ell)}_t = f^{(\ell)}\!\bigl(\vect{h}^{(\ell-1)}_t,\vect{h}^{(\ell)}_{t-1}\bigr).
+\vect{h}^{(\ell)}_t = f^{(\ell)}\!\bigl(\vect{h}^{(\ell-1)}_t,\vect{h}^{(\ell)}_{t-1}\bigr)
 \]
 Why it helps: higher layers can learn more abstract / longer-range temporal features.
 Weights are shared across time \emph{within a layer}, but \emph{not shared across layers}.
@@ -1096,7 +928,7 @@ Weights are shared across time \emph{within a layer}, but \emph{not shared acros
 \subsection{Bidirectional RNN}
 A bidirectional RNN runs one RNN forward ($1\to T$) and one backward ($T\to 1$), then combines states (often concatenation):
 \[
-\vect{h}^{\text{bi}}_t = [\vect{h}^{\to}_t;\ \vect{h}^{\leftarrow}_t].
+\vect{h}^{\text{bi}}_t = [\vect{h}^{\to}_t;\ \vect{h}^{\leftarrow}_t]
 \]
 Advantage when the whole sequence is available (tagging, classification).
 Not suitable for strictly causal/online prediction where future inputs are unknown.
@@ -1112,7 +944,7 @@ Mitigations: LSTM/GRU gating, careful initialization, normalization, residual co
 \subsection{Gradient clipping}
 Clip gradients to prevent exploding updates, e.g. clip global norm:
 \[
-\vect{g}\leftarrow \vect{g}\cdot \min\!\left(1,\frac{\tau}{\|\vect{g}\|}\right).
+\vect{g}\leftarrow \vect{g}\cdot \min\left(1,\frac{\tau}{\|\vect{g}\|}\right)
 \]
 Used commonly for RNN/LSTM training stability. (Helps exploding, not vanishing.)
 
@@ -1144,23 +976,20 @@ Core cell update:
 \[
 \vect{c}_t = \vect{f}_t\odot\vect{c}_{t-1} + \vect{i}_t\odot\tilde{\vect{c}}_t
 \quad\Rightarrow\quad
-\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t).
+\frac{\partial \vect{c}_t}{\partial \vect{c}_{t-1}}=\operatorname{diag}(\vect{f}_t)
 \]
 If $\vect{f}_t\approx\vect{1}$ for relevant components, gradients can propagate through many timesteps; the model learns when to remember/forget.
 
 
 
 \clearpage
-\section{Assignment 3: Traveling Salesperson Problem (TSP) -- Heuristic with Transformers}
+\section{TSP with Transformers (encoder-decoder heuristic)}
 
 \subsection{Problem setup (Euclidean TSP)}
 \begin{itemize}
   \item Cities are points $p_i=(x_i,y_i)\in\R^2$.
   \item Goal: shortest Hamiltonian cycle (visit each city once, return to start).
-  \item Edge costs: Euclidean distance
-  \[
-    w_{uv}=\|p_u-p_v\|_2.
-  \]
+  \item Edge costs: Euclidean distance $w_{uv}=\|p_u-p_v\|_2$.
   \item TSP is NP-hard $\Rightarrow$ use heuristics / learned approximations.
 \end{itemize}
 
@@ -1178,11 +1007,11 @@ Each sample is a tuple $(G,\ \texttt{opt\_tour})$ where $G$ is a complete weight
   \item Model input:
   \[
     \matr{X}\in\R^{n\times 2},\qquad
-    \matr{X}_{i,:}=(x_i,y_i).
+    \matr{X}_{i,:}=(x_i,y_i)
   \]
   \item Target tour (closed cycle):
   \[
-    \vect{y}\in\{0,\ldots,n-1\}^{n+1},\qquad y_0=y_n=0.
+    \vect{y}\in\{0,\ldots,n-1\}^{n+1},\qquad y_0=y_n=0
   \]
   \item Batch shapes: $\matr{X}\in\R^{B\times n\times 2}$, $\vect{y}\in\Z^{B\times(n+1)}$.
 \end{itemize}
@@ -1192,11 +1021,11 @@ For $\mathrm{pos}\in\{0,\ldots,T-1\}$ and $i\in\{0,\ldots,\frac{d_{\text{model}}
 \[
 \mathrm{PE}_{\mathrm{pos},2i}
 =
-\sin \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right),
+\sin \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right)
 \qquad
 \mathrm{PE}_{\mathrm{pos},2i+1}
 =
-\cos \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right).
+\cos \left(\frac{\mathrm{pos}}{10000^{2i/d_{\mathrm{model}}}}\right)
 \]
 Purpose: attention alone is permutation-equivariant; positional information breaks symmetry so the model can represent a sequence/tour.
 
@@ -1212,189 +1041,108 @@ Let $\vect{y}=[y_0,\ldots,y_n]$ be the optimal closed tour. Use
 \[
 \vect{y}^{\text{src}}=[y_0,\ldots,y_{n-1}],
 \qquad
-\vect{y}^{\text{tgt}}=[y_1,\ldots,y_n].
+\vect{y}^{\text{tgt}}=[y_1,\ldots,y_n]
 \]
 Train with token-level cross-entropy (next-node prediction):
 \[
 \mathcal{L}
 =
 -\frac{1}{Bn}\sum_{b=1}^B\sum_{t=1}^{n}
-\log p_\theta\!\bigl(y^{(b)}_t \mid y^{(b)}_{<t}, \matr{X}^{(b)}\bigr).
+\log p_\theta\!\bigl(y^{(b)}_t \mid y^{(b)}_{<t}, \matr{X}^{(b)}\bigr)
 \]
 Best checkpoint selected by validation loss.
 
-\subsection{Inference (greedy autoregressive decoding)}
+\subsection{Inference and evaluation}
 \begin{itemize}
-  \item Start prefix $[0]$.
-  \item For $t=1,\ldots,n-1$: choose the highest-scoring unvisited node
+  \item Greedy autoregressive decoding starts with prefix $[0]$.
+  For $t=1,\ldots,n-1$ choose the highest-scoring unvisited node
   \[
-    y_t=\argmax_{j\notin\{y_0,\ldots,y_{t-1}\}} \ \text{logit}_\theta(j \mid y_{<t},\matr{X}).
+    y_t=\argmax_{j\notin\{y_0,\ldots,y_{t-1}\}} \ \ell_\theta\bigl(j \mid y_{<t},\matr{X}\bigr)
   \]
-  \item Close the cycle by appending $0$.
+  where $\ell_\theta(\cdot)$ denotes the decoder logits.
+  Close the cycle by appending $0$.
+
+  \item Tour length is $L(\text{tour})=\sum_{(u,v)\ \text{on tour}} w_{uv}$.
+
+  \item Gap to optimum is $\mathrm{gap}=\bigl(L(\text{heuristic})-L(\text{opt})\bigr)/L(\text{opt})$.
+
+  \item Baselines include a random tour and greedy nearest-neighbor (NetworkX \texttt{greedy\_tsp}).
 \end{itemize}
 
-\subsection{Evaluation metric}
-\begin{itemize}
-  \item Tour length:
-  \[
-    L(\text{tour})=\sum_{(u,v)\ \text{on tour}} w_{uv}.
-  \]
-  \item Gap vs optimum:
-  \[
-    \mathrm{gap}
-    =
-    \frac{L(\text{heuristic})-L(\text{opt})}{L(\text{opt})}.
-  \]
-  \item Baselines: random tour; greedy nearest-neighbor (NetworkX \texttt{greedy\_tsp}).
-\end{itemize}
+\subsection{Practical extensions and core Transformer concepts}
 
-\subsection{Concept questions (answers in key points)}
-
-\subsubsection{Can we use this model for $n=50$? How improve it?}
+\paragraph{Scaling to larger instances and improving decoding}
 \begin{itemize}
-  \item As written: typically \emph{not directly} if you hard-code $n=20$ in
-  \texttt{nn.Embedding(n,\dots)} or in the output head dimension.
-  \item To support $n=50$ (and variable $n$):
+  \item As written, the approach typically does not scale directly if $n=20$ is hard-coded in \texttt{nn.Embedding(n,\dots)} or in the output head dimension.
+  \item To support $n=50$ and variable $n$:
   \begin{itemize}
-    \item Train / finetune on $n=50$ or on variable $n$ with padding + masks.
-    \item Replace fixed $n$ output head with a \emph{pointer} / attention scoring:
-    score each city by compatibility with decoder state (works for variable $n$).
-    \item Improve decoding: beam search, sampling + best-of-$k$, and post-optimization (2-opt / local search).
-    \item Active search / test-time finetuning on each instance can further reduce tour length.
+    \item Train or finetune on $n=50$ or on variable $n$ with padding and masks.
+    \item Replace a fixed-$n$ output head with a pointer-style attention scoring mechanism.
+    The decoder scores each city by compatibility with its current state, which supports variable $n$.
+    \item Improve decoding with beam search, sampling plus best-of-$k$, and post-optimization such as 2-opt or local search.
+    \item Active search or test-time finetuning on each instance can further reduce tour length.
   \end{itemize}
 \end{itemize}
 
-\subsubsection{What is attention and why is it core?}
-Attention computes content-dependent weighted averages: each token/node aggregates information from others via similarity scores.
-This enables long-range interactions without recurrence.
+\paragraph{Attention and multi-head attention}
+Attention computes content-dependent weighted averages.
+Each token or node aggregates information from others using similarity scores, enabling long-range interactions without recurrence.
+Multi-head attention runs several attention heads in parallel using different learned projections and then concatenates the results.
+This is useful because different heads can capture different relations such as local geometry, global structure, and symmetries.
 
-\subsubsection{Multi-head vs single-head attention}
-\begin{itemize}
-  \item Single-head: one similarity notion in one subspace.
-  \item Multi-head: several attention heads in parallel (different learned projections), then concatenation.
-  \item Useful because different heads can capture different relations (local geometry, global structure, symmetries).
-\end{itemize}
+\paragraph{Positional encodings}
+Without positional information, attention is permutation-equivariant.
+Positional encodings inject order so the decoder can represent the step $t$ in a tour.
 
-\subsubsection{Purpose of positional encodings}
-Without positions, attention is permutation-equivariant.
-Positional encodings inject order so the decoder can represent “step $t$ in the tour”.
-
-\subsubsection{Role of the feed-forward network (FFN)}
-A position-wise MLP adds nonlinearity and feature mixing within each token embedding:
+\paragraph{Feed-forward network}
+A position-wise MLP adds nonlinearity and feature mixing within each token embedding
 \[
-\mathrm{FFN}(\vect{h})
-=
-\matr{W}_2\,\phi(\matr{W}_1\vect{h}+\vect{b}_1)+\vect{b}_2.
+\mathrm{FFN}(\vect{h})=\matr{W}_2\,\phi\bigl(\matr{W}_1\vect{h}+\vect{b}_1\bigr)+\vect{b}_2
 \]
 
-\subsubsection{Why LayerNorm instead of BatchNorm?}
-
-Given a feature vector
+\paragraph{LayerNorm}
+For $\vect{h}=(h_1,\dots,h_d)\in\R^d$, LayerNorm normalizes across the feature dimension.
+Define
 \[
-\vect{h}=(h_1,\dots,h_d)\in\R^d,
-\]
-LayerNorm normalizes across the feature dimension.
-
-\paragraph{Mean and variance}
-\[
-\mu
-=
-\frac{1}{d}\sum_{i=1}^d h_i,
+\mu=\frac{1}{d}\sum_{i=1}^d h_i
 \qquad
-\sigma^2
-=
-\frac{1}{d}\sum_{i=1}^d (h_i-\mu)^2.
+\sigma^2=\frac{1}{d}\sum_{i=1}^d (h_i-\mu)^2
 \]
-
-\paragraph{Normalization}
+then
 \[
-\hat h_i
-=
-\frac{h_i-\mu}{\sqrt{\sigma^2+\varepsilon}},
-\qquad i=1,\dots,d.
-\]
-
-\paragraph{Affine re-scaling}
-\[
-\mathrm{LN}(\vect{h})
-=
-\vect{\gamma}\odot \hat{\vect{h}} + \vect{\beta},
+\hat h_i=\frac{h_i-\mu}{\sqrt{\sigma^2+\varepsilon}}
 \qquad
-\vect{\gamma},\vect{\beta}\in\R^d.
+\mathrm{LN}(\vect{h})=\vect{\gamma}\odot \hat{\vect{h}} + \vect{\beta}
 \]
+with $\vect{\gamma},\vect{\beta}\in\R^d$.
+For a sequence tensor $\matr{H}\in\R^{B\times T\times d}$, LayerNorm is applied independently to each token $\matr{H}_{b,t,:}$.
+It is independent of batch size and works well for variable-length sequences and autoregressive inference.
+BatchNorm depends on batch statistics and is awkward or unstable in sequence models.
 
-\paragraph{Sequence form (Transformer)}
-For $\matr{H}\in\R^{B\times T\times d}$, LayerNorm is applied independently to each token:
+\paragraph{Queries, keys, values, scaling, and masking}
+Given token embeddings $\matr{H}\in\R^{B\times T\times d}$ and per-head dimension $d_k$,
 \[
-\mathrm{LN}(\matr{H}_{b,t,:})
-=
-\vect{\gamma}\odot
-\frac{\matr{H}_{b,t,:}-\mu_{b,t}}
-{\sqrt{\sigma^2_{b,t}+\varepsilon}}
-+
-\vect{\beta},
-\]
-with
-\[
-\mu_{b,t}
-=
-\frac{1}{d}\sum_{i=1}^d \matr{H}_{b,t,i},
+\matr{Q}=\matr{H}\matr{W}_Q
 \qquad
-\sigma^2_{b,t}
-=
-\frac{1}{d}\sum_{i=1}^d
-(\matr{H}_{b,t,i}-\mu_{b,t})^2.
+\matr{K}=\matr{H}\matr{W}_K
+\qquad
+\matr{V}=\matr{H}\matr{W}_V
 \]
-\begin{itemize}
-  \item LayerNorm normalizes features within each token; independent of batch size.
-  \item Works well for variable-length sequences and autoregressive inference (often batch size 1).
-  \item BatchNorm depends on batch statistics; awkward/unstable in sequence models.
-\end{itemize}
+with $\matr{Q},\matr{K},\matr{V}\in\R^{B\times T\times d_k}$.
+Queries ask what to attend to, keys describe content, and values are aggregated.
+Dot products grow with $d_k$, so scaling by $\sqrt{d_k}$ avoids softmax saturation and tiny gradients.
+Causal masking blocks access to future positions so that step $t$ depends only on $<t$.
 
-\subsubsection{What are Q, K, V? (with dimensions)}
-Given token embeddings $\matr{H}\in\R^{B\times T\times d}$ (per head $d_k$):
-\[
-\matr{Q}=\matr{H}\matr{W}_Q,\qquad
-\matr{K}=\matr{H}\matr{W}_K,\qquad
-\matr{V}=\matr{H}\matr{W}_V,
-\]
-with $\matr{Q},\matr{K},\matr{V}\in\R^{B\times T\times d_k}$ per head.
-Intuition: queries ask what to attend to; keys describe content; values are what gets aggregated.
+\paragraph{Teacher forcing, tokenization, and training paradigms}
+Teacher forcing feeds the ground-truth prefix $(y_0,\ldots,y_{t-1})$ during training to predict $y_t$.
+At inference time the model conditions on its own predictions, so errors can accumulate.
+Tokenization maps text to discrete symbols and affects sequence length, vocabulary size, and what can be represented efficiently.
+Pretraining uses a large-scale generic objective, usually self-supervised, to learn broad representations.
+Finetuning adapts the model to a specific task or domain using task data and objectives.
 
-\subsubsection{Why scale by $\sqrt{d_k}$?}
-Dot products grow with $d_k$, making softmax saturate and gradients tiny.
-Scaling keeps logits in a sensible range.
-
-\subsubsection{Intuition behind causal masking}
-Block attention to future positions so that step $t$ depends only on $<t$:
-prevents information leakage and matches autoregressive factorization.
-
-\subsubsection{Training-time vs inference-time input; teacher forcing}
-\begin{itemize}
-  \item Training: feed ground-truth prefix $(y_0,\ldots,y_{t-1})$ to predict $y_t$ (teacher forcing).
-  \item Inference: feed model predictions (exposure bias can accumulate errors).
-  \item Teacher forcing stabilizes optimization and speeds up learning.
-\end{itemize}
-
-\subsubsection{Tokenization and why it matters (LLMs)}
-Tokenization maps text to discrete symbols.
-It affects sequence length, vocabulary size, and what the model can represent efficiently; hence it impacts quality and compute.
-
-\subsubsection{Pretraining vs finetuning}
-\begin{itemize}
-  \item Pretraining: large-scale generic objective (usually self-supervised) to learn broad representations.
-  \item Finetuning: adapt to a specific task/domain with task data/objective.
-\end{itemize}
-
-\subsubsection{Greedy decoding vs sampling vs beam search}
-\begin{itemize}
-  \item Greedy: choose $\argmax$ each step; fast, can be suboptimal.
-  \item Sampling: sample from the distribution (optionally temperature/top-$k$/top-$p$) for diversity.
-  \item Beam search: keep top $k$ partial sequences; better quality than greedy, more compute.
-\end{itemize}
-
-
-
-
+\paragraph{Decoding strategies}
+Greedy decoding chooses $\argmax$ at each step and is fast but can be suboptimal.
+Sampling draws from the distribution, optionally with temperature, top-$k$, or top-$p$, and can improve diversity.
+Beam search keeps the top $k$ partial sequences, often improving quality at increased compute cost.
 
 \end{document}
