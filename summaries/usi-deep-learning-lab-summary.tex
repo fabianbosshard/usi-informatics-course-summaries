@@ -419,6 +419,13 @@
   citebordercolor={0 0.6 1}       % citations
 ]{hyperref}
 
+% clickable \texttt{...} without changing its appearance
+% Note: in URLs you must escape a literal # as \#
+\DeclareRobustCommand{\ttlink}[2]{\href{#1}{\texttt{#2}}}
+\pdfstringdefDisableCommands{%
+  \def\ttlink#1#2{#2}%
+}
+
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
@@ -533,21 +540,21 @@
   Too large $\eta$ yields oscillation or divergence.
   In code, $\eta=0.01$ gave a smooth decrease and reached near noise-level MSE in reasonable steps.
 
-  \item Bias handling in \texttt{nn.Linear}:
+  \item Bias handling in \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.nn.Linear.html}{nn.Linear}:
   since $\vect{x}$ already contains a constant feature, using \texttt{bias=False} makes $w_0$ act as the bias.
   If \texttt{bias=True} is used while keeping the constant feature, the model has two redundant bias terms.
 
   \item Training bookkeeping:
   \begin{itemize}
-    \item A \textbf{step} is one parameter update (one batch forward/backward plus \texttt{optimizer.step()}).
+    \item A \textbf{step} is one parameter update (one batch forward/backward plus \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.step.html}{optimizer.step()}).
     \item An \textbf{epoch} is one full pass over the training set.
     \item For mini-batches, steps per epoch equal $\text{num\_samples}/\text{batch\_size}$.
   \end{itemize}
 
   \item Optimizer calls:
   \begin{itemize}
-    \item \texttt{optimizer.zero\_grad()} clears accumulated gradients.
-    \item \texttt{optimizer.step()} updates parameters using the stored gradients (here, the SGD rule).
+    \item \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html}{optimizer.zero\_grad()} clears accumulated gradients.
+    \item \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.step.html}{optimizer.step()} updates parameters using the stored gradients (here, the SGD rule).
   \end{itemize}
 \end{itemize}
 
@@ -579,7 +586,7 @@
 \subsection{Dataset \& Basics}
 
 \begin{itemize}
-  \item CIFAR-10: 50k train, 10k test, RGB images of size \(3 \times 32 \times 32\), 10 classes.
+  \item \href{https://pytorch.org/vision/stable/generated/torchvision.datasets.CIFAR10.html}{CIFAR-10}: 50k train, 10k test, RGB images of size \(3 \times 32 \times 32\), 10 classes.
   \item Normalization: per-channel mean and standard deviation so inputs have roughly mean 0 and variance 1.
   \item Train/val split: original test set split into validation and final test.
 \end{itemize}
@@ -590,7 +597,7 @@
   \item Convolutional layers: filter weight tensors +\tikzmark{convline} optional bias vectors.
   \item Fully connected layers: weight matrices \(\matr{W}\) + bias vectors.
   \item BatchNorm: scale \(\gamma\) and shift \(\beta\) parameters.
-  \item All trainable parameters are in \texttt{model.parameters()} (tensors on the chosen device).
+  \item All trainable parameters are in \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html\#torch.nn.Module.parameters}{model.parameters()} (tensors on the chosen device).
 \end{itemize}
 
 
@@ -690,9 +697,9 @@ n_{\text{in}}
 
 \paragraph{Data augmentation}
 \begin{itemize}
-  \item \texttt{RandomCrop(32, padding=4)} introduces small translations and zoom-like effects.
-  \item \texttt{RandomHorizontalFlip} encourages left--right invariance.
-  \item \texttt{RandomPerspective} adds mild geometric distortions.
+  \item \ttlink{https://pytorch.org/vision/stable/generated/torchvision.transforms.RandomCrop.html}{RandomCrop(32, padding=4)} introduces small translations and zoom-like effects.
+  \item \ttlink{https://pytorch.org/vision/stable/generated/torchvision.transforms.RandomHorizontalFlip.html}{RandomHorizontalFlip} encourages left--right invariance.
+  \item \ttlink{https://pytorch.org/vision/stable/generated/torchvision.transforms.RandomPerspective.html}{RandomPerspective} adds mild geometric distortions.
   \item Overall, augmentation makes the effective training set larger and more diverse and improves validation and test generalization.
 \end{itemize}
 
@@ -715,7 +722,7 @@ n_{\text{in}}
 \begin{itemize}
   \item Momentum (e.g. $0.9$) keeps an exponential moving average of gradients, giving smoother updates, less oscillation, and faster progress along consistent directions.
   \item Weight decay (e.g. $10^{-6}$) adds an $L_2$ penalty and encourages smaller weights, which reduces overfitting.
-  \item \texttt{ReduceLROnPlateau} monitors validation loss and decreases the learning rate when validation performance stops improving.
+  \item \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ReduceLROnPlateau.html}{ReduceLROnPlateau} monitors validation loss and decreases the learning rate when validation performance stops improving.
   A common strategy is a larger learning rate early and a smaller one later for fine-tuning.
 \end{itemize}
 
@@ -962,7 +969,7 @@ Tradeoff: harder to learn dependencies longer than $K$.
 Represent a token $w$ from a vocabulary of size $V$ as $\vect{e}_w\in\{0,1\}^V$ with exactly one 1.
 Limitations: high-dimensional and sparse; no notion of similarity between words; expensive for large $V$.
 
-\subsection{\texttt{nn.Embedding}}
+\subsection{\ttlink{https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html}{nn.Embedding}}
 An embedding layer is a learnable lookup table $\matr{E}\in\R^{V\times d}$.
 Given token id $w$, it outputs the dense vector $\vect{x}=\matr{E}_{w,:}\in\R^d$.
 Preferred over one-hot: efficient and learns semantic similarity (nearby vectors for related words).
@@ -1066,14 +1073,14 @@ Best checkpoint selected by validation loss.
 
   \item Gap to optimum is $\mathrm{gap}=\bigl(L(\text{heuristic})-L(\text{opt})\bigr)/L(\text{opt})$.
 
-  \item Baselines include a random tour and greedy nearest-neighbor (NetworkX \texttt{greedy\_tsp}).
+  \item Baselines include a random tour and greedy nearest-neighbor (NetworkX \ttlink{https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.approximation.traveling_salesman.greedy_tsp.html}{greedy\_tsp}).
 \end{itemize}
 
 \subsection{Practical extensions and core Transformer concepts}
 
 \paragraph{Scaling to larger instances and improving decoding}
 \begin{itemize}
-  \item As written, the approach typically does not scale directly if $n=20$ is hard-coded in \texttt{nn.Embedding(n,\dots)} or in the output head dimension.
+  \item As written, the approach typically does not scale directly if $n=20$ is hard-coded in \ttlink{https://docs.pytorch.org/docs/stable/generated/torch.nn.Embedding.html}{nn.Embedding(n,\dots)} or in the output head dimension.
   \item To support $n=50$ and variable $n$:
   \begin{itemize}
     \item Train or finetune on $n=50$ or on variable $n$ with padding and masks.
