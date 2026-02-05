@@ -143,7 +143,8 @@
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
-\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+\definecolor{emblue}{RGB}{20,60,120}
+\renewcommand{\emph}[1]{\textcolor{emblue}{\textsl{#1}}}
 
 
 \usepackage{thmtools}
@@ -201,7 +202,7 @@
 \usepackage{algorithmicx}
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
 
-\newcommand*{\algorithmautorefname}{Algorithm}
+
 
 \newcommand{\im}{\operatorname{Im}}
 
@@ -345,8 +346,45 @@
 \makeatother
 
 
+% autoref names ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\title{Numerical Algorithms - Summary}
+\renewcommand{\definitionautorefname}{Definition}
+\renewcommand{\lemmaautorefname}{Lemma}
+\renewcommand{\theoremautorefname}{Theorem}
+\renewcommand{\corollaryautorefname}{Corollary}
+\renewcommand{\propositionautorefname}{Proposition}
+\renewcommand{\conjectureautorefname}{Conjecture}
+\renewcommand{\claimautorefname}{Claim}
+\renewcommand{\exampleautorefname}{Example}
+\renewcommand{\remarkautorefname}{Remark}
+
+\renewcommand{\cautionautorefname}{Caution}
+\renewcommand{\digressionautorefname}{Digression}
+
+
+\makeatletter
+\def\thmt@dummyctrautorefname~#1\null{Proof\null}
+\makeatother
+
+
+\makeatletter
+\patchcmd{\ALG@step}{\addtocounter{ALG@line}{1}}{\refstepcounter{ALG@line}}{}{}
+\newcommand{\ALG@lineautorefname}{Line}
+\makeatother
+\newcommand{\algorithmautorefname}{Algorithm}
+
+
+
+\AtBeginDocument{%
+  \renewcommand{\sectionautorefname}{Section}%
+  \renewcommand{\subsectionautorefname}{Section}%
+  \renewcommand{\subsubsectionautorefname}{Section}%
+}
+
+
+
+
+\title{Numerical Algorithms}
 \author{Fabian Bosshard}
 \date{\today}
 
@@ -976,16 +1014,18 @@ and then \(\vect{F}(t)=\vect{C}_0^{n}(t)\).
 
 \paragraph{Bernstein form.}
 With the affine reparameterization \(s(t)=\frac{t-a}{b-a}\in[0,1]\), the same curve can be written explicitly as
-\[
+\begin{equation}\label{eq:bezier_curve}
 \vect{F}(t)=\sum_{i=0}^{n} \vect{C}_i\,B_i^{n}(s(t))
 % \qquad t\in[a,b]
-\]
+\end{equation}
 where \(t\in[a,b]\) and
 the Bernstein polynomials are
-\[
+\begin{equation}\label{eq:bernstein_polynomials}
+{\color{red}\boxed{\color{black}
 B_i^{n}(s)=\binom{n}{i}s^i(1-s)^{n-i}
-\]
-where \(i=0,\dots,n\).
+}}
+\end{equation}
+where \(i=0,\dots,n\) and \[\binom{n}{i}=\frac{n!}{i!(n-i)!}\] is the binomial coefficient.
 \[
 \begin{tikzpicture}
 \begin{axis}[
@@ -1025,16 +1065,15 @@ where \(i=0,\dots,n\).
 
 
 \newcommand{\propitem}[2]{%
-  \item \makebox[\propsep][l]{#1}%
-  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{#2}%
+  \item \makebox[\propsep][l]{\textcolor{red}{#1}}%
+  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{\textcolor{black}{#2}}%
 }
 \settowidth{\propw}{{Endpoint interpolation:}} % longest label in this list
 \setlength{\propsep}{\propw + 0.5em} % label + space
 
-
-Besides forming a basis for the space of polynomials of degree at most \(n\), they satisfy the following properties:
-\begin{itemize}
-
+\begin{fact}\label{fact:bernstein-bezier-properties}
+Besides forming a basis for the space of polynomials of degree at most \(n\), the Bernstein polynomials satisfy the following properties:
+\begin{enumerate}[label=•]%[label=\textbf{\roman*.}]
   \propitem{{Partition of unity:}}{%
     $ \sum_{i=0}^{n} B_i^n(s)\equiv 1$}
   \propitem{{Positivity:}}{%
@@ -1044,16 +1083,15 @@ Besides forming a basis for the space of polynomials of degree at most \(n\), th
   \propitem{{Symmetry:}}{%
     $B_i^n(s)=B_{n-i}^n(1-s)$}
   \propitem{{Recursion formula:}}{%
-    $B_i^n(s)=sB_{i-1}^{n-1}(s)+(1-s)B_i^{n-1}(s)$}
+    $B_i^n(s)=sB_{i-1}^{n-1}(s)+(1-s)B_i^{n-1}(s)$ with $B_i^n =0$ for $i<0$ or $i>n$}
   \propitem{{Derivative:}}{%
     $ \bigl(B_i^n\bigr)'(s)=n\bigl(B_{i-1}^{n-1}(s)-B_i^{n-1}(s)\bigr)$}
   \propitem{{Locality:}}{%
     $B_i^n$ has a local maximum at $s=i/n$}
-\end{itemize}
+\end{enumerate}
 
 These properties almost immediately ``translate'' to corresponding properties of B\'ezier curves:
-\begin{itemize}
-
+\begin{enumerate}[label=•]%[label=\textbf{\roman*.}]
   \propitem{{Affine invariance:}}{%
     $ \phi\!\left(\sum_{i=0}^n \vect{C}_iB_i^n(s)\right)
       =\sum_{i=0}^n \phi(\vect{C}_i)B_i^n(s)$
@@ -1061,171 +1099,309 @@ These properties almost immediately ``translate'' to corresponding properties of
   \propitem{{Convex hull:}}{%
     $\vect{F}(t)\in\operatorname{conv}\{\vect{C}_0,\dots,\vect{C}_n\}$}
   \propitem{{Endpoint interpolation:}}{%
-    $\vect{F}(a)=\vect{C}_0$ and $\vect{F}(b)=\vect{C}_n$}
+    $\vect{F}(a)=\vect{C}_0$ and $\vect{F}(b)=\vect{C}_n$\label{item:endpoint-interpolation}}
   \propitem{{Derivative:}}{%
     $ \vect{F}'(t)=\frac{n}{b-a}\sum_{i=0}^{n-1}(\vect{C}_{i+1}-\vect{C}_i)B_i^{n-1}(s)$}
   \propitem{{Endpoint tangent:}}{%
-    $ \vect{F}'(a)=\frac{n}{b-a}(\vect{C}_1-\vect{C}_0)$ and $\vect{F}'(b)=\frac{n}{b-a}(\vect{C}_n-\vect{C}_{n-1})$}
+    $ \vect{F}'(a)=\frac{n}{b-a}(\vect{C}_1-\vect{C}_0)$ and $\vect{F}'(b)=\frac{n}{b-a}(\vect{C}_n-\vect{C}_{n-1})$\label{item:endpoint-tangent}}
   \propitem{{Symmetry:}}{%
     $ \sum_{i=0}^n \vect{C}_iB_i^n(s)=\sum_{i=0}^n \vect{C}_{n-i}B_i^n(1-s)$}
   \propitem{{Local control:}}{%
     $\vect{C}_i$ influences $\vect{F}$ the most at $t=a+i(b-a)/n$}
-\end{itemize}
-
+\end{enumerate}
 % Another property, which does not follow that easily, is the \emph{variation diminishing property}
 % in \(\R^2\), which guarantees that for any line in the plane, the number of intersections with
 % the \emph{control polygon}, formed by connecting the control points \(\vect{C}_i\) with straight line
 % segments, is greater than or equal to the number of intersections with the curve \(\vect{F}\).
 % In a nutshell, this means that \(\vect{F}\) cannot have unexpected ``wiggles''.
-In \(\R^2\), Bézier curves satisfy the \emph{variation diminishing property}: any line intersects
-the curve \(\vect{F}\) no more often than it intersects its control polygon. 
+In \(\R^2\), Bézier curves satisfy the \emph{variation diminishing property}: 
+any line intersects the curve \(\vect{F}\) no more often than it intersects its control polygon. 
 Therefore,
 \(\vect{F}\) cannot exhibit unexpected oscillations.
+\end{fact}
+
+
+% % numbered "equation" at end of the same line (works in inline math)
+% \newcommand{\inlabeleq}[1]{%
+%   \refstepcounter{equation}\label{#1}%
+%   \quad\hfill(\theequation)%
+% }
+
+% Besides forming a basis for the space of polynomials of degree at most \(n\), they satisfy the following properties:
+% \begin{itemize}
+
+%   \propitem{{Partition of unity:}}{%
+%     $\sum_{i=0}^{n} B_i^n(s)\equiv 1\inlabeleq{eq:bernstein-partition}$}
+%   \propitem{{Positivity:}}{%
+%     $B_i^n(s)\ge 0 \text{ for } s\in[0,1]\inlabeleq{eq:bernstein-positivity}$}
+%   \propitem{{Endpoints:}}{%
+%     $B_i^n(0)=\delta_{i,0}\ \text{and}\ B_i^n(1)=\delta_{i,n}\inlabeleq{eq:bernstein-endpoints}$
+%     (where $\delta_{i,j}$ is the Kronecker delta)}
+%   \propitem{{Symmetry:}}{%
+%     $B_i^n(s)=B_{n-i}^n(1-s)\inlabeleq{eq:bernstein-symmetry}$}
+%   \propitem{{Recursion formula:}}{%
+%     $B_i^n(s)=sB_{i-1}^{n-1}(s)+(1-s)B_i^{n-1}(s)\inlabeleq{eq:bernstein-recursion}$
+%     with $B_i^n =0$ for $i<0$ or $i>n$}
+%   \propitem{{Derivative:}}{%
+%     $\bigl(B_i^n\bigr)'(s)=n\bigl(B_{i-1}^{n-1}(s)-B_i^{n-1}(s)\bigr)\inlabeleq{eq:bernstein-derivative}$}
+%   \propitem{{Locality:}}{%
+%     $B_i^n \text{ has a local maximum at } s=i/n\inlabeleq{eq:bernstein-locality}$}
+
+% \end{itemize}
+
+% These properties almost immediately ``translate'' to corresponding properties of B\'ezier curves:
+% \begin{itemize}
+
+%   \propitem{{Affine invariance:}}{%
+%     $\phi\!\left(\sum_{i=0}^n \vect{C}_iB_i^n(s)\right)
+%       =\sum_{i=0}^n \phi(\vect{C}_i)B_i^n(s)\inlabeleq{eq:bezier-affine}$
+%     for any affine mapping $\phi:\R^d\to\R^d$}
+%   \propitem{{Convex hull:}}{%
+%     $\vect{F}(t)\in\operatorname{conv}\{\vect{C}_0,\dots,\vect{C}_n\}\inlabeleq{eq:bezier-convexhull}$}
+%   \propitem{{Endpoint interpolation:}}{%
+%     $\vect{F}(a)=\vect{C}_0\ \text{and}\ \vect{F}(b)=\vect{C}_n\inlabeleq{eq:bezier-endpoints}$}
+%   \propitem{{Derivative:}}{%
+%     $\vect{F}'(t)=\frac{n}{b-a}\sum_{i=0}^{n-1}(\vect{C}_{i+1}-\vect{C}_i)B_i^{n-1}(s)\inlabeleq{eq:bezier-derivative}$}
+%   \propitem{{Endpoint tangent:}}{%
+%     $\vect{F}'(a)=\frac{n}{b-a}(\vect{C}_1-\vect{C}_0)
+%       \inlabeleq{eq:bezier-endpoint-tangent-a}$
+%     and
+%     $\vect{F}'(b)=\frac{n}{b-a}(\vect{C}_n-\vect{C}_{n-1})
+%       \inlabeleq{eq:bezier-endpoint-tangent-b}$}
+%   \propitem{{Symmetry:}}{%
+%     $\sum_{i=0}^n \vect{C}_iB_i^n(s)=\sum_{i=0}^n \vect{C}_{n-i}B_i^n(1-s)\inlabeleq{eq:bezier-symmetry}$}
+%   \propitem{{Local control:}}{%
+%     $\vect{C}_i \text{ influences }\vect{F}\text{ the most at } t=a+i(b-a)/n\inlabeleq{eq:bezier-localcontrol}$}
+
+% \end{itemize}
+
+
+
+
+\begin{remark}
+Recall the binomial theorem: 
+\(
+(x+y)^n=\sum_{i=0}^{n}\binom{n}{i}x^i y^{n-i}
+\)
+\end{remark}
+
+Another property is
+\[\begin{aligned}
+\sum_{i=0}^n \frac{i}{n} B_i^n(s)
+&=\sum_{i=0}^n \frac{i}{n} \frac{n!}{i!(n-i)!} s^i (1-s)^{n-i} \\
+&= s \sum_{i=1}^n \frac{(n-1)!}{(i-1)!(n-i)!} s^{i-1} (1-s)^{n-i} \\
+&= s \sum_{i=1}^n \frac{(n-1)!}{(i-1)!((n-1)-(i-1))!} s^{i-1} (1-s)^{(n-1)-(i-1)} \\
+&= s \sum_{j=0}^{n-1} \binom{n-1}{j} s^{j} (1-s)^{(n-1)-j} \\
+&= s \sum_{j=0}^{n-1} B_j^{n-1}(s) \\
+&= s 
+\end{aligned}\]
 
 
 % \paragraph{Degree elevation.}
 \begin{theorem}[Degree elevation of B\'ezier curves]\label{thm:bezier-degree-elevation}
-Let
-\[
-\vect{F}(t)=\sum_{i=0}^{n}\vect{C}_i\,B_i^{n}(s(t)),
-\qquad s(t)=\frac{t-a}{b-a}\in[0,1],
-\]
-be a B\'ezier curve of degree \(n\) with control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\).
+Given a B\'ezier curve
+\begin{equation}\label{eq:degree-elevation-start}
+\vect{F}(t)=\sum_{i=0}^{n}\vect{C}_i\,B_i^{n}(s)
+% \qquad\qquad
+% s(t)=\frac{t-a}{b-a}\in[0,1]  % reduntant info
+\end{equation}
+of degree \(n\) with control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\).
 Then the same curve admits a representation of degree \(n+1\),
-\[
-\vect{F}(t)=\sum_{i=0}^{n+1}\vect{C}_i^{\ast}\,B_i^{n+1}(s(t)),
-\]
-where the elevated control points are
+\begin{equation}\label{eq:degree-elevation-end}
+\vect{F}(t)=\sum_{i=0}^{n+1}\vect{C}_i^{\ast}\,B_i^{n+1}(s)
+\end{equation}
+with control points
 \(
 \vect{C}_0^{\ast}=\vect{C}_0
 \),
 \(
 \vect{C}_i^{\ast}=\frac{i}{n+1}\vect{C}_{i-1}+\frac{n+1-i}{n+1}\vect{C}_i
-\), 
-\(i=1,\dots,n\),
+\) for \(i=1,\dots,n\),
 \(
 \vect{C}_{n+1}^{\ast}=\vect{C}_n
 \).
 \end{theorem}
 
 \begin{proof}
-Write \(s=s(t)\). Using \(B_i^n(s)=\binom{n}{i}s^i(1-s)^{n-i}\) and the binomial identities
+Using \eqref{eq:bernstein_polynomials} and the binomial identities
 \[
-\binom{n}{i}=\frac{n+1-i}{n+1}\binom{n+1}{i},
-\qquad
-\binom{n}{i}=\frac{i+1}{n+1}\binom{n+1}{i+1},
+\binom{n}{i}=\frac{n+1-i}{n+1}\binom{n+1}{i}
+\qquad\qquad
+\binom{n}{i}=\frac{i+1}{n+1}\binom{n+1}{i+1}
 \]
 we obtain the two relations
 \[
-(1-s)B_i^n(s)=\frac{n+1-i}{n+1}\,B_i^{n+1}(s),
-\qquad
-sB_i^n(s)=\frac{i+1}{n+1}\,B_{i+1}^{n+1}(s).
+(1-s)B_i^n(s)=\frac{n+1-i}{n+1}\,B_i^{n+1}(s)
+\qquad\qquad
+sB_i^n(s)=\frac{i+1}{n+1}\,B_{i+1}^{n+1}(s)
 \]
 Hence
 \[
 B_i^n(s)=(1-s)B_i^n(s)+sB_i^n(s)
-=\frac{n+1-i}{n+1}B_i^{n+1}(s)+\frac{i+1}{n+1}B_{i+1}^{n+1}(s).
+=\frac{n+1-i}{n+1}B_i^{n+1}(s)+\frac{i+1}{n+1}B_{i+1}^{n+1}(s)
 \]
-Insert this into \(\vect{F}(t)=\sum_{i=0}^n \vect{C}_iB_i^n(s)\):
+Insert into \eqref{eq:degree-elevation-start}:
 \[
 \vect{F}(t)=\sum_{i=0}^n \frac{n+1-i}{n+1}\vect{C}_i\,B_i^{n+1}(s)
-+\sum_{i=0}^n \frac{i+1}{n+1}\vect{C}_i\,B_{i+1}^{n+1}(s).
++\sum_{i=0}^n \frac{i+1}{n+1}\vect{C}_i\,B_{i+1}^{n+1}(s)
 \]
-Reindex the second sum by \(j=i+1\) (so \(j=1,\dots,n+1\)):
+Reindex the second sum by \(j=i+1\):
 \[
 \vect{F}(t)=\sum_{i=0}^n \frac{n+1-i}{n+1}\vect{C}_i\,B_i^{n+1}(s)
-+\sum_{j=1}^{n+1} \frac{j}{n+1}\vect{C}_{j-1}\,B_{j}^{n+1}(s).
++\sum_{j=1}^{n+1} \frac{j}{n+1}\vect{C}_{j-1}\,B_{j}^{n+1}(s)
 \]
 Now collect the coefficients of \(B_k^{n+1}(s)\).
 For \(k=0\) and \(k=n+1\) we obtain \(\vect{C}_0^{\ast}=\vect{C}_0\) and \(\vect{C}_{n+1}^{\ast}=\vect{C}_n\).
 For \(k=1,\dots,n\), both sums contribute and yield
 \[
-\vect{C}_k^{\ast}=\frac{k}{n+1}\vect{C}_{k-1}+\frac{n+1-k}{n+1}\vect{C}_k,
+\vect{C}_k^{\ast}=\frac{k}{n+1}\vect{C}_{k-1}+\frac{n+1-k}{n+1}\vect{C}_k
 \]
 which proves the claim.
 \end{proof}
 
+
 \subsection{Bézier Splines}\label{subsec:bezier-splines}
 
-High-degree Bézier curves are rarely used in practice: evaluation (\(\mathcal{O}(n^2)\)) becomes slower and local control becomes weak.
+High-degree Bézier curves are rarely used for designing complex curves for 2 reasons: \(\mathcal{O}(n^2)\) evaluation with \autoref{alg:de-casteljau} becomes slower and local control is not very effective for large \(n\), so the shape becomes difficult to control.
 Instead, one typically joins several low-degree Bézier segments into a spline.
 
 Let \(\vect{F}_0:[t_0,t_1]\to\R^d\) and \(\vect{F}_1:[t_1,t_2]\to\R^d\) be Bézier curves of the same degree \(n\) with control points
 \(\vect{C}_{0,0},\dots,\vect{C}_{0,n}\) and \(\vect{C}_{1,0},\dots,\vect{C}_{1,n}\), respectively.
 
-\paragraph{\(C^0\) continuity.}
-Since \(\vect{F}_0(t_1)=\vect{C}_{0,n}\) and \(\vect{F}_1(t_1)=\vect{C}_{1,0}\), the curves join continuously iff
-\[
-\vect{C}_{0,n}=\vect{C}_{1,0}.
-\]
+They are called \hl[2]{\(C^k\)-continuous at \(t_1\)} if
+\(\vect{F}_0(t_1)=\vect{F}_1(t_1)\),
+\(\vect{F}_0'(t_1)=\vect{F}_1'(t_1)\),
+\(\dots\),
+\(\vect{F}_0^{(k)}(t_1)=\vect{F}_1^{(k)}(t_1)\).
 
-\paragraph{\(C^1\) continuity.}
-Using the endpoint tangent formula (with intervals \([t_0,t_1]\) and \([t_1,t_2]\)), a sufficient and standard condition for \(C^1\) continuity is
+
+\subsubsection{\(C^0\)-continuity}
+By the \hyperref[item:endpoint-interpolation]{endpoint interpolation property} from \autoref{fact:bernstein-bezier-properties} we have 
+% \(\vect{F}_0(t_1)=\vect{C}_{0,n}\) and \(\vect{F}_1(t_1)=\vect{C}_{1,0}\), 
+\[\begin{aligned}
+\vect{F}_0(t_1) &= \vect{C}_{0,n} \\
+\vect{F}_1(t_1) &= \vect{C}_{1,0}
+\end{aligned}\]
+so the 2 curves join continuously at \(t_1\) iff
+\(
+\vect{C}_{0,n}=\vect{C}_{1,0}
+\).
+
+
+\subsubsection{\(C^1\)-continuity}\label{sec:c1-continuity}
+Similarly, by the \hyperref[item:endpoint-tangent]{endpoint tangent property} from \autoref{fact:bernstein-bezier-properties}, 
+we have
+% \(\vect{F}_0'(t_1)=\frac{n}{t_1-t_0}(\vect{C}_{0,n}-\vect{C}_{0,n-1})\) and \(\vect{F}_1'(t_1)=\frac{n}{t_2-t_1}(\vect{C}_{1,1}-\vect{C}_{1,0})\),
+\[\begin{aligned}
+\vect{F}_0'(t_1) &= \frac{n}{t_1-t_0}(\vect{C}_{0,n}-\vect{C}_{0,n-1}) \\
+\vect{F}_1'(t_1) &= \frac{n}{t_2-t_1}(\vect{C}_{1,1}-\vect{C}_{1,0})
+\end{aligned}\]
+so
+the 2 curves join with \(C^1\)-continuity at \(t_1\) iff
+\(\vect{C}_{0,n-1}\), \(\vect{C}_{0,n} = \vect{C}_{1,0}\), \(\vect{C}_{1,1}\)  lie on a common line and are an affine image of the parameter values \(t_0\), \(t_1\), \(t_2\), 
+i.e.,
 \[
-\frac{n}{t_1-t_0}\bigl(\vect{C}_{0,n}-\vect{C}_{0,n-1}\bigr)
+\vect{C}_{0,n} 
 =
-\frac{n}{t_2-t_1}\bigl(\vect{C}_{1,1}-\vect{C}_{1,0}\bigr),
-\]
-equivalently,
-\[
-\vect{C}_{0,n-1},\ \vect{C}_{0,n}(=\vect{C}_{1,0}),\ \vect{C}_{1,1}\ \text{are collinear}
-\quad\text{and}\quad
-\vect{C}_{0,n}
+\vect{C}_{1,0}
 =
-(1-\lambda)\vect{C}_{0,n-1}+\lambda\,\vect{C}_{1,1},
+(1-\lambda)\vect{C}_{0,n-1}+\lambda\,\vect{C}_{1,1}
 \]
 with
-\[
+\(
 \lambda=\frac{t_1-t_0}{t_2-t_0}
-\quad\Longleftrightarrow\quad
-t_1=(1-\lambda)t_0+\lambda t_2.
-\]
+\)
+or, equivalently,
+\(
+t_1=(1-\lambda)t_0+\lambda t_2
+\).
 
-\paragraph{Piecewise cubic \(C^1\) interpolating Bézier spline.}
+These 2 observations can be used to construct the simplest kind of Bézier splines, see \autoref{ex:cubic-bezier-spline}.
+
+\begin{example}[Cubic \(C^1\)-continuous Bézier splines]\label{ex:cubic-bezier-spline}
 Given interpolation points \(\vect{P}_0,\dots,\vect{P}_m\in\R^d\) at parameters \(t_0<\cdots<t_m\) and tangents \(\vect{T}_0,\dots,\vect{T}_m\in\R^d\),
 define \(m\) cubic Bézier pieces \(\vect{F}_i:[t_i,t_{i+1}]\to\R^d\) by control points
 \[
 \begin{aligned}
-\vect{C}_{i,0}&=\vect{P}_i,\\
-\vect{C}_{i,1}&=\vect{P}_i+\frac{t_{i+1}-t_i}{3}\,\vect{T}_i,\\
-\vect{C}_{i,2}&=\vect{P}_{i+1}-\frac{t_{i+1}-t_i}{3}\,\vect{T}_{i+1},\\
-\vect{C}_{i,3}&=\vect{P}_{i+1},
+\vect{C}_{i,0}&=\vect{P}_i\\
+\vect{C}_{i,1}&=\vect{P}_i+\frac{t_{i+1}-t_i}{3}\,\vect{T}_i\\
+\vect{C}_{i,2}&=\vect{P}_{i+1}-\frac{t_{i+1}-t_i}{3}\,\vect{T}_{i+1}\\
+\vect{C}_{i,3}&=\vect{P}_{i+1}
 \end{aligned}
-\qquad i=0,\dots,m-1.
 \]
+where \(i=0,\dots,m-1\).
 Then \(\vect{F}\) interpolates both positions and tangents, and is \(C^1\) at the knots.
+This is called a \emph{cubic Hermite spline}.
 
 \paragraph{Automatic tangent choices.}
-If tangents are not given, common interior choices (\(i=1,\dots,m-1\)) are:
+If tangents are not given, they can be generated from the interpolation points. For the interior tangents \(i=1,\dots,m-1\), 2 common choices are:
 \begin{itemize}
-  \item \textbf{FMMI\!L tangents (finite difference):}
-  \[
-  \vect{T}_i=\frac{\vect{P}_{i+1}-\vect{P}_{i-1}}{t_{i+1}-t_{i-1}}.
-  \]
-  \item \textbf{Bessel tangents:} \(\vect{T}_i=\vect{Q}_i'(t_i)\), where \(\vect{Q}_i\) is the quadratic interpolant through
-  \((t_{i-1},\vect{P}_{i-1})\), \((t_i,\vect{P}_i)\), \((t_{i+1},\vect{P}_{i+1})\).
+  \item \textbf{\tikzmarknode{mill}{FMILL}:}%
+\begin{tikzpicture}[overlay,remember picture, font=\tiny,%
+  >={Stealth[length=1.2mm]},
+  ann/.style={Stealth-,rounded corners=2pt,line cap=round, thick}
+]
+  % ---- padding (numerator): go UP then RIGHT
+  \coordinate (millA) at ($(mill.north) + (0,1.8mm)$);    % vertical end
+  \coordinate (millB) at ($(millA) + (3mm,0)$);        % right end (tip)
+  \draw[ann, ->, green!50!black] ($(mill.north) + (0,0.4mm)$) -- (millA) -- (millB);
+  \node[anchor=west,inner sep=1pt, color=green!50!black] at (millB) {milling devices};
+\end{tikzpicture} %
+  \(
+  \vect{T}_i=\frac{\vect{P}_{i+1}-\vect{P}_{i-1}}{t_{i+1}-t_{i-1}}
+  \) (finite difference)
+  \item \textbf{Bessel:} \(\vect{T}_i=\vect{Q}_i'(t_i)\), where \(\vect{Q}_i\) is the quadratic interpolant to \(\vect{P}_{i-1}\), \(\vect{P}_i\), \(\vect{P}_{i+1}\) at \(t_{i-1}\), \(t_i\), \(t_{i+1}\)
+  % \((t_{i-1},\vect{P}_{i-1})\), \((t_i,\vect{P}_i)\), \((t_{i+1},\vect{P}_{i+1})\)
 \end{itemize}
+
 Endpoint tangents can be chosen via:
 \begin{itemize}
-  \item \textbf{Overhauser:} \(\vect{T}_0=\vect{Q}_1'(t_0)\), \(\vect{T}_m=\vect{Q}_{m-1}'(t_m)\),
-  \item \textbf{Natural end conditions (cubic):} \(\vect{F}_0''(t_0)=\vect{F}_{m-1}''(t_m)=\vect{0}\), which implies
-  \[
-  \vect{C}_{0,1}=\frac{\vect{C}_{0,0}+\vect{C}_{0,2}}{2},
-  \qquad
-  \vect{C}_{m-1,2}=\frac{\vect{C}_{m-1,1}+\vect{C}_{m-1,3}}{2}.
-  \]
+  \item \textbf{Overhauser:} \(\vect{T}_0=\vect{Q}_1'(t_0)\), \(\vect{T}_m=\vect{Q}_{m-1}'(t_m)\)
+  \item \textbf{Natural end:} \(\vect{F}_0''(t_0)=\vect{F}_{m-1}''(t_m)=\vect{0}\) \(\Rightarrow\)
+  \(
+  \vect{C}_{0,1}=\frac{\vect{C}_{0,0}+\vect{C}_{0,2}}{2}
+  \),
+  \(
+  \vect{C}_{m-1,2}=\frac{\vect{C}_{m-1,1}+\vect{C}_{m-1,3}}{2}
+  \)
 \end{itemize}
-For closed curves (\(\vect{P}_0=\vect{P}_m\)), endpoints are treated like interior points.
+For closed curves (\(\vect{P}_0=\vect{P}_m\)), endpoints are treated like interior points with the two choices above.
+\end{example}
 
-\paragraph{\(C^2\) continuity and the A-frame condition (cubic).}
-Two cubic Bézier pieces \(\vect{F}_0\) and \(\vect{F}_1\) join \(C^2\) at \(t_1\) if, in addition to the \(C^1\) condition, there exists \(\vect{D}\in\R^d\) such that
-\[
-\vect{C}_{0,2}=(1-\lambda)\vect{C}_{0,1}+\lambda\,\vect{D},
-\qquad
-\vect{C}_{1,1}=(1-\lambda)\vect{D}+\lambda\,\vect{C}_{1,2},
-\]
+\subsubsection{\(C^2\) continuity}
+
+The two curves \(\vect{F}_0\) and \(\vect{F}_1\) join with \(C^2\)-continuity at \(t_1\), if, in addition to the conditions from \autoref{sec:c1-continuity}, there exists a point \(\vect{D}\in\R^d\) such that
+% \(
+% \vect{C}_{0,n-1} 
+% =
+% (1-\lambda)\vect{C}_{0,n-2}+\lambda\vect{D}
+% \)
+% and
+% \(
+% \vect{C}_{1,1}
+% =
+% (1-\lambda)\vect{D}+\lambda\vect{C}_{1,2}
+% \)
+\[\begin{aligned}
+\vect{C}_{0,n-1} 
+&=
+(1-\lambda)\vect{C}_{0,n-2}+\lambda\vect{D} \\
+\vect{C}_{1,1}
+&=
+(1-\lambda)\vect{D}+\lambda\vect{C}_{1,2}
+\end{aligned}\]
 with the same \(\lambda=\frac{t_1-t_0}{t_2-t_0}\).
-This is the \emph{A-frame condition}.
+This is called the \emph{A-frame condition} and guarantees that 
+\(\vect{C}_{0,n-2}\), \(\vect{C}_{0,n-1}\), \(\vect{D}\),
+as well as
+\(\vect{D}\), \(\vect{C}_{1,1}\), \(\vect{C}_{1,2}\)
+lie on a common line and are affine images of the parameter values \(t_0\), \(t_1\), \(t_2\).
+
+
+
+\begin{example}[Cubic \(C^2\)-continuous Bézier splines]\label{ex:cubic-c2-bezier-spline}
+
+\end{example}
 
 \subsection{B-Splines}\label{subsec:bsplines}
 
