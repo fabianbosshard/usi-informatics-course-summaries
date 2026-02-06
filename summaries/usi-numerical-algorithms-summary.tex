@@ -145,8 +145,8 @@
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
 \definecolor{emblue}{RGB}{20,60,120}
-\renewcommand{\emph}[1]{\textcolor{emblue}{\textsl{#1}}}
-
+% \renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
+\renewcommand{\emph}[1]{\textcolor{black}{\textit{#1}}}
 
 \usepackage{thmtools}
 
@@ -1276,6 +1276,38 @@ They are called \hl[2]{\(C^k\)-continuous at \(t_1\)} if
 \(\vect{F}_0^{(k)}(t_1)=\vect{F}_1^{(k)}(t_1)\).
 
 
+There is also the weaker notion of \emph{geometric continuity}.
+The two curves \(\vect{F}_0\) and \(\vect{F}_1\) are called \hl[2]{\(G^1\)-continuous at \(t_1\)} if
+\(
+\vect{F}_0(t_1)=\vect{F}_1(t_1)
+\) and \(
+\vect{F}_0'(t_1)\parallel\vect{F}_1'(t_1)
+\),
+i.e. the tangent directions agree, but their magnitudes may differ.
+Clearly, \(C^1\)-continuity implies \(G^1\)-continuity, but not conversely.
+% Unlike \(C^1\)-continuity, \(G^1\)-continuity is invariant under reparameterization and is often sufficient for visual smoothness.
+
+
+\newcommand{\conditem}[2]{%
+  \item \makebox[\propsep][l]{\textcolor{black}{{#1}}}%
+  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{\textcolor{black}{#2}}%
+}
+\settowidth{\propw}{\(C^{-1}\)} % longest label in this list
+\setlength{\propsep}{\propw + 1em} % label + space
+
+
+\begin{example}[Curve design]
+In graphic editors, curves are often represented as piecewise cubic Bézier curves.
+At a join point \(P\),
+\begin{itemize}
+  \conditem{\(C^{-1}\):}{the segments do not share the same point \(P\) (gap)}
+  \conditem{\(C^{0}\):}{the segments share the same point \(P\) (corner allowed)}
+  \conditem{\(G^{1}\):}{the two Bézier handles at \(P\) are collinear (smooth join)}
+  \conditem{\(C^{1}\):}{the handles are collinear and of equal length (matched derivatives)}
+\end{itemize}
+Thus, \(G^{1}\)-continuity corresponds to a visually smooth join, while \(C^{1}\)-continuity additionally enforces equal parametrization speed.
+\end{example}
+
 \subsubsection{\(C^0\)-continuity}
 By the \hyperref[item:endpoint-interpolation]{endpoint interpolation property} from \autoref{fact:bernstein-bezier-properties} we have 
 % \(\vect{F}_0(t_1)=\vect{C}_{0,n}\) and \(\vect{F}_1(t_1)=\vect{C}_{1,0}\), 
@@ -1319,6 +1351,13 @@ t_1=(1-\lambda)t_0+\lambda t_2
 
 These 2 observations can be used to construct the simplest kind of Bézier splines, see \autoref{ex:cubic-bezier-spline}.
 
+
+
+
+\settowidth{\propw}{\textbf{Natural end:}} % longest label in this list
+\setlength{\propsep}{\propw + 1em} % label + space
+
+
 \begin{example}[Cubic \(C^1\)-continuous Bézier splines]\label{ex:cubic-bezier-spline}
 Given interpolation points \(\vect{P}_0,\dots,\vect{P}_m\in\R^d\) at parameters \(t_0<\cdots<t_m\) and tangents \(\vect{T}_0,\dots,\vect{T}_m\in\R^d\),
 define \(m\) cubic Bézier pieces \(\vect{F}_i:[t_i,t_{i+1}]\to\R^d\) by control points
@@ -1334,10 +1373,12 @@ where \(i=0,\dots,m-1\).
 Then \(\vect{F}\) interpolates both positions and tangents, and is \(C^1\) at the knots.
 This is called a \emph{cubic Hermite spline}.
 
+
+
 \paragraph{Automatic tangent choices.}
 If tangents are not given, they can be generated from the interpolation points. For the interior tangents \(i=1,\dots,m-1\), 2 common choices are:
 \begin{itemize}
-  \item \textbf{\tikzmarknode{mill}{FMILL}:}%
+  \conditem{\textbf{\tikzmarknode{mill}{FMILL}:}%
 \begin{tikzpicture}[overlay,remember picture, font=\tiny,%
   >={Stealth[length=1.2mm]},
   ann/.style={Stealth-,rounded corners=2pt,line cap=round, thick}
@@ -1346,25 +1387,25 @@ If tangents are not given, they can be generated from the interpolation points. 
   \coordinate (millA) at ($(mill.north) + (0,1.8mm)$);    % vertical end
   \coordinate (millB) at ($(millA) + (3mm,0)$);        % right end (tip)
   \draw[ann, ->, green!50!black] ($(mill.north) + (0,0.4mm)$) -- (millA) -- (millB);
-  \node[anchor=west,inner sep=1pt, color=green!50!black] at (millB) {milling devices};
-\end{tikzpicture} %
-  \(
+  \node[anchor=west,inner sep=1pt, color=green!50!black] at (millB) {\textnormal{milling devices}};
+\end{tikzpicture}%
+}{\(
   \vect{T}_i=\frac{\vect{P}_{i+1}-\vect{P}_{i-1}}{t_{i+1}-t_{i-1}}
-  \) (finite difference)
-  \item \textbf{Bessel:} \(\vect{T}_i=\vect{Q}_i'(t_i)\), where \(\vect{Q}_i\) is the quadratic interpolant to \(\vect{P}_{i-1}\), \(\vect{P}_i\), \(\vect{P}_{i+1}\) at \(t_{i-1}\), \(t_i\), \(t_{i+1}\)
+  \) (finite difference)}
+  \conditem{\textbf{Bessel:}}{\(\vect{T}_i=\vect{Q}_i'(t_i)\), \(\vect{Q}_i\) is the quadratic interpolant to \(\vect{P}_{i-1}\), \(\vect{P}_i\), \(\vect{P}_{i+1}\) at \(t_{i-1}\), \(t_i\), \(t_{i+1}\)}
   % \((t_{i-1},\vect{P}_{i-1})\), \((t_i,\vect{P}_i)\), \((t_{i+1},\vect{P}_{i+1})\)
 \end{itemize}
 
 Endpoint tangents can be chosen via:
 \begin{itemize}
-  \item \textbf{Overhauser:} \(\vect{T}_0=\vect{Q}_1'(t_0)\), \(\vect{T}_m=\vect{Q}_{m-1}'(t_m)\)
-  \item \textbf{Natural end:} \(\vect{F}_0''(t_0)=\vect{F}_{m-1}''(t_m)=\vect{0}\) \(\Rightarrow\)
+  \conditem{\textbf{Overhauser:}}{\(\vect{T}_0=\vect{Q}_1'(t_0)\), \(\vect{T}_m=\vect{Q}_{m-1}'(t_m)\)}
+  \conditem{\textbf{Natural end:}}{\(\vect{F}_0''(t_0)=\vect{F}_{m-1}''(t_m)=\vect{0}\) \(\Rightarrow\)
   \(
   \vect{C}_{0,1}=\frac{\vect{C}_{0,0}+\vect{C}_{0,2}}{2}
   \),
   \(
   \vect{C}_{m-1,2}=\frac{\vect{C}_{m-1,1}+\vect{C}_{m-1,3}}{2}
-  \)
+  \)}
 \end{itemize}
 For closed curves (\(\vect{P}_0=\vect{P}_m\)), endpoints are treated like interior points with the two choices above.
 \end{example}
@@ -1551,6 +1592,8 @@ N_i^{j}(t)
 for \(i=0,\dots,2n+m-j\)
 with the convention that terms with zero denominators are treated as zero.
 
+\settowidth{\propw}{{Endpoint interpolation:}} % longest label in this list
+\setlength{\propsep}{\propw + 0.5em} % label + space
 
 \begin{fact}\label{fact:bspline-basis-properties}
 The functions \(N_i^{j}\) are piecewise polynomials of degree \(j\) and \(C^{j-1}\)-continuous. They satisfy
@@ -1633,12 +1676,23 @@ For cubic interpolation, \(n=3\), the matrix is tridiagonal up to two additional
 The two free parameters correspond to the two degrees of freedom in \autoref{ex:cubic-c2-bezier-spline}.
 But they can be fixed more conveniently via end conditions! \Smiley
 
+\renewcommand{\conditem}[2]{%
+  \item \makebox[\propsep][l]{\textcolor{black}{\textbf{#1}}}%
+  \parbox[t]{\dimexpr\linewidth-\propsep\relax}{\textcolor{black}{#2}}%
+}
+\settowidth{\propw}{\textbf{Not-a-knot:}} % longest label in this list
+\setlength{\propsep}{\propw + 2.5em} % label + space
+
 Common choices are
 \begin{itemize}
-  \item \textbf{Natural:} \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})=\vect{0}\)
-  \item \textbf{Clamped:} \(\vect{F}'(t_3)=\vect{T}_0\) and \(\vect{F}'(t_{m+4})=\vect{T}_{m+1}\)
-  \item \textbf{Periodic:} \(\vect{F}'(t_3)=\vect{F}'(t_{m+4})\) and \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})\)
-  \item \textbf{Not-a-knot:} \(\lim_{t\nearrow t_4}\vect{F}'''(t)=\lim_{t\searrow t_4}\vect{F}'''(t)\) and \(\lim_{t\nearrow t_{m+3}}\vect{F}'''(t)=\lim_{t\searrow t_{m+3}}\vect{F}'''(t)\)
+  \conditem{{Natural:}}{%
+    \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})=\vect{0}\)}
+  \conditem{{Clamped:}}{%
+    \(\vect{F}'(t_3)=\vect{T}_0\) \ and \  \(\vect{F}'(t_{m+4})=\vect{T}_{m+1}\)}
+  \conditem{{Periodic:}}{%
+    \(\vect{F}'(t_3)=\vect{F}'(t_{m+4})\) \ and \  \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})\)}
+  \conditem{{Not-a-knot:}}{%
+    \(\lim\limits_{t\nearrow t_4}\vect{F}'''(t)=\lim\limits_{t\searrow t_4}\vect{F}'''(t)\) \ and \  \(\lim\limits_{t\nearrow t_{m+3}}\vect{F}'''(t)=\lim\limits_{t\searrow t_{m+3}}\vect{F}'''(t)\)}
 \end{itemize}
 These conditions can be expressed in terms of basis functions and control points and added as the first and last row,
 turning the system into a square invertible system that uniquely determines the control points.
