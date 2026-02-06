@@ -134,6 +134,7 @@
 \usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
+\usepackage{tikzsymbols}
 \usepackage{pgfplots}
 
 
@@ -993,7 +994,7 @@ where \(i=0,\dots,n-j\)
 and then \(\vect{F}(t)=\vect{C}_0^{n}(t)\).
 
 \begin{algorithm}[h]
-  \caption{de Casteljau algorithm (evaluate Bézier curve at \(t\))}
+  \caption{de Casteljau}% (evaluate Bézier curve at \(t\))}
   \label{alg:de-casteljau}
   \begin{algorithmic}[1]
     \Require control points \(\vect{C}_0,\dots,\vect{C}_n\in\R^d\), interval \([a,b]\), parameter \(t\in[a,b]\)
@@ -1397,143 +1398,260 @@ as well as
 \(\vect{D}\), \(\vect{C}_{1,1}\), \(\vect{C}_{1,2}\)
 lie on a common line and are affine images of the parameter values \(t_0\), \(t_1\), \(t_2\).
 
-
-
 \begin{example}[Cubic \(C^2\)-continuous Bézier splines]\label{ex:cubic-c2-bezier-spline}
-
+Let \(\vect{P}_0,\dots,\vect{P}_m\in\R^d\) be given at parameters
+\(
+t_0<\cdots<t_m
+\).
+Define cubic Bézier pieces \(\vect{F}_i:[t_i,t_{i+1}]\to\R^d\) with
+\(
+\vect{C}_{i,0}=\vect{P}_i
+\),
+\(
+\vect{C}_{i,3}=\vect{P}_{i+1}
+\).
+Choose the two interior control points \(\vect{C}_{0,1}\) and \(\vect{C}_{0,2}\) (or symmetrically \(\vect{C}_{m-1,1}\) and \(\vect{C}_{m-1,2}\))
+arbitrarily.
+Then imposing \(C^1\) continuity and the A-frame condition at all interior knots
+uniquely determines all remaining control points.
+Hence a cubic \(C^2\)-continuous Bézier spline interpolating the data
+has exactly two degrees of freedom.
 \end{example}
+
 
 \subsection{B-Splines}\label{subsec:bsplines}
 
-B-splines provide piecewise polynomial curves with built-in smoothness and strong local control.
+The difficulty of controlling the shape of a \nameref{ex:cubic-c2-bezier-spline} motivates B-splines, which
+are piecewise polynomial curves with built-in maximal smoothness and intuitive local control.
 
-\paragraph{de Boor evaluation.}
-Fix a degree \(n\ge 1\). A B-spline curve \(\vect{F}\) with \(m+1\) pieces is defined by control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\)
-and a nondecreasing knot vector \(t_0,\dots,t_{2n+m+1}\in\R\).
-The curve is defined on \([t_n,t_{n+m+1}]\).
-Given \(t\in[t_n,t_{n+m+1}]\), choose the index \(k\in\{0,\dots,m\}\) such that
+\subsubsection{Definition and evaluation}\label{subsec:bspline-definition}
+
+A B-spline curve \(\vect{F}\) of degree \(n\) with \(m+1\) pieces is defined by
+control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\)
+and knots 
+% \(t_0,\dots,t_{2n+m+1}\) with
 \[
-t_{n+k}\le t \le t_{n+k+1}.
+\underbrace{
+t_0
+\le
+\cdots
+\le
+t_{n-1}
+}_{\text{\(n\) knots}}
+\le
+\underbrace{
+t_n
+\le
+\cdots
+\le
+t_{n+m+1}
+}_{\text{\(m+2\) knots}}%, domain of \(\vect{F}\)}}
+\le
+\underbrace{
+t_{n+m+2}
+\le
+\cdots
+\le
+t_{2n+m+1}
+}_{\text{\(n\) knots}}
 \]
-Initialize
+i.e. a non-decreasing \emph{knot vector} of length \(2n+m+2\).
+The curve domain is between the \(m+2\) ``internal'' knots, i.e. 
+\(
+\vect{F}:[t_n,t_{n+m+1}] \to \R^d
+\).
+To evaluate \(\vect{F}(t)\) for \(t\in[t_n,t_{n+m+1}]\),
+first
+find \(k\) such that
+\(
+t_{n+k}\le t\le t_{n+k+1}
+\).
+Then repeatedly compute convex combinations:
 \[
-\vect{D}_i^{0}(t)=\vect{D}_i,\qquad i=k,\dots,k+n,
+\vect{D}_i^{0}(t)=\vect{D}_i
 \]
+where
+\(i=k,\dots,k+n\),
 and for \(j=1,\dots,n\),
 \[
-\vect{D}_i^{j}(t)
+\vect{D}_i^{\,j}(t)
 =
-\frac{t_{n+i+1}-t}{t_{n+i+1}-t_{i+j}}\,\vect{D}_i^{j-1}(t)
+\frac{t_{n+i+1}-t}{t_{n+i+1}-t_{i+j}}\,\vect{D}_i^{\,j-1}(t)
 +
-\frac{t-t_{i+j}}{t_{n+i+1}-t_{i+j}}\,\vect{D}_{i+1}^{j-1}(t),
-\qquad i=k,\dots,k+n-j.
+\frac{t-t_{i+j}}{t_{n+i+1}-t_{i+j}}\,\vect{D}_{i+1}^{\,j-1}(t)
 \]
-Then \(\vect{F}(t)=\vect{D}_k^{n}(t)\).
+where \(i=k,\dots,k+n-j\) and then finally set
+\(
+\vect{F}(t)=\vect{D}_k^{\,n}(t)
+\).
+This is the \nameref{alg:de-boor} algorithm;
+it is the B-spline analogue of \nameref{alg:neville} and \nameref{alg:de-casteljau}.
+
+
+Like \nameref{alg:neville}'s algorithm and \nameref{alg:de-casteljau}'s algorithm, \nameref{alg:de-boor}'s algorithm costs \hl[6]{\(\mathcal{O}(n^2)\)}, but since here \(n\) is typically small (often \(2\le n\le 5\)), this is not an issue.
+
+
 
 \begin{algorithm}[h]
-  \caption{de Boor algorithm (evaluate B-spline curve at \(t\))}
+  \caption{de Boor}% (evaluate B-spline curve at \(t\))}
   \label{alg:de-boor}
   \begin{algorithmic}[1]
-    \Require degree \(n\), control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\), knots \(t_0,\dots,t_{2n+m+1}\), parameter \(t\in[t_n,t_{n+m+1}]\)
+    \Require control points \(\vect{D}_0,\dots,\vect{D}_{n+m}\in\R^d\), knots \(t_0,\dots,t_{2n+m+1}\), parameter \(t\in[t_n,t_{n+m+1}]\)
     \Ensure value \(\vect{F}(t)\)
-    \State \(k \gets 0\)
-    \While{\(t_{n+k+1} < t\)}
-      \State \(k \gets k+1\)
+    \State \(k\gets 0\)
+    \While{\(t_{n+k+1}<t\)}
+      \State \(k\gets k+1\)
     \EndWhile
-    \For{\(i = 0 \TO n\)}
-      \State \(\vect{E}_i \gets \vect{D}_{k+i}\)
+    \For{\(i=0 \TO n\)}
+      \State \(\vect{E}_i\gets \vect{D}_{i+k}\)
     \EndFor
-    \For{\(j = 1 \TO n\)}
-      \For{\(i = 0 \TO n-j\)}
-        \State \(\alpha \gets \frac{t_{n+k+i+1}-t}{t_{n+k+i+1}-t_{k+i+j}}\), \(\beta \gets 1-\alpha\)
-        \State \(\vect{E}_i \gets \alpha\,\vect{E}_i + \beta\,\vect{E}_{i+1}\)
+    \For{\(j=1 \TO n\)}
+      \For{\(i=0 \TO n-j\)}
+        \State \(\vect{E}_i \gets \frac{t_{n+i+k+1}-t}{t_{n+i+k+1}-t_{i+k+j}} \vect{E}_i + \frac{t-t_{i+k+j}}{t_{n+i+k+1}-t_{i+k+j}} \vect{E}_{i+1}\)
       \EndFor
     \EndFor
     \State \Return \(\vect{E}_0\)
   \end{algorithmic}
 \end{algorithm}
 
-The algorithm costs \(\mathcal{O}(n^2)\), and in practice \(n\) is typically small (often \(2\le n\le 5\)).
+The curve \(\vect{F}\) is polynomial of degree \(n\) on each interval \([t_{n+k},t_{n+k+1}]\)
+and \(C^{n-1}\) at interior knots if knots are simple (i.e. not repeated).
 
-\paragraph{B-spline basis representation.}
-The curve can also be written as
+
+\subsubsection{B-spline basis functions}\label{subsec:bspline-basis}
+
+A B-spline curve can be written explicitly as
+\begin{equation}\label{eq:bspline-curve}
+\vect{F}(t)=\sum_{i=0}^{n+m}\vect{D}_i\,N_i^{n}(t)
+\end{equation}
+where \(t \in[t_n,t_{n+m+1}]\).
+\(N_i^{n}\), \(i = 0,\dots,n+m\), are the \emph{B-spline basis functions} of degree \(n\) with respect to the knots \(t_0,\dots,t_{2n+m+1}\).
+
+They are defined recursively as follows.
+Define the piecewise constant functions
 \[
-\vect{F}(t)=\sum_{i=0}^{n+m}\vect{D}_i\,N_i^{n}(t),
-\qquad t\in[t_n,t_{n+m+1}],
-\]
-where the basis functions \(N_i^{n}\) are defined recursively by
-\[
-N_i^{0}(t)=
+N_i^{0}(t)
+=
+\chi_{[t_i,t_{i+1})}(t)
+:=
 \begin{cases}
-1, & t\in[t_i,t_{i+1}),\\
-0, & \text{otherwise},
+1 & t\in[t_i,t_{i+1})\\
+0 & \text{otherwise}
 \end{cases}
-\qquad i=0,\dots,2n+m,
 \]
-and for \(j=1,\dots,n\),
+for \(i=0,\dots,2n+m\).
+Then define recursively for \(j=1,\dots,n\) 
 \[
-N_i^{j}(t)=\frac{t-t_i}{t_{i+j}-t_i}N_i^{j-1}(t)+\frac{t_{i+j+1}-t}{t_{i+j+1}-t_{i+1}}N_{i+1}^{j-1}(t),
-\qquad i=0,\dots,2n+m-j,
+N_i^{j}(t)
+=
+\frac{t-t_i}{t_{i+j}-t_i}\,N_i^{j-1}(t)
++
+\frac{t_{i+j+1}-t}{t_{i+j+1}-t_{i+1}}\,N_{i+1}^{j-1}(t)
 \]
-with the convention that a fraction with zero denominator is treated as \(0\) (i.e. the corresponding term is omitted).
+for \(i=0,\dots,2n+m-j\)
+with the convention that terms with zero denominators are treated as zero.
 
-\paragraph{Properties of B-spline basis functions.}
-For \(j\ge 0\):
-\begin{itemize}
-  \item partition of unity: \(\sum_i N_i^{j}(t)=1\) on the interior knot span of definition,
-  \item positivity: \(N_i^{j}(t)>0\) for \(t\in(t_i,t_{i+j+1})\),
-  \item local support: \(N_i^{j}(t)=0\) for \(t\notin[t_i,t_{i+j+1}]\),
-  \item derivative:
-  \[
-  \frac{\dif}{\dif t}N_i^{j}(t)=\frac{j}{t_{i+j}-t_i}N_i^{j-1}(t)-\frac{j}{t_{i+j+1}-t_{i+1}}N_{i+1}^{j-1}(t).
-  \]
-\end{itemize}
 
-\paragraph{Consequences for B-spline curves.}
-Let \(t\in[t_{n+k},t_{n+k+1}]\). Then
-\begin{itemize}
-  \item \textbf{Convex hull:} \(\vect{F}(t)\in\operatorname{conv}\{\vect{D}_k,\dots,\vect{D}_{k+n}\}\).
-  \item \textbf{Local control:} \(\vect{F}(t)\) depends only on \(\vect{D}_k,\dots,\vect{D}_{k+n}\).
-  \item \textbf{Derivative:}
-  \[
-  \vect{F}'(t)=\sum_{i=1}^{n+m}\vect{D}'_i\,N_i^{n-1}(t),
-  \qquad
-  \vect{D}'_i=\frac{n}{t_{i+n}-t_i}\bigl(\vect{D}_i-\vect{D}_{i-1}\bigr).
-  \]
-  \item \textbf{Affine invariance:} \(\phi(\vect{F}(t))=\sum_i \phi(\vect{D}_i)N_i^{n}(t)\) for any affine \(\phi\).
-\end{itemize}
-In \(\R^2\), B-splines also satisfy a variation diminishing property (proof is more involved than for Bézier curves).
+\begin{fact}\label{fact:bspline-basis-properties}
+The functions \(N_i^{j}\) are piecewise polynomials of degree \(j\) and \(C^{j-1}\)-continuous. They satisfy
+\begin{enumerate}[label=•]
+  \propitem{Partition of unity:}{%
+    \(\sum_{i=0}^{2n+m-j} N_i^{j}(t)=1\) for \(t\in[t_j,t_{2n-j+m+1}]\)}
+  \propitem{Positivity:}{%
+    \(N_i^{j}(t)>0\) for \(t\in(t_i,t_{i+j+1})\)}
+  \propitem{Local support:}{%
+    \(N_i^{j}(t)=0\) for \(t\notin[t_i,t_{i+j+1}]\)}
+  \propitem{Derivative:}{%
+    \(\bigl(N_i^{j}\bigr)'(t)=\frac{j}{t_{i+j}-t_i}N_i^{j-1}(t)-\frac{j}{t_{i+j+1}-t_{i+1}}N_{i+1}^{j-1}(t)\)}
+\end{enumerate}
 
-\paragraph{B-spline interpolation.}
-Given points \(\vect{P}_0,\dots,\vect{P}_{m+1}\in\R^d\), a standard approach is to impose interpolation at the parameter values \(t_n,\dots,t_{n+m+1}\):
+
+These translate to B-spline curve properties.
+For \(t\in[t_{n+k},t_{n+k+1}]\)
+\begin{enumerate}[label=•]
+  \propitem{Convex hull:}{%
+    \(\vect{F}(t)\in\operatorname{conv}\{\vect{D}_k,\dots,\vect{D}_{k+n}\}\)}
+  \propitem{Local control:}{%
+    \(\vect{F}(t)\) depends only on \(\vect{D}_k,\dots,\vect{D}_{k+n}\)}
+  \propitem{Derivative:}{%
+    \(\vect{F}'(t)=\sum_{i=1}^{n+m}\vect{D}_i'\,N_i^{n-1}(t)\) with \(\vect{D}_i'=\frac{n}{t_{i+n}-t_i}\bigl(\vect{D}_i-\vect{D}_{i-1}\bigr)\)}
+  \propitem{Affine invariance:}{%
+    \(\phi\!\left(\sum_{i=0}^{n+m}\vect{D}_iN_i^{n}(t)\right)=\sum_{i=0}^{n+m}\phi(\vect{D}_i)N_i^{n}(t)\) for any affine \(\phi:\R^d\to\R^d\)}
+\end{enumerate}
+As for Bézier curves, B-spline curves also satisfy the variation diminishing property in \(\R^2\).
+\end{fact}
+
+
+\subsubsection{Interpolation}\label{subsec:cubic-bspline-interpolation}
+
+Given points \(\vect{P}_0,\dots,\vect{P}_{m+1}\in\R^d\),
+a standard approach is to interpolate them at the knots \(t_n,\dots,t_{n+m+1}\),
+that is
 \[
-\vect{F}(t_{n+i})=\vect{P}_i,\qquad i=0,\dots,m+1.
+\vect{F}(t_{n+i})=\vect{P}_i
 \]
-This yields the linear system
+for \(i=0,\dots,m+1\).
+Using \eqref{eq:bspline-curve} this yields the linear system
 \[
-\matr{M}\,\vect{D}=\vect{P},
+\matr{M}\vect{D}=\vect{P}
 \]
-with unknown control points \(\vect{D}=[\vect{D}_0,\dots,\vect{D}_{n+m}]^\top\) and
+with unknown control points \(
+\vect{D}=[\vect{D}_0, \dots, \vect{D}_{n+m}]^\top %\in\R^{(n+m+1)\times d}
+\), interpolation points \(
+\vect{P}=[\vect{P}_0, \dots, \vect{P}_{m+1}]^\top %\in\R^{(m+2)\times d}
+\),
+and
 \[
+% \vect{D}=
+% \begin{pmatrix}
+% \vect{D}_0\\
+% \vdots\\
+% \vect{D}_{n+m}
+% \end{pmatrix}
+% \qquad
+% \vect{P}=
+% \begin{pmatrix}
+% \vect{P}_0\\
+% \vdots\\
+% \vect{P}_{m+1}
+% \end{pmatrix}
 \matr{M}=
 \begin{bmatrix}
-N_0^{n}(t_{n}) & N_1^{n}(t_{n}) & \cdots & N_{n+m}^{n}(t_{n})\\
+N_0^{n}(t_n) & N_1^{n}(t_n) & \cdots & N_{n+m}^{n}(t_n)\\
 N_0^{n}(t_{n+1}) & N_1^{n}(t_{n+1}) & \cdots & N_{n+m}^{n}(t_{n+1})\\
 \vdots & \vdots & \ddots & \vdots\\
 N_0^{n}(t_{n+m+1}) & N_1^{n}(t_{n+m+1}) & \cdots & N_{n+m}^{n}(t_{n+m+1})
-\end{bmatrix}.
+\end{bmatrix}
+\in \R^{(m+2) \times (n+m+1)}
 \]
-Due to local support, \(\matr{M}\) is banded (sparse near the diagonal). The system is underdetermined by \(n-1\) degrees of freedom, so one adds extra end conditions (e.g. natural/clamped/periodic) to obtain a unique solution.
+This system is underdetermined with \(n-1\) degrees of freedom.
+Hence, additional conditions are needed to get a unique solution.
+Moreover, due to local support, \(\matr{M}\) is a band matrix with non-zero entries only near the diagonal.
 
-\paragraph{Cubic case and natural end conditions.}
-For cubic splines (\(n=3\)), the interpolation matrix becomes tridiagonal after incorporating standard end constraints, and can be solved very efficiently.
-In the scalar case (\(d=1\)), the natural cubic spline interpolant minimizes the bending energy
+\begin{example}[Cubic B-spline interpolation]
+For cubic interpolation, \(n=3\), the matrix is tridiagonal up to two additional boundary rows.
+The two free parameters correspond to the two degrees of freedom in \autoref{ex:cubic-c2-bezier-spline}.
+But they can be fixed more conveniently via end conditions! \Smiley
+
+Common choices are
+\begin{itemize}
+  \item \textbf{Natural:} \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})=\vect{0}\)
+  \item \textbf{Clamped:} \(\vect{F}'(t_3)=\vect{T}_0\) and \(\vect{F}'(t_{m+4})=\vect{T}_{m+1}\)
+  \item \textbf{Periodic:} \(\vect{F}'(t_3)=\vect{F}'(t_{m+4})\) and \(\vect{F}''(t_3)=\vect{F}''(t_{m+4})\)
+  \item \textbf{Not-a-knot:} \(\lim_{t\nearrow t_4}\vect{F}'''(t)=\lim_{t\searrow t_4}\vect{F}'''(t)\) and \(\lim_{t\nearrow t_{m+3}}\vect{F}'''(t)=\lim_{t\searrow t_{m+3}}\vect{F}'''(t)\)
+\end{itemize}
+These conditions can be expressed in terms of basis functions and control points and added as the first and last row,
+turning the system into a square invertible system that uniquely determines the control points.
+
+% \begin{remark}
+In the functional setting, \(d=1\),
+the natural interpolating cubic B-spline minimizes the bending energy
 \[
-\|f''\|_2^2=\int_{t_3}^{t_{m+4}} (f''(t))^2\,\dif t
+\lVert f''\rVert_2^2=\int_{t_3}^{t_{m+4}}\bigl(f''(t)\bigr)^2\,\dif t
 \]
-among all \(C^2\) interpolants satisfying the same data.
-
-
+among all interpolating \(C^2\) functions.
+% \end{remark}
+\end{example}
 
 
 
