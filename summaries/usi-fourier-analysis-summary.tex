@@ -163,7 +163,7 @@
 
 \newcommand*\matrspace{0.8mu}
 \newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
-\newcommand{\vect}[1]{\vec{\boldsymbol{#1}}}
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
 
 \newcommand{\dif}{\mathrm{d}}
 \newcommand{\eu}{\mathrm{e}}
@@ -313,7 +313,7 @@
 \text{mu}      & \mu      &              & \latinlike{M} \\
 \text{nu}      & \nu      &              & \latinlike{N} \\
 \text{xi}      & \xi      &              & \Xi \\
-\text{omicron} & \latinlike{o}        &  & \latinlike{O} \\
+\text{omicron} & {o}      &              & \latinlike{O} \\
 \text{pi}      & \pi      & \varpi       & \Pi \\
 \text{rho}     & \rho     & \varrho      & \latinlike{P} \\
 \text{sigma}   & \sigma   & \varsigma    & \Sigma \\
@@ -390,23 +390,281 @@ The motivation for replacing Riemann with Lebesgue theory is that Lebesgue integ
 the order of integration and derivatives and integration.
 
 
-\subsection{Complex analysis}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Complex analysis}
+
+
+A complex function \(f = u + \iu v\) is complex differentiable at \(z = x + \iu y \in D(f)\) iff it is real differentiable (as a function \(\vect{f}: \R^2 \to \R^2\)) at \((x,y)\) and additionally the \emph{Cauchy-Riemann equations}
+\begin{equation}\label{eq:cauchy-riemann}
+\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y},
+\qquad
+\frac{\partial u}{\partial y} = - \frac{\partial v}{\partial x}
+\end{equation}
+hold at \((x,y)\), because the derivative needs to be a ``Drehstreckung'' (i.e., a composition of a rotation and a scaling), i.e. its Jacobian needs to be of the form \(\vect{f}' =  \left[\begin{smallmatrix} a & -b \\ b & a \end{smallmatrix}\right]\).
+If a function is complex differentiable at every point of an simply connected open set \(D\), then it is called \emph{holomorphic} on \(D\).
 
 
 We define the curve integral of a function \(f: \C \to \C\) along a curve \(C\) parametrized by \(z(t)\), \(t \in [a,b]\) as
 \begin{equation}\label{eq:curve-integral}
+{\color{red}\boxed{\color{black}
 \int_C f(z) \dif z := \int_a^b f( z(t)) z'(t) \dif t
+}}
 \end{equation}
 
+The formula \(|\int_a^b f(t) \dif t| \leq \int_a^b |f(t)| \dif t\) for complex valued functions of a real variable \(t\) implies the following useful estimate for curve integrals:
+\[
+\begin{aligned}
+\left| \int_C f(z) \dif z \right| &= \left| \int_a^b f( z(t)) z'(t) \dif t \right| \\
+&\leq \int_a^b |f( z(t)) z'(t)| \dif t \\
+&= \int_a^b |f( z(t))| |z'(t)| \dif t \\
+&\leq \int_a^b \left(\max_{\tilde{t} \in [a,b]} |f(z(\tilde{t}))|\right) |z'(t)| \dif t \\
+&= \max_{\tilde{t} \in [a,b]} |f(z(\tilde{t}))| \int_a^b |z'(t)| \dif t \\
+&= \left\|f\right\|_{C} \cdot \operatorname{length}(C)
+\end{aligned}
+\]
+where \(\|f\|_C\) denotes the maximum of the modulus of \(f\) on the curve \(C\) and \(\operatorname{length}(C)\) denotes the length of the curve \(C\).
+
+
+\begin{theorem}[central integral of complex analysis]
 For a positively oriented circle \(C\) centered at \(z_0\) with radius \(R\), we have
 \begin{equation}\label{eq:central-integral}
-\int_C (z - z_0)^n \dif z 
+\oint_C (z - z_0)^n \dif z 
 =
 \begin{cases}
     0 & n \neq -1 \\
     2 \pi \iu & n = -1
 \end{cases}
 \end{equation}
+as can easily be seen by parametrizing \(C: z(t) = z_0 + R \eu^{\iu t}\), \(t \in [0, 2 \pi)\) and evaluating \eqref{eq:curve-integral}.
+\end{theorem}
+
+
+
+\begin{theorem}\label{thm:cauchy-integral-theorem}
+For a simply connected open set \(D\) and a holomorphic function \(f\) thereupon, we have, provided all considered curves are completely contained in \(D\):
+\begin{itemize}
+  \item for any closed curve \(C\): \(\int_C f(z) \dif z = 0\)
+  \item for any two curves \(C_1\) and \(C_2\) with the same start and end point: \(\int_{C_1} f(z) \dif z = \int_{C_2} f(z) \dif z\)
+  \item \(f\) has a antiderivative \(F\) with \(\frac{\dif F}{\dif z} = f\) and \(\int_{z_{\text{start}}}^{z_{\text{end}}} f(z) \dif z = F(z_{\text{end}}) - F(z_{\text{start}})\)
+  \qedhere
+\end{itemize}
+\end{theorem}
+\begin{remark}\label{rem:cauchy-integral-theorem-ass}
+The conditions under which \autoref{thm:cauchy-integral-theorem} holds can be slightly weakened: 
+We choose an arbitrary, but fixed point \(z^* \in D\) and require continuity on entire \(D\), but holomorphy only on \(D\setminus \{z^*\}\).
+
+These conditions are technical (it turns out that a function that fulfills them is also holomorphic in \(z^*\) anyway), but they simplify the proof of \autoref{thm:cauchy-integral-formula}.
+\end{remark}
+
+In the case of holomorphic functions, \autoref{thm:cauchy-integral-theorem} simplifies the evaluation of curve integrals significantly, because we only need to find an antiderivative and evaluate it at the endpoints of the curve.
+
+
+
+
+
+\subsection{Cauchy integral formula}
+
+Choose any \(z_0 \in \C\) and consider the integral
+\[
+\oint_C \frac{1}{z - z_0} \dif z
+\]
+where \(C\) is a positive oriented circle that does not contain \(z_0\).
+We need to distinguish 2 cases. If \(z_0\) is outside of \(C\), then by \autoref{thm:cauchy-integral-theorem} the integral is 0.
+If \(z_0\) is inside of \(C\), we can use \eqref{eq:central-integral} to see that the integral equals \(n 2 \pi \iu\) if \(C\) travels \(n\) times around \(z_0\) in positive orientation and \(-n 2 \pi \iu\) if \(C\) travels \(n\) times around \(z_0\) in negative orientation.
+So the above integral counts (up the the factor \(2 \pi \iu\)) how often \(C\) winds around \(z_0\).
+
+This motivates the following definition.
+Consider a closed curve \(C\) and a point \(z_0 \notin \operatorname{im}(C)\).
+We call
+\begin{equation}\label{eq:index}
+\operatorname{Ind}_C(z_0) := \frac{1}{2 \pi \iu} \oint_C \frac{1}{z - z_0} \dif z
+\end{equation}
+the \emph{Index} or \emph{winding number} of the curve \(C\) with respect to the point \(z_0\).
+It counts how often \(C\) winds around \(z_0\) in positive orientation.
+We have \(\operatorname{Ind}_{-C}(z_0) = - \operatorname{Ind}_C(z_0)\).
+
+
+
+
+\begin{theorem}[Cauchy integral formula]
+\label{thm:cauchy-integral-formula}
+Let \(D\) be a simply connected open set and \(f\) holomorphic on \(D\).
+Then, for any closed curve \(C\) in \(D\), we have 
+\begin{equation}\label{eq:cauchy-integral-formula}
+% f(z_0) \, \operatorname{Ind}_C(z_0) = \frac{1}{2 \pi \iu} \oint_C \frac{f(z)}{z - z_0} \dif z
+\oint_C \frac{f(z)}{z - z_0} \dif z
+=
+2 \pi \iu \, f(z_0) \, \operatorname{Ind}_C(z_0) 
+\end{equation}
+for all \(z_0 \in D \setminus \operatorname{im}(C)\), where \(\operatorname{im}(C)\) denotes the image of \(C\).
+\end{theorem}
+\begin{proof}
+Given a function \(f\) that is holomorphic on \(D\) and a fixed point \(z_0 \in D\), we define a function \(g\) on \(D\) by
+\[
+g(z) := \begin{cases}
+\frac{f(z) - f(z_0)}{z - z_0} & z \neq z_0 \\
+f'(z_0) & z = z_0
+\end{cases}
+\]
+Clearly, \(g\) is continuous on \(D\) and holomorphic on \(D \setminus \{z_0\}\).
+
+No consider a closed curve \(C\) that circulates \(z_0\). % in positive orientation.
+By \autoref{rem:cauchy-integral-theorem-ass}, we can apply \autoref{thm:cauchy-integral-theorem} to \(g\) to obtain
+\[
+\begin{aligned}
+0 
+=
+\oint_C g(z) \dif z
+&= \oint_C \frac{f(z) - f(z_0)}{z - z_0} \dif z \\
+&= \oint_C \frac{f(z)}{z - z_0} \dif z - f(z_0) \oint_C \frac{1}{z - z_0} \dif z \\
+&= \oint_C \frac{f(z)}{z - z_0} \dif z - f(z_0) \, 2 \pi \iu \, \operatorname{Ind}_C(z_0)
+\end{aligned}
+\]
+where we used \eqref{eq:index} in the last step.
+This can be rearranged to obtain \eqref{eq:cauchy-integral-formula}.
+\end{proof}
+
+\autoref{thm:cauchy-integral-formula} has important consequences.
+For example, it implies that the value of a holomorphic function on the inside of a simply connected set is completely determined by the values on the boundary.
+If we choose as our curve for example a circular path centered at \(z_0\) that circles \(z_0\) with some radius \(R\) once in positive orientation, we obtain 
+\[\begin{aligned}
+f(z_0) &= \frac{1}{2 \pi \iu} \oint_C \frac{f(z)}{z - z_0} \dif z \\
+&= \frac{1}{2 \pi \iu} \int_0^{2 \pi} \frac{f(z_0 + R \eu^{\iu t})}{(z_0 + R \eu^{\iu t}) - z_0} \cdot \iu R \eu^{\iu t} \dif t \\
+&= \frac{1}{2 \pi} \int_0^{2 \pi} f(z_0 + R \eu^{\iu t}) \dif t
+\end{aligned}\]
+which is known as the \emph{mean value equation}.
+The function value at any point is therefore the arithmetic mean of the function values on any circle centered at that point.
+
+Another important consequence of \autoref{thm:cauchy-integral-formula} is that a inductive proof yields a formula for the \(n\)-th derivative of a holomorphic function \(f\),
+\begin{equation}\label{eq:cauchy-integral-formula-derivative}
+f^{(n)}(z_0) = \frac{n!}{2 \pi \iu} \oint_{|z - z_0| = R} \frac{f(z)}{(z - z_0)^{n+1}} \dif z
+\end{equation}
+for all \(n \in \N\) and \(R > 0\) such that the circle \(\{z \in \C : |z - z_0| = R\}\) is contained in \(D\).
+Even though this formula is not very practical for computing derivatives, it implies that a holomorphic function is infinitely often complex differentiable, 
+which is radically different from the real case.
+
+
+% here I forgot some concepts. some that are missing:
+% - Existenz beliebig hoher Ableitungen -> jede holomorphe Funktion kann in eine Potenzreihe entwickelt werde
+% - konvergenz radius mindestens und höchstens bis zum rand des Holomorphiegebiets
+% - Holomorphe Funktionen = (lokal) in Potenzreihen entwickelbare Funktionen
+% - Identitätssatz
+% - Beweis funktionalgleichung, inkl bsp sin^2 + cos^2 = 1
+% - reellen Funktionen e x , sin x usw. nur auf eine Art holomorph nach ganz C fortsetzbar.(Deﬁnition der elementaren Funktionen mittels Potenzreihen war also „goldrichtig“)
+% - maximumsprinzip
+% - satz von Liouville
+% - beweis des Fundamentalsatzes der Algebra
+% - konforme Abbildungen, laplacegleichung, harmonische Funktionen, etc.
+
+\subsection{Power and Laurent series}
+
+% A power series with center \(z_0 \in \C\) is a series of the form
+% \begin{equation}\label{eq:power-series}
+% \sum_{n=0}^{\infty} a_n (z - z_0)^n
+% \end{equation}
+% where \(z \in \C\) and \(a_n \in \C\) are the coefficients of the series.
+% After the root test, \eqref{eq:power-series} converges if
+% % \begin{equation}\label{eq:power-series-convergence}
+% \[
+% \limsup_{n \to \infty} \sqrt[n]{|a_n (z - z_0)^n|} = |z - z_0| \limsup_{n \to \infty} |a_n|^{1/n} < 1
+% \]
+% % \end{equation}
+%  and diverges if it is larger than 1.
+% If it is equal to 1, the root test is inconclusive.
+% Solving the above inequality for \(z - z_0\) yields the \emph{radius of convergence} \(R\) of the power series, which is given by
+% \begin{equation}\label{eq:power-series-radius}
+% R = \frac{1}{\limsup_{n \to \infty} |a_n|^{1/n}}
+% \end{equation}
+% and the power series converges for all \(z\) with \(|z - z_0| < R\) and diverges for all \(z\) with \(|z - z_0| > R\).
+% On the boundary \(\{z \in \C : |z - z_0| = R\}\), there may be convergence or divergence.
+
+
+
+A Laurent series with center \(z_0 \in \C\) is a series of the form
+\begin{equation}\label{eq:laurent-series}
+% \begin{aligned}
+\sum_{n=-\infty}^{\infty} a_n (z - z_0)^n 
+% &=
+% \underbrace{\sum_{n=-1}^{-\infty} a_n (z - z_0)^n}_{\text{principal part}} + \underbrace{\sum_{n=0}^{\infty} a_n (z - z_0)^n}_{\text{regular part}}\\
+= \underbrace{\sum_{n=1}^{\infty} a_{-n} (z - z_0)^{-n}}_{\text{principal part}} + \underbrace{\sum_{n=0}^{\infty} a_n (z - z_0)^n}_{\text{regular part}}
+% \end{aligned}
+\end{equation}
+where \(z \in \C\) and \(a_n \in \C\) are the coefficients of the series.
+It converges if both parts converge, so we apply the root test to both parts separately to obtain an outer and inner radius of convergence:
+\begin{itemize}
+\item principal part:
+\[
+\limsup_{n \to \infty} \sqrt[n]{|a_{-n} (z - z_0)^{-n}|} < 1 \quad \Leftrightarrow \quad |z - z_0| > \frac{1}{\limsup_{n \to \infty} |a_{-n}|^{1/n}} =: R_1
+\]
+\item regular part:
+\[
+\limsup_{n \to \infty} \sqrt[n]{|a_n (z - z_0)^n|} < 1 \quad \Leftrightarrow \quad |z - z_0| < \frac{1}{\limsup_{n \to \infty} |a_n|^{1/n}} =: R_2
+\]
+\end{itemize}
+
+The Laurent series thus converges on the annulus
+\begin{equation}\label{eq:laurent-series-convergence}
+D_{R_1, R_2} := \{z \in \C : R_1 < |z - z_0| < R_2\}
+\end{equation}
+and diverges outside of it.
+The inner and outer boundary need to be considered separately, as usual.
+On \(D_{R_1, R_2}\), the Laurent series defines a holomorphic function.
+
+Conversely, every function that is holomorphic on an annulus can be represented by a Laurent series.
+If 
+\begin{equation}\label{eq:laurent-series-holomorphic-function}
+f(z) = \sum_{n=-\infty}^{\infty} a_n (z - z_0)^n
+\end{equation}
+is the Laurent series representation of a holomorphic function \(f\) on an annulus \(D_{R_1, R_2}\), then the coefficients \(a_n\) can be computed by the formula
+\begin{equation}\label{eq:laurent-series-coefficients}
+a_n = \frac{1}{2 \pi \iu} \oint_{C} \frac{f(z)}{(z - z_0)^{n+1}} \dif z
+\end{equation}
+for any closed curve \(C\) in \(D_{R_1, R_2}\) that circulates \(z_0\) once in positive orientation.
+This can be seen by plugging \eqref{eq:laurent-series-holomorphic-function} into the right-hand side of \eqref{eq:laurent-series-coefficients},
+\[
+\begin{aligned}
+\frac{1}{2 \pi \iu} \oint_{C} \frac{f(z)}{(z - z_0)^{n+1}} \dif z
+&= \frac{1}{2 \pi \iu} \oint_{C} \frac{\sum_{m=-\infty}^{\infty} a_m (z - z_0)^m}{(z - z_0)^{n+1}} \dif z \\
+&= \frac  {1}{2 \pi \iu} \sum_{m=-\infty}^{\infty} a_m \oint_{C} (z - z_0)^{m - n - 1} \dif z \\
+&= a_n
+\end{aligned}
+\]
+where we used \eqref{eq:central-integral} in the last step.
+For practical purposes, \eqref{eq:laurent-series-coefficients} is not very useful and the last step of dispaair.
+On most cases of interest, the coefficients can be infered froma known poswer series or with the help of certain sum formulas (e.g. geometric).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \subsection{Function spaces}
