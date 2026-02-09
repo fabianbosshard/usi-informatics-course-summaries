@@ -40,6 +40,8 @@
 \usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings}
 \usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
 \usepackage{pgfplots}
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz-cache/]
 
 % ===================== highlighting (SOUL + math-safe \hl) =====================
 \usepackage{soulutf8}
@@ -85,10 +87,18 @@
 \definecolor{amethyst}{rgb}{0.6,0.4,0.8}
 \definecolor{mypurple}{rgb}{0.5,0,0.5}
 \definecolor{highlightpurple}{rgb}{0.6,0,0.6}
-\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+\renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
 
 % ===================== theorem environments =====================
 \usepackage{thmtools}
+
+\renewcommand\thmcontinues[1]{%
+  \ifcsname hyperref\endcsname
+    \hyperref[#1]{continuing}%
+  \else
+    continuing%
+  \fi
+}
 
 \newlength{\thmspace}\setlength{\thmspace}{3pt plus 1pt minus 1pt}
 
@@ -159,8 +169,10 @@
 \DeclareMathOperator{\Kern}{kern}
 \DeclareMathOperator{\Trace}{trace}
 \DeclareMathOperator{\Rank}{rank}
-\newcommand{\im}{\operatorname{Im}}
-\newcommand{\re}{\operatorname{Re}}
+% \newcommand{\im}{\operatorname{Im}}
+% \newcommand{\re}{\operatorname{Re}}
+\newcommand{\im}{\Im}
+\newcommand{\re}{\Re}
 
 \newcommand*\matrspace{0.8mu}
 \newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
@@ -367,6 +379,111 @@
     \item \(\sin(a + b) = \sin(a) \cos(b) + \cos(a) \sin(b)\)
 \end{itemize}
 
+
+\subsection{Complex numbers}
+The imaginary part of \(\log z := \log |z| + \iu \arg(z)\) is not unique (see \autoref{fig:helicoid-log}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    trig format plots=rad,
+    view={-50}{25},
+    z buffer=sort,
+    % unit vector ratio*=1 1 0.6,
+    zmin=-3.0*pi,
+    zmax=3.0*pi,
+    xlabel={$\re(z)$},
+    ylabel={$\im(z)$},
+    zlabel={$\im(\log z)$},
+    xtick={-3,-2,-1,0,1,2,3},
+ytick={-3,-2,-1,0,1,2,3},
+xticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
+yticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
+    % z ticks in multiples of pi/2
+    ztick={-3*pi,-2*pi,-pi,0,pi,2*pi,3*pi},
+    zticklabels={$-3\pi$,$-2\pi$,$-\pi$,$0$,$\pi$,$2\pi$,$3\pi$},
+    ticklabel style={font=\footnotesize},
+]
+
+% \addplot3[
+%     surf,
+%     domain=0.001:4,
+%     domain y=-3*pi:3*pi,
+%     samples=25,
+%     samples y=109,
+%     draw=black,                 % black mesh lines
+%     shader=flat,                % no gradient shading
+%     colormap={grayfill}{        % constant gray fill
+%       rgb255(0cm)=(220,220,220)
+%       rgb255(1cm)=(220,220,220)
+%     },
+% ]
+% ({x*cos(y)},{x*sin(y)},{y});
+
+% lower sheets (gray): y in [-3pi,-pi]
+\addplot3[
+    surf,
+    domain=0.001:4,
+    domain y=-3*pi:-pi,
+    samples=30,
+    samples y=30,
+    draw=black, line width=0.15pt,
+    shader=flat,
+    colormap={grayfill}{rgb255(0cm)=(220,220,220) rgb255(1cm)=(220,220,220)},
+]
+({x*cos(y)},{x*sin(y)},{y});
+
+\addplot3[red,very thick,domain=0:4,samples=2] ({-x},{0},{-pi});
+
+% principal branch (green): y in [-pi,pi]
+\addplot3[
+    surf,
+    domain=0.001:4,
+    domain y=-pi:pi,
+    samples=30,
+    samples y=30,
+    draw=black, line width=0.15pt,
+    shader=flat,
+    colormap={greenfill}{rgb255(0cm)=(80,200,120) rgb255(1cm)=(80,200,120)},
+]
+({x*cos(y)},{x*sin(y)},{y});
+
+\addplot3[red,very thick,domain=0:4,samples=2] ({-x},{0},{pi});
+
+% upper sheets (gray): y in [pi,3pi]
+\addplot3[
+    surf,
+    domain=0.001:4,
+    domain y=pi:3*pi,
+    samples=30,
+    samples y=30,
+    draw=black, line width=0.15pt,
+    shader=flat,
+    colormap={grayfill}{rgb255(0cm)=(220,220,220) rgb255(1cm)=(220,220,220)},
+]
+({x*cos(y)},{x*sin(y)},{y});
+
+\end{axis}
+\end{tikzpicture}
+\caption{Imaginary part of \(\log(z)\) as a function of \(\re(z)\) and \(\im(z)\).
+Green corresponds to the principal branch, red lines correspond to the branch cut along the negative real axis.}
+\label{fig:helicoid-log}
+\end{figure}
+
+
+Consider \(\C^{-\ast} := \C \setminus \{z \in \R \mid z \leq 0\}\).
+To obtain uniqueness, we define
+\[
+\begin{aligned}
+\operatorname{Log} \colon &\C^{-\ast} \to \C \\
+& z \mapsto \log |z| + \iu \operatorname{Arg}(z)
+\end{aligned}
+\]
+where \(\operatorname{Arg}(z) := \arg(z) \cap (-\pi, \pi)\).
+This is called the \emph{principal branch} of the logarithm.
+
+
 \paragraph{Complex functions}
 If \(f: \R \to \C\), we may write \(f(x) = \Re(f(x)) + \iu \Im(f(x))\).
 We have \(|f(x)|^2 = f(x) \overline{f(x)}\), where \(\overline{f(x)} = \Re(f(x)) - \iu \Im(f(x))\).
@@ -387,13 +504,42 @@ Moreover, the Riemann integral of \(f\) equals the Lebesgue integral of \(f\).
 \end{itemize}
 \end{theorem}
 
-The motivation for replacing Riemann with Lebesgue theory is that Lebesgue integrals are particularly well-suited for interchanginng limits and integration,
+The motivation for replacing Riemann with Lebesgue theory is that Lebesgue integrals are particularly well-suited for interchanging limits and integration,
 the order of integration and derivatives and integration.
 
+\begin{theorem}[Dominated convergence]\label{thm:dominated-convergence}
+Let \((f_n)_{n \in \N}\) be a sequence of functions in \(L^1(\R)\) such that
+\begin{enumerate}[label=(\roman*)]
+\item there exists \(f \in L^1(\R)\) so that \(f(x) = \lim_{n \to \infty} f_n(x)\) for almost all \(x \in \R\)
+\item there exists \(g \in L^1(\R)\) such that \(|f_n(x)| \leq |g(x)|\) for almost all \(x \in \R\) and all \(n \in \N\) 
+\end{enumerate}
+Then
+\[
+\begin{verticalhack}
+\lim_{n \to \infty} \int_{-\infty}^{\infty} f_n(x) \dif x = \int_{-\infty}^{\infty} f(x) \dif x
+\end{verticalhack}
+\qedhere
+\]
+\end{theorem}
 
+As mentioned before, we are also free to choose the order of integration.
+According to Fubini-Tonelli, if \(f \in L^1(\R^2)\), we may calculate 
+\(
+\int_{-\infty}^{\infty} \int_{-\infty}^{\infty} f(x,y) \dif x \dif y
+\) 
+by first integrating with respect to \(x\) and then with respect to \(y\) or the other way around.
 
-
-
+Finally, differentiation and integration can also be interchanged under certain conditions.
+Indeed,
+\begin{equation}\label{eq:diff-int}
+\frac{\dif}{\dif t} \int_{-\infty}^{\infty} f(x,t) \dif x = \int_{-\infty}^{\infty} \frac{\partial}{\partial t} f(x,t) \dif x
+\end{equation}
+if certain conditions are met.
+Generally speaking, if \(f(\cdot, t) \in L^1(\R)\) for all \(t\), \(\frac{\partial f}{\partial t}\) exists and
+\[
+\left|\frac{\partial}{\partial t} f(x,t)\right| \leq |g(x)|
+\]
+for some \(g \in L^1(\R)\) and every \((x, t) \in \R^2\) outside a set of measure zero, then \eqref{eq:diff-int} holds.
 
 \subsection{Function spaces}
 
@@ -431,7 +577,7 @@ For \(1 \leq p < \infty\), we write \(f \in L^p(\R)\) if
 }}
 \end{equation}
 is finite.
-To be precise, we also need the requierement that \(f: \R \to \C\) is measurable.
+To be precise, we also need the requirement that \(f: \R \to \C\) is measurable.
 
 \begin{remark}
 There is also a definition of \(L^{\infty}(\R)\), where \(f \in L^{\infty}(\R)\) if
@@ -441,46 +587,119 @@ There is also a definition of \(L^{\infty}(\R)\), where \(f \in L^{\infty}(\R)\)
 }}
 \end{equation}
 is finite.
-The essential supremum is basically a supremum out of a set of measure zero.
+The essential supremum is basically a supremum outside  a set of measure zero.
+If \(f\) is in \(C(\R)\), then \(\|f\|_{\infty} = \sup_{x \in \R} |f(x)|\).
+If, in addition, \(f(x) \to 0\) as \(|x| \to \infty\), i.e.\ \(f \in C_0(\R)\),
+% then the supremum is attained and equals a maximum.
+then \(\|f\|_{\infty} = \max_{x \in \R} |f(x)|\).
 \end{remark}
 \begin{remark}
-Strictly speaking, \eqref{eq:Lp-norm} is not a norm on functions defined pointwise, but on equivalence classes of functions that are equal almost everywhere.
+Strictly speaking, \(\|\cdot\|_p\) for \(1 \le p \le \infty\), i.e. \cref{eq:Lp-norm,eq:Linf-norm}, is not a norm on functions defined pointwise, but on equivalence classes of functions that are equal almost everywhere.
 \end{remark}
 
-We write \(f \in C_b(\R)\) if \(f \in C(\R)\) and there exists \(M > 0\) such that \(|f(x)| \leq M\) for all \(x \in \R\) (i.e., \(f\) is bounded).
+We write \(f \in C_b(\R)\) if \(f \in C(\R)\) and there exists \(M > 0\) such that \(|f(x)| \leq M\) for all \(x \in \R\) (i.e., \(f\) is \emph{bounded}).
 Observe that \hl[2]{\(C_b(\R)  = L^{\infty}(\R) \cap C(\R)\)}.
 
-If \(f \in C_b(\R)\), then \(\|f\|_{\infty} = \max_{x \in \R} |f(x)|\).
-
-% In general, $L^p(\R)$ is not closed under pointwise products: even if $f,g\in L^p(\R)$, it may happen that $fg\notin L^p(\R)$.
-% For $1\le p\le \infty$, the \emph{conjugate exponent} $p'$ is defined by
-% \[
-% \frac{1}{p}+\frac{1}{p'}=1,
-% \qquad \text{with } \frac{1}{\infty}:=0 \text{ and } \frac{1}{0}:=\infty.
-% \]
-% If $f\in L^p(\R)$ and $g\in L^{p'}(\R)$, then $fg\in L^1(\R)$ and H\"older's inequality holds:
-% \[
-% \|fg\|_1 \le \|f\|_p\,\|g\|_{p'}.
-% \]
-
-% A subspace $Y\subseteq X$ of a normed space $(X,\|\cdot\|_X)$ is \emph{dense} in $X$ if for every $x\in X$ and every $\varepsilon>0$ there exists $y\in Y$ such that
-% \[
-% \|x-y\|_X<\varepsilon.
-% \]
-% The space
-% \[
-% C_c^\infty(\R):=\{f\in C^\infty(\R): \exists R>0 \text{ such that } f(x)=0 \text{ for } |x|>R\}
-% \]
-% is dense in $L^p(\R)$ for every $1\le p<\infty$. Hence, many statements can be proved first for $C_c^\infty(\R)$ and then extended to $L^p(\R)$ by approximation.
 
 
+Lebesgue \(L^p\) are not closed under product, i.e., \(f, g \in L^p(\R) \not\Rightarrow fg \in L^p(\R)\).
+However, if \(f\) and \(g\) are in conjugate spaces, something can be said about the product \(fg\).
+
+For \(1 \leq p \leq \infty\), the \emph{Lebesgue conjugate exponent} of \(p\) is the number \(p'\) defined by
+\[
+\frac{1}{p} + \frac{1}{p'} = 1
+\]
+where we set \(\frac{1}{\infty} := 0\) and \(\frac{1}{0} := \infty\).
+\begin{theorem}[H\"older's inequality]\label{thm:holder}
+If \(f \in L^p(\R)\) and \(g \in L^{p'}(\R)\), then \(fg \in L^1(\R)\) and
+\begin{equation}\label{eq:holder}
+\|fg\|_1 \leq \|f\|_p \|g\|_{p'}
+\qedhere
+\end{equation}
+\end{theorem}
+\begin{definition}\label{def:dense}
+Let \((X, \|\cdot\|_X)\) be a normed space and \(Y \subseteq X\) a subspace of \(X\).
+We say that \(Y\) is \emph{dense} in \(X\) if for every \(x \in X\) and every \(\varepsilon > 0\) there exists \(y \in Y\) such that \(\|x - y\|_X < \varepsilon\).
+\end{definition}
+\begin{example}
+\(\Q\) is dense in \(\R\).
+\end{example}
+\begin{example}
+Define
+\hl[1]{\(
+C_c^\infty(\R) := \{f \in C^\infty(\R) : \exists R > 0 \text{ such that } f(x) = 0 \text{ for } |x| > R\}
+\)}
+the space of \emph{compactly supported} smooth functions.
+\(C_c^\infty(\R)\) is dense in \(L^p(\R)\) for every \(1 \leq p < \infty\).
+\end{example}
+
+Often easier to prove a statement in e.g. \(C_c^\infty(\R)\) and then extend it to e.g. \(L^1(\R)\) by invoking e.g. \autoref{thm:dominated-convergence}.
 
 
 
+\subsection{Operator theory}
+Let \(X, Y\) be vector spaces (over \(\C\)).
+A linear operator \(T \colon X \to Y\) is a mapping that satisfies
+\begin{enumerate}[label=(\roman*)]
+\item \(T(x_1 + x_2) = T(x_1) + T(x_2)\) for all \(x_1, x_2 \in X\) \hfill (additivity)
+\item \(T(\lambda x) = \lambda T(x)\) for all \(x \in X\) and \(\lambda \in \C\) \hfill (homogeneity)
+\end{enumerate}
+We often write \(T x\) instead of \(T(x)\), if it does not cause ambiguity.
+
+\begin{example}
+ If \(X = \C^n\) and \(Y = \C^m\), then \(T\) is linear iff there exists a matrix \(\matr{M} \in \C^{m \times n}\) such that \(T(\vect{x}) = \matr{M} \vect{x}\) for all \(\vect{x} \in \C^n\).
+\end{example}
+Linear operators between finite-dimensional spaces are always identified with their matrix.
+They are fundamentally trivial.
+For instance, they are always continuous, a property not shared by linear operators between infinite-dimensional spaces.
+
+\begin{definition}
+Let \((X, \|\cdot\|_X)\) and \((Y, \|\cdot\|_Y)\) be normed spaces.
+A linear operator \(T: X \to Y\) is \emph{bounded} if there exists \(C > 0\) such that 
+\begin{equation}\label{eq:bounded-operator}
+\|T x\|_Y \leq C \|x\|_X
+\end{equation}
+for all \(x \in X\).
+The infimum of the constants \(C\) for which \eqref{eq:bounded-operator} holds is called the \emph{operator norm} of \(T\).
+\end{definition}
+
+Roughly speaking, \(T\) is bounded when bounded sets in \(X\) cannot grow too much under the action of \(T\).
+Observe  that if \((x_n)_{n \in \N}\) is a sequence in \(X\) converging to \(x\), then
+\[
+\|T x_n - T x\|_Y 
+=
+\|T(x_n - x)\|_Y
+\leq 
+C \|x_n - x\|_X \to 0
+\]
+as \(n \to \infty\), i.e. \(\lim_{n \to \infty} T x_n = T x\) in \(Y\), implying that \(T\) is continuous.
+This is a characterization of bounded linear operators between normed spaces.
 
 
+A normed space \((X, \|\cdot\|_X)\) is \emph{complete} if whenever \((x_n)_{n \in \N}\) satisfies
+\[
+\lim_{n,m \to \infty} \|x_n - x_m\|_X = 0
+\]
+there exists \(x \in X\) such that \(\lim_{n \to \infty} \|x - x_n\|_X = 0\), i.e. \(x = \lim_{n \to \infty} x_n\) in \(X\).
+A complete normed vector space is called a \emph{Banach space}.
+Loosely speaking, \(X\) is complete if it has no holes.
+\begin{example}
+\(\Q\) is not complete, \(\R\) and \(\C\) are complete.
+\end{example}
+\begin{example}
+\((L^p(\R), \|\cdot\|_p)\) is complete for every \(1 \leq p \leq \infty\).
+\end{example}
 
+\begin{remark}
+Finite-dimensional vector spaces (over a complete field) are always complete, with respect to any norm defined on them.
+\end{remark}
 
+\begin{theorem}
+Let \((X, \|\cdot\|_X)\) and \((Y, \|\cdot\|_Y)\) be normed spaces, with \(Y\) complete.
+Let \(Z\) be a dense subspace of \(X\) and \(T: Z \to Y\) be a linear bounded operator.
+Then, there exists a unique linear bounded operator \(\tilde{T}: X \to Y\) such that \(\tilde{T} x = T x\) for every \(x \in Z\).
+When there is no risk of ambiguity, we often write \(T\) instead of \(\tilde{T}\) for this \emph{extended operator}.
+\end{theorem}
 
 
 \clearpage
@@ -499,6 +718,52 @@ If a function is complex differentiable at every point of an open set \(D \subse
 then it is called \emph{holomorphic} on \(D\).
 
 
+\begin{digression}[Polya vector field]\label{dig:polya}
+Given a complex function \(f = u + \iu v\), we can associate with it the vector field \(\vect{V} := [u, -v]^\top\) (\(\vect{V}_1\) from \autoref{rem:curve-integral}), which corresponds to the complex conjugate of \(f\) in the sense that \(\vect{V} = [\re(\overline{f}), \im(\overline{f})]^\top\).
+
+The divergence and curl of \(\vect{V}\) are given by
+\[
+\begin{aligned}
+\operatorname{div}(\vect{V}) 
+&= 
+\nabla 
+\cdot 
+% \vect{V} 
+% = 
+% \begin{bmatrix}
+% \frac{\partial}{\partial x} \\
+% \frac{\partial}{\partial y}
+% \end{bmatrix}
+% \cdot
+\begin{bmatrix}
+u \\
+-v
+\end{bmatrix}
+=
+\frac{\partial u}{\partial x} - \frac{\partial v}{\partial y} \\
+\operatorname{rot}(\vect{V})
+&=
+\nabla 
+\times 
+% \vect{V}
+% =
+% \begin{bmatrix}
+% \frac{\partial}{\partial x} \\
+% \frac{\partial}{\partial y}
+% \end{bmatrix}
+% \times
+\begin{bmatrix}u \\
+-v
+\end{bmatrix}
+=
+- \left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}\right)
+\end{aligned}
+\]
+which vanish if \(f\) is holomorphic, because of \eqref{eq:cauchy-riemann}.
+\end{digression}
+
+
+
 We define the curve integral of a function \(f: \C \to \C\) along a curve \(C\) parametrized by \(z(t)\), \(t \in [a,b]\) as
 \begin{equation}\label{eq:curve-integral}
 {\color{red}\boxed{\color{black}
@@ -506,7 +771,7 @@ We define the curve integral of a function \(f: \C \to \C\) along a curve \(C\) 
 }}
 \end{equation}
 % give me a \remark to add here, that explain how the complex curve integral can bee interpreded as a wegintegral 2. art... 
-\begin{remark}
+\begin{remark}\label{rem:curve-integral}
 \eqref{eq:curve-integral} can be interpreted as a line integral of a vector field in \(\R^2\) (``Wegintegral 2. Art'').
 To that end, we write \(f = u(x,y) + \iu v(x,y)\) with \(u,v : \R^2 \to \R\), and the parametrization of \(C\) as \(z(t) = x(t) + \iu y(t)\), \(t \in [a,b]\).
 Then
@@ -561,6 +826,23 @@ and
 \),
 respectively.
 \end{remark}
+
+\begin{digression}[continues=dig:polya]
+In terms of the Polya vector field \(\vect{V}\), \eqref{eq:curve-integral} can be rewritten as
+\[
+\begin{aligned}
+\int_C f(z) \dif z
+&=
+\int_\Gamma \vect{V} \cdot \vect{T} \dif l 
++
+\iu \int_\Gamma \vect{V} \cdot \vect{N} \dif l \\
+&= 
+W_{\Gamma}(\vect{V}) + \iu F_{\Gamma}(\vect{V})
+\end{aligned}
+\]
+where \(\vect{T}\) and \(\vect{N}\) are the unit tangent and (right) normal vectors along \(\Gamma\), respectively, \(\dif l\) is the arc length differential.
+\(W_{\Gamma}(\vect{V})\) and \(F_{\Gamma}(\vect{V})\) denote the work and flux of \(\vect{V}\) along \(\Gamma\), respectively.
+\end{digression}
 
 
 
@@ -877,6 +1159,36 @@ It converges if both parts converge, so we apply the root test to both parts sep
 \]
 \end{itemize}
 
+\[
+\begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=1cm,y=1cm]
+
+% radii
+\def\Rone{1}
+\def\Rtwo{2}
+
+% annulus as ONE filled shape (hole removed)
+\path[fill=blue!20, draw, thick, even odd rule]
+  (0,0) circle (\Rtwo)
+  (0,0) circle (\Rone);
+
+% center point z0
+\fill (0,0) circle (1.2pt);
+\node[below] at (0,0) {$z_0$};
+
+% radii using polar coordinates + node at endpoint
+\draw[] (0,0) -- (40:\Rone)
+  node[pos=1, above right, inner sep=1pt] {$R_1$};
+
+\draw[] (0,0) -- (55:\Rtwo)
+  node[pos=1, above right, inner sep=1pt] {$R_2$};
+
+% label inside the annulus
+\pgfmathsetmacro{\Rmid}{(\Rone+\Rtwo)/2}
+\node at (235:\Rmid) {$D_{R_1,R_2}$};
+
+\end{tikzpicture}
+\]
+
 The Laurent series thus converges on the annulus
 \begin{equation}\label{eq:laurent-series-convergence}
 D_{R_1, R_2} := \{z \in \C : R_1 < |z - z_0| < R_2\}
@@ -884,6 +1196,7 @@ D_{R_1, R_2} := \{z \in \C : R_1 < |z - z_0| < R_2\}
 and diverges outside of it.
 The inner and outer boundary must be considered separately, as usual.
 On \(D_{R_1, R_2}\), the Laurent series defines a holomorphic function.
+
 
 Conversely, every function that is holomorphic on an annulus can be represented by a Laurent series.
 If
@@ -1078,15 +1391,12 @@ Observe that we normalized the integral in \eqref{eq:L2-norm} by means of the fa
 % $$
 Loosely speaking, we change the unit of measurement so that the length of $[-\pi, \pi]$ becomes $1$.
 
-% see Figure 2.1.
+
 % Differently from the other $L^p$ spaces, the space $L^2([-\pi, \pi])$ has the additional structure provided by the (sesquilinear) inner product:
 
 % $$
 % \langle f, g\rangle_{L^2}=\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \overline{g(x)} d x, \quad f, g \in L^2([-\pi, \pi]) .
 % $$
-
-
-% For the benefit of the reader, we recall the definition of inner product, that reflects the usual definition of inner product on $\R^d$, with the necessary precaution needed when working in the complex framework.
 
 
 
