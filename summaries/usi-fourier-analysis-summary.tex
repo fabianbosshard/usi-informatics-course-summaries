@@ -380,7 +380,12 @@
 \end{itemize}
 
 
-\subsection{Complex numbers}
+\subsection{Complex functions}
+If \(f: \R \to \C\), we may write \(f(x) = \Re(f(x)) + \iu \Im(f(x))\).
+We have \(|f(x)|^2 = f(x) \overline{f(x)}\), where \(\overline{f(x)} = \Re(f(x)) - \iu \Im(f(x))\).
+
+
+
 The imaginary part of \(\log z := \log |z| + \iu \arg(z)\) is not unique (see \autoref{fig:helicoid-log}).
 
 \begin{figure}[htbp]
@@ -428,7 +433,8 @@ yticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
     domain y=-3*pi:-pi,
     samples=30,
     samples y=30,
-    draw=black, line width=0.15pt,
+    draw=black, line width=0.01pt,
+    % draw=none,
     shader=flat,
     colormap={grayfill}{rgb255(0cm)=(220,220,220) rgb255(1cm)=(220,220,220)},
 ]
@@ -443,7 +449,8 @@ yticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
     domain y=-pi:pi,
     samples=30,
     samples y=30,
-    draw=black, line width=0.15pt,
+    draw=black, line width=0.01pt,
+    % draw=none,
     shader=flat,
     colormap={greenfill}{rgb255(0cm)=(80,200,120) rgb255(1cm)=(80,200,120)},
 ]
@@ -458,7 +465,8 @@ yticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$},
     domain y=pi:3*pi,
     samples=30,
     samples y=30,
-    draw=black, line width=0.15pt,
+    draw=black, line width=0.01pt,
+    % draw=none,
     shader=flat,
     colormap={grayfill}{rgb255(0cm)=(220,220,220) rgb255(1cm)=(220,220,220)},
 ]
@@ -483,10 +491,6 @@ To obtain uniqueness, we define
 where \(\operatorname{Arg}(z) := \arg(z) \cap (-\pi, \pi)\).
 This is called the \emph{principal branch} of the logarithm.
 
-
-\paragraph{Complex functions}
-If \(f: \R \to \C\), we may write \(f(x) = \Re(f(x)) + \iu \Im(f(x))\).
-We have \(|f(x)|^2 = f(x) \overline{f(x)}\), where \(\overline{f(x)} = \Re(f(x)) - \iu \Im(f(x))\).
 
 
 \subsection{Lebesgue integration}
@@ -721,7 +725,7 @@ When there is no risk of ambiguity, we often write \(T\) instead of \(\tilde{T}\
 
 
 \clearpage
-\section{Fourier Series}
+\section{Fourier Series on \(L^2([-\pi, \pi])\)}
 
 We write $f \in L^2([-\pi, \pi])$ if $f: \R \rightarrow \mathbb{C}$ is $2 \pi$-periodic and
 \begin{equation}\label{eq:L2-norm}
@@ -742,7 +746,8 @@ Observe that we normalized the integral in \eqref{eq:L2-norm} by means of the fa
 % =
 % 1
 % $$
-Loosely speaking, we change the unit of measurement so that the length of $[-\pi, \pi]$ becomes $1$.
+% Loosely speaking, we change the unit of measurement so that the length of $[-\pi, \pi]$ becomes $1$.
+Loosely speaking, we change the unit of measurement so that \(\operatorname{length}([-\pi, \pi]) = \frac{1}{2 \pi} \int_{-\pi}^\pi 1 \dif x = 1\).
 
 
 % Differently from the other $L^p$ spaces, the space $L^2([-\pi, \pi])$ has the additional structure provided by the (sesquilinear) inner product:
@@ -752,9 +757,47 @@ Loosely speaking, we change the unit of measurement so that the length of $[-\pi
 % $$
 
 
+Different from other \(L^p\) spaces, \(L^2([-\pi, \pi])\) has additional structure provided by the (sesquilinear) inner product
+\begin{equation}\label{eq:L2-inner-product}
+\langle f, g\rangle_{L^2}=\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \overline{g(x)} \dif x
+\end{equation}
+for \(f, g \in L^2([-\pi, \pi])\).
+\eqref{eq:L2-inner-product} \emph{induces} \eqref{eq:L2-norm} since \(\|f\|_2 = \sqrt{\langle f, f\rangle_{L^2}}\).
 
 
-% Here, we used the component-wise continuity of $\langle\cdot, \cdot\rangle_{L^2}$ to intertwine series and inner products. 
+\(L^2([-\pi, \pi])\) is not finite-dimensional, i.e. it does not admit a finite basis.
+However, it does have a countable orthonormal (Schauder) basis, i.e. there exists an infinite sequence of functions
+\(
+(e_n)_{n \in \Z} \subseteq L^2([-\pi, \pi])
+\) 
+such that
+\(
+\langle e_n, e_m\rangle_{L^2} = \delta_{n,m}
+\)
+and for every \(f \in L^2([-\pi, \pi])\) there exist unique \(a_n \in \C\) such that
+\begin{equation}\label{eq:fourier-series-convergence}
+f \stackrel{L^2}{=} \sum_{n} a_n e_n
+\end{equation}
+where the symbol \(\stackrel{L^2}{=}\) means that 
+\begin{equation}\label{eq:L2-convergence}
+\lim_{N \to \infty} \left\|f - \sum_{n=-N}^N a_n e_n\right\|_2 = 0
+\end{equation}
+i.e.
+the series converges in the \(L^2\) norm. % i.e. \(\lim_{N \to \infty} \|f - \sum_{n=-N}^N a_n e_n\|_2 = 0\).
+We can compute the coefficients explicitly since
+\[
+\langle f, e_m\rangle_{L^2} 
+=
+\left\langle \sum_{n} a_n e_n, e_m\right\rangle_{L^2}
+=
+\sum_{n} a_n \langle e_n, e_m\rangle_{L^2}
+=
+a_m
+\]
+where we used the component-wise continuity of \(\langle\cdot, \cdot\rangle_{L^2}\) to intertwine series and inner products.
+
+
+The prototype of such an orthonormal basis are the functions \(e_n(x) = \eu^{\iu n x}\) with \(n \in \Z\):
 For every $f \in L^2([-\pi, \pi])$,
 \begin{equation}\label{eq:fourier-series}
   f(x) \stackrel{L^2}{=} \sum_{n=-\infty}^{\infty} \hat{f}(n) \eu^{\iu n x}
@@ -773,11 +816,110 @@ is the $n$-th Fourier coefficient of $f$.
 \eqref{eq:fourier-series} is the Fourier series of $f$.
 
 
+\begin{theorem}\label{thm:parseval}
 For every \(f \in L^2([-\pi,\pi])\), we have 
 \begin{equation}\label{eq:parseval}
 \|f\|_2^2=\sum_{n=-\infty}^{\infty}|\hat{f}(n)|^2
 \end{equation}
 which is known as \hl{Parseval's theorem}.
+\end{theorem}
+\begin{proof}
+By the properties of the inner product,
+\[
+\begin{aligned}
+\|f\|_2^2
+&=
+\langle f, f\rangle_{L^2}
+=
+\left\langle \sum_{n} \hat{f}(n) e_n, \sum_{m} \hat{f}(m) e_m\right\rangle_{L^2} \\
+&=
+\sum_{n} \sum_{m} \hat{f}(n) \overline{\hat{f}(m)} \underbrace{\langle e_n, e_m\rangle_{L^2}}_{\delta_{n,m}}
+=
+\sum_{n} |\hat{f}(n)|^2
+\end{aligned}
+\]
+where we again used the component-wise continuity of \(\langle\cdot, \cdot\rangle_{L^2}\).
+\end{proof}
+
+
+
+\begin{corollary}\label{cor:fourier-zeros}
+If \(f \in L^2([-\pi, \pi])\) has \(\hat{f}(n) = 0\) for all \(n \in \Z\), then \(f = 0\) in \(L^2([-\pi, \pi])\).
+\end{corollary}
+
+\begin{proof}
+\(\hat{f}(n) = 0 \quad \forall n \in \Z 
+\quad \overset{\text{\eqref{eq:parseval}}}{\Rightarrow}\quad 
+ \|f\|_2^2 = 0
+% \quad \Rightarrow\quad 
+%  \|f\|_2 = 0
+\quad \Rightarrow\quad 
+ f = 0_{L^2([-\pi, \pi])}\)
+\end{proof}
+
+\begin{example}
+The \(C^\infty\) function \(\eu^{-{1}/{x^2}}\) is a prototypical example of a non-zero function with all vanishing Taylor coefficients at \(0\).
+\autoref{cor:fourier-zeros} shows that these pathologies do not occur for Fourier series.
+\end{example}
+
+
+\begin{corollary}[Riemann-Lebesgue lemma]\label{cor:riemann-lebesgue}
+We have 
+\[
+\lim_{|n| \to \infty} \hat{f}(n) = 0
+\]
+for every \(f \in L^2([-\pi, \pi])\).
+\end{corollary}
+\begin{proof}
+\(f \in L^2([-\pi, \pi]) 
+\quad \Rightarrow\quad 
+%  \|f\|_2^2 < \infty 
+% \quad \Rightarrow\quad 
+\|f\|_2^2 \overset{\text{\eqref{eq:parseval}}}{=}
+ \sum_{n} |\hat{f}(n)|^2 < \infty 
+\quad \Rightarrow\quad 
+ \lim_{|n| \to \infty} |\hat{f}(n)|^2 = 0\)
+\end{proof}
+
+
+Lebesgue spaces on finite measure spaces satisfy \(L^q \subseteq L^p\) for \(1 \leq p < q \leq \infty\).
+Thus, \(L^1([-\pi, \pi])\) is the largest of the \(L^p\) spaces on \([-\pi, \pi]\).
+Furthermore, the Fourier coefficients are well-defined for functions in \(L^1([-\pi, \pi])\), since
+\[
+|\hat{f}(n)| 
+=
+\left|\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \eu^{-\iu n x} \dif x\right|
+\leq
+\frac{1}{2 \pi} \int_{-\pi}^\pi |f(x)| \dif x
+=
+\|f\|_1
+\]
+exists and is finite for every \(f \in L^1([-\pi, \pi])\) and \(n \in \Z\).
+Proving results such as Corollaries \ref{cor:fourier-zeros} and \ref{cor:riemann-lebesgue} is considerably simplified in the \(L^2\) setting thanks to the inner product.
+Nevertheless, together with most of the results from this section, they also hold for \(L^1([-\pi, \pi])\).
+In fact, except for \eqref{eq:fourier-series-convergence} and \eqref{eq:parseval}, all statements from this section are already true in \(L^1([-\pi, \pi])\), but need to be proved by different methods.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -796,9 +938,16 @@ For $f \in L^1(\R)$ the Fourier transform
 \end{equation}
 converges for every $\xi \in \R$. 
 Moreover,
-\[
-|\hat{f}(\xi)| \leq \int_{-\infty}^{\infty}|f(x)| \dif x=\|f\|_1
-\]
+\begin{equation}\label{eq:fourier-transform-bound}
+|\hat{f}(\xi)| 
+=
+\left|\int_{-\infty}^{\infty} f(x) \eu^{-2\pi\iu\xi x} \dif x\right|
+\leq 
+\int_{-\infty}^{\infty}|f(x)| \underbrace{|\eu^{-2\pi\iu\xi x}|}_{=1}
+\dif x
+=
+\|f\|_1
+\end{equation}
 for any \(\xi \in \R\),
 \hl[2]{implying that $\hat{f}$ is in $L^{\infty}(\R)$} and the operator 
 \[
@@ -813,10 +962,26 @@ is bounded with
 The operator $\mathcal{F}$ defined above is called Fourier transform, and the function $\hat{f}$ is the Fourier transform of $f$.
 \end{definition}
 
-Recall that a function $f: \R \rightarrow \mathbb{C}$ is uniformly continuous on $\R$ if for every $\varepsilon>0$ there exists $\delta>0$ depending only on $\varepsilon$ such that
-$$
-|x-y|<\delta \quad \Longrightarrow \quad|f(x)-f(y)|<\varepsilon 
-$$
+\begin{definition}[Pointwise continuity]
+Let \(f:\R\to\C\) and \(x_0\in\R\).  
+We say \(f\) is continuous at \(x_0\) if for every \(\varepsilon>0\) there exists \(\delta>0\) such that
+\[
+|x-x_0|<\delta \Longrightarrow |f(x)-f(x_0)|<\varepsilon
+\qedhere
+\]
+\end{definition}
+\begin{definition}[Uniform continuity]
+Let \(f:\R\to\C\).  
+We say \(f\) is uniformly continuous on \(\R\) if for every \(\varepsilon>0\) there exists \(\delta>0\) such that for all \(x,y\in\R\)
+\[
+|x-y|<\delta \Longrightarrow |f(x)-f(y)|<\varepsilon
+\qedhere
+\]
+\end{definition}
+
+\begin{remark}
+Uniform continuity is stronger than pointwise continuity and implies it.
+\end{remark}
 
 
 \begin{fact}
@@ -824,8 +989,70 @@ The Fourier transform is a bounded operator from $L^1(\R)$ to $L^{\infty}(\R)$. 
 \end{fact}
 
 
+\begin{proof}
+Boundedness follows from \eqref{eq:fourier-transform-bound}.
+Fix \(\varepsilon > 0\).
+Choose \(R>0\) such that
+\[
+\int_{|x|>R} |f(x)|\,\dif x < \varepsilon
+\]
+i.e. the tail of \(f\) is smaller than \(\varepsilon\).
+For \(\xi,\eta\in\R\)
+\[
+|\hat f(\xi)-\hat f(\eta)|
+\le
+\int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
++
+\int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+\]
 
+Using \(|\eu^{\iu t}-1|\le |t|\) and \(|\eu^{\iu t}-1|\le 2\) we estimate the two terms separately.
 
+For \(|x|\le R\) we have
+\[
+\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|
+\le
+2\pi|\xi-\eta||x|
+\le
+2\pi R|\xi-\eta|
+\]
+hence
+\[
+\int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+\le
+2\pi R|\xi-\eta|\int_{|x|\le R}|f(x)|\,\dif x
+\le
+2\pi R\|f\|_1|\xi-\eta|
+\]
+
+For \(|x|>R\) we use \(\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\le 2\) to get
+\[
+\int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+\le
+2\int_{|x|>R}|f(x)|\,\dif x
+<
+2\varepsilon
+\]
+
+Combining the two estimates yields
+\[
+|\hat f(\xi)-\hat f(\eta)|
+\le
+2\pi R\|f\|_1|\xi-\eta| + 2\varepsilon
+\]
+
+Set
+\[
+\delta=\frac{\varepsilon}{3\,2\pi R\|f\|_1}
+\]
+
+Then \(|\xi-\eta|<\delta\) implies
+\[
+|\hat f(\xi)-\hat f(\eta)|<\varepsilon
+\]
+
+This proves uniform continuity of \(\hat f\)
+\end{proof}
 
 
 
