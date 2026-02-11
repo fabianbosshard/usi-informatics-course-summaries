@@ -762,7 +762,7 @@ Different from other \(L^p\) spaces, \(L^2([-\pi, \pi])\) has additional structu
 \langle f, g\rangle_{L^2}=\frac{1}{2 \pi} \int_{-\pi}^\pi f(x) \overline{g(x)} \dif x
 \end{equation}
 for \(f, g \in L^2([-\pi, \pi])\).
-\eqref{eq:L2-inner-product} \emph{induces} \eqref{eq:L2-norm} since \(\|f\|_2 = \sqrt{\langle f, f\rangle_{L^2}}\).
+\eqref{eq:L2-inner-product} \emph{induces} \eqref{eq:L2-norm} since \(\left\|f\right\|_2 = \sqrt{\left\langle f, f\right\rangle_{L^2}}\).
 
 
 \(L^2([-\pi, \pi])\) is not finite-dimensional, i.e. it does not admit a finite basis.
@@ -865,9 +865,9 @@ The \(C^\infty\) function \(\eu^{-{1}/{x^2}}\) is a prototypical example of a no
 
 \begin{corollary}[Riemann-Lebesgue lemma]\label{cor:riemann-lebesgue}
 We have 
-\[
+\begin{equation}\label{eq:riemann-lebesgue}
 \lim_{|n| \to \infty} \hat{f}(n) = 0
-\]
+\end{equation}
 for every \(f \in L^2([-\pi, \pi])\).
 \end{corollary}
 \begin{proof}
@@ -926,7 +926,7 @@ In fact, except for \eqref{eq:fourier-series-convergence} and \eqref{eq:parseval
 
 \clearpage
 
-\section{Fourier Transform}
+\section{Fourier Transform on \(L^1(\R)\)}
 
 
 
@@ -954,9 +954,12 @@ for any \(\xi \in \R\),
 \mathcal{F}: f \in L^1(\R) \mapsto \hat{f} \in L^{\infty}(\R)
 \]
 is bounded with
-\(
-\|\hat{f}\|_{\infty} \leq\|f\|_1 
-\).
+\begin{equation}\label{eq:fourier-transform-norm-bound}
+\|\hat{f}\|_{\infty} \leq \|f\|_1
+\end{equation}
+% \(
+% \|\hat{f}\|_{\infty} \leq\|f\|_1 
+% \).
 
 \begin{definition}
 The operator $\mathcal{F}$ defined above is called Fourier transform, and the function $\hat{f}$ is the Fourier transform of $f$.
@@ -984,75 +987,113 @@ Uniform continuity is stronger than pointwise continuity and implies it.
 \end{remark}
 
 
-\begin{fact}
+\begin{fact}\label{fact:fourier-transform-uniform-continuity} 
 The Fourier transform is a bounded operator from $L^1(\R)$ to $L^{\infty}(\R)$. Moreover, $\hat{f}$ is a uniformly continuous function on $\R$ for every $f \in L^1(\R)$.
 \end{fact}
 
 
+% \begin{proof}
+% Boundedness follows from \eqref{eq:fourier-transform-bound}.
+% Fix \(\varepsilon > 0\).
+% Choose \(R>0\) such that
+% \[
+% \int_{|x|>R} |f(x)|\,\dif x < \varepsilon
+% \]
+% i.e. the tail of \(f\) is smaller than \(\varepsilon\).
+% For \(\xi,\eta\in\R\)
+% \[
+% |\hat f(\xi)-\hat f(\eta)|
+% \le
+% \int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+% +
+% \int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+% \]
+
+% Using \(|\eu^{\iu t}-1|\le |t|\) and \(|\eu^{\iu t}-1|\le 2\) we estimate the two terms separately.
+
+% For \(|x|\le R\) we have
+% \[
+% \bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|
+% \le
+% 2\pi|\xi-\eta||x|
+% \le
+% 2\pi R|\xi-\eta|
+% \]
+% hence
+% \[
+% \int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+% \le
+% 2\pi R|\xi-\eta|\int_{|x|\le R}|f(x)|\,\dif x
+% \le
+% 2\pi R\|f\|_1|\xi-\eta|
+% \]
+
+% For \(|x|>R\) we use \(\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\le 2\) to get
+% \[
+% \int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
+% \le
+% 2\int_{|x|>R}|f(x)|\,\dif x
+% <
+% 2\varepsilon
+% \]
+
+% Combining the two estimates yields
+% \[
+% |\hat f(\xi)-\hat f(\eta)|
+% \le
+% 2\pi R\|f\|_1|\xi-\eta| + 2\varepsilon
+% \]
+
+% Set
+% \[
+% \delta=\frac{\varepsilon}{3\,2\pi R\|f\|_1}
+% \]
+
+% Then \(|\xi-\eta|<\delta\) implies
+% \[
+% |\hat f(\xi)-\hat f(\eta)|<\varepsilon
+% \]
+
+% This proves uniform continuity of \(\hat f\)
+% \end{proof}
+
 \begin{proof}
 Boundedness follows from \eqref{eq:fourier-transform-bound}.
-Fix \(\varepsilon > 0\).
-Choose \(R>0\) such that
-\[
-\int_{|x|>R} |f(x)|\,\dif x < \varepsilon
-\]
-i.e. the tail of \(f\) is smaller than \(\varepsilon\).
-For \(\xi,\eta\in\R\)
-\[
-|\hat f(\xi)-\hat f(\eta)|
-\le
-\int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
-+
-\int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
-\]
-
-Using \(|\eu^{\iu t}-1|\le |t|\) and \(|\eu^{\iu t}-1|\le 2\) we estimate the two terms separately.
-
-For \(|x|\le R\) we have
-\[
-\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|
-\le
-2\pi|\xi-\eta||x|
-\le
-2\pi R|\xi-\eta|
-\]
-hence
-\[
-\int_{|x|\le R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
-\le
-2\pi R|\xi-\eta|\int_{|x|\le R}|f(x)|\,\dif x
-\le
-2\pi R\|f\|_1|\xi-\eta|
-\]
-
-For \(|x|>R\) we use \(\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\le 2\) to get
-\[
-\int_{|x|>R} |f(x)|\,\bigl|\eu^{-2\pi\iu(\xi-\eta)x}-1\bigr|\,\dif x
-\le
-2\int_{|x|>R}|f(x)|\,\dif x
-<
-2\varepsilon
-\]
-
-Combining the two estimates yields
-\[
-|\hat f(\xi)-\hat f(\eta)|
-\le
-2\pi R\|f\|_1|\xi-\eta| + 2\varepsilon
-\]
-
-Set
-\[
-\delta=\frac{\varepsilon}{3\,2\pi R\|f\|_1}
-\]
-
-Then \(|\xi-\eta|<\delta\) implies
-\[
-|\hat f(\xi)-\hat f(\eta)|<\varepsilon
-\]
-
-This proves uniform continuity of \(\hat f\)
+For uniform continuity, consider 
+\(
+|\hat{f}(\xi + h) - \hat{f}(\xi)|
+\),
+apply \autoref{thm:dominated-convergence} and observe that the obtained expression goes to zero as \(h \to 0\) and does not depend on \(\xi\).
 \end{proof}
+
+
+
+% \begin{proof}
+% Boundedness follows from \eqref{eq:fourier-transform-bound}.
+% For uniform continuity, let \(h\in\R\) and \(\xi\in\R\). Then
+% \[
+% \hat f(\xi+h)-\hat f(\xi)
+% =
+% \int_{-\infty}^{\infty} f(x)\,\eu^{-2\pi\iu\xi x}\Bigl(\eu^{-2\pi\iu h x}-1\Bigr)\,\dif x
+% \]
+% hence
+% \[
+% |\hat f(\xi+h)-\hat f(\xi)|
+% \le
+% \int_{-\infty}^{\infty} |f(x)|\,\bigl|\eu^{-2\pi\iu h x}-1\bigr|\,\dif x
+% \]
+% For each \(x\), \(\bigl|\eu^{-2\pi\iu h x}-1\bigr|\to 0\) as \(h\to 0\), and
+% \[
+% |f(x)|\,\bigl|\eu^{-2\pi\iu h x}-1\bigr|
+% \le
+% 2|f(x)|
+% \]
+% By \autoref{thm:dominated-convergence},
+% \[
+% \int_{-\infty}^{\infty} |f(x)|\,\bigl|\eu^{-2\pi\iu h x}-1\bigr|\,\dif x \to 0
+% \]
+% as \(h\to 0\). The right-hand side depends only on \(h\), so \(\hat f\) is uniformly continuous
+% \end{proof}
 
 
 
@@ -1091,9 +1132,16 @@ Then for every \(\xi \ne 0\),
 \[
 \hat{f}(\xi) 
 =
+\int_{-A/2}^{A/2} \eu^{-2\pi\iu\xi x} \dif x
+=
 \frac{\sin( \pi A \xi)}{\pi \xi}
 \]
-and \(\hat{f}(0) = A\).
+and \(\hat{f}(0) 
+=
+% \int_{-\infty}^{\infty} f(x) \dif x
+% =
+\int_{-A/2}^{A/2} 1 \dif x
+= A\).
 \[
 \begin{tikzpicture}[scale=1.2, font=\footnotesize]
   \tikzset{>=latex}
@@ -1145,6 +1193,53 @@ which is called \emph{cardinal sine} or \emph{sinc function}.
 \begin{example}[Gaussian]
 The Fourier transform of \(f(x) = \eu^{-\pi x^2}\) is \(\hat{f}(\xi) = \eu^{-\pi \xi^2}\).
 \end{example}
+% \begin{example}[Gaussian]
+% Let \(\varphi(x)=\eu^{-\pi x^2}\). For \(\xi\in\R\),
+% \[
+% \hat\varphi(\xi)=\int_{-\infty}^{\infty}\eu^{-\pi x^2}\,\eu^{-2\pi\iu\xi x}\,\dif x
+% \]
+% Since \(x\varphi(x)\in L^1(\R)\), we may differentiate under the integral sign and obtain
+% \[
+% \hat\varphi'(\xi)
+% =
+% -2\pi\iu\int_{-\infty}^{\infty} x\,\eu^{-\pi x^2}\,\eu^{-2\pi\iu\xi x}\,\dif x
+% \]
+% Using \(\varphi'(x)=-2\pi x\varphi(x)\), we get \(x\varphi(x)=-(2\pi)^{-1}\varphi'(x)\) and hence
+% \[
+% \hat\varphi'(\xi)
+% =
+% \iu\int_{-\infty}^{\infty} \varphi'(x)\,\eu^{-2\pi\iu\xi x}\,\dif x
+% \]
+% Integration by parts yields
+% \[
+% \hat\varphi'(\xi)
+% =
+% \iu\Bigl(\bigl[\varphi(x)\,\eu^{-2\pi\iu\xi x}\bigr]_{-\infty}^{\infty}
+% -\int_{-\infty}^{\infty} \varphi(x)\,(-2\pi\iu\xi)\,\eu^{-2\pi\iu\xi x}\,\dif x\Bigr)
+% =
+% -2\pi\xi\,\hat\varphi(\xi)
+% \]
+% Thus \(\hat\varphi\) satisfies the ODE
+% \[
+% \hat\varphi'(\xi)=-2\pi\xi\,\hat\varphi(\xi)
+% \]
+% so
+% \[
+% \hat\varphi(\xi)=C\,\eu^{-\pi\xi^2}
+% \]
+% Evaluating at \(\xi=0\) gives
+% \[
+% C=\hat\varphi(0)=\int_{-\infty}^{\infty}\eu^{-\pi x^2}\,\dif x=1
+% \]
+% Therefore
+% \[
+% \hat\varphi(\xi)=\eu^{-\pi\xi^2}
+% \qedhere
+% \]
+% \end{example}
+
+
+
 \begin{example}
 The Fourier transform of \(f(x) = \eu^{-2 |x|}\) is \(\hat{f}(\xi) = \frac{1}{1 + \pi^2 \xi^2}\).
 \end{example}
@@ -1168,27 +1263,35 @@ The Fourier transform of \(f(x) = \eu^{-2 |x|}\) is \(\hat{f}(\xi) = \frac{1}{1 
 \subsubsection{Duality}
 Let \(f \in L^1(\R)\) and \(\lambda > 0\).
 
+\medskip
+
 Translation/Modulation:
 % {\color{red}\boxed{\color{black}
 \begin{align}
 \widehat{(T_{x_0} f)}(\xi)
-&= M_{-x_0}\hat f(\xi)\\
+&= M_{-x_0}\hat f(\xi)
+\label{eq:duality-translation}\\
 % = \eu^{-2\pi \iu x_0 \xi}\hat f(\xi)\\[0.4em]
 \widehat{(M_{\xi_0} f)}(\xi)
 &= T_{\xi_0}\hat f(\xi)
+\label{eq:duality-modulation}
 % = \hat f(\xi-\xi_0)
 \end{align}
 % }}
 
 
+\medskip
+
 Dilation:
 % {\color{red}\boxed{\color{black}
 \begin{align}
 \widehat{(f^{\lambda})}(\xi)
-&= (\hat f)_{\lambda}(\xi)\\
+&= (\hat f)_{\lambda}(\xi)
+\label{eq:duality-dilation-upper}\\
 % = \frac{1}{\lambda}\hat f(\xi/\lambda)\\[0.4em]
 \widehat{(f_{\lambda})}(\xi)
 &= (\hat f)^{\lambda}(\xi)
+\label{eq:duality-dilation-lower}
 % = \hat f(\lambda \xi)
 \end{align}
 % }}
@@ -1196,33 +1299,269 @@ Dilation:
 % \end{itemize}
 % \end{theorem}
 
+\eqref{eq:duality-dilation-upper} and \eqref{eq:duality-dilation-lower} are a prelude to the \emph{uncertainty principle}, which states that a function and its Fourier transform cannot both be arbitrarily well localized.
 Compressing a function in the time domain causes its Fourier transform to expand in the frequency domain and vice versa.
 
 
 
 \subsection{Convolution}
+For \(f, g \colon \R \to \C\), we define the convolution
 \begin{equation}\label{eq:convolution}\
   {\color{red}\boxed{\color{black}
   (f * g)(x) := \int_{-\infty}^{\infty} f(y) g(x - y) \dif y
   }}
 \end{equation}
 
-If \(f, g \in L^1(\R)\), then \(f * g \in L^1(\R)\) and \(\|f * g\|_1 \leq \|f\|_1 \|g\|_1\).
+If \(f, g \in L^1(\R)\), then \(\|f * g\|_1 \leq \|f\|_1 \|g\|_1\), so \(f * g \in L^1(\R)\).
+Furthermore, the convolution is commutative, associative and distributive.
 
-The Fourier transform turns convolution into pointwise multiplication:
+
+\begin{theorem}
+If \(f \in L^1(\R)\), \(g \in L^p(\R)\) for \(1 \leq p \leq \infty\), then 
+\begin{equation}\label{eq:young}
+\|f * g\|_p \leq \|f\|_1 \|g\|_p
+\end{equation}
+which is known as \hl{Young's inequality}.
+\end{theorem}
+
+
+
+
+\begin{theorem}
+The Fourier transform turns convolution into pointwise multiplication
 \begin{equation}\label{eq:convolution-theorem}
 % {\color{red}\boxed{\color{black}
 \widehat{(f * g)}(\xi) = \hat{f}(\xi) \cdot \hat{g}(\xi)
 % }}
 \end{equation}
+for every \(f, g \in L^1(\R)\) and \(\xi \in \R\).
+\end{theorem}
+\begin{proof}
+Plug \eqref{eq:convolution} into \eqref{eq:fourier-transform}, use Fubini, substitute \(x - y = z\) and \(x = z + y\).
+\end{proof}
 
 
-\subsection{Riemann-Lebesgue lemma}
-\begin{theorem}[Riemann-Lebesgue lemma]
-If \(f \in L^1(\R)\), then \(\hat{f}(\xi) \in C_0(\R)\), i.e., \(\hat{f}\) is continuous and vanishes outside a certain interval.
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Differentiation}
+
+Define 
+\begin{equation}
+C_0(\R) := \left\{f \in C(\R) \colon \lim_{|x| \to \infty} f(x) = 0\right\}
+\end{equation}
+i.e. \(f \in C_0(\R)\) if \(f\) is continuous and decays at infinity.
+
+
+It is widely known that the normed space \((C_0(\R), \|\cdot\|_\infty)\) is complete, i.e. a Banach space.
+
+
+
+
+
+\begin{theorem}\label{thm:differentiation-fourier}
+Let \(f \in L^1(\R)\).
+\begin{enumerate}[label=(\roman*)]
+\item If \(xf \in L^1(\R)\), then \(\hat{f} \in C^1(\R)\) and 
+\begin{equation}\label{eq:derivative-of-fourier}
+\hat{f}'(\xi) = \widehat{(-2\pi \iu xf)}(\xi)
+\end{equation}
+\item If \(f \in C^1(\R) \cap C_0(\R)\) and \(f' \in L^1(\R)\), then 
+\begin{equation}\label{eq:fourier-of-derivative}
+{\color{red}\boxed{\color{black}
+\widehat{(f')}(\xi) = 2\pi \iu \xi \hat{f}(\xi)
+}}
+\end{equation} 
+\qedhere
+\end{enumerate}
 \end{theorem}
 
-\subsection{Inversion formula}
+
+
+\begin{figure}[hb]
+\center
+\begin{tikzpicture}[scale=2,>=Latex, font=\footnotesize, every node/.style={font=\footnotesize}]
+
+  % angle (degrees)
+  \def\th{35}
+
+  \coordinate (O) at (0,0);
+  \coordinate (A) at (1,0);
+  \coordinate (B) at ({cos(\th)},{sin(\th)});
+
+  % --- styles (single source of truth, used also in legend) ---
+  \tikzset{
+    ax/.style   ={->, line width=0.35pt},
+    circ/.style ={line width=0.5pt},
+    rad/.style  ={line width=0.5pt, blue!60!black},
+    chord/.style={line width=0.7pt,  green!60!black},
+    arcl/.style ={line width=0.7pt,  orange},
+  }
+
+  % --- angle sector FIRST (so it sits behind lines) ---
+  \fill[blue!25] (O) -- (0.38,0) arc (0:\th:0.38) -- cycle;
+  \node at ({0.27*cos(\th/2)},{0.27*sin(\th/2)}) {$\vartheta$};
+
+  % axes (a bit longer)
+  \draw[ax] (-1.4,0) -- (1.5,0);
+  \draw[ax] (0,-1.4) -- (0,1.4);
+
+  % unit circle
+  \draw[circ] (O) circle (1);
+
+  % radius to e^{i\vartheta}
+  \draw[rad] (O) -- (B);
+
+  % green chord |e^{i\vartheta}-1|
+  \draw[chord] (A) -- (B);
+
+  % red arc length = \vartheta
+  \draw[arcl] (A) arc (0:\th:1);
+
+  % labels (move "1" off the circle a bit)
+  \node[below left] at (O) {$0$};
+  \node[below right] at (A) {$1$};
+  \node[above right] at (B) {$\eu^{\iu \vartheta}$};
+
+  % --- compact legend, short samples, matching line widths ---
+  \node[
+    draw,
+    line width=0.35pt,
+    inner sep=4pt,
+    anchor=north west
+  ] at (1.5,1.4) {%
+    \begin{tabular}{@{}l@{\;}l@{}}
+      \tikz{\draw[chord] (0,0)--(0.2,0);} & $|\eu^{\iu \vartheta}-1|$\\[2pt]
+      \tikz{\draw[arcl]  (0,0)--(0.2,0);} & $\vartheta$
+    \end{tabular}
+  };
+
+\end{tikzpicture}
+\caption{Inequality \(|\eu^{\iu \vartheta}-1| \leq \vartheta\) for \(\vartheta > 0\).}
+\label{fig:complex-inequality}
+\end{figure}
+
+% \begin{proof}
+% \begin{enumerate}[label=(\roman*)]
+% \item 
+% % write the proof sketch in prose, referencing all rerqured ingredients 9aobve figure, dom conv., uniform continuousness of fourier transf
+% \end{enumerate}
+% \end{proof}
+
+\begin{proof}
+\begin{enumerate}[label=(\roman*)]
+\item
+Consider 
+\smash{\(\frac{\hat f(\xi+h)-\hat f(\xi)}{h}\)},
+factor out the common exponential, so that the dependence on \(h\) appears only through 
+\smash{\(\frac{\eu^{-2\pi \iu h x}-1}{h}\)}.
+Using \autoref{fig:complex-inequality} with \(\vartheta=-2\pi h x\), this quotient is dominated by a constant multiple of \(|x f(x)|\).
+Since \(x f\in L^1(\R)\) by assumption, this provides an \(L^1\)-majorant, so we apply \autoref{thm:dominated-convergence}.
+This proves that \(\hat f\) is differentiable and that the derivative is given by \eqref{eq:derivative-of-fourier}.
+Moreover, \(\hat f'\) is a Fourier transform of an \(L^1\)-function, hence is (uniformly) continuous by \autoref{fact:fourier-transform-uniform-continuity}, so \(\hat f\in C^1(\R)\).
+
+\item
+Integrate by parts, using the fact that \(f\) vanishes at infinity.
+\qedhere
+\end{enumerate}
+\end{proof}
+
+
+By iterating \eqref{eq:derivative-of-fourier}, we obtain
+\begin{theorem}\label{thm:higher-derivatives}
+Let \(f \in L^1(\R) \cap C^k(\R)\), \(k \geq 1\). 
+If
+\begin{enumerate}[label=(\roman*)]
+\item \(f^{(j)} \in L^1(\R)\) for every \(j \leq k\)
+\item \(f^{(j)} \in C_0(\R)\) for every \(j \leq k-1\)
+\end{enumerate}
+then 
+% \(
+\begin{equation}\label{eq:higher-derivatives}
+  \widehat{(f^{(j)})}(\xi) = (2\pi \iu \xi)^j \hat{f}(\xi)
+\end{equation}
+% \) 
+for every \(j \leq k\) and \(\xi \in \R\).
+\end{theorem}
+
+
+As a corollary, if \(f \in C_c^\infty(\R)\), then \(\hat{f} \in C^\infty(\R)\) and \eqref{eq:higher-derivatives} holds for every \(j \in \N\).
+In particular, if \(f \in C_c^\infty(\R)\), by choosing \(j = 1\), we get
+\begin{equation}\label{eq:decay-of-fourier}
+|\hat{f}(\xi)| 
+\leq 
+\frac{|\widehat{(f')}(\xi)|}{2\pi |\xi|}
+\overset{\text{\eqref{eq:fourier-transform-norm-bound}}}{\leq}
+\frac{\|f'\|_1}{|\xi|}
+\to
+0
+\end{equation}
+as \(|\xi| \to \infty\).
+If \(f \in L^1(\R)\), by the density of \(C_c^\infty(\R)\) in \(L^1(\R)\), 
+there exists a sequence of functions \((f_i)_{i \in \N}\), \(f_i \in C_c^\infty(\R)\) such that \(\lim_{j \to \infty} \|f - f_j\|_1 = 0\).
+Then,
+\[
+\|\hat{f} - \hat{f_j}\|_\infty \overset{\text{\eqref{eq:fourier-transform-norm-bound}}}{\leq} \|f - f_j\|_1 \to 0
+\]
+as \(j \to \infty\).
+Thus, \(\hat{f} \in C_0(\R)\), since every \(\hat{f_j} \in C_0(\R)\) and \(C_0(\R)\) is complete with respect to \(\|\cdot\|_\infty\).
+In essence:
+\begin{theorem}[Riemann-Lebesgue lemma]
+If \(f \in L^1(\R)\), then 
+% \(
+\begin{equation}\label{eq:riemann-lebesgue-FT}
+{\color{red}\boxed{\color{black}
+\hat{f}(\xi) \in C_0(\R)
+}}
+\end{equation}
+% \), 
+i.e., \(\hat{f}\) is continuous and decays at infinity.
+\end{theorem}
+
+
+
+
+
+
+
+\subsection{Inverse}
+
+\begin{lemma}\label{lem:fourier-transform-switch}
+If \(f,g \in L^1(\R)\), then \(\int_{-\infty}^{\infty} \hat{f}(y) g(y) \dif y = \int_{-\infty}^{\infty} f(x) \hat{g}(x) \dif x\).
+\end{lemma}
+\begin{proof}
+Plug in \eqref{eq:fourier-transform} and use Fubini.
+\end{proof}
+
+\begin{theorem}\label{thm:approximate-identity}
+Let \(f,K \in L^1(\R)\) and \(\int_{-\infty}^{\infty} K(y) \dif y = 1\).
+Then
+\begin{equation}\label{eq:approximate-identity}
+\left\|f - K_\lambda * f\right\|_1 
+% =
+% \left\|f - \int_{-\infty}^{\infty} \frac{1}{\lambda} K({y}/{\lambda}) f(\cdot - y) \dif y\right\|_1
+\to 0
+\end{equation}
+as \(\lambda \to 0\).
+\end{theorem}
+\autoref{thm:approximate-identity} states that \(K_\lambda \to \delta\) as \(\lambda \to 0\) in the sense of distributions, where
+\(\delta \colon C(\R) \to \C\) 
+is the operator \(\delta(g) = g(0)\), \(g \in C(\R)\).
+
+
+
+
+
+
 \begin{theorem}\label{thm:inversion}
 Let \(f \in L^1(\R)\).
 Assume that \(\hat{f} \in L^1(\R)\).
@@ -1237,7 +1576,56 @@ If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
 \end{theorem}
 
 
+% \begin{proof}
+% Let $T_y f(x):=f(x-y)$. Since $\int_{\R}K=1$,
+% \[
+% (K_\lambda*f-f)(x)=\int_{\R}K_\lambda(y)\,\bigl(T_y f(x)-f(x)\bigr)\,\dif y .
+% \]
+% Hence, by Minkowski,
+% \[
+% \|K_\lambda*f-f\|_1
+% \le \int_{\R}|K_\lambda(y)|\,\|T_y f-f\|_1\,\dif y. \tag{$\ast$}
+% \]
+% Fix $\varepsilon>0$. Using density, pick $g\in C_c^\infty(\R)$ with $\|f-g\|_1<\varepsilon$.
+% Then for all $y$,
+% \[
+% \|T_y f-f\|_1 \le \|T_y(f-g)\|_1+\|T_y g-g\|_1+\|g-f\|_1
+% \le 2\varepsilon+\|T_y g-g\|_1.
+% \]
+% Insert into $(\ast)$ and use $\|K_\lambda\|_1=\|K\|_1$:
+% \[
+% \|K_\lambda*f-f\|_1
+% \le 2\varepsilon\|K\|_1 + \int_{\R}|K_\lambda(y)|\,\|T_y g-g\|_1\,\dif y.
+% \]
+% Now $g$ is uniformly continuous and compactly supported, hence $\|T_y g-g\|_1\to 0$ as $y\to 0$ and
+% $\|T_y g-g\|_1\le 2\|g\|_1$. Moreover,
+% \[
+% \int_{\R}|K_\lambda(y)|\,\|T_y g-g\|_1\,\dif y
+% =\int_{\R}|K(u)|\,\|T_{\lambda u}g-g\|_1\,\dif u \xrightarrow[\lambda\to 0]{} 0
+% \]
+% by dominated convergence. Therefore $\limsup_{\lambda\to 0}\|K_\lambda*f-f\|_1 \le 2\varepsilon\|K\|_1$.
+% Letting $\varepsilon\to 0$ gives $\|K_\lambda*f-f\|_1\to 0$.
+% \end{proof}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+\section{Fourier transform on \(L^2(\R)\)}
 
 \clearpage
 
