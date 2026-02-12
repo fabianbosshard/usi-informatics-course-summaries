@@ -183,6 +183,8 @@
 \newcommand{\iu}{\mathrm{i}}
 \newcommand{\sign}{\operatorname{sgn}}
 
+\newcommand{\oo}{\infty}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -545,7 +547,7 @@ Generally speaking, if \(f(\cdot, t) \in L^1(\R)\) for all \(t\), \(\frac{\parti
 \]
 for some \(g \in L^1(\R)\) and every \((x, t) \in \R^2\) outside a set of measure zero, then \eqref{eq:diff-int} holds.
 
-\subsection{Function spaces}
+\subsection{Function spaces: $C^k(\R)$, $L^p(\R)$, $C_b(\R)$, $C_c^\infty(\R)$}
 
 Classically, functions are classified in terms of their regularity.
 We write \(C(\R)\) for the space of continuous functions from \(\R\) to \(\C\).
@@ -725,7 +727,7 @@ When there is no risk of ambiguity, we often write \(T\) instead of \(\tilde{T}\
 
 
 \clearpage
-\section{Fourier Series on \(L^2([-\pi, \pi])\)}
+\section{Fourier Series on \(L^2([-\pi, \pi])\)}\label{sec:fourier-series-L2}
 
 We write $f \in L^2([-\pi, \pi])$ if $f: \R \rightarrow \mathbb{C}$ is $2 \pi$-periodic and
 \begin{equation}\label{eq:L2-norm}
@@ -882,7 +884,11 @@ for every \(f \in L^2([-\pi, \pi])\).
 \end{proof}
 
 
-Lebesgue spaces on finite measure spaces satisfy \(L^q \subseteq L^p\) for \(1 \leq p < q \leq \infty\).
+Lebesgue spaces on finite measure spaces satisfy the inclusion relations
+\begin{equation}\label{eq:Lp-inclusion}
+L^q \subseteq L^p
+\end{equation} 
+for \(1 \leq p < q \leq \infty\).
 Thus, \(L^1([-\pi, \pi])\) is the largest of the \(L^p\) spaces on \([-\pi, \pi]\).
 Furthermore, the Fourier coefficients are well-defined for functions in \(L^1([-\pi, \pi])\), since
 \[
@@ -1181,16 +1187,16 @@ and \(\hat{f}(0)
 \]
 Thus we conclude that \(\hat{f}(\xi) = \frac{\sin( \pi A \xi)}{\pi \xi}\), where we implicitly consider its continuous continuation.
 In particular, for \(A = 1\), we have
-\[
+\begin{equation}\label{eq:sinc-function}
 \hat{f}(\xi) = \frac{\sin( \pi \xi)}{\pi \xi}
 =:
 \operatorname{sinc}(\xi)
-\]
+\end{equation}
 which is called \emph{cardinal sine} or \emph{sinc function}.
 \end{example}
 
 
-\begin{example}[Gaussian]
+\begin{example}[Gaussian]\label{ex:gaussian-fourier-transform}
 The Fourier transform of \(f(x) = \eu^{-\pi x^2}\) is \(\hat{f}(\xi) = \eu^{-\pi \xi^2}\).
 \end{example}
 % \begin{example}[Gaussian]
@@ -1240,7 +1246,7 @@ The Fourier transform of \(f(x) = \eu^{-\pi x^2}\) is \(\hat{f}(\xi) = \eu^{-\pi
 
 
 
-\begin{example}
+\begin{example}\label{ex:decaying-exponential-fourier-transform}
 The Fourier transform of \(f(x) = \eu^{-2 |x|}\) is \(\hat{f}(\xi) = \frac{1}{1 + \pi^2 \xi^2}\).
 \end{example}
 
@@ -1515,7 +1521,7 @@ Then,
 as \(j \to \infty\).
 Thus, \(\hat{f} \in C_0(\R)\), since every \(\hat{f_j} \in C_0(\R)\) and \(C_0(\R)\) is complete with respect to \(\|\cdot\|_\infty\).
 In essence:
-\begin{theorem}[Riemann-Lebesgue lemma]
+\begin{theorem}[Riemann-Lebesgue lemma]\label{thm:riemann-lebesgue-lemma-FT}
 If \(f \in L^1(\R)\), then 
 % \(
 \begin{equation}\label{eq:riemann-lebesgue-FT}
@@ -1542,6 +1548,14 @@ If \(f,g \in L^1(\R)\), then \(\int_{-\infty}^{\infty} \hat{f}(y) g(y) \dif y = 
 Plug in \eqref{eq:fourier-transform} and use Fubini.
 \end{proof}
 
+
+\begin{lemma}\label{lem:L1-convergence-pointwise-convergence-implies-almost-everywhere-equality}
+If \(u_n \to f\) in \(L^1(\R)\) and \(u_n(x) \to g(x)\) for almost every \(x \in \R\), then we have \(f = g\) almost everywhere.
+\end{lemma}
+\begin{remark}
+Even if \(u_n(x) \to g(x)\) for all \(x \in \R\), we still only get \(f = g\) almost everywhere, not necessarily everywhere.
+\end{remark}
+
 \begin{theorem}\label{thm:approximate-identity}
 Let \(f,K \in L^1(\R)\) and \(\int_{-\infty}^{\infty} K(y) \dif y = 1\).
 Then
@@ -1556,24 +1570,6 @@ as \(\lambda \to 0\).
 \autoref{thm:approximate-identity} states that \(K_\lambda \to \delta\) as \(\lambda \to 0\) in the sense of distributions, where
 \(\delta \colon C(\R) \to \C\) 
 is the operator \(\delta(g) = g(0)\), \(g \in C(\R)\).
-
-
-
-
-
-
-\begin{theorem}\label{thm:inversion}
-Let \(f \in L^1(\R)\).
-Assume that \(\hat{f} \in L^1(\R)\).
-Then,
-\begin{equation}\label{eq:inversion}
-{\color{red}\boxed{\color{black}
-f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
-}}
-\end{equation}
-for every \(x \in \R\), outside a set of measure zero.
-If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
-\end{theorem}
 
 
 % \begin{proof}
@@ -1613,19 +1609,388 @@ If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
 
 
 
+\begin{theorem}\label{thm:inversion}
+Let \(f \in L^1(\R)\).
+Assume that \(\hat{f} \in L^1(\R)\).
+Then,
+\begin{equation}\label{eq:inversion}
+{\color{red}\boxed{\color{black}
+f(x) = \int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+}}
+\end{equation}
+for almost every \(x \in \R\). %, outside a set of measure zero.
+If \(f \in C(\R)\), then \eqref{eq:inversion} holds for every \(x \in \R\).
+\end{theorem}
+
+\begin{proof}
+Let \(\lambda > 0\) and \(x \in \R\). Consider 
+\begin{equation}\label{eq:fourier-transform-phi-definition}
+\phi(\xi) 
+:= 
+\eu^{2 \pi \iu \xi x} \eu^{-\pi \lambda^2 \xi^2}
+=
+M_x \varphi^\lambda(\xi)
+\end{equation}
+where \(\varphi(\xi) = \eu^{-\pi \xi^2}\) is the \nameref{ex:gaussian-fourier-transform}.
+By \eqref{eq:duality-modulation} and \eqref{eq:duality-dilation-upper},
+\begin{equation}\label{eq:fourier-transform-phi}
+\hat{\phi}(y)
+=
+T_x \hat{\varphi}_\lambda(y)
+=
+T_x \varphi_\lambda(y)
+=
+\frac{1}{\lambda} \varphi\left(\frac{y - x}{\lambda}\right)
+=
+\frac{1}{\lambda} \eu^{-\pi |x-y|^2/\lambda^2}
+=
+\varphi_\lambda(x-y)
+\end{equation}
+where we used the fact that \(\varphi\) is even and that \(\hat{\varphi} = \varphi\) (\autoref{ex:gaussian-fourier-transform}).
+
+Now on the one hand, by \autoref{lem:fourier-transform-switch},
+\[
+\begin{aligned}
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \eu^{-\pi \lambda^2 \xi^2} \dif \xi
+\overset{\text{\eqref{eq:fourier-transform-phi-definition}}}{=}&
+\int_{-\oo}^\oo \hat{f}(\xi) \phi(\xi) \dif \xi
+\overset{\text{\autoref{lem:fourier-transform-switch}}}{=}
+\int_{-\oo}^\oo f(y) \hat{\phi}(y) \dif y \\
+\overset{\text{\eqref{eq:fourier-transform-phi}}}{=}&
+\int_{-\oo}^\oo f(y) \varphi_\lambda(x-y) \dif y
+\overset{\text{\eqref{eq:convolution}}}{=}
+(f * \varphi_\lambda)(x)
+\end{aligned}
+\]
+and, since \(\int_{-\oo}^\oo \varphi(y) \dif y = 1\), by \autoref{thm:approximate-identity}
+\(f * \varphi_\lambda \to f\) as \(\lambda \to 0\) in \(L^1(\R)\).
+
+On the other hand, as \(\lambda \to 0\), for every \(x \in \R\),
+\[
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \eu^{-\pi \lambda^2 \xi^2} \dif \xi
+\to
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+\]
+by \autoref{thm:dominated-convergence} (with \(g(\xi) = \hat{f}(\xi)\)), which is in \(L^1(\R)\) by assumption.
+
+Setting e.g. \(u_n = f * \varphi_{1/n}\), by \autoref{lem:L1-convergence-pointwise-convergence-implies-almost-everywhere-equality}, we conclude that
+\begin{equation}\label{eq:inversion-almost-everywhere}
+f(x) = \int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+\end{equation}
+for almost all \(x \in \R\).
+Note that 
+\[
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi
+=
+\widehat{\hat{f}}(-x)
+\]
+and since \(\hat{f} \in L^1(\R)\),  by \autoref{fact:fourier-transform-uniform-continuity}, the right-hand side of \eqref{eq:inversion-almost-everywhere} defines a continuous function.
+Therefore, if \(f\) is is also continuous, \eqref{eq:inversion-almost-everywhere} holds for all \(x \in \R\).
+\end{proof}
 
 
+\begin{corollary}\label{cor:fourier-transform-injective}
+The operator \(\mathcal{F} \colon L^1(\R) \to L^\oo(\R)\) is injective.
+\end{corollary}
+\begin{proof}
+A linear operator \(T \colon X \to Y\) is injective if \(\Kern(T) = \{0\}\), i.e., \(Tx = 0 \implies x = 0\).
+Let \(f \in L^1(\R)\) and assume that \(\hat{f} = 0\).
+Then,
+\[
+f(x) \overset{L^1}{=} \int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \xi = 0
+\]
+where we used the fact that \(\hat{f} = 0 \in L^1(\R)\) to apply \autoref{thm:inversion}.
+\end{proof}
 
+\begin{corollary}
+Assume that \(f, \hat{f} \in L^1(\R)\). Then,
+\begin{equation}\label{eq:fourier-transform-periodicity}
+(\mathcal{F}^2 f)(x) = f(-x)
+\end{equation}
+in \(L^1(\R)\).
+In particular, \((\mathcal{F}^{-1} f)(x) = (\mathcal{F} f)(-x)\) and \((\mathcal{F}^4 f)(x) = f(x)\) in \(L^1(\R)\).
+\end{corollary}
 
+\begin{proof}
+We have
+\[
+(\mathcal{F}^2 f)(x) 
+=
+(\mathcal{F}(\hat{f}))(x)
+=
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{-2 \pi \iu \xi x} \dif \xi
+=
+\int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi (-x)} \dif \xi
+\overset{L^1}{=}
+f(-x)
+\]
+where we used \autoref{thm:inversion} in the last step.
 
-
+Therefore also,
+\(
+(\mathcal{F}^4 f)(x) = (\mathcal{F}^2 (\mathcal{F}^2 f))(x) = (\mathcal{F}^2 f)(-x) = f(x)
+\) and
+\(
+\mathcal{F}^{-1} f(x) = \mathcal{F}^{-1} (\mathcal{F}^2 f)(-x) = \mathcal{F}(-x) = \mathcal{F} f(-x)
+\) in the sense of \(L^1(\R)\).
+\end{proof}
 
 
 
 
 \clearpage
 
-\section{Fourier transform on \(L^2(\R)\)}
+\section{Fourier Transform on \(L^p(\R)\), \(1 < p \leq 2\)}
+
+\subsection{Fourier Transform on \(L^2(\R)\)}
+
+Unlike the function on \([-\pi, \pi]\) considered in \autoref{sec:fourier-series-L2},
+the \(L^p(\R)\) spaces do not satisfy \eqref{eq:Lp-inclusion}.
+In particular, \(L^1(\R)\) is not the largest Lebesgue space on \(\R\).
+Consequently, the results developed for \(L^1(\R)\) do not extend in an automatic way to \(L^2(\R)\).
+Note that the functions \(\{\eu^{2\pi \iu \xi x}\}_{\xi \in \R}\) are not even in \(L^2(\R)\), whereas \(\{\eu^{\iu n x}\}_{n \in \Z}\) was an orthonormal basis of \(L^2([-\pi, \pi])\).
+Instead of using orthonormal bases, the results for \(L^2(\R)\) are proven using functional analysis and operator theory, extending them by density from \(L^1(\R)\).
+
+\subsubsection{Inner product and Hilbert space structure}
+The one property that does also hold for \(L^2(\R)\) is that we have an inner product
+\begin{equation}\label{eq:L2R-inner-product}
+\langle f, g \rangle := \int_{-\infty}^\infty f(x) \overline{g(x)} \dif x
+\end{equation}
+for \(f, g \in L^2(\R)\). 
+The definition \eqref{eq:L2R-inner-product} is well-defined because, by \nameref{thm:holder},
+\[
+|\langle f, g \rangle| 
+=
+\left|\int_{-\infty}^\infty f(x) \overline{g(x)} \dif x\right|
+\leq
+% \int_{-\infty}^\infty |f(x) \overline{g(x)}| \dif x
+% =
+\int_{-\infty}^\infty |f(x) g(x)| \dif x
+=
+\|f \cdot g\|_1
+\leq
+\|f\|_2 \|g\|_2
+\]
+which is finite since \(f, g \in L^2(\R)\).
+The norm induced by \eqref{eq:L2R-inner-product} is precisely the \(L^2\)-norm, since
+\(
+\|f\|_2^2 = \langle f, f \rangle
+\).
+Since \(L^2(\R)\) is complete with respect to this norm, it is a \emph{Hilbert space}.
+
+\begin{definition}
+The \(L^2\)-norm of a (measurable) function \(f \to \C\) is called the \emph{energy} of \(f\).
+A \emph{finite-energy signal} is a function in \(L^2(\R)\).
+\end{definition}
+
+
+
+\subsubsection{Definition and properties}
+
+For \(f \in L^2(\R)\), the integral \eqref{eq:fourier-transform} may not converge.
+\begin{theorem}
+Let \(f \in L^2(\R)\).
+Then,
+\begin{equation}\label{eq:fourier-transform-L2}
+\hat{f}(\xi) := \lim_{R \to \infty} \int_{-R}^R f(x) \eu^{-2\pi \iu \xi x} \dif x
+\end{equation}
+converges for almost every \(\xi \in \R\) and is in \(L^2(\R)\).
+\end{theorem}
+
+\begin{theorem}
+The linear operator \(\mathcal{F} \colon f \in L^2(\R) \mapsto \hat{f} \in L^2(\R)\) satisfies:
+\begin{enumerate}[label=(\roman*)]
+\item \(\mathcal{F} \colon L^2(\R) \to L^2(\R)\) is bounded, injective and surjective. Its inverse is also bounded.
+\item For every \(f, g \in L^2(\R)\), \(\langle f, \hat{g} \rangle = \langle f, g \rangle\), in particular \(\|f\|_2 = \|\hat{f}\|_2\), i.e., \(\mathcal{F}\) is a surjective isometry of \(L^2(\R)\).\footnote{in fact, a unitary operator}
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Inverse]
+Let \(f \in L^2(\R)\).
+Then, 
+\(
+f(x) \overset{L^2}{=} 
+\lim_{R \to \infty} \int_{-R}^R \hat{f}(\xi) \eu^{2\pi \iu \xi x} \dif \xi
+\).
+\end{theorem}
+
+Different from \(L^1(\R)\), where where \(\hat{f}\) is continuous and defined for every \(\xi \in \R\), the Fourier transform of \(f \in L^2(\R)\) does not have the same nice behavior.
+In general, the Fourier transform of \(f \in L^2(\R)\) is not a continuous function, and may even be infinite for some \(\xi \in \R\).
+
+\begin{example}
+For \(f(x) = \frac{\sin(\pi x)}{\pi x} \in L^2(\R)\), we have 
+\[
+\hat{f}(\xi) = 
+\begin{cases}
+0 & |\xi| > 1/2 \\
+1/2 & |\xi| = 1/2 \\
+1 & |\xi| < 1/2
+\end{cases}
+\]
+which is not continuous.
+\end{example}
+
+\begin{example}
+Take
+\(
+f(x) = \frac{1}{(1 + |x|)^\alpha}
+\) for \(1/2 < \alpha < 1\).
+Then, \(f \in L^2(\R) \setminus L^1(\R)\) and
+\[
+\hat{f}(0) = \lim_{R \to \infty} \int_{-R}^R f(x) \dif x = \int_{-\infty}^\infty f(x) \dif x = \|f\|_1 = \infty
+\]
+ by the monotone convergence theorem (since \(f \geq 0\)).
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+% We defined the Fourier transform F on L 1 (R) and L 2 (R). We showed that
+% F : L 1 (R) → L ∞ (R) is bounded,
+% and that
+% F : L 2 (R) → L 2 (R)
+% is a surjective isometry (in fact, a unitary operator).
+% In particular, for p = 2 we have the complete characterization
+% F(L 2 (R)) = L 2 (R).
+% On the other hand, F(L 1 (R)) is far from being L ∞ (R). By the Riemann–Lebesgue Lemma we know that
+% F(L 1 (R)) ⊆ C 0 (R) ∩ UC(R) ⊂ L ∞ (R),
+% where UC(R) denotes the space of uniformly continuous functions on R and C 0 (R) ∩ UC(R) is much smaller that L ∞ (R): there exist functions in C 0 (R) ∩ UC(R) which are not the Fourier transform of any L 1 function. In other words,
+% F(L 1 (R)) ⊂ C 0 (R) ∩ UC(R)
+% (strict inclusion). Unlike the case p = 2, the image of L 1 (R) under the Fourier transform does not admit a simple characterization. More generally, the behavior of F on L p spaces is subtle. First of all, it can be proven that if f ∈ L p (R), 1 < p < 2, there exist (non-unique) f 1 ∈ L 1 (R) and f 2 ∈ L 2 (R) so that f = f 1 + f 2 . Hence, we may define the Fourier transform of f as f ˆ = f 1 ˆ + f 2 ˆ . Moreover, this definition does not depend on the choice of f 1 and f 2 . Concerning the boundedness of F on L p (R), 1 < p < 2, the following celebrated result holds. 36
+% CHAPTER 2. FOURIER TRANSFORM ON L 1 (R)
+% ′
+% Theorem 2.6.1 (Hausdorff-Young). The Fourier transform F maps L p (R) to L p (R) for every 1 ≤ p ≤ 2. Moreover,
+% d/2 p1/p  ∥ f ∥ p ′ ≤ (p ′ ) 1/p ′ ∥ f ∥ p , ( )
+% f ∈ L p (R)
+% (Babenko–Beckner inequality).
+% The mapping
+% ′ F : L p (R) → L p (R),
+% 1 ≤ p ≤ 2,
+% is surjective if and only if p = 2. In fact, F(L p (R)) admits an explicit characterization only in this case. Moreover, for every p > 2 there does always exist a function f ∈ L p (R) such that
+% f ˆ ∈ / L q (R)
+% for any 0 < q ≤ ∞.
+% Even worse, one can find f ∈ L p (R) such that
+% f ˆ ∈ / L loc 1 (R),
+% where L loc 1 (R) denotes the space of measurable functions f : R → C satisfying
+% | f(x) | dx < ∞ ∫ K
+% for every compact K ⊆ R
+% (locally integrable functions). In order to develop a Fourier theory for L p functions beyond the case p = 2, one is naturally led to the framework of distributions.
+% 2.7 Final remarks
+% The whole theory in this section can be formulated for multivariate functions f : R d → C, where
+% if f ∈ L 1 (R d ),
+% f( ˆ ξ ) = f(x)e −2πi ξ ·x dx. ∫ Rd 
+% Here, ξ ·x = ∑ j=1 d xj  as
+% ξj 
+% is the standard inner product in R d . The lower dilation must be re-defined
+% 1 f λ (x) = f(x/λ), λd 
+% and Gaussians are replaced by multivariate Gaussians φ (x) = e −π x 2 | | .
+% Generally speaking, the notation is slightly more difficult to digest in the multivariate setting, for instance we need to introduce the multi-index notation: if α = (α 1 , . . . , α d ) ∈ N d and x =
+% (x 1 , . . . , x d ) ∈ R d ,
+% x α = x 1 α 1 · . . . · x d α d ,
+% and if f ∈ C k (R d ) and | α | = α 1 + . . . + α d ≤ k, we define
+% ∂ | α | D α f(x) = f(x). ∂x 1 α 1 . . . ∂xd α d 
+% Under this notation, formulas such that in Theorem 2.3.5, become
+% (D α f) ∧ ( ξ ) = (2πi ξ ) α f( ˆ ξ ),
+% where (2πi ξ ) α = (2πi) α |
+% |
+% ξ1 α 1 
+% · ... · ξ d α d .
+
+
+
+\subsection{Fourier transform on \(L^p(\R)\), \(1 < p < 2\)}
+For \(p = 2\), we have the complete characterization \(\mathcal{F}(L^2(\R)) = L^2(\R)\).
+On the other hand, for \(p = 1\), \(\mathcal{F}(L^1(\R))\) is far from being \(L^\infty(\R)\).
+By \autoref{fact:fourier-transform-uniform-continuity} and \autoref{thm:riemann-lebesgue-lemma-FT}, we know that
+\[
+\mathcal{F}(L^1(\R)) \subseteq C_0(\R) \cap C_\text{uni}(\R) \subsetneq L^\infty(\R)
+\]
+where \(C_\text{uni}(\R)\) denotes the space of uniformly continuous functions on \(\R\).
+The first inclusion is also strict, i.e.,
+\begin{equation}\label{eq:fourier-transform-image-L1}
+{\color{red}\boxed{\color{black}
+\mathcal{F}(L^1(\R)) 
+\subsetneq 
+C_0(\R) \cap C_\text{uni}(\R)
+\subsetneq
+L^\infty(\R)
+}}
+\end{equation}
+since there exist functions in \(C_0(\R) \cap C_\text{uni}(\R)\) which are not the Fourier transform of any \(L^1\)-function.
+Unlike \(p = 2\), the image of \(L^1(\R)\) under the Fourier transform does not admit a simple characterization.
+
+In general, the behavior of \(\mathcal{F}\) on \(L^p(\R)\) is subtle.
+It can be proven that if \(f \in L^p(\R)\), \(1 < p < 2\), there exist (non-unique) \(f_1 \in L^1(\R)\) and \(f_2 \in L^2(\R)\) such that \(f = f_1 + f_2\).
+Hence, we may define the Fourier transform of \(f\) as \(\hat{f} = \hat{f_1} + \hat{f_2}\).
+Moreover, this definition does not depend on the choice of \(f_1\) and \(f_2\).
+We have the following celebrated result regarding boundedness:
+
+\begin{theorem}[Hausdorff-Young]\label{thm:hausdorff-young}
+The Fourier transform \(\mathcal{F}\) maps \(L^p(\R)\) to \(L^{p'}(\R)\) for every \(1 \leq p \leq 2\), where \(p' = \frac{p}{p-1}\) is the conjugate exponent of \(p\).
+Moreover,
+\begin{equation}\label{eq:hausdorff-young}
+\|\hat{f}\|_{p'} 
+\leq
+\left(\frac{p^{1/p}}{(p')^{1/p'}}\right)^{1/2} \|f\|_p
+\end{equation}
+for every \(f \in L^p(\R)\).
+Also known as the \hl{Babenko–Beckner inequality}.
+\end{theorem}
+
+The mapping \(\mathcal{F} \colon L^p(\R) \to L^{p'}(\R)\), \(1 \leq p \leq 2\), is surjective if and only if \(p = 2\).
+In fact, \(\mathcal{F}(L^p(\R))\) admits an explicit characterization only in this case.
+Moreover, for every \(p > 2\) there does always exist a function \(f \in L^p(\R)\) such that \(\hat{f} \notin L^q(\R)\) for any \(0 < q \leq \infty\).
+Even worse, one can find \(f \in L^p(\R)\) such that \(\hat{f} \notin L^1_\text{loc}(\R)\), where \(L^1_\text{loc}(\R)\) denotes the space of measurable functions \(f \colon \R \to \C\) satisfying 
+\[
+\int_K |f(x)| \dif x < \infty
+\]
+for every compact \(K \subseteq \R\) (locally integrable functions).
+In order to develop a Fourier theory for \(L^p\) functions beyond the case \(p = 2\), one is naturally led to the framework of \emph{distributions}.
+
+
+
+\subsection{Multivariate Fourier transform}
+For a multivariate function \(f \colon \R^d \to \C\), \(f \in L^1(\R^d)\), we define 
+\begin{equation}\label{eq:multivariate-fourier-transform}
+\hat{f}(\vect{\xi}) := \int_{\R^d} f(\vect{x}) \eu^{-2\pi \iu \vect{\xi} \cdot \vect{x}} \dif \vect{x}
+\end{equation}
+where \(\vect{\xi} \cdot \vect{x} = \sum_{j=1}^d \xi_j x_j\) is the standard inner product in \(\R^d\).
+
+The lower dilation must be re-defined as
+\[
+f_\lambda(\vect{x}) = \frac{1}{\lambda^d} f\left(\frac{\vect{x}}{\lambda}\right)
+\]
+and Gaussians are replaced by multivariate Gaussians \(\varphi(\vect{x}) = \eu^{-\pi \|\vect{x}\|^2}\).
+
+If \(f \in C^k(\R^d)\) and \(|\vect{\alpha}| = \alpha_1 + \cdots + \alpha_d \leq k\), we define
+\[
+D^{\vect{\alpha}} f(\vect{x}) 
+=
+\frac{\partial^{|\vect{\alpha}|}}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}} f(\vect{x})
+\]
+where \(\vect{\alpha} = (\alpha_1, \ldots, \alpha_d) \in \N^d\) is a multi-index.
+Under this notation, \autoref{eq:higher-derivatives} becomes
+\[
+\widehat{D^{\vect{\alpha}} f}(\vect{\xi}) 
+=
+(2\pi \iu \vect{\xi})^{\vect{\alpha}} \hat{f}(\vect{\xi})
+\]
+where \((2\pi \iu \vect{\xi})^{\vect{\alpha}} = (2\pi \iu)^{|\vect{\alpha}|} \xi_1^{\alpha_1} \cdots \xi_d^{\alpha_d}\).
+
+
+
+
+
+
+
 
 \clearpage
 
@@ -1638,6 +2003,8 @@ Then,
 \widehat{(f')}(\xi) = 2\pi \iu \xi \cdot \hat{f}(\xi)
 }}
 \end{equation}
+
+
 
 
 
