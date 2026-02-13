@@ -547,7 +547,8 @@ Generally speaking, if \(f(\cdot, t) \in L^1(\R)\) for all \(t\), \(\frac{\parti
 \]
 for some \(g \in L^1(\R)\) and every \((x, t) \in \R^2\) outside a set of measure zero, then \eqref{eq:diff-int} holds.
 
-\subsection{Function spaces: $C^k(\R)$, $L^p(\R)$, $C_b(\R)$, $C_c^\infty(\R)$}
+% \subsection{Function spaces: $C^k(\R)$, $L^p(\R)$, $C_b(\R)$, $C_c^\infty(\R)$}
+\subsection{Function spaces: $C^k$, $L^p$, $C_b$, $C_c^\infty$}
 
 Classically, functions are classified in terms of their regularity.
 We write \(C(\R)\) for the space of continuous functions from \(\R\) to \(\C\).
@@ -727,7 +728,8 @@ When there is no risk of ambiguity, we often write \(T\) instead of \(\tilde{T}\
 
 
 \clearpage
-\section{Fourier Series on \(L^2([-\pi, \pi])\)}\label{sec:fourier-series-L2}
+% \section{Fourier Series on \(L^2([-\pi, \pi])\)}\label{sec:fourier-series-L2}
+\section{Fourier Series}\label{sec:fourier-series-L2}
 
 We write $f \in L^2([-\pi, \pi])$ if $f: \R \rightarrow \mathbb{C}$ is $2 \pi$-periodic and
 \begin{equation}\label{eq:L2-norm}
@@ -932,7 +934,8 @@ In fact, except for \eqref{eq:fourier-series-convergence} and \eqref{eq:parseval
 
 \clearpage
 
-\section{Fourier Transform on \(L^1(\R)\)}
+% \section{Fourier Transform on \(L^1(\R)\)}
+\section{Fourier Transform on $L^1$}
 
 
 
@@ -1383,9 +1386,9 @@ Let \(f \in L^1(\R)\).
 \end{equation}
 \item If \(f \in C^1(\R) \cap C_0(\R)\) and \(f' \in L^1(\R)\), then 
 \begin{equation}\label{eq:fourier-of-derivative}
-{\color{red}\boxed{\color{black}
+% {\color{red}\boxed{\color{black}
 \widehat{(f')}(\xi) = 2\pi \iu \xi \hat{f}(\xi)
-}}
+% }}
 \end{equation} 
 \qedhere
 \end{enumerate}
@@ -1493,7 +1496,9 @@ If
 then 
 % \(
 \begin{equation}\label{eq:higher-derivatives}
+  {\color{red}\boxed{\color{black}
   \widehat{(f^{(j)})}(\xi) = (2\pi \iu \xi)^j \hat{f}(\xi)
+  }}
 \end{equation}
 % \) 
 for every \(j \leq k\) and \(\xi \in \R\).
@@ -1609,7 +1614,7 @@ is the operator \(\delta(g) = g(0)\), \(g \in C(\R)\).
 
 
 
-\begin{theorem}\label{thm:inversion}
+\begin{theorem}[Inverse]\label{thm:inversion}
 Let \(f \in L^1(\R)\).
 Assume that \(\hat{f} \in L^1(\R)\).
 Then,
@@ -1702,13 +1707,17 @@ f(x) \overset{L^1}{=} \int_{-\oo}^\oo \hat{f}(\xi) \eu^{2 \pi \iu \xi x} \dif \x
 where we used the fact that \(\hat{f} = 0 \in L^1(\R)\) to apply \autoref{thm:inversion}.
 \end{proof}
 
-\begin{corollary}
+\begin{corollary}\label{cor:fourier-transform-periodicity}
 Assume that \(f, \hat{f} \in L^1(\R)\). Then,
 \begin{equation}\label{eq:fourier-transform-periodicity}
 (\mathcal{F}^2 f)(x) = f(-x)
 \end{equation}
 in \(L^1(\R)\).
-In particular, \((\mathcal{F}^{-1} f)(x) = (\mathcal{F} f)(-x)\) and \((\mathcal{F}^4 f)(x) = f(x)\) in \(L^1(\R)\).
+In particular, 
+\begin{equation}\label{eq:fourier-transform-inverse-periodicity}
+(\mathcal{F}^{-1} f)(x) = (\mathcal{F} f)(-x)
+\end{equation}
+and \((\mathcal{F}^4 f)(x) = f(x)\) in \(L^1(\R)\).
 \end{corollary}
 
 \begin{proof}
@@ -1740,9 +1749,11 @@ Therefore also,
 
 \clearpage
 
-\section{Fourier Transform on \(L^p(\R)\), \(1 < p \leq 2\)}
+% \section{Fourier Transform on \(L^p(\R)\), \(1 < p \leq 2\)}
+\section{Fourier Transform on \(L^p\)}
 
-\subsection{Fourier Transform on \(L^2(\R)\)}
+% \subsection{Fourier Transform on \(L^2(\R)\)}
+\subsection{Fourier Transform on \(L^2\)}
 
 Unlike the function on \([-\pi, \pi]\) considered in \autoref{sec:fourier-series-L2},
 the \(L^p(\R)\) spaces do not satisfy \eqref{eq:Lp-inclusion}.
@@ -1847,66 +1858,8 @@ Then, \(f \in L^2(\R) \setminus L^1(\R)\) and
 
 
 
-
-
-
-
-
-
-% We defined the Fourier transform F on L 1 (R) and L 2 (R). We showed that
-% F : L 1 (R) → L ∞ (R) is bounded,
-% and that
-% F : L 2 (R) → L 2 (R)
-% is a surjective isometry (in fact, a unitary operator).
-% In particular, for p = 2 we have the complete characterization
-% F(L 2 (R)) = L 2 (R).
-% On the other hand, F(L 1 (R)) is far from being L ∞ (R). By the Riemann–Lebesgue Lemma we know that
-% F(L 1 (R)) ⊆ C 0 (R) ∩ UC(R) ⊂ L ∞ (R),
-% where UC(R) denotes the space of uniformly continuous functions on R and C 0 (R) ∩ UC(R) is much smaller that L ∞ (R): there exist functions in C 0 (R) ∩ UC(R) which are not the Fourier transform of any L 1 function. In other words,
-% F(L 1 (R)) ⊂ C 0 (R) ∩ UC(R)
-% (strict inclusion). Unlike the case p = 2, the image of L 1 (R) under the Fourier transform does not admit a simple characterization. More generally, the behavior of F on L p spaces is subtle. First of all, it can be proven that if f ∈ L p (R), 1 < p < 2, there exist (non-unique) f 1 ∈ L 1 (R) and f 2 ∈ L 2 (R) so that f = f 1 + f 2 . Hence, we may define the Fourier transform of f as f ˆ = f 1 ˆ + f 2 ˆ . Moreover, this definition does not depend on the choice of f 1 and f 2 . Concerning the boundedness of F on L p (R), 1 < p < 2, the following celebrated result holds. 36
-% CHAPTER 2. FOURIER TRANSFORM ON L 1 (R)
-% ′
-% Theorem 2.6.1 (Hausdorff-Young). The Fourier transform F maps L p (R) to L p (R) for every 1 ≤ p ≤ 2. Moreover,
-% d/2 p1/p  ∥ f ∥ p ′ ≤ (p ′ ) 1/p ′ ∥ f ∥ p , ( )
-% f ∈ L p (R)
-% (Babenko–Beckner inequality).
-% The mapping
-% ′ F : L p (R) → L p (R),
-% 1 ≤ p ≤ 2,
-% is surjective if and only if p = 2. In fact, F(L p (R)) admits an explicit characterization only in this case. Moreover, for every p > 2 there does always exist a function f ∈ L p (R) such that
-% f ˆ ∈ / L q (R)
-% for any 0 < q ≤ ∞.
-% Even worse, one can find f ∈ L p (R) such that
-% f ˆ ∈ / L loc 1 (R),
-% where L loc 1 (R) denotes the space of measurable functions f : R → C satisfying
-% | f(x) | dx < ∞ ∫ K
-% for every compact K ⊆ R
-% (locally integrable functions). In order to develop a Fourier theory for L p functions beyond the case p = 2, one is naturally led to the framework of distributions.
-% 2.7 Final remarks
-% The whole theory in this section can be formulated for multivariate functions f : R d → C, where
-% if f ∈ L 1 (R d ),
-% f( ˆ ξ ) = f(x)e −2πi ξ ·x dx. ∫ Rd 
-% Here, ξ ·x = ∑ j=1 d xj  as
-% ξj 
-% is the standard inner product in R d . The lower dilation must be re-defined
-% 1 f λ (x) = f(x/λ), λd 
-% and Gaussians are replaced by multivariate Gaussians φ (x) = e −π x 2 | | .
-% Generally speaking, the notation is slightly more difficult to digest in the multivariate setting, for instance we need to introduce the multi-index notation: if α = (α 1 , . . . , α d ) ∈ N d and x =
-% (x 1 , . . . , x d ) ∈ R d ,
-% x α = x 1 α 1 · . . . · x d α d ,
-% and if f ∈ C k (R d ) and | α | = α 1 + . . . + α d ≤ k, we define
-% ∂ | α | D α f(x) = f(x). ∂x 1 α 1 . . . ∂xd α d 
-% Under this notation, formulas such that in Theorem 2.3.5, become
-% (D α f) ∧ ( ξ ) = (2πi ξ ) α f( ˆ ξ ),
-% where (2πi ξ ) α = (2πi) α |
-% |
-% ξ1 α 1 
-% · ... · ξ d α d .
-
-
-
-\subsection{Fourier transform on \(L^p(\R)\), \(1 < p < 2\)}
+% \subsection{Fourier transform on \(L^p(\R)\), \(1 < p < 2\)}
+\subsection{Fourier transform on \(L^p\), \(1 < p < 2\)}
 For \(p = 2\), we have the complete characterization \(\mathcal{F}(L^2(\R)) = L^2(\R)\).
 On the other hand, for \(p = 1\), \(\mathcal{F}(L^1(\R))\) is far from being \(L^\infty(\R)\).
 By \autoref{fact:fourier-transform-uniform-continuity} and \autoref{thm:riemann-lebesgue-lemma-FT}, we know that
@@ -1994,19 +1947,445 @@ where \((2\pi \iu \vect{\xi})^{\vect{\alpha}} = (2\pi \iu)^{|\vect{\alpha}|} \xi
 
 \clearpage
 
-\section{PDE}
 
-Let \(f \in L^1(\R)\) and assume that \(f'\) exists and is in \(L^1(\R)\).
-Then,
-\begin{equation}\label{eq:fourier-derivative}
+
+
+\section{PDEs}
+
+\subsection{Sobolev spaces}
+
+% Recall \autoref{thm:higher-derivatives}, \autoref{eq:higher-derivatives}:
+% \[
+% \widehat{(f^{(j)})}(\xi) = (2\pi \iu \xi)^j \hat{f}(\xi)
+% \]
+
+Consider the ODE
+\begin{equation}\label{eq:ODE}
+\boxed{
+-u_{xx} + u = f
+}
+\end{equation}
+for a fixed forcing \(f \in L^1(\R)\).
+Assuming that \(u \in L^1(\R)\), we take the Fourier transform to obtain
+\[
+(4\pi^2 \xi^2 + 1) \hat{u}(\xi) 
+\overset{\text{\eqref{eq:higher-derivatives}}}{=} 
+\hat{f}(\xi) \implies \hat{u}(\xi) = \frac{1}{1 + 4\pi^2 \xi^2} \cdot \hat{f}(\xi)
+\]
+whence,
+\[
+u = \mathcal{F}^{-1} \left( \frac{1}{1 + 4\pi^2 (\cdot)^2} \cdot \hat{f} \right) 
+\overset{\text{\eqref{eq:convolution-theorem}}}{=}
+\mathcal{F}^{-1} \left( \frac{1}{1 + 4\pi^2 (\cdot)^2} \right) \ast f
+\]
+
+By \autoref{ex:decaying-exponential-fourier-transform}
+\[
+\frac{1}{1 + \pi^2 (2\xi)^2} 
+= 
+\mathcal{F}(e^{-2 |\cdot|})(2\xi) 
+=
+\frac 1 2 \mathcal{F}(e^{- |\cdot|})(\xi)
+\]
+where we used \autoref{eq:duality-dilation-upper}.
+Therefore, 
+\(
+\mathcal{F}^{-1} \left( \frac{1}{1 + 4\pi^2 (\cdot)^2} \right) = \frac{1}{2} e^{-|\cdot|}
+\).
+
+Thus, the solution of \autoref{eq:ODE} can be expressed as
+\[
+\begin{verticalhack}
+u(x) = \frac{1}{2} \int_{-\infty}^\infty e^{-|x-y|} f(y) \dif y
+\end{verticalhack}
+\qedhere
+\]
+
+
+\begin{definition}[Lebesgue-Sobolev space]\label{def:lebesgue-sobolev-space}
+For \(s \in \R\), we define 
+\begin{equation}\label{eq:lebesgue-sobolev-space}
 {\color{red}\boxed{\color{black}
-\widehat{(f')}(\xi) = 2\pi \iu \xi \cdot \hat{f}(\xi)
+H^s(\R) := \big\{f \in L^2(\R) : \Lambda_s f \in L^2(\R)\big\}
+}}
+\end{equation}
+where 
+\begin{equation}\label{eq:bessel-sobolev-potential}
+\Lambda_s f = \mathcal{F}^{-1} \big( (1 + 4\pi^2 (\cdot)^2)^{s/2} \cdot \hat{f} \big)
+\end{equation}
+denotes the Bessel-Sobolev potential of order \(s\).
+\end{definition}
+
+\subsubsection{Norm}
+A norm is naturally defined on \(H^s(\R)\) by \hl{\(\|f\|_{H^s} := \|\Lambda_s f\|_2\)}.
+Recall that the Fourier and its inverse are isometries of \(L^2(\R)\), so
+\[
+\|f\|_{H^s}
+=
+\|\Lambda_s f\|_2
+=
+\big\|\mathcal{F}^{-1} \big( (1 + 4\pi^2 (\cdot)^2)^{s/2} \cdot \hat{f} \big)\big\|_2
+=
+\big\|(1 + 4\pi^2 (\cdot)^2)^{s/2} \cdot \hat{f}\big\|_2
+\]
+whence
+\begin{equation}\label{eq:lebesgue-sobolev-norm}
+{\color{red}
+\boxed{\color{black}
+\|f\|_{H^s} 
+= 
+\left( \int_{-\infty}^\infty (1 + 4\pi^2 \xi^2)^s |\hat{f}(\xi)|^2 \dif \xi \right)^{1/2}
+}
+}
+\end{equation}
+
+
+
+Trivially, \(\Lambda_0 f = f\) for every \(f \in L^2(\R)\), so \(H^0(\R) = L^2(\R)\).
+Moreover, if \(s = k \in \N_{\geq 1}\),
+\[
+\begin{aligned}
+\|f\|_{H^k}^2
+&= 
+\int_{-\infty}^\infty (1 + 4\pi^2 \xi^2)^k |\hat{f}(\xi)|^2 \dif \xi 
+=
+\int_{-\infty}^\infty \left( \sum_{j=0}^k \binom{k}{j} (4\pi^2 \xi^2)^j \right) |\hat{f}(\xi)|^2 \dif \xi \\
+&=
+\sum_{j=0}^k \binom{k}{j} \int_{-\infty}^\infty (4\pi^2 \xi^2)^j |\hat{f}(\xi)|^2 \dif \xi 
+=
+\|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \int_{-\infty}^\infty (4 \pi^2 \xi^2)^j |\hat{f}(\xi)|^2 \dif \xi \\
+&=
+\|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \int_{-\infty}^\infty |(2\pi \iu \xi)^j \hat{f}(\xi)|^2 \dif \xi  \\
+&\overset{\text{\eqref{eq:higher-derivatives}}}{=}
+\|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \int_{-\infty}^\infty |\widehat{f^{(j)}}(\xi)|^2 \dif \xi \\
+&=
+\|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \|\mathcal{F}(f^{(j)})\|_2^2 \\
+&=
+\|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \|f^{(j)}\|_2^2
+\end{aligned}
+\]
+
+Therefore,
+\begin{equation}\label{eq:lebesgue-sobolev-norm-derivatives}
+{\color{red}\boxed{\color{black}
+\|f\|_{H^k}
+=
+\sqrt{
+  \|f\|_2^2 + \sum_{j=1}^k \binom{k}{j} \|f^{(j)}\|_2^2 
+}
 }}
 \end{equation}
 
 
 
+We have the estimate
+\begin{equation}\label{eq:lebesgue-sobolev-norm-derivatives-estimate}
+% \left( 
+\sqrt{
+  \|f\|_2^2 + \sum_{j=1}^k \|f^{(j)}\|_2^2 
+}
+% \right)^{\frac{1}{2}}
+\;
+\leq
+\;
+\|f\|_{H^k}
+\;
+\leq
+\;
+\binom{k}{\lfloor k/2 \rfloor}^{\frac{1}{2}}
+% \left(
+\sqrt{
+   \|f\|_2^2 + \sum_{j=1}^k \|f^{(j)}\|_2^2 
+}
+% \right)^{1/2}
+\end{equation}
+since \(1 \leq \binom{k}{j} \leq \binom{k}{\lfloor k/2 \rfloor}\) for every \(0 \leq j \leq k\).
 
+
+
+% \begin{lemma}\label{lem:sum-of-squares-inequality}
+Furthermore, for \(x_1, \ldots, x_k \geq 0\) and \(k \in \N_{\geq 1}\),
+\begin{equation}\label{eq:sum-of-squares-inequality}
+\frac{1}{k} (x_1 + \cdots + x_k)^2 
+\leq
+x_1^2 + \cdots + x_k^2
+\leq
+(x_1 + \cdots + x_k)^2
+\end{equation}
+as can be proven by induction on \(k\).
+% \end{lemma}
+
+
+Combining \eqref{eq:sum-of-squares-inequality} and \eqref{eq:lebesgue-sobolev-norm-derivatives-estimate}, we obtain
+\begin{equation}\label{eq:lebesgue-sobolev-norm-derivatives-estimate-2}
+{\color{red}\boxed{\color{black}
+\frac{1}{\sqrt{1 + k}} \sum_{j=0}^k \|f^{(j)}\|_2
+\leq
+\|f\|_{H^k}
+\leq
+\binom{k}{\lfloor k/2 \rfloor}^{\frac{1}{2}} 
+\sum_{j=0}^k \|f^{(j)}\|_2
+}}
+\end{equation}
+where we denoted \(f^{(0)} = f\) for compactness.
+
+
+
+
+\subsubsection{Weak derivative}
+
+\autoref{def:weak-derivative} clarifies the notion of derivative appearing in the next sections.
+Recall that \(L^1_{\mathrm{loc}}(\R)\) is the space of measurable functions \(f : \R \to \C\) such that
+\[
+\int_K |f(x)| \dif x < \infty
+\]
+for every compact \(K\) in  \(\R\).
+
+
+
+\begin{definition}[weak derivative]\label{def:weak-derivative}
+Let \(f \in L^2(\R)\).
+We say that \(f\) has weak derivative of order \(k\) if there exists a function \(F \in L^1_{\mathrm{loc}}(\R)\) such that for every \(g \in C_c^\infty(\R)\),
+\begin{equation}\label{eq:weak-derivative}
+\int_{-\infty}^\infty F(x) g(x) \dif x
+=
+(-1)^k \int_{-\infty}^\infty f(x) g^{(k)}(x) \dif x
+\end{equation}
+The function \(F\) is called the \(k\)-th weak derivative of \(f\) and will be denoted by \(f^{(k)}\).
+\end{definition}
+
+\begin{theorem}\label{thm:lebesgue-sobolev-characterization}
+Let \(k \in \N\).
+Then, \(f \in H^k(\R)\) if and only if \(f\) has weak derivatives up to order \(k\) and for every \(j \leq k\), \(f^{(j)} \in L^2(\R)\).
+\end{theorem}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Heat equation}
+
+
+% Let \(u = u(t, x)\). % where \(t > 0\) and \(x \in \R\) are the time and space variables.
+% Denote by \(u_t\) and \(u_{xx}\) the partial derivatives \(\partial_t u\) and \(\partial_{xx}^2 u\), respectively.
+Consider the Cauchy problem
+\begin{equation}\label{eq:heat-equation}
+\begin{cases}
+\partial_t u(t, x) = \partial_{xx}^2 u(t, x) & t > 0, x \in \R \\
+u(0, x) = u_0(x) & x \in \R
+\end{cases}
+\end{equation}
+where the initial datum \(u_0\) is assumed to be sufficiently regular.
+
+% To solve \eqref{eq:heat-equation}, we use the Fourier transform wrt the space variable \(x\), i.e., we fix \(t > 0\) and take the Fourier transform of \(u(t, \cdot)\).
+
+To solve \eqref{eq:heat-equation}, take FT wrt the space variable \(x\).
+It commutes with \(\partial_t\) and to the RHS we apply \autoref{thm:higher-derivatives}:
+\begin{equation}\label{eq:heat-equation-fourier}
+\begin{cases}
+\partial_t \hat{u}(t, \xi) = -4\pi^2 \xi^2 \hat{u}(t, \xi) & t > 0, \xi \in \R \\
+\hat{u}(0, \xi) = \widehat{u_0}(\xi) & \xi \in \R
+\end{cases}
+\end{equation}
+
+For every fixed \(\xi \in \R\), \eqref{eq:heat-equation-fourier} is a first-order ODE in \(t\) with solution given by
+\begin{equation}\label{eq:heat-equation-fourier-general-solution}
+\hat{u}(t, \xi) = C e^{-4\pi^2 t \xi^2}
+\end{equation}
+where the constant \(C\) is chosen such that the initial condition is satisfied:
+\[
+\left[\hat{u}(t, \xi)\right]_{t=0} \overset{!}{=} \widehat{u_0}(\xi) \implies C = \widehat{u_0}(\xi)
+\]
+whence the solution of \eqref{eq:heat-equation-fourier} is
+\begin{equation}\label{eq:heat-equation-specific-solution}
+\hat{u}(t, \xi) = e^{-4\pi^2 t \xi^2} \widehat{u_0}(\xi)
+\end{equation}
+
+
+By taking the inverse Fourier transform, we obtain
+\begin{equation}\label{eq:heat-equation-solution}
+\begin{aligned}
+u(t, x)
+&= 
+\mathcal{F}^{-1} \left( e^{-4\pi^2 t (\cdot)^2} \widehat{u_0} \right)(x) \\
+&\overset{\text{\eqref{eq:convolution-theorem}}}{=}
+\left(\mathcal{F}^{-1} \left( e^{-4\pi^2 t (\cdot)^2} \right) \ast \mathcal{F}^{-1} \left( \widehat{u_0} \right) \right)(x) \\
+&\overset{\text{\eqref{eq:duality-dilation-lower}}}{=}
+\left(\frac{1}{\sqrt{4\pi t}} e^{-\frac{(\cdot)^2}{4t}} \ast u_0 \right)(x)
+\end{aligned}
+\end{equation}
+where we used \autoref{cor:fourier-transform-periodicity}, \eqref{eq:fourier-transform-inverse-periodicity}, and \autoref{eq:duality-dilation-upper} with \(\lambda = \sqrt{4 \pi t}\) 
+
+
+In conclusion, 
+\begin{equation}\label{eq:heat-equation-final-solution}
+{\color{red}\boxed{\color{black}
+u(t, x) = (K_t \ast u_0)(x)
+}}
+\end{equation}
+where \(K_t(x) = \frac{1}{\sqrt{4\pi t}} e^{-\frac{x^2}{4t}}\), \(t > 0\), \(x \in \R\), is called \hl{heat kernel}.
+
+
+
+
+% 3.3 The wave equation
+% We consider the Cauchy problem
+%   ∂ tt 2 u(t, x) = ∂ xx 2 u(t, x), t > 0, x ∈ R, u(0, x) = u 0 (x), x ∈ R,    ∂ t u(0, x) = v 0 (x), x ∈ R,
+% for properly regular initial data u 0 , v 0 : R → C. By taking the Fourier transform, exactly as we did for the heat equation, we obtain the Cauchy problem
+%   ∂ tt 2 uˆ(t, ξ ) = −4π 2 ξ 2 uˆ(t, ξ ), t > 0, ξ ∈ R, uˆ(0, ξ ) = u0 ⌃( ξ ), ∈ R,   ξ  ∂ t uˆ(0, ξ ) = v0 ⌃ (x), ξ ∈ R,
+% (3.8) 42
+% CHAPTER 3. FOURIER ANALYSIS OF PDES
+% so we basically have to solve the ordinary differential equation y ′′ (t) = −4π 2 |ξ| 2 y(t), where y(t) = uˆ(t, ξ ), for every ξ ∈ R fixed. In the complex framework, solving this equation is simpler. We search for solutions in the form y(t) = e λt , and by substitution we obtain that it must be
+% λ 2 + 4π 2 ξ 2 = 0,
+% whose solutions are λ = ±2π |ξ| i. Thus, the solutions are in the form
+% y(t) = uˆ(t, ξ ) = Ae −2π |ξ| it + Be 2π |ξ| it ,
+% t > 0, for some A, B constant in t, i.e., A, B only depend on ξ . To find A and B, we differentiate and impose the initial conditions in (3.8):
+% y(0) = A + B = u0 ⌃( ξ ), ′ { y (0) = 2πi |ξ| (−A + B) = v0 ⌃ ( ξ ),
+% =⇒
+%  A + B = u0 ⌃( ξ ), 1 −A + B = ( ξ ), v ⌃ 0  2πi |ξ|
+% from which we obtain
+%  A = 1 u 0 ( ξ ) − 1 2πi |ξ| v⌃ ( ξ ) 2 ( ⌃ 0 ) ,  B = 1 u 0 ( ξ ) + 1 2πi |ξ| v⌃ ( ξ ) ⌃ , 0  2 ( )
+% whence
+% 1 1 1 1 y(t) = uˆ(t, ξ ) = u 0 ( ξ ) − ( ξ ) e −2π |ξ| it + u 0 ( ξ ) + ( ξ ) e 2πi |ξ| t , ⌃ v ⌃ ⌃ v ⌃ 0 0 2 ( 2πi |ξ| ) 2 ( 2π |ξ| )
+% and by associativity
+% e2πi |ξ| t  +e −2πi |ξ| t −e−2πi |ξ| t  e2πi |ξ| t  sin(2πt ) uˆ(t, ξ ) = u0 ⌃( ξ ) + v0 ⌃ ( ξ ) = cos(2π |ξ| t)⌃u0 ( ξ ) + |ξ| v0 ⌃ ( ξ ) 2 2i(2π |ξ| ) 2π |ξ|
+% sin(2πt ) = cos(2π ξ t)⌃u0 ( ξ ) + ξ v0 ⌃ ( ξ ), 2π ξ
+% where we used that sin(·) and cos(·) are odd and even, respectively. Consequently,
+% sin(2πt ξ ) u(t, x) = F −1 (cos(2π ξ t)⌃u0 )(x) + F −1 v0 ⌃ (x). ( 2π ξ )
+% Using the inversion formula,
+% ∞ ∞ e2πi ξ t +e−2πi ξ t  F −1 (cos(2π ξ t)⌃u0 )(x) = cos(2π ξ t)⌃u0 ( ξ )e 2πi ξ x d ξ = u0 ⌃( ξ )e 2πi ξ x d ξ ∫ −∞ (1.5) ∫ −∞ 2
+% ∞ ∞ 1 1 = u⌃( ξ )e 2πi ξ (x+t) d ξ + u⌃( ξ )e 2πi ξ (x−t) d ξ 0 0 2 ∫ −∞ 2 ∫ −∞
+% u 0 (x + t) + u 0 (x − t) = . (2.22) 2 3.3. THE WAVE EQUATION
+% 43
+% On the other hand,
+% sin(2πt ξ ) 1 1 F −1 v0 ⌃ (x) = F −1 )v⌃ (x) = ∗ v 0 (x) F( 0 ( 2π ξ ) (Ex. 2.2.3) ( 2 χ [−t,t] ) (Thm. 2.3.2) 2 χ[−t,t] 
+% ∞ t 1 1 = χ [−t,t] (y)v 0 (x − y)dy = v 0 (x − y)dy 2 ∫ −∞ 2 ∫ −t
+% 1 x+t = v 0 (y ′ )dy ′ . (x − y = y ′ ) 2 ∫ x−t
+% In conclusion, we retrieve d’Alembert’s formula:
+% u0  (x + t) + u 0 (x − t) x+t 1 u(t, x) = + v 0 (y)dy. 2 2 ∫ x−t
+
+
+
+\subsection{Wave equation}
+
+% Let \(u = u(t, x)\).
+% Denote by \(u_{tt}\) and \(u_{xx}\) the partial derivatives \(\partial_{tt}^2 u\) and \(\partial_{xx}^2 u\), respectively.
+Consider the Cauchy problem
+\begin{equation}\label{eq:wave-equation}
+\begin{cases}
+\partial_{tt}^2 u(t, x) = \partial_{xx}^2 u(t, x) & t > 0, x \in \R \\
+u(0, x) = u_0(x) & x \in \R \\
+\partial_t u(0, x) = v_0(x) & x \in \R
+\end{cases}
+\end{equation}
+where the initial data \(u_0, v_0\) are assumed to be sufficiently regular.
+
+To solve \eqref{eq:wave-equation}, take FT wrt the space variable \(x\). %, i.e., we fix \(t > 0\) and take the Fourier transform of \(u(t, \cdot)\).
+It commutes with \(\partial_t\) and to the RHS we apply \autoref{thm:higher-derivatives}:
+\begin{equation}\label{eq:wave-equation-fourier}
+\begin{cases}
+\partial_{tt}^2 \hat{u}(t, \xi) = -4\pi^2 \xi^2 \hat{u}(t, \xi) & t > 0, \xi \in \R \\
+\hat{u}(0, \xi) = \widehat{u_0}(\xi) & \xi \in \R \\
+\partial_t \hat{u}(0, \xi) = \widehat{v_0}(\xi) & \xi \in \R
+\end{cases}
+\end{equation}
+
+For every fixed \(\xi \in \R\), \eqref{eq:wave-equation-fourier} is a second-order ODE in \(t\) with solution given by
+% If \(\xi \neq 0\), its general solution is
+\begin{equation}\label{eq:wave-equation-fourier-general-solution}
+\hat{u}(t, \xi)
+=
+A(\xi) \cos(2\pi |\xi| t)
++
+B(\xi) \sin(2\pi |\xi| t)
+\end{equation}
+where \(A(\xi)\) and \(B(\xi)\) are chosen to satisfy the initial conditions in \eqref{eq:wave-equation-fourier}.
+Evaluating at \(t=0\) gives \(A(\xi) = \widehat{u_0}(\xi)\).
+Differentiating \eqref{eq:wave-equation-fourier-general-solution} and evaluating at \(t=0\) yields
+\[
+\partial_t \hat{u}(0,\xi)
+=
+2\pi |\xi|\, B(\xi)
+=
+\widehat{v_0}(\xi)
+\]
+so that \(B(\xi) = \frac{\widehat{v_0}(\xi)}{2\pi |\xi|}\) for \(\xi \neq 0\).
+Thus, for \(\xi \neq 0\),
+\begin{equation}\label{eq:wave-equation-fourier-solution}
+\hat{u}(t, \xi)
+=
+\cos(2\pi |\xi| t)\,\widehat{u_0}(\xi)
++
+\frac{\sin(2\pi |\xi| t)}{2\pi |\xi|}\,\widehat{v_0}(\xi)
+\end{equation}
+and for \(\xi = 0\) we have \(\partial_{tt}^2 \hat{u}(t,0)=0\), hence
+\(
+\hat{u}(t,0)=\widehat{u_0}(0)+t\,\widehat{v_0}(0)
+\),
+which is consistent with \eqref{eq:wave-equation-fourier-solution} by continuous continuation.
+
+By taking the inverse Fourier transform, we obtain
+\begin{equation}\label{eq:wave-equation-solution}
+u(t, x)
+=
+\mathcal{F}^{-1}\!\left(\cos(2\pi t|\cdot|)\,\widehat{u_0}\right)(x)
++
+\mathcal{F}^{-1}\!\left(\frac{\sin(2\pi t|\cdot|)}{2\pi |\cdot|}\,\widehat{v_0}\right)(x)
+\end{equation}
+
+For the first term, using \(\cos(\theta)=\frac{1}{2}(\eu^{\iu\theta}+\eu^{-\iu\theta})\) and the inversion formula,
+\begin{equation}\label{eq:wave-equation-first-term}
+\mathcal{F}^{-1}\!\left(\cos(2\pi t|\cdot|)\,\widehat{u_0}\right)(x)
+=
+\frac{u_0(x+t) + u_0(x-t)}{2}
+\end{equation}
+where we used that \(|\xi|\) is even and split the integral over \(\xi>0\) and \(\xi<0\).
+
+For the second term, we use that
+\[
+\frac{\sin(2\pi t\xi)}{\pi \xi}
+=
+\mathcal{F}\big(\chi_{[-t,t]}\big)(\xi)
+\]
+as in the characteristic function computation in the Fourier transform section (cf.\ \autoref{eq:characteristic-function} with \(A=2t\)).
+Using \autoref{eq:convolution-theorem} and \autoref{eq:fourier-transform-periodicity},
+\begin{equation}\label{eq:wave-equation-second-term}
+\mathcal{F}^{-1}\!\left(\frac{\sin(2\pi t|\cdot|)}{2\pi |\cdot|}\,\widehat{v_0}\right)(x)
+=
+\frac{1}{2}\,(\chi_{[-t,t]} \ast v_0)(x)
+=
+\frac{1}{2}\int_{x-t}^{x+t} v_0(y)\,\dif y
+\end{equation}
+
+In conclusion, combining \eqref{eq:wave-equation-solution}, \eqref{eq:wave-equation-first-term}, and \eqref{eq:wave-equation-second-term}, we obtain \hl{d'Alembert's formula}
+\begin{equation}\label{eq:wave-equation-final-solution}
+{\color{red}\boxed{\color{black}
+u(t, x)
+=
+\frac{u_0(x+t) + u_0(x-t)}{2}
++
+\frac{1}{2}\int_{x-t}^{x+t} v_0(y)\,\dif y
+}}
+\end{equation}
+for \(t>0\) and \(x\in\R\).
 
 
 
