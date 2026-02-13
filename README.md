@@ -12,5 +12,5 @@ This repository contains only the TeX sources. The PDFs can be viewed [here](htt
 
 ## 📄 About
 - They are not official, not exhaustive and may contain mistakes.
-- If you find an error please [open an issue](https://github.com/fabianbosshard/usi-informatics-course-summaries/issues) or send an email to [fabianlucasbosshard@gmail.com](mailto:fabianlucasbosshard@gmail.com).
+- If you find an error please send an email to [fabianlucasbosshard@gmail.com](mailto:fabianlucasbosshard@gmail.com).
 - Special thanks to [Bosshard Career Consulting](https://bosshard-career-consulting.ch/) for supporting this project.
