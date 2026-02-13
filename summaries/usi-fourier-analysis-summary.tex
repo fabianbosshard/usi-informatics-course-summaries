@@ -221,6 +221,7 @@
   urlbordercolor={0 0.6 1},
   citebordercolor={0 0.6 1}
 ]{hyperref}
+\usepackage{xurl} 
 
 % ToC entries: dotted leaders + full-width clickable line
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
@@ -301,10 +302,34 @@
 
 
 \maketitle
+\thispagestyle{empty} % no page number on title page
+
+
+\vspace{1cm}
 
 \tableofcontents
 
+% \section*{Preface}
+
+\vspace{2.5cm}
+
+This document contains unofficial student-made notes for the course
+\href{https://search.usi.ch/courses/35276061/introduction-to-fourier-analysis}{Introduction to Fourier Analysis}
+taught by
+\href{https://search.usi.ch/it/persone/091c34ba9dc1f648be9077a7e9e031b9/giacchi-gianluca}{Gianluca Giacchi}
+in Winter 2025/2026 at the
+\href{https://www.usi.ch/it}{Università della Svizzera italiana}.
+If you spot an error, please report it to
+\href{mailto:fabianlucasbosshard@gmail.com}{fabianlucasbosshard@gmail.com}.
+The up-to-date PDF is available at
+\url{https://fabianbosshard.github.io/usi-informatics-course-summaries/}.
+The \LaTeX{} source is available at
+\url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
+
+
 \clearpage
+\setcounter{page}{1}  % second physical page becomes page 1
+
 \section{Preliminaries}
 
 
