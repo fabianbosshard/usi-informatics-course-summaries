@@ -179,8 +179,10 @@
 \newcommand{\vect}[1]{{\boldsymbol{#1}}}
 
 \newcommand{\dif}{\mathrm{d}}
-\newcommand{\eu}{\mathrm{e}}
-\newcommand{\iu}{\mathrm{i}}
+% \newcommand{\eu}{\mathrm{e}}
+\newcommand{\eu}{e}
+% \newcommand{\iu}{\mathrm{i}}
+\newcommand{\iu}{\imath}
 \newcommand{\sign}{\operatorname{sgn}}
 
 \newcommand{\oo}{\infty}
@@ -2206,7 +2208,7 @@ It commutes with \(\partial_t\) and to the RHS we apply \autoref{thm:higher-deri
 \end{cases}
 \end{equation}
 
-For every fixed \(\xi \in \R\), \eqref{eq:heat-equation-fourier} is a first-order ODE in \(t\) with solution given by
+For every fixed \(\xi \in \R\), \eqref{eq:heat-equation-fourier} is a first-order ODE in \(t\) with general solution given by
 \begin{equation}\label{eq:heat-equation-fourier-general-solution}
 \hat{u}(t, \xi) = C e^{-4\pi^2 t \xi^2}
 \end{equation}
@@ -2246,43 +2248,6 @@ where \(K_t(x) = \frac{1}{\sqrt{4\pi t}} e^{-\frac{x^2}{4t}}\), \(t > 0\), \(x \
 
 
 
-% 3.3 The wave equation
-% We consider the Cauchy problem
-%   ∂ tt 2 u(t, x) = ∂ xx 2 u(t, x), t > 0, x ∈ R, u(0, x) = u 0 (x), x ∈ R,    ∂ t u(0, x) = v 0 (x), x ∈ R,
-% for properly regular initial data u 0 , v 0 : R → C. By taking the Fourier transform, exactly as we did for the heat equation, we obtain the Cauchy problem
-%   ∂ tt 2 uˆ(t, ξ ) = −4π 2 ξ 2 uˆ(t, ξ ), t > 0, ξ ∈ R, uˆ(0, ξ ) = u0 ⌃( ξ ), ∈ R,   ξ  ∂ t uˆ(0, ξ ) = v0 ⌃ (x), ξ ∈ R,
-% (3.8) 42
-% CHAPTER 3. FOURIER ANALYSIS OF PDES
-% so we basically have to solve the ordinary differential equation y ′′ (t) = −4π 2 |ξ| 2 y(t), where y(t) = uˆ(t, ξ ), for every ξ ∈ R fixed. In the complex framework, solving this equation is simpler. We search for solutions in the form y(t) = e λt , and by substitution we obtain that it must be
-% λ 2 + 4π 2 ξ 2 = 0,
-% whose solutions are λ = ±2π |ξ| i. Thus, the solutions are in the form
-% y(t) = uˆ(t, ξ ) = Ae −2π |ξ| it + Be 2π |ξ| it ,
-% t > 0, for some A, B constant in t, i.e., A, B only depend on ξ . To find A and B, we differentiate and impose the initial conditions in (3.8):
-% y(0) = A + B = u0 ⌃( ξ ), ′ { y (0) = 2πi |ξ| (−A + B) = v0 ⌃ ( ξ ),
-% =⇒
-%  A + B = u0 ⌃( ξ ), 1 −A + B = ( ξ ), v ⌃ 0  2πi |ξ|
-% from which we obtain
-%  A = 1 u 0 ( ξ ) − 1 2πi |ξ| v⌃ ( ξ ) 2 ( ⌃ 0 ) ,  B = 1 u 0 ( ξ ) + 1 2πi |ξ| v⌃ ( ξ ) ⌃ , 0  2 ( )
-% whence
-% 1 1 1 1 y(t) = uˆ(t, ξ ) = u 0 ( ξ ) − ( ξ ) e −2π |ξ| it + u 0 ( ξ ) + ( ξ ) e 2πi |ξ| t , ⌃ v ⌃ ⌃ v ⌃ 0 0 2 ( 2πi |ξ| ) 2 ( 2π |ξ| )
-% and by associativity
-% e2πi |ξ| t  +e −2πi |ξ| t −e−2πi |ξ| t  e2πi |ξ| t  sin(2πt ) uˆ(t, ξ ) = u0 ⌃( ξ ) + v0 ⌃ ( ξ ) = cos(2π |ξ| t)⌃u0 ( ξ ) + |ξ| v0 ⌃ ( ξ ) 2 2i(2π |ξ| ) 2π |ξ|
-% sin(2πt ) = cos(2π ξ t)⌃u0 ( ξ ) + ξ v0 ⌃ ( ξ ), 2π ξ
-% where we used that sin(·) and cos(·) are odd and even, respectively. Consequently,
-% sin(2πt ξ ) u(t, x) = F −1 (cos(2π ξ t)⌃u0 )(x) + F −1 v0 ⌃ (x). ( 2π ξ )
-% Using the inversion formula,
-% ∞ ∞ e2πi ξ t +e−2πi ξ t  F −1 (cos(2π ξ t)⌃u0 )(x) = cos(2π ξ t)⌃u0 ( ξ )e 2πi ξ x d ξ = u0 ⌃( ξ )e 2πi ξ x d ξ ∫ −∞ (1.5) ∫ −∞ 2
-% ∞ ∞ 1 1 = u⌃( ξ )e 2πi ξ (x+t) d ξ + u⌃( ξ )e 2πi ξ (x−t) d ξ 0 0 2 ∫ −∞ 2 ∫ −∞
-% u 0 (x + t) + u 0 (x − t) = . (2.22) 2 3.3. THE WAVE EQUATION
-% 43
-% On the other hand,
-% sin(2πt ξ ) 1 1 F −1 v0 ⌃ (x) = F −1 )v⌃ (x) = ∗ v 0 (x) F( 0 ( 2π ξ ) (Ex. 2.2.3) ( 2 χ [−t,t] ) (Thm. 2.3.2) 2 χ[−t,t] 
-% ∞ t 1 1 = χ [−t,t] (y)v 0 (x − y)dy = v 0 (x − y)dy 2 ∫ −∞ 2 ∫ −t
-% 1 x+t = v 0 (y ′ )dy ′ . (x − y = y ′ ) 2 ∫ x−t
-% In conclusion, we retrieve d’Alembert’s formula:
-% u0  (x + t) + u 0 (x − t) x+t 1 u(t, x) = + v 0 (y)dy. 2 2 ∫ x−t
-
-
 
 \subsection{Wave equation}
 
@@ -2298,7 +2263,7 @@ u(0, x) = u_0(x) & x \in \R \\
 \end{equation}
 where the initial data \(u_0, v_0\) are assumed to be sufficiently regular.
 
-To solve \eqref{eq:wave-equation}, take FT wrt the space variable \(x\). %, i.e., we fix \(t > 0\) and take the Fourier transform of \(u(t, \cdot)\).
+To solve \eqref{eq:wave-equation}, take FT wrt the space variable \(x\).
 It commutes with \(\partial_t\) and to the RHS we apply \autoref{thm:higher-derivatives}:
 \begin{equation}\label{eq:wave-equation-fourier}
 \begin{cases}
@@ -2308,27 +2273,43 @@ It commutes with \(\partial_t\) and to the RHS we apply \autoref{thm:higher-deri
 \end{cases}
 \end{equation}
 
-For every fixed \(\xi \in \R\), \eqref{eq:wave-equation-fourier} is a second-order ODE in \(t\) with solution given by
-% If \(\xi \neq 0\), its general solution is
+For every fixed \(\xi \in \R\), \eqref{eq:wave-equation-fourier} is a second-order ODE in \(t\).
+Searching for solutions of the form \(\hat u(t,\xi)=\eu^{\lambda t}\) yields
+\[
+\lambda^2 + 4\pi^2 \xi^2 = 0
+\]
+hence \(\lambda = \pm 2\pi \iu |\xi|\), and thus, for \(\xi \neq 0\) the general solution%
+\footnote{For \(\xi = 0\) the solution is different (since the characteristic polynomial has a double root), but for our purposes we can ignore that, since the (inverse) FT does not care about a set of measure zero.}
+is given by
 \begin{equation}\label{eq:wave-equation-fourier-general-solution}
 \hat{u}(t, \xi)
 =
-A(\xi) \cos(2\pi |\xi| t)
+A(\xi)\,\eu^{-2\pi \iu |\xi| t}
 +
-B(\xi) \sin(2\pi |\xi| t)
+B(\xi)\,\eu^{2\pi \iu |\xi| t}
 \end{equation}
-where \(A(\xi)\) and \(B(\xi)\) are chosen to satisfy the initial conditions in \eqref{eq:wave-equation-fourier}.
-Evaluating at \(t=0\) gives \(A(\xi) = \widehat{u_0}(\xi)\).
-Differentiating \eqref{eq:wave-equation-fourier-general-solution} and evaluating at \(t=0\) yields
+where \(A(\xi)\) and \(B(\xi)\) are obtained by imposing the initial conditions in \eqref{eq:wave-equation-fourier}:
+% Imposing \(\hat u(0,\xi)=\widehat{u_0}(\xi)\) and \(\partial_t\hat u(0,\xi)=\widehat{v_0}(\xi)\) gives
+% \[
+% A(\xi)+B(\xi)=\widehat{u_0}(\xi),
+% \qquad
+% 2\pi\iu|\xi|\bigl(-A(\xi)+B(\xi)\bigr)=\widehat{v_0}(\xi),
+% \]
+% so that
 \[
-\partial_t \hat{u}(0,\xi)
-=
-2\pi |\xi|\, B(\xi)
-=
-\widehat{v_0}(\xi)
+A(\xi)=\frac{1}{2}\widehat{u_0}(\xi)-\frac{1}{2}\frac{\widehat{v_0}(\xi)}{2\pi\iu|\xi|}
+\qquad
+B(\xi)=\frac{1}{2}\widehat{u_0}(\xi)+\frac{1}{2}\frac{\widehat{v_0}(\xi)}{2\pi\iu|\xi|}
 \]
-so that \(B(\xi) = \frac{\widehat{v_0}(\xi)}{2\pi |\xi|}\) for \(\xi \neq 0\).
-Thus, for \(\xi \neq 0\),
+By associativity and the identities
+\(
+\frac{\eu^{\iu\theta}+\eu^{-\iu\theta}}{2}=\cos(\theta)
+\)
+and
+\(
+\frac{\eu^{\iu\theta}-\eu^{-\iu\theta}}{2\iu}=\sin(\theta)
+\),
+we obtain
 \begin{equation}\label{eq:wave-equation-fourier-solution}
 \hat{u}(t, \xi)
 =
@@ -2336,13 +2317,7 @@ Thus, for \(\xi \neq 0\),
 +
 \frac{\sin(2\pi |\xi| t)}{2\pi |\xi|}\,\widehat{v_0}(\xi)
 \end{equation}
-and for \(\xi = 0\) we have \(\partial_{tt}^2 \hat{u}(t,0)=0\), hence
-\(
-\hat{u}(t,0)=\widehat{u_0}(0)+t\,\widehat{v_0}(0)
-\),
-which is consistent with \eqref{eq:wave-equation-fourier-solution} by continuous continuation.
-
-By taking the inverse Fourier transform, we obtain
+with the inverse 
 \begin{equation}\label{eq:wave-equation-solution}
 u(t, x)
 =
@@ -2351,28 +2326,32 @@ u(t, x)
 \mathcal{F}^{-1}\!\left(\frac{\sin(2\pi t|\cdot|)}{2\pi |\cdot|}\,\widehat{v_0}\right)(x)
 \end{equation}
 
-For the first term, using \(\cos(\theta)=\frac{1}{2}(\eu^{\iu\theta}+\eu^{-\iu\theta})\) and the inversion formula,
+For the first term, using \(\cos(\theta)=\frac{1}{2}(\eu^{\iu\theta}+\eu^{-\iu\theta})\) and the inversion formula:
 \begin{equation}\label{eq:wave-equation-first-term}
 \mathcal{F}^{-1}\!\left(\cos(2\pi t|\cdot|)\,\widehat{u_0}\right)(x)
 =
 \frac{u_0(x+t) + u_0(x-t)}{2}
 \end{equation}
-where we used that \(|\xi|\) is even and split the integral over \(\xi>0\) and \(\xi<0\).
+% where we used that \(|\xi|\) is even and split the integral over \(\xi>0\) and \(\xi<0\).
 
-For the second term, we use that
-\[
-\frac{\sin(2\pi t\xi)}{\pi \xi}
-=
-\mathcal{F}\big(\chi_{[-t,t]}\big)(\xi)
-\]
-as in the characteristic function computation in the Fourier transform section (cf.\ \autoref{eq:characteristic-function} with \(A=2t\)).
-Using \autoref{eq:convolution-theorem} and \autoref{eq:fourier-transform-periodicity},
+% For the second term, we use that
+% \[
+% \frac{\sin(2\pi t\xi)}{\pi \xi}
+% =
+% \mathcal{F}\big(\chi_{[-t,t]}\big)(\xi)
+% \]
+% as in the characteristic function computation in the Fourier transform section (cf.\ \autoref{eq:characteristic-function} with \(A=2t\)).
+For the second term, we use \eqref{eq:characteristic-function}, \eqref{eq:convolution-theorem} and \eqref{eq:fourier-transform-periodicity}:
 \begin{equation}\label{eq:wave-equation-second-term}
+\begin{aligned}
 \mathcal{F}^{-1}\!\left(\frac{\sin(2\pi t|\cdot|)}{2\pi |\cdot|}\,\widehat{v_0}\right)(x)
-=
-\frac{1}{2}\,(\chi_{[-t,t]} \ast v_0)(x)
-=
+&=
+\frac{1}{2}\,(\chi_{[-t,t]} \ast v_0)(x) \\
+&=
+\frac{1}{2}\int_{-\infty}^\infty \chi_{[-t,t]}(x-y) v_0(y)\,\dif y \\
+&=
 \frac{1}{2}\int_{x-t}^{x+t} v_0(y)\,\dif y
+\end{aligned}
 \end{equation}
 
 In conclusion, combining \eqref{eq:wave-equation-solution}, \eqref{eq:wave-equation-first-term}, and \eqref{eq:wave-equation-second-term}, we obtain \hl{d'Alembert's formula}
