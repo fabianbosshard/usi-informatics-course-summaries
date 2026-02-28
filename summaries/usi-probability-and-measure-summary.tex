@@ -1,0 +1,718 @@
+% author: Fabian Bosshard % © CC BY 4.0
+\documentclass[9pt,headings=standardclasses,parskip=half]{scrartcl}
+
+% ===================== basics =====================
+\usepackage{ifthen,iftex,csquotes}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% ===================== page style =====================
+\usepackage[automark]{scrlayer-scrpage}
+\pagestyle{scrheadings}
+
+% ===================== graphics / color =====================
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{caption,subcaption}
+\usepackage[left=38mm,right=38mm,top=20mm,bottom=30mm]{geometry}
+
+% ===================== math =====================
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathdots,accents}
+\numberwithin{equation}{section}
+
+% ===================== lists =====================
+\usepackage{enumitem}
+\renewcommand{\labelitemi}{\textbullet}
+\renewcommand{\labelitemii}{\raisebox{0.1ex}{\scalebox{0.8}{\textbullet}}}
+\renewcommand{\labelitemiii}{\raisebox{0.2ex}{\scalebox{0.6}{\textbullet}}}
+\renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
+
+% ===================== bibliography =====================
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{\jobname.bib}
+
+% ===================== symbols =====================
+\usepackage{pifont}
+\usepackage{marvosym}
+
+% ===================== TikZ / plots =====================
+\usepackage{tikz}
+\usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings}
+\usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
+\usepackage{pgfplots}
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz-cache/]
+
+% ===================== highlighting (SOUL + math-safe \hl) =====================
+\usepackage{soulutf8}
+\usepackage{xparse}
+
+\ExplSyntaxOn
+\tl_new:N \__l_SOUL_argument_tl
+\cs_set_eq:Nc \SOUL_start:n { SOUL@start }
+\cs_generate_variant:Nn \SOUL_start:n { V }
+\cs_set_protected:cpn {SOUL@start} #1 {
+  \tl_set:Nn \__l_SOUL_argument_tl { #1 }
+  \regex_replace_all:nnN { \c{\(} (.*?) \c{\)} } { \cM\$ \1 \cM\$ } \__l_SOUL_argument_tl
+  \SOUL_start:V \__l_SOUL_argument_tl
+}
+\ExplSyntaxOff
+
+\let\SOULhl\hl
+\renewcommand{\hl}[1]{\SOULhl{#1}}
+
+\definecolor{HLgreen}{HTML}{77DD77}
+\definecolor{HLyellow}{HTML}{FFFF66}
+\definecolor{HLorange}{HTML}{FFB347}
+\definecolor{HLred}{HTML}{FF6961}
+\definecolor{HLpink}{HTML}{FFB6C1}
+\definecolor{HLturquoise}{HTML}{40E0D0}
+
+\RenewDocumentCommand{\hl}{O{1} m}{%
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
+
+% ===================== colors / emphasis =====================
+\definecolor{funblue}{rgb}{0.10,0.35,0.66}
+\definecolor{alizarincrimsonred}{rgb}{0.85,0.17,0.11}
+\definecolor{amethyst}{rgb}{0.6,0.4,0.8}
+\definecolor{mypurple}{rgb}{0.5,0,0.5}
+\definecolor{highlightpurple}{rgb}{0.6,0,0.6}
+\renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
+
+% ===================== theorem environments =====================
+\usepackage{thmtools}
+
+\renewcommand\thmcontinues[1]{%
+  \ifcsname hyperref\endcsname
+    \hyperref[#1]{continuing}%
+  \else
+    continuing%
+  \fi
+}
+
+\newlength{\thmspace}\setlength{\thmspace}{3pt plus 1pt minus 1pt}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{assertionstyle}
+\declaretheorem[style=assertionstyle,name=Theorem,numberwithin=section]{theorem}
+\declaretheorem[style=assertionstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=assertionstyle,name=Corollary,sibling=theorem]{corollary}
+\declaretheorem[style=assertionstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=assertionstyle,name=Conjecture,sibling=theorem]{conjecture}
+\declaretheorem[style=assertionstyle,name=Claim,sibling=theorem]{claim}
+\declaretheorem[style=assertionstyle,name=Fact,sibling=theorem]{fact}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{definitionstyle}
+\declaretheorem[style=definitionstyle,name=Definition,numberwithin=section]{definition}
+\declaretheorem[style=definitionstyle,name=Problem,sibling=definition]{problem}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
+\declaretheorem[style=exercisestyle,name=Exercise,numberwithin=section]{exercise}
+\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
+\declaretheorem[style=solutionstyle,name=Solution,numbered=no]{solution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\square},postheadspace=1em]{proofstyle}
+\let\proof\relax \let\endproof\relax
+\declaretheorem[style=proofstyle,name=Proof,numbered=no]{proof}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\blacktriangleleft},postheadspace=1em]{remarkstyle}
+\declaretheorem[style=remarkstyle,name=Remark,numberwithin=section]{remark}
+
+\declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
+\declaretheorem[style=examplestyle,name=Example,sibling=remark]{example}
+
+\declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
+\declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
+
+\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont\footnotesize,spaceabove=\thmspace,spacebelow=\thmspace,postheadspace=1em]{smallremarkstyle}
+\declaretheorem[style=smallremarkstyle,name=Remark,sibling=remark]{smallremark}
+
+\declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
+\declaretheorem[style=digressionstyle,name=Digression,sibling=remark]{digression}
+
+% ===================== misc helpers =====================
+\newenvironment{verticalhack}{\begin{array}[b]{@{}c@{}}\displaystyle}{\\\noalign{\hrule height0pt}\end{array}}
+
+% ===================== algorithms =====================
+\usepackage{algorithm,algorithmicx}
+\usepackage[italicComments=false]{algpseudocodex}
+\newcommand*{\algorithmautorefname}{Algorithm}
+
+\algnewcommand{\TO}{, \ldots ,}
+\algnewcommand{\DOWNTO}{, \ldots ,}
+\algnewcommand{\OR}{\vee}
+\algnewcommand{\AND}{\wedge}
+\algnewcommand{\NOT}{\neg}
+\algnewcommand{\LEN}{\operatorname{len}}
+\algnewcommand{\tru}{\ensuremath{\mathrm{\texttt{true}}}}
+\algnewcommand{\fals}{\ensuremath{\mathrm{\texttt{false}}}}
+\algnewcommand{\append}{\circ}
+\algnewcommand{\nil}{\ensuremath{\mathrm{\textsc{nil}}}}
+\algnewcommand{\red}{\ensuremath{\mathrm{\textsc{red}}}}
+\algnewcommand{\black}{\ensuremath{\mathrm{\textsc{black}}}}
+\algnewcommand{\gray}{\ensuremath{\mathrm{\textsc{gray}}}}
+\algnewcommand{\white}{\ensuremath{\mathrm{\textsc{white}}}}
+
+% ===================== operators / notation =====================
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Span}{span}
+\DeclareMathOperator{\Kern}{kern}
+\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Rank}{rank}
+% \newcommand{\im}{\operatorname{Im}}
+% \newcommand{\re}{\operatorname{Re}}
+\newcommand{\im}{\Im}
+\newcommand{\re}{\Re}
+
+\newcommand*{\matrspace}{0.8mu}
+\newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
+\newcommand{\vect}[1]{{\boldsymbol{#1}}}
+
+\newcommand{\dif}{\mathrm{d}}
+% \newcommand{\eu}{\mathrm{e}}
+\newcommand{\eu}{e}
+% \newcommand{\iu}{\mathrm{i}}
+\newcommand{\iu}{\imath}
+\newcommand{\sign}{\operatorname{sgn}}
+
+\newcommand{\oo}{\infty}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\numof}{\ensuremath{\#\,}}
+\newcommand{\blackheight}{\operatorname{bh}}
+
+\newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}}
+\newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}}
+
+% ===================== metadata / hyperlinks =====================
+\title{Fourier Analysis}
+\author{Fabian Bosshard}
+\date{\today}
+
+\usepackage[
+  linktoc=none,
+  pdfauthor={Fabian Bosshard},
+  pdftitle={USI - Fourier Analysis - Course Notes},
+  pdfkeywords={USI, Fourier analysis, course notes, informatics},
+  colorlinks=false,
+  pdfborder={0 0 0},
+  linkbordercolor={0 0.6 1},
+  urlbordercolor={0 0.6 1},
+  citebordercolor={0 0.6 1}
+]{hyperref}
+\usepackage{xurl} 
+
+% ToC entries: dotted leaders + full-width clickable line
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsection}
+\DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{subsubsection}
+
+\makeatletter
+\newlength\FB@toclinkht \newlength\FB@toclinkdp
+\setlength\FB@toclinkht{.80\ht\strutbox}
+\setlength\FB@toclinkdp{.40\dp\strutbox}
+
+\let\FB@orig@contentsline\contentsline
+\renewcommand*\contentsline[4]{%
+  \begingroup
+    \Hy@safe@activestrue
+    \edef\Hy@tocdestname{#4}%
+    \FB@orig@contentsline{#1}{%
+      \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
+      \leavevmode
+      \rlap{%
+        \hyper@linkstart{link}{\Hy@tocdestname}%
+          \raisebox{0pt}[\FB@toclinkht][\FB@toclinkdp]{%
+            \hbox to \dimexpr\hsize-\parindent\relax{\hfil}%
+          }%
+        \hyper@linkend
+      }%
+      #2%
+    }{#3}{#4}%
+  \endgroup
+}
+
+\let\FB@orig@sectionlinesformat\sectionlinesformat
+\renewcommand{\sectionlinesformat}[4]{%
+  \ifx\@currentHref\@empty
+    \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+  \else
+    \leavevmode
+    \hyper@linkstart{link}{toc:\@currentHref}%
+      \@hangfrom{\hskip #2\relax #3}{#4}%
+    \hyper@linkend
+    \par
+  \fi
+}
+\makeatother
+
+% hyperref anchor uniqueness for section-relative numbering
+\makeatletter
+\renewcommand{\theHequation}{\thesection.\arabic{equation}}
+\renewcommand{\theHtheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theHlemma}{\theHtheorem}
+\renewcommand{\theHcorollary}{\theHtheorem}
+\renewcommand{\theHproposition}{\theHtheorem}
+\renewcommand{\theHconjecture}{\theHtheorem}
+\renewcommand{\theHclaim}{\theHtheorem}
+\renewcommand{\theHfact}{\theHtheorem}
+\renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
+\renewcommand{\theHproblem}{\theHdefinition}
+\renewcommand{\theHexercise}{\thesection.\arabic{exercise}}
+\renewcommand{\theHremark}{\thesection.\arabic{remark}}
+\renewcommand{\theHexample}{\theHremark}
+\renewcommand{\theHcaution}{\theHremark}
+\renewcommand{\theHsmallremark}{\theHremark}
+\renewcommand{\theHdigression}{\theHremark}
+\makeatother
+
+% ===================== license / cleveref =====================
+\usepackage[type={CC},modifier={by},version={4.0}]{doclicense}
+\usepackage{cleveref}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Probability and Measure}}\\[1ex]
+Fabian Bosshard
+\end{center}
+
+\vspace{1em}
+
+\tableofcontents
+
+\section{Basic Stuff}
+
+Contingency table: displays the multivariate frequency distribution of the variables.
+
+\subsection{Conditional Probability and Bayes' Theorem}
+
+\subsubsection{Events}
+
+\emph{Conditional probability}
+\[
+\mathrm{P}(A\mid B) = \frac{\mathrm{P}(A \cap B)}{\mathrm{P}(B)}
+\]
+
+\emph{Bayes' theorem}
+\[
+\mathrm{P}(A\mid B) = \frac{\mathrm{P}(B\mid A)\,\mathrm{P}(A)}{\mathrm{P}(B)}
+\]
+
+\emph{Total probability}
+
+Let $(A_i)_i$ be a partition of $\Omega$. Then
+\[
+\begin{aligned}
+\mathrm{P}(B)
+&= \sum_i \mathrm{P}(B \cap A_i) \\
+&= \sum_i \mathrm{P}(B\mid A_i)\,\mathrm{P}(A_i).
+\end{aligned}
+\]
+
+\subsubsection{From Events to Random Variables}
+
+If $X,Y$ are random variables, the same structure appears at the level of distributions.
+
+\subsubsection{Random Variables}
+
+\begin{center}
+\begin{tabular}{@{}p{0.45\linewidth}p{0.45\linewidth}@{}}
+\textbf{Discrete case (pmf)} & \textbf{Continuous case (pdf)}\\[0.5ex]
+% \hline
+\emph{Joint distribution} & \emph{Joint distribution}\\[0.0ex]
+$p_{X,Y}(x,y) = \mathrm{P}(X = x, Y = y)$ & $f_{X,Y}(x,y)$\\[1.5ex]
+\emph{Marginal distribution} & \emph{Marginal distribution}\\[0.0ex]
+$p_Y(y) = \sum_x p_{X,Y}(x,y)$ & $f_Y(y) = \int f_{X,Y}(x,y)\,\mathrm{d}x$\\[1.5ex]
+\emph{Conditional distribution} & \emph{Conditional distribution}\\[0.0ex]
+$p_{X\mid Y}(x\mid y) = \dfrac{p_{X,Y}(x,y)}{p_Y(y)}$ & $f_{X\mid Y}(x\mid y) = \dfrac{f_{X,Y}(x,y)}{f_Y(y)}$\\[1.5ex]
+\emph{Bayes' theorem} & \emph{Bayes' theorem}\\[0.0ex]
+$p_{X\mid Y}(x\mid y)
+  = \dfrac{p_{Y\mid X}(y\mid x)\,p_X(x)}{\sum_u p_{Y\mid X}(y\mid u)\,p_X(u)}$ &
+\makebox[0.45\linewidth][l]{$f_{X\mid Y}(x\mid y)
+  = \dfrac{f_{Y\mid X}(y\mid x)\,f_X(x)}{\int f_{Y\mid X}(y\mid u)\,f_X(u)\,\mathrm{d}u}$}\\
+% \hline
+\end{tabular}
+\end{center}
+
+\section{Probability Spaces}
+
+\subsection{Measurable Spaces}
+
+Let $\Omega$ be a \hl{non-empty} set.
+We call $\Omega$ the sample space, which specifies the possible outcomes of a random trial.
+
+Based on the \emph{elementary outcomes} $\omega \in \Omega$, one can also consider more complex \emph{events} $A \subseteq \Omega$, which are based on the usual set operations.
+
+If $P$ is a property of elements of $\Omega$, then the set
+\[
+\{\omega \in \Omega : P(\omega)\} \subset \Omega
+\]
+is the subset of all elements $\omega \in \Omega$ for which $P$ is true.
+Furthermore, for $A \subset \Omega$, we write
+\[
+A^\complement := \{\omega \in \Omega : \omega \notin A\}
+\]
+for the \emph{complement} of $A$ in $\Omega$.
+The complement of $\Omega$ is the empty set $\varnothing$.
+Given two sets $A,B\subset \Omega$, we further define their \emph{union} by  
+\[
+A \cup B := \{\omega \in \Omega : \omega \in A \text{ or } \omega \in B\},
+\]
+their \emph{intersection} by
+\[
+A \cap B := \{\omega \in \Omega : \omega \in A \text{ and } \omega \in B\},
+\]
+and their \emph{difference} by
+\[
+A \setminus B := A \cap B^\complement.
+\]
+
+The collection of all possible subsets of $\Omega$ is called the \emph{power set} of $\Omega$ and is defined as
+\[
+2^\Omega := \{ A : A \subseteq \Omega \}.
+\]
+
+We are often interested in certain subsets of the sample space.
+To work with these subsets, we define a collection of events that is closed under the usual set operations.
+
+\begin{definition}[Algebra]\label{def:algebra}
+A set $\mathcal{F}\subseteq 2^\Omega$ is called an \emph{algebra} on $\Omega$ if
+\begin{enumerate}[label=(\roman*)]
+  \item $\Omega \in \mathcal{F}$,\label{def:algebra-contains-samplespace}
+  \item $A \in \mathcal{F} \Rightarrow A^\complement \in \mathcal{F}$,\label{def:algebra-closed-under-complement}
+  \item $A,B \in \mathcal{F} \Rightarrow A \cup B \in \mathcal{F}$.\label{def:algebra-closed-under-union}
+\end{enumerate}
+The sets $A \in \mathcal{F}$ are called \emph{events}.
+\end{definition}
+
+The smallest algebra is $\{\varnothing,\Omega\}$.
+Since for any algebra $\mathcal{F}\subseteq 2^\Omega$, $2^\Omega$ is the largest algebra.
+Note that any algebra is also closed under intersection, since
+$A \cap B = (A^\complement \cup B^\complement)^\complement$ (De Morgan).
+
+\begin{example}[Different information $\Rightarrow$ different algebras]\label{ex-info-algebras}
+Alice generates two random bits. The sample space therefore is
+\[
+\Omega = \{00,01,10,11\}.
+\]
+
+Alice observes the exact outcome, hence her observable events are all subsets of $\Omega$:
+\[
+\mathcal{F}_A = 2^\Omega.
+\]
+
+Bob is only told the \emph{number of ones} in the two bits. This induces the partition
+\[
+\Pi_B = \bigl\{\{00\},\{01,10\},\{11\}\bigr\}
+\]
+of the sample space $\Omega$.
+Therefore Bob can only observe events that are unions of blocks of $\Pi_B$, i.e., the algebra generated by $\Pi_B$:
+\[
+\mathcal{F}_B
+=
+\{
+\varnothing,\{00\},\{01,10\},\{11\},\{00,11\},\{00,01,10\},\{01,10,11\},\Omega
+\}.
+\]
+
+Cindy is only told whether the bits are \emph{equal or different}. This induces the coarser partition
+\[
+\Pi_C = \bigl\{\{00,11\},\{01,10\}\bigr\},
+\]
+hence her observable events form the algebra:
+\[
+\mathcal{F}_C = \{\varnothing,\{00,11\},\{01,10\},\Omega\}.
+\]
+
+We have
+\[
+\mathcal{F}_A \supset \mathcal{F}_B \supset \mathcal{F}_C
+\]
+expressing that more information corresponds to a finer partition and thus a larger algebra of observable events.
+\end{example}
+
+Often, we encounter situations with infinitely many events and we want to assign probabilities to the case that all of them occur simultaneously.
+This is possible, as long as the number of events involved is at most countably infinite.
+
+\begin{definition}[$\sigma$-algebra]\label{def:sigma-algebra}
+A set $\mathcal{F}\subseteq 2^\Omega$ is called a \emph{$\sigma$-algebra} on $\Omega$ if
+\begin{enumerate}[label=(\roman*)]
+  \item $\mathcal{F}$ is an algebra on $\Omega$,\label{item:sigma-algebra-is-algebra}
+  \item for any $A_1,A_2,\dots\in\mathcal{F}$ we have $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$.\label{item:sigma-algebra-closed-under-countable-union}
+\end{enumerate}
+The sets in $\mathcal{F}$ are called \hl{measurable} and the tuple $(\Omega,\mathcal{F})$ is called a \emph{measurable space}.
+\end{definition}
+
+\begin{remark}
+Let $\mathcal{I}$ be an index set, which may be uncountably infinite, and let $A_i\subseteq \Omega$ for each $i\in \mathcal{I}$.
+We denote the union of $A_i$ over $i\in\mathcal{I}$ by
+\[
+  \bigcup_{i\in\mathcal{I}} A_i := \{\omega \in \Omega : \omega \in A_i \text{ for some } i \in \mathcal{I}\}
+\]
+and the intersection of $A_i$ over $i \in \mathcal{I}$ by
+\[
+  \bigcap_{i\in\mathcal{I}} A_i := \{\omega \in \Omega : \omega \in A_i \text{ for all } i \in \mathcal{I}\}.
+\]
+If $\mathcal{I}$ is countable, e.g.\ $\mathcal{I} = \mathbb{N}$, we often write $\bigcup_{i=1}^{\infty}A_i$ and $\bigcap_{i=1}^{\infty} A_i$ to represent the union and intersection of $A_i$ over $i\in \mathcal{I}$, respectively.
+\end{remark}
+
+\begin{example}[Co-finite algebra]\label{ex:cofinite-algebra}
+Let $\Omega = \mathbb{N}$ and denote by $\mathcal{F}$ the collection of subsets of $\mathbb{N}$ that are finite or co-finite, i.e.,
+\[
+  \mathcal{F} = \{A \subseteq \mathbb{N} : |A| < \infty \ \text{or}\ |A^\complement| < \infty\}.
+\]
+Then $\mathcal{F}$ is an algebra, but not a $\sigma$-algebra,
+e.g.\ the sequence $\{2\},\{4\},\{6\},\dots$ is contained in $\mathcal{F}$, but $\bigcup_{i=1}^{\infty} \{i\} \notin \mathcal{F}$.
+\end{example}
+
+Recall that for sequences of real numbers, the limit inferior and limit superior are defined as
+\[
+  \liminf_{i\to\infty} x_i := \lim_{n\to\infty} \inf_{i\ge n} x_i
+\quad\text{and}\quad
+  \limsup_{i\to\infty} x_i := \lim_{n\to\infty} \sup_{i\ge n} x_i.
+\]
+
+\begin{definition}
+Let $A_1,A_2,\dots$ be a sequence of subsets of $\Omega$.
+The \emph{limit inferior} and \emph{limit superior} of this sequence are defined as
+\[
+  \liminf_{i\to\infty} A_i := \bigcup_{i=1}^{\infty} \bigcap_{k=i}^{\infty} A_k
+\quad\text{and}\quad
+  \limsup_{i\to\infty} A_i := \bigcap_{i=1}^{\infty} \bigcup_{k=i}^{\infty} A_k,
+\]
+respectively.
+\end{definition}
+
+If $\omega \in \liminf_{i\to\infty} A_i$, we say that ``$\omega$ is in $A_i$ eventually'', i.e., for all but finitely many $i$, whereas $\omega \in \limsup_{i\to\infty} A_i$ means that ``$\omega$ is in $A_i$ infinitely often'', i.e. for infinitely many $i$.
+We have
+\[
+  \liminf_{i\to\infty} A_i \subseteq \limsup_{i\to\infty} A_i.
+\]
+
+\hl{The power set $2^\Omega$ is always the largest $\sigma$-algebra on $\Omega$.}
+In contrast, the smallest $\sigma$-algebra is given by $\mathcal{F} = \{\varnothing,\Omega\}$.
+
+\begin{theorem}[Generated $\sigma$-algebra]\label{thm:generated-sigma-algebra}
+Let $\mathcal{A}\subseteq 2^\Omega$.
+If we define the set
+\[
+\mathcal{M} := \{\mathcal{F} \mid \mathcal{A} \subseteq \mathcal{F} \subseteq 2^\Omega\ \text{and}\ \mathcal{F}\ \text{is a }\sigma\text{-algebra}\},
+\]
+the smallest $\sigma$-algebra such that $\mathcal{A} \subseteq \sigma(\mathcal{A})$ is given by
+\[
+  \sigma(\mathcal{A}) := \bigcap_{\mathcal{F} \in \mathcal{M}} \mathcal{F},
+\]
+which is called the $\sigma$-algebra generated by $\mathcal{A}$.
+\end{theorem}
+
+\begin{proof}
+$\mathcal{M}$ is non-empty since $\mathcal{A}\subset 2^\Omega$.
+By \Cref{def:algebra} \Cref{def:algebra-contains-samplespace}, $\Omega \in \mathcal{F}$ for all $\mathcal{F}\in \mathcal{M}$, which means that $\Omega \in \sigma(\mathcal{A})$.
+
+If $A \in \sigma(\mathcal{A})$, then $A \in \mathcal{F}$ for all $\mathcal{F}\in \mathcal{M}$.
+By \Cref{def:algebra} \Cref{def:algebra-closed-under-complement}, this implies $A^\complement \in \mathcal{F}$ for all $\mathcal{F}\in \mathcal{M}$ and, hence, $A^\complement \in \sigma(\mathcal{A})$.
+
+Let $A_n \in \sigma(\mathcal{A})$ for all $n \in \mathbb{N}$.
+Then $A_n \in \mathcal{F}$ for all $n\in \mathbb{N}$ and each $\mathcal{F}\in \mathcal{M}$.
+By \Cref{def:sigma-algebra} \Cref{item:sigma-algebra-closed-under-countable-union}, this implies
+\[
+  A := \bigcup_{n=1}^{\infty} A_n \in \mathcal{F}
+\]
+for each such $\mathcal{F}$.
+Therefore, $A \in \sigma(\mathcal{A})$.
+
+Thus $\sigma(\mathcal{A})$ is a $\sigma$-algebra.
+The minimality is a consequence of its definition.
+\end{proof}
+
+\begin{example}
+Let $(\Omega_1,\mathcal{F}_1)$ and $(\Omega_2,\mathcal{F}_2)$ denote two measurable spaces (see \Cref{def:sigma-algebra}). The \emph{product $\sigma$-algebra} is defined as
+\[
+  \mathcal{F}_1 \otimes \mathcal{F}_2 := \sigma\bigl(\{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}\bigr).
+\]
+
+
+Note that
+\[
+\{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}
+\]
+is no $\sigma$-algebra in general.
+Intuitively, it corresponds to the fact that while rectangles are closed under intersections the same is not true for unions.
+The union of two rectangles in general is not a rectangle.
+\[
+\begin{tikzpicture}[scale=0.7]
+\definecolor{aFill}{HTML}{dbfedd}
+\definecolor{aStroke}{HTML}{5bd772}
+\definecolor{bFill}{HTML}{f8d7d7}
+\definecolor{bStroke}{HTML}{d07a7a}
+\definecolor{cFill}{HTML}{f8efcf}
+\definecolor{cStroke}{HTML}{d5b86a}
+% Rectangle A ((2,2.5),(5,4.5))
+\filldraw[aFill, draw=aStroke, opacity=0.5] (2,2.5) rectangle (5,4.5);
+% Rectangle B ((1,2),(4,4))
+\filldraw[bFill, draw=bStroke, opacity=0.5] (1,2) rectangle (4,4);
+% Rectangle C ((3,1.5),(6,3.5))
+\filldraw[cFill, draw=cStroke, opacity=0.5] (3,1.5) rectangle (6,3.5);
+\end{tikzpicture}
+\]
+
+Hence the family is not even an algebra, and therefore certainly not a $\sigma$-algebra.
+If it were closed under complements, closure under unions would follow by De Morgan's laws, leading to a contradiction.
+\end{example}
+
+\subsection{Measures}
+
+Introducing the concept of a \emph{measure}, we can assign volumes to sets.
+
+\begin{definition}
+  Let $(\Omega,\mathcal{F})$ be a measurable space (see \Cref{def:sigma-algebra}).
+  A set function $\mu : \mathcal{F} \to [0,\infty]$ is called a \emph{measure} if
+  \begin{enumerate}[label=(\roman*)]
+  \item $\mu(\varnothing) = 0$,\smallskip
+  \item for any $A_1,A_2,\dots \in \mathcal{F}$ with $A_i \cap A_j = \varnothing$ for $i \neq j$, there holds the \emph{$\sigma$-additivity}
+  \[
+    \mu\Bigl(\bigcup_{i=1}^{\infty} A_i\Bigr) = \sum_{i=1}^{\infty} \mu(A_i).
+  \]
+  \end{enumerate}
+  A measure $\mu$ is called \emph{$\sigma$-finite} if there exists a sequence $A_1,A_2,\dots \in \mathcal{F}$ such that $\Omega = \bigcup_{i=1}^{\infty} A_i$ and $\mu(A_i) < \infty$ for all $i\in \mathbb{N}$.
+  It is \emph{finite} if $\mu(\Omega) < \infty$.
+  The triple $(\Omega,\mathcal{F},\mu)$ is called a \emph{measure space}.
+\end{definition}
+
+\begin{remark}
+  If a measure assumes the value $\infty$, we make the convention $\infty + \infty = \infty$ and $\infty + c = \infty$ for any $c \in \mathbb{R}$.
+\end{remark}
+
+\begin{example}[Counting measure]
+Let $\Omega$ be a countable set and consider the measurable space $(\Omega,2^\Omega)$.
+We define the set function $\mu$ which assigns a set $A \in \mathcal{F}$ its cardinality, i.e., $\mu(A) = |A|$.
+The set function $\mu$ is a measure called the \emph{counting measure}.
+\end{example}
+
+To assign \emph{probabilities} to events, we consider the following specialization of a measure.
+
+\begin{definition}[Probability space]\label{def:probability-space}
+  Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
+  If $\mu(\Omega) = 1$, we call $(\Omega,\mathcal{F},\mu)$ a \emph{probability space} and $\mu$ a \emph{probability measure}.
+  In this case, we usually denote $\mu$ by $\Prob$.
+\end{definition}
+
+\begin{example}[Discrete probability space]
+Let $\Omega = \mathbb{N}$.
+Suppose $p_1,p_2,\dots$ are a sequence of nonnegative real numbers such that
+\[
+  \sum_{i=1}^{\infty} p_i = 1.
+\]
+For any $A \subset \Omega$, we define
+\[
+\Prob(A) = \sum_{i \in A} p_i.
+\]
+Then, the set function $\Prob: 2^\Omega \to [0,1]$ is a probability measure and $(\Omega,2^\Omega,\Prob)$ is a probability space.
+\end{example}
+
+\begin{theorem}
+Let $(\Omega,\mathcal{F},\Prob)$ be a measure space.
+Let $A,B \in \mathcal{F}$ with $A \subset B$.
+Then,
+\[
+  \mu(A) \le \mu(B)
+  \qedhere
+\]
+\end{theorem}
+
+\begin{proof}
+We have $B = A \cup (B \setminus A)$, whereby the sets $A$ and $B \setminus A$ are disjoint.
+We infer
+\[
+  \mu(B) = \mu(A) + \mu(B \setminus A)
+\]
+and since $\mu(B \setminus A) \ge 0$ by definition, follows that $\mu(B) \ge \mu(A)$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+\[
+  2 \Omega
+\]
+\[
+  E = m \cdot c^2
+\]
+
+\begin{exercise}[Borel $\sigma$-algebra on $\mathbb{R}$]
+  Let $\mathcal{A}_1 = \{(-\infty,a] : a \in \mathbb{R}\}$ and $\mathcal{A}_2 = \{(-\infty,a) : a \in \mathbb{R}\}$.
+  Show that $\sigma(\mathcal{A}_1) = \sigma(\mathcal{A}_2)$.
+\end{exercise}
+
+\begin{solution}
+  We show both directions of inclusion.
+
+  \emph{Step 1: Show $\mathcal{A}_2 \subset \sigma(\mathcal{A}_1)$.}
+
+  Fix $a \in \mathbb{R}$. Note that
+  \[
+    (-\infty,a) = \bigcup_{n=1}^{\infty} \Bigl(-\infty,a - \tfrac{1}{n}\Bigr].
+  \]
+  Each $(-\infty,a - \tfrac{1}{n}] \in \mathcal{A}_1 \subset \sigma(\mathcal{A}_1)$, and $\sigma$-algebras are closed under countable unions, so the union is in $\sigma(\mathcal{A}_1)$. Hence $(-\infty,a) \in \sigma(\mathcal{A}_1)$.
+
+  Therefore $\mathcal{A}_2 \subset \sigma(\mathcal{A}_1)$, which implies $\sigma(\mathcal{A}_2) \subset \sigma(\mathcal{A}_1)$ by minimality.
+
+  \emph{Step 2: Show $\mathcal{A}_1 \subset \sigma(\mathcal{A}_2)$.}
+
+  Fix $a \in \mathbb{R}$. Note that
+  \[
+    (-\infty,a] = \bigcap_{n=1}^{\infty} \Bigl(-\infty,a + \tfrac{1}{n}\Bigr).
+  \]
+  Each $(-\infty,a + \tfrac{1}{n}) \in \mathcal{A}_2 \subset \sigma(\mathcal{A}_2)$. Since $\sigma$-algebras are closed under countable intersections (via De Morgan: $\bigcap E_n = \bigl(\bigcup E_n^c\bigr)^c$), the intersection is in $\sigma(\mathcal{A}_2)$.
+
+  Therefore $\mathcal{A}_1 \subset \sigma(\mathcal{A}_2)$, which implies $\sigma(\mathcal{A}_1) \subset \sigma(\mathcal{A}_2)$ by minimality.
+
+  \emph{Conclusion:} From both inclusions, $\sigma(\mathcal{A}_1) = \sigma(\mathcal{A}_2)$.
+\end{solution}
+
+\end{document}
