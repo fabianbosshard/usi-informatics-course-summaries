@@ -1,4 +1,3 @@
-
 \documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
 \usepackage{ifthen}
 \usepackage{iftex}
@@ -60,7 +59,9 @@
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{mathtools}
 \usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
+
 \usepackage{accents}
+\usepackage{braket}
 
 \usepackage{enumitem}
 \renewcommand{\labelitemi}{\textbullet}
@@ -134,19 +135,33 @@
 \usepackage{algorithmicx}
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
 
-\newcommand{\im}{\operatorname{Im}}
 
+% ===================== operators / notation =====================
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\Span}{span}
 \DeclareMathOperator{\Kern}{kern}
 \DeclareMathOperator{\Trace}{trace}
 \DeclareMathOperator{\Rank}{rank}
+% \newcommand{\im}{\operatorname{Im}}
+% \newcommand{\re}{\operatorname{Re}}
+\newcommand{\im}{\Im}
+\newcommand{\re}{\Re}
+
 
 \newcommand*\matrspace{0.8mu}
 \newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
 \newcommand{\vect}[1]{{\boldsymbol{#1}}}
+
 \newcommand{\dif}{\mathrm{d}}
+% \newcommand{\eu}{\mathrm{e}}
+\newcommand{\eu}{e}
+% \newcommand{\iu}{\mathrm{i}}
+\newcommand{\iu}{\imath}
+\newcommand{\sign}{\operatorname{sgn}}
+
+\newcommand{\oo}{\infty}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -154,6 +169,7 @@
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\K}{\mathbb{K}}
 \newcommand{\F}{\mathbb{F}}
+
 
 % commands for probability
 \newcommand{\Var}{\operatorname{Var}}
@@ -324,6 +340,531 @@
 \]
 
 \section{Information is Physical}
+
+\subsection{Stern/Gerlach Experiment}
+
+Measure \emph{magnetic dipole moment} of silver atoms by sending a stream of them through an \emph{inhomogeneous} magnetic field.  Each atom is deflected from the path proportionally to its dipole in the direction of the field gradient.
+
+\subsubsection{Classical expectation}
+
+If we imagine that the moments of the atoms point in random directions, then the classical expectation is that the deflection pattern reaches a maximum in the middle (no deflection) and then symmetrically, monotonically and continuously decreases on the sides.
+
+\paragraph{\textbf{Classical mechanics.}}
+
+Angular momentum (pseudovector):
+\[
+\vect{L} = \vect{r} \times \vect{p} = \vect{r} \times (m\,\vect{v})
+\]
+
+Torque:
+\[
+\vect{\tau} = \vect{r} \times \vect{F}
+\]
+
+Relationship:
+\begin{equation}\label{eq:tau_L}
+\vect{\tau} = \frac{\dif}{\dif t}\,\vect{L}
+\end{equation}
+
+\paragraph{\textbf{Classical electrodynamics.}}
+
+A charge $q$ moving in a circle of radius $R$ creates a current:
+\[
+I = \frac{q}{T}
+\quad\text{where}\quad
+T = \frac{2\pi R}{v}
+\]
+
+Magnetic dipole moment of a current loop:
+\[
+\vect{\mu} = I\,A\,\hat{n}
+\quad\text{where}\quad
+A = \pi R^{2}
+\quad\text{and}\quad
+\hat{n}\ \text{is normal to the area.}
+\]
+
+Thus
+\[
+\vect{\mu}
+= \frac{q}{2\pi R/v}\,(\pi R^{2})\,\hat{n}
+= \frac{q\,v\,R}{2}\,\hat{n}
+\]
+
+Angular momentum:
+\[
+\vect{L} = m\,\vect{r}\times\vect{v} = m\,R\,v\,\hat{n}
+\]
+
+Therefore (the bridge):
+\begin{equation}\label{eq:mu_gammaL}
+\fcolorbox{red}{white}{\(\vect{\mu} = \gamma\,\vect{L}\)}
+\end{equation}
+with
+\[
+\gamma = \frac{q}{2m}
+\]
+
+\paragraph{\textbf{Magnetic dipole dynamics.}}
+
+Torque:
+\begin{equation}\label{eq:tau_muB}
+\vect{\tau} = \vect{\mu} \times \vect{B}
+\end{equation}
+
+Combining \eqref{eq:tau_L}, \eqref{eq:mu_gammaL} and \eqref{eq:tau_muB} gives the precession equation:
+\[
+\frac{\dif}{\dif t}\,\vect{L} = \gamma\bigl(\vect{L}\times\vect{B}\bigr)
+\quad\text{or equivalently}\quad
+\frac{\dif}{\dif t}\,\vect{\mu} = \gamma\bigl(\vect{\mu}\times\vect{B}\bigr)
+\]
+Hence $\frac{\dif\vect{\mu}}{\dif t}\perp\vect{\mu}$, and therefore $\lvert\vect{\mu}\rvert$ is constant (only the direction changes).
+
+Energy:
+\[
+U = -\,\vect{\mu}\cdot\vect{B}
+\]
+
+Force in general is
+\[
+\vect{F} = \nabla\bigl(\vect{\mu}\cdot\vect{B}\bigr)
+\]
+and if $\vect{\mu}$ is constant and $\vect{B}\approx [0,0,B_z(z)]$, then
+\[
+F_{z} \approx \mu_{z}\,\frac{\partial B_{z}}{\partial z}
+\]
+
+So, as mentioned above, according to classical physics we would expect to measure
+\[
+\mu_{z}\in[-\lvert\vect{\mu}\rvert,\,+\lvert\vect{\mu}\rvert]
+\]
+i.e. a continuous range and thus a continuous vertical smear.
+
+\subsubsection{Observation}
+
+That is, however, not what was observed: there is no detection in (not even close to) the middle, but rather two sharp peaks at equal distances from the middle.
+
+In quantum mechanics, $\vect{L}$ becomes an operator with three components $\hat{L}_{x},\hat{L}_{y},\hat{L}_{z}$ and they do not commute, e.g.
+\[
+[\hat{L}_{x},\hat{L}_{y}]
+:= \hat{L}_{x}\hat{L}_{y}-\hat{L}_{y}\hat{L}_{x}
+= \iu \hbar \hat{L}_{z}
+\]
+This means we cannot simultaneously know all three components exactly.  What is possible is to simultaneously know one component and the total angular momentum operator:
+\[
+\hat{L}^{2} = \hat{L}_{x}^{2}+\hat{L}_{y}^{2}+\hat{L}_{z}^{2}
+\]
+$\hat{L}^{2}$ has eigenvalues $\ell(\ell+1)\hbar^{2}$:
+\[
+\hat{L}^{2}\,|\ell,m_{\ell}\rangle = \ell(\ell+1)\,\hbar^{2}\,|\ell,m_{\ell}\rangle
+\]
+Projection quantization:
+\[
+\hat{L}_{z}\,|\ell,m_{\ell}\rangle = m_{\ell}\,\hbar\,|\ell,m_{\ell}\rangle
+\]
+with $m_{\ell}=-\ell,-\ell+1,\dots,\ell-1,\ell$.
+
+Even when orbital $\ell=0$, particles can still have angular momentum (spin) $\vect{S}$.  It also satisfies $\hat{S}^{2} = \hat{S}_{x}^{2} + \hat{S}_{y}^{2} + \hat{S}_{z}^{2}$ and
+\[
+\hat{S}^{2}\,|s,m_{s}\rangle = s(s+1)\,\hbar^{2}\,|s,m_{s}\rangle,
+\quad
+\hat{S}_{z}\,|s,m_{s}\rangle = m_{s}\,\hbar\,|s,m_{s}\rangle
+\]
+For the electron, for example, $m_{s} = \pm\tfrac{1}{2}$ so $\hat{S}_{z}$ has eigenvalues $\pm\,\hbar/2$.
+
+Magnetic moment in quantum mechanics:
+\[
+\vect{\mu} = \vect{\mu}_{L} + \vect{\mu}_{S}
+\]
+where
+$\vect{\mu}_{L} = \tfrac{q}{2m}\,\vect{L}$
+and
+$\vect{\mu}_{S} = g\,\tfrac{q}{2m}\,\vect{S}$
+(for the electron: $g \approx 2$).
+
+For silver, the valence electron is in an $s$-orbital ($\ell=0$), so $\vect{\mu}_{L}\approx\vect{0}$.  The remaining contribution is spin: $s=\tfrac{1}{2}$ and $m_{s}=\pm\tfrac{1}{2}$, hence $\mu_{z}$ can take only two values.  This is the reason for the two peaks.
+
+\subsubsection{Repeated measurements}
+
+If we split along $z$, take the $z_{+}$ beam, and split again along $z$, all atoms are deflected into the positive $z$ direction.  In this sense the $Z$-spin looks classical; it is \emph{stable} with respect to repeated measurements.
+\[
+\begin{tikzpicture}[x=0.3cm, y=0.3cm, every node/.style={font=\footnotesize}]
+  \def\sourceW{0.9}
+  \def\sourceH{0.45}
+  \def\deviceW{0.45}
+  \def\deviceH{0.9}
+  \def\branch{1}
+  \def\rightSpan{4}
+  \coordinate (zTwoBypass) at (15.25,-1);
+
+  \node[draw, rounded corners=1.5pt, minimum width=\sourceW cm, minimum height=\sourceH cm] (source) at (0,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (z1) at (6,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (z2) at (16,1) {};
+
+  \node at (z1) {$Z$};
+  \node at (z2) {$Z$};
+
+  \draw[densely dotted] (source.east) -- (z1.west);
+
+  \draw[densely dotted] (z1.east) ++(0,\branch) -- node[pos=0.22, anchor=south] {$z_{+}$} node[pos=0.72, anchor=south] {$50\%$} (z2.west);
+  \draw[densely dotted] (z1.east) ++(0,-\branch) -- node[pos=0.22, anchor=north] {$z_{-}$} node[pos=0.72, anchor=north] {$50\%$} (zTwoBypass);
+
+  \draw[densely dotted] (z2.east) ++(0,\branch) -- node[pos=0.5, anchor=south] {$z_{+}$} node[pos=1, anchor=west] {$100\%$} ++(\rightSpan,0);
+  \draw[densely dotted] (z2.east) ++(0,-\branch) -- node[pos=0.5, anchor=north] {$z_{-}$} node[pos=1, anchor=west] {$0\%$} ++(\rightSpan,0);
+\end{tikzpicture}
+\]
+
+When the second magnet is rotated into the $x$-direction, again a 50–50 distribution occurs, which is not very surprising, since it just means that the two properties, $Z$-spin and $X$-spin, look \emph{independent}.
+\[
+\begin{tikzpicture}[x=0.3cm, y=0.3cm, every node/.style={font=\footnotesize}]
+  \def\sourceW{0.9}
+  \def\sourceH{0.45}
+  \def\deviceW{0.45}
+  \def\deviceH{0.9}
+  \def\branch{1}
+  \def\rightSpan{4}
+  \coordinate (xTwoBypass) at (15.25,-1);
+
+  \node[draw, rounded corners=1.5pt, minimum width=\sourceW cm, minimum height=\sourceH cm] (source) at (0,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (z1) at (6,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (x2) at (16,1) {};
+
+  \node at (z1) {$Z$};
+  \node at (x2) {$X$};
+
+  \draw[densely dotted] (source.east) -- (z1.west);
+  \draw[densely dotted]
+    (z1.east) ++(0,\branch)
+    -- node[pos=0.22, anchor=south] {$z_{+}$}
+       node[pos=0.72, anchor=south] {$50\%$}
+    (x2.west);
+  \draw[densely dotted]
+    (z1.east) ++(0,-\branch)
+    -- node[pos=0.22, anchor=north] {$z_{-}$}
+       node[pos=0.72, anchor=north] {$50\%$}
+    (xTwoBypass);
+
+  \draw[densely dotted]
+    (x2.east) ++(0,\branch)
+    -- node[pos=0.5, anchor=south] {$x_{+}$}
+       node[pos=1, anchor=west] {$50\%$}
+    ++(\rightSpan,0);
+  \draw[densely dotted]
+    (x2.east) ++(0,-\branch)
+    -- node[pos=0.5, anchor=north] {$x_{-}$}
+       node[pos=1, anchor=west] {$50\%$}
+    ++(\rightSpan,0);
+\end{tikzpicture}
+\]
+
+A surprising outcome occurs when the measurements are cascaded as follows:
+\[
+\begin{tikzpicture}[x=0.3cm, y=0.3cm, every node/.style={font=\footnotesize}]
+  \def\sourceW{0.9}
+  \def\sourceH{0.45}
+  \def\deviceW{0.45}
+  \def\deviceH{0.9}
+  \def\branch{1}
+  \def\rightSpan{4}
+
+  \node[draw, rounded corners=1.5pt, minimum width=\sourceW cm, minimum height=\sourceH cm] (source) at (0,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (z1) at (6,0) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (x2) at (16,1) {};
+  \node[draw, rounded corners=1.5pt, minimum width=\deviceW cm, minimum height=\deviceH cm] (z3) at (26,2) {};
+  \coordinate (xTwoBypass) at ($(x2.west) + (0,-2)$);
+  \coordinate (zThreeBypass) at ($(z3.west) + (0,-2)$);
+
+  \node at (z1) {$Z$};
+  \node at (x2) {$X$};
+  \node at (z3) {$Z$};
+
+  \draw[densely dotted] (source.east) -- (z1.west);
+  \draw[densely dotted]
+    (z1.east) ++(0,\branch)
+    -- node[pos=0.22, anchor=south] {$z_{+}$}
+       node[pos=0.72, anchor=south] {$50\%$}
+    (x2.west);
+  \draw[densely dotted]
+    (z1.east) ++(0,-\branch)
+    -- node[pos=0.22, anchor=north] {$z_{-}$}
+       node[pos=0.72, anchor=north] {$50\%$}
+    (xTwoBypass);
+
+  \draw[densely dotted]
+    (x2.east) ++(0,\branch)
+    -- node[pos=0.22, anchor=south] {$x_{+}$}
+       node[pos=0.72, anchor=south] {$50\%$}
+    (z3.west);
+  \draw[densely dotted]
+    (x2.east) ++(0,-\branch)
+    -- node[pos=0.22, anchor=north] {$x_{-}$}
+       node[pos=0.72, anchor=north] {$50\%$}
+    (zThreeBypass);
+
+  \draw[densely dotted]
+    (z3.east) ++(0,\branch)
+    -- node[pos=0.5, anchor=south] {$z_{+}$}
+       node[pos=1, anchor=west] {$50\%$}
+    ++(\rightSpan,0);
+  \draw[densely dotted]
+    (z3.east) ++(0,-\branch)
+    -- node[pos=0.5, anchor=north] {$z_{-}$}
+       node[pos=1, anchor=west] {$50\%$}
+    ++(\rightSpan,0);
+\end{tikzpicture}
+\]
+
+This questions both the \emph{stability} and the \emph{independence} of the spin property.
+
+\subsubsection{Superposition}
+
+{%
+% Tikz Library
+\usetikzlibrary{3d, shapes.multipart, angles, quotes}
+% Tikz Styles
+\tikzset{>=latex}
+\tikzset{axis/.style={black, ->}}
+\tikzset{ef/.style={red}}
+\tikzset{vec/.style={black, -{Latex[length=0.8mm]}}}
+\tikzset{every text node part/.style={align=center, font=\footnotesize}}
+% Newcommand
+%% Polar Coordinates Line from (0,0 to (r, theta)
+\newcommand{\cdraw}[2]{\draw[-stealth, red] (0,0) -- ({#1*cos(#2)}, {#1*sin(#2)});}
+%% Polarizer
+\newcommand{\polarizer}[2]{%
+	\begin{scope}[canvas is xz plane at y=1.2]
+		\draw[line join=round, thick, fill=black!40] (#1,-1.2) rectangle (#1+0.2,1.2);
+	\end{scope}
+	%
+	\begin{scope}[canvas is xy plane at z=1.2]
+		\draw[line join=round, thick, fill=black!25](#1,-1.2) rectangle (#1+0.2,1.2);
+	\end{scope}
+	%
+	\begin{scope}[canvas is yz plane at x=#1]
+		\draw[line join=round, thick, fill=black!10] (-1.2,-1.2) rectangle (1.2,1.2);
+		\draw[line join=round, thick, fill=white] (0,0) circle (0.8cm);
+		\draw[line join=round, thick] (-{0.8*cos(#2)}, -{0.8*sin(#2)}) -- ({0.8*cos(#2)},{0.8*sin(#2)});
+	\end{scope}
+}
+%% Analyser
+\newcommand{\analizer}[2]{%
+	\begin{scope}[canvas is xz plane at y=1.2]
+		\draw[line join=round, thick, fill=black!40] (#1,-1.2) rectangle (#1+0.2,1.2);
+	\end{scope}
+	%
+	\begin{scope}[canvas is xy plane at z=1.2]
+		\draw[line join=round, thick, fill=black!25](#1,-1.2) rectangle (#1+0.2,1.2);
+	\end{scope}
+	%
+	\begin{scope}[canvas is yz plane at x=#1]
+		\draw[line join=round, thick, fill=black!10] (-1.2,-1.2) rectangle (1.2,1.2);
+		\draw[line join=round, thick, fill=white] (0,0) coordinate (B) circle (0.8cm);
+		\draw[line join=round, thick] (-{0.8*cos(#2)}, -{0.8*sin(#2)}) -- ({0.8*cos(#2)},{0.8*sin(#2)}) coordinate (A);
+		\draw[line join=round, dashed, thick] (0,-0.8) -- (0,0.8) coordinate (C);
+		\pic[line join=round, draw, thick, "$\varphi$", angle radius=0.2cm, angle eccentricity=1.8] {angle = A--B--C};
+	\end{scope}
+}%
+%
+%Layers
+\pgfdeclarelayer{layer1}
+\pgfdeclarelayer{layer2}
+\pgfdeclarelayer{layer3}
+\pgfdeclarelayer{layer4}
+\pgfdeclarelayer{layer5}
+\pgfdeclarelayer{layer6}
+\pgfdeclarelayer{layer7}
+%
+\pgfsetlayers{main, layer7, layer6, layer5, layer4, layer3, layer2, layer1}
+%
+The statistics found were surprising for particles, but they would not have been surprising for waves.  
+With a beam of light and a polarizing filter, a similar thing happens.  
+The angles are a bit different though, because classical polarization intensities obey Malus' law,
+\[
+\frac{I}{I_0} = \cos^{2}(\varphi),
+\]
+where $\varphi$ is the angle between the polarization direction and the polarizer axis:
+\[
+\begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
+	
+\node[align=left, every text node part/.style={align=left}] at (6,-6)
+{\fontsize{5pt}{2pt}\selectfont%
+Image Source:\\[-5.5pt]
+\fontsize{5pt}{2pt}\selectfont\url{https://tikz.net/malus-law/}};
+
+	% Big Axis 
+	\draw[axis] (-1,0,0) -- (12.5,0,0);% node[right, black] {\footnotesize{Polarization}\\[-0.5mm]\footnotesize{Direction}};
+	
+	% Polarizers
+	\begin{pgfonlayer}{layer1}
+		\polarizer{3}{90}
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{layer3}
+		\analizer{8}{45}
+	\end{pgfonlayer}
+	
+	% Polarizer and Analiyzer Nodes
+	\begin{scope}[canvas is yz plane at x=3]
+		% \node[rotate=-20] at (0.5,1.8) {\footnotesize{Polarizer}};
+	\end{scope}
+	%
+	\begin{scope}[canvas is yz plane at x=8]
+		% \node[rotate=-20] at (0.5,1.8) {\footnotesize{Polarizer}};
+	\end{scope}
+	
+	% Polarization Planes
+	\begin{pgfonlayer}{layer1}
+		\begin{scope}[canvas is xy plane at z=-0.2]
+			% \draw[latex-] (3,0) to[out=160, in=270] (3,3) node[right, yshift=-3pt] {\footnotesize{Polarization Plane}\\[-0.5mm]\footnotesize{of Polarizer}};
+		\end{scope}
+		%
+		\begin{scope}[canvas is xy plane at z=-0.2]
+			\draw[latex-] (7.85,-0.07) to[out=130, in=270] (8,3) node[right, yshift=-3pt] {\footnotesize{Polarizer Axis}};
+		\end{scope}
+	\end{pgfonlayer}
+	
+	% Electric Field
+	%% Physical Light
+	\begin{pgfonlayer}{layer1}
+		\begin{scope}[canvas is yz plane at x=0.7]
+			\foreach \i in {0,45,...,315}
+			{
+				\cdraw{0.8}{\i}
+			}		
+		\end{scope}		
+	\end{pgfonlayer}
+	
+	%% Linear Polarization
+	\begin{pgfonlayer}{layer2}
+		\begin{scope}[canvas is yz plane at x=5.4]
+			% \node at (0,1.4) {$\vect{E}, \: I_0$};
+      \node at (0,1.4) {$I_0$};
+		\end{scope}
+		\foreach \i in {3,3.5,...,7.5}
+		{
+			\begin{scope}[canvas is yz plane at x=\i]
+				\cdraw{0.8}{90}
+				\cdraw{0.8}{270}
+			\end{scope}
+		}
+	\end{pgfonlayer}
+	
+	%% Slanted Linear Polarization
+	\begin{pgfonlayer}{layer4}
+		% \begin{scope}[canvas is yz plane at x=10.5]
+		% 	\draw[dashed] (0,-0.8) -- (0,0.8);
+		% 	\coordinate (A) at ({0.8*cos(45)},{0.8*sin(45)});
+		% 	\coordinate (B) at (0,0);
+		% 	\coordinate (C) at (0,0.8); 
+		% 	\pic[draw,  "$\theta$", angle radius=0.25cm, angle eccentricity=2, pic text options={xshift=-1pt}] {angle = A--B--C};
+		% \end{scope}
+		\foreach \i in {8,8.5,...,11.5}
+		{
+			\begin{scope}[canvas is yz plane at x=\i]
+				\cdraw{0.8}{45}
+				\cdraw{0.8}{225}
+			\end{scope}
+	
+		}		
+	\end{pgfonlayer}
+	
+	% Nodes
+	% \node at (0.7,0,1.3) {$I_o$};
+	\node at (10,0,1) {$I$};
+	
+	% Refinements for 3D View
+	\begin{pgfonlayer}{layer1}
+		\draw[] (1,0,0) -- (2.99,0,0);
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{layer3}
+		\draw[] (6,0,0) -- (7.99,0,0);
+	\end{pgfonlayer}
+\end{tikzpicture}
+\]
+}
+
+
+For a spin-$\tfrac{1}{2}$ particle the transition probability between ``up'' along two axes separated by an angle $\theta$ is
+\[
+P = \cos^{2}\frac{\theta}{2}.
+\]
+The extra factor of $\tfrac{1}{2}$ in the angle appears because spin states are \emph{spinors} (an $\mathrm{SU}(2)$ representation): 
+a physical rotation by $\theta$ acts on the state with half the angle in the two-dimensional Hilbert space.
+
+The essential property of waves is that they can be linearly combined.  
+Quantum mechanical states have the same property: 
+they are elements in a vector space and we can derive probability distributions from them by squaring.  
+% For our silver atom, we can write
+% $|x_{+}\rangle$
+% and
+% $|x_{-}\rangle$.
+
+If, after a $Z$ measurement, we perform an $X$ measurement, then we want to know wether the silver atom is in a state $\ket{x_+}$ or $\ket{x_-}$. 
+Both are superpositions:
+\[
+\ket{x_+} = \frac{1}{\sqrt{2}} \ket{z_+} + \frac{1}{\sqrt{2}} \ket{z_-}
+\qquad
+\ket{x_-} = \frac{1}{\sqrt{2}} \ket{z_+} - \frac{1}{\sqrt{2}} \ket{z_-}
+\]
+
+No matter the outcome of the first measurement, the $X$ measurement yields one of both results with equal probability.
+Also in the other direction, if we first measure $X$ and then $Z$, we get the same statistics, independent of any measurements before the $X$ measurement.
+\[
+\begin{tikzpicture}[scale=1.8, font=\scriptsize]
+  % define colors
+  \definecolor{statecolor}{HTML}{1FC7FF}
+  % axis lines
+  \draw[-Stealth, black] (0,0) -- (0,1) node[right] {$\ket{z_{-}}$};
+  \draw[-Stealth, black] (0,0) -- (1,0) node[below] {$\ket{z_{+}}$};
+  % state vectors
+  \draw[-Stealth, statecolor] (0,0) -- ({cos(45)},{sin(45)}) node[above right] {$\ket{x_{+}}$};
+  \draw[-Stealth, statecolor] (0,0) -- ({cos(45)},-{sin(45)}) node[below right] {$\ket{x_{-}}$};
+  % arc between z+ and z-
+  \draw[statecolor,<->] (0.48,0) arc (0:90:0.48) node [above right, inner sep = 0pt, outer sep =1pt, pos=0.23] {$45^\circ$} node [above right, inner sep = 0pt, outer sep =1pt, pos=0.75] {$45^\circ$};
+\end{tikzpicture}
+\]
+
+
+
+
+\subsection{Quantum Key Distribution}\label{sec:quantum-key-distribution}
+
+If a quantum system is measured twice in the same basis, the same result is obtained with certainty. 
+However, an intermediate measurement in a different basis disturbs the state and can change the outcome.
+So the interactions of a system with its environment become traceable. 
+This can be used to detect an eavesdropper in a cryptographic key agreement protocol.
+
+In 1984, Gilles Brassard and Charles Bennett developed the first application of quantum mechanics for cryptographic purposes with such a key agreement protocol (BB84).
+
+Assume Alice and Bob want to agree on a secret key; e.g. for \emph{symmetric encryption} (same key for encryption and decryption).
+They can proceed as follows.
+\begin{enumerate}
+  \item Alice repeatedly measures a random bit in a random basis (e.g., $Z$ or $X$) and sends the quantum system to Bob.
+  \item Bob measures the received system in a randomly chosen basis ($Z$ or $X$).
+\end{enumerate}
+  For the bits where they used the same basis, the measurements must be the same, unless there has been an eavesdropper, Eve, measuring the system in a different basis during its transmission from Alice to Bob. 
+  Since Eve does not know the true basis, the best thing to do for her is to guess it, so her probability of guessing right is 50\%.
+  If, she guesses wrong, the bit Bob recieves will be incorrect with a chance of 50\%, so in total, 25\% of the bits will be wrong.
+\begin{enumerate}[resume]
+  \item Alice and Bob communicate over an \emph{public authenticated classical channel} which basis they used, without sharing the measurement results.
+  \item They randomly select some of the shared bits, reveal them publicly and check if they match.
+  \item If the error rate for those selected bits is high (around 25\%), Eve is present, and they discard the key.
+  \item If the error rate is very low: No eavesdropping detected
+  \item They keep the remaining unrevealed bits as the secret key.
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+
 
 
 
