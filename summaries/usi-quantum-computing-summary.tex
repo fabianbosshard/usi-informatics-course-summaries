@@ -90,7 +90,7 @@
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
-\definecolor{highlightpurple}{rgb}{0.6, 0.0, 0.6}
+\definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
 
 \renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
 
@@ -682,7 +682,7 @@ The angles are a bit different though, because classical polarization intensitie
 \[
 \frac{I}{I_0} = \cos^{2}(\varphi),
 \]
-where $\varphi$ is the angle between the polarization direction and the polarizer axis:
+where $\varphi$ is the angle between the intial polarization direction and the polarizer axis:
 \[
 \begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
 	
@@ -833,7 +833,7 @@ However, an intermediate measurement in a different basis disturbs the state and
 So the interactions of a system with its environment become traceable. 
 This can be used to detect an eavesdropper in a cryptographic key agreement protocol.
 
-In 1984, Gilles Brassard and Charles Bennett developed the first application of quantum mechanics for cryptographic purposes with such a key agreement protocol (BB84).
+In 1984, Gilles Brassard and Charles Bennett developed the first application of quantum mechanics for cryptographic purposes with such a key agreement protocol (\hl{BB84}).
 
 Assume Alice and Bob want to agree on a secret key; e.g. for \emph{symmetric encryption} (same key for encryption and decryption).
 They can proceed as follows.
@@ -851,6 +851,121 @@ They can proceed as follows.
   \item If the error rate is very low: No eavesdropping detected
   \item They keep the remaining unrevealed bits as the secret key.
 \end{enumerate}
+
+
+
+\subsection{Mach Zehnder Interferometer}\label{sec:mach-zehnder-interferometer}
+
+
+
+\[
+\begin{tikzpicture}[
+  line join=round,
+  line cap=round,
+  >=Stealth,
+  x={(2.0cm,0.0cm)},
+  y={(-1cm,-1.2cm)},
+  z={(0.0cm,2.0cm)}
+]
+  % planes
+  \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black]  (-1,0,0) -- (-1,-1,0)  -- (1,-1,0) -- (1,0,0);
+  \filldraw[fill=gray!70, fill opacity=0.7, draw=black] (-1,0,1) -- (-1,0,-1) -- (1,0,-1) -- (1,0,1) -- cycle node[pos=0.5, anchor=south, yshift=0mm, text=black] {\footnotesize Incident Plane};
+  \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black] (-1,0,0) -- (-1,1,0) -- (1,1,0) -- (1,0,0);
+  \draw[dashed] (-1,0,0) -- (-1,0,-1);
+
+  % incoming/outgoing rays
+  \draw[->, red, thick] (-1.8,0,0.4) -- (0,0,0);
+  \draw[->, red, thick] (0,0,0) -- (1.8,0,0.4);
+
+  % polarization vectors
+  \draw[->, black, thick] (0,0,0) -- (0,0.5,0) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_s$};
+  \draw[->, black, thick] (0,0,0) -- (0,0,0.5) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_p$};
+\end{tikzpicture}
+\]
+
+
+
+
+
+\[
+\begin{tikzpicture}[
+  x=1cm, y=1cm,
+  mirror/.style={line width=2.0pt, draw=black!90},
+  bsplate/.style={line width=7pt, draw=black!20},
+  bsedge/.style={line width=1.2pt, draw=black!70},
+  ray/.style={line width=1.6pt, draw=black!90},
+  arr/.style={-{Stealth[length=4mm,width=2.2mm]}, line width=1.1pt, draw=black!90}
+]
+  % dimensions
+  \def\W{7.0}      % arm width
+  \def\H{4.0}      % arm height
+  \def\Lin{2.0}    % input extension
+  \def\Lout{1.3}   % output extension
+  \def\D{0.70}     % half-length of diagonal optics (45 deg)
+  \def\Dash{1.75}  % dashed detector/input branch length
+  \def\R{0.45}     % detector radius
+  \def\SW{1.15}    % sample width
+  \def\SH{0.90}    % sample height
+
+  % key coordinates
+  \coordinate (BS1) at (0,0);
+  \coordinate (M2)  at (\W,0);
+  \coordinate (BS2) at (\W,\H);
+  \coordinate (M1)  at (0,\H);
+  \coordinate (In)  at (-\Lin,0);
+  \coordinate (Out) at (\W+\Lout,\H);
+  \coordinate (Bin) at (0,-\Dash);
+  \coordinate (Top) at (\W,\H+\Dash);
+  \path ($ (M1)!0.5!(BS2) $) coordinate (S);
+
+  % optical elements (all diagonals at 45 deg)
+  \draw[bsplate] ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$);
+  \draw[bsedge]  ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$)
+    node[pos=1.0, anchor=north west, xshift=-1mm, yshift=-1mm] {Beam-splitter};
+  \draw[bsplate] ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$);
+  \draw[bsedge]  ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$)
+    node[pos=1.0, anchor=south west, xshift=-1mm, yshift=-1mm] {Beam-splitter};
+  \draw[mirror] ($(M1)+(-\D,-\D)$) -- ($(M1)+(\D,\D)$)
+    node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
+  \draw[mirror] ($(M2)+(-\D,-\D)$) -- ($(M2)+(\D,\D)$)
+    node[pos=1.0, anchor=north west, xshift=1mm] {Mirror};
+
+  % rays
+  \draw[ray] (In) -- (M2);
+  \draw[ray] (BS1) -- (M1);
+  \draw[ray] (M1) -- (Out);
+  \draw[ray] (M2) -- (BS2);
+  \draw[dashed, line width=1.6pt, draw=black!90] (BS1) -- (Bin)
+    node[pos=1.0, anchor=north] {$\hat{b}_{in}$};
+  \draw[dashed, line width=1.6pt, draw=black!90] (BS2) -- (Top);
+
+  % direction arrows
+  \draw[arr] ($(In)!0.25!(BS1)$) -- ($(In)!0.45!(BS1)$);
+  \draw[arr] ($(BS1)!0.40!(M2)$) -- ($(BS1)!0.48!(M2)$);
+  \draw[arr] ($(BS1)!0.30!(M1)$) -- ($(BS1)!0.48!(M1)$);
+  \draw[arr] ($(M2)!0.32!(BS2)$) -- ($(M2)!0.50!(BS2)$);
+  \draw[arr] ($(M1)!0.37!(BS2)$) -- ($(M1)!0.46!(BS2)$);
+  \draw[arr] ($(BS2)!0.28!(Out)$) -- ($(BS2)!0.72!(Out)$);
+
+  % sample + phase
+  \filldraw[fill=orange!70, draw=red!80!black, line width=1.2pt, opacity=0.9]
+    ($(S)+(-0.5*\SW,-0.5*\SH)$) rectangle ($(S)+(0.5*\SW,0.5*\SH)$);
+  \node[text=red!80!black, font=\small] at ($(S)+(0,0.95)$) {Sample};
+  \node at ($(S)+(0,-0.80)$) {$\theta$};
+
+  % mode label
+  \node[anchor=east] at (In) {$\hat{a}_{in}$};
+
+  % detectors: both are semicircles
+  \draw[line width=1.2pt] ($(Out)+(0,\R)$) -- ($(Out)+(0,-\R)$)
+    arc[start angle=-90, end angle=90, radius=\R]
+    node[pos=1.0, anchor=west, rotate=-90, xshift=1mm] {Detector 1};
+  \draw[line width=1.2pt] ($(Top)+(-\R,0)$) arc[start angle=180, end angle=0, radius=\R]
+    node[pos=1.0, anchor=south east, yshift=2mm] {Detector 2};
+\end{tikzpicture}
+\]
+
+
 
 
 
