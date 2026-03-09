@@ -3,8 +3,17 @@
 \usepackage{iftex}
 \usepackage{csquotes}
 
+\newcommand{\eat}[1]{}
+
 \usepackage[T1]{fontenc}     % handle accented glyphs properly
 \usepackage[english]{babel}  % load the hyphenation patterns you need
+
+\pretolerance=1
+\tolerance=200
+\hyphenpenalty=1
+\doublehyphendemerits=0
+\finalhyphendemerits=0
+
 
 \usepackage[automark]{scrlayer-scrpage}
 % \clearpairofpagestyles
@@ -680,7 +689,7 @@ The statistics found were surprising for particles, but they would not have been
 With a beam of light and a polarizing filter, a similar thing happens.  
 The angles are a bit different though, because classical polarization intensities obey Malus' law,
 \[
-\frac{I}{I_0} = \cos^{2}(\varphi),
+\frac{I}{I_0} = \cos^{2}(\varphi)
 \]
 where $\varphi$ is the angle between the intial polarization direction and the polarizer axis:
 \[
@@ -785,7 +794,7 @@ Image Source:\\[-5.5pt]
 
 For a spin-$\tfrac{1}{2}$ particle the transition probability between ``up'' along two axes separated by an angle $\theta$ is
 \[
-P = \cos^{2}\frac{\theta}{2}.
+P = \cos^{2}\frac{\theta}{2}
 \]
 The extra factor of $\tfrac{1}{2}$ in the angle appears because spin states are \emph{spinors} (an $\mathrm{SU}(2)$ representation): 
 a physical rotation by $\theta$ acts on the state with half the angle in the two-dimensional Hilbert space.
@@ -811,7 +820,7 @@ Also in the other direction, if we first measure $X$ and then $Z$, we get the sa
 \[
 \begin{tikzpicture}[scale=1.8, font=\scriptsize]
   % define colors
-  \definecolor{statecolor}{HTML}{1FC7FF}
+  \definecolor{statecolor}{HTML}{\eat #20a61e}
   % axis lines
   \draw[-Stealth, black] (0,0) -- (0,1) node[right] {$\ket{z_{-}}$};
   \draw[-Stealth, black] (0,0) -- (1,0) node[below] {$\ket{z_{+}}$};
@@ -833,7 +842,7 @@ However, an intermediate measurement in a different basis disturbs the state and
 So the interactions of a system with its environment become traceable. 
 This can be used to detect an eavesdropper in a cryptographic key agreement protocol.
 
-In 1984, Gilles Brassard and Charles Bennett developed the first application of quantum mechanics for cryptographic purposes with such a key agreement protocol (\hl{BB84}).
+In 1984, Gilles Brassard and Charles Bennett developed the first application of quantum mechanics for cryptographic purposes with such a key agreement protocol (\hl[2]{BB84}).
 
 Assume Alice and Bob want to agree on a secret key; e.g. for \emph{symmetric encryption} (same key for encryption and decryption).
 They can proceed as follows.
@@ -854,34 +863,37 @@ They can proceed as follows.
 
 
 
+
+
+% \[
+% \begin{tikzpicture}[
+%   line join=round,
+%   line cap=round,
+%   >=Stealth,
+%   x={(2.0cm,0.0cm)},
+%   y={(-1cm,-1.2cm)},
+%   z={(0.0cm,2.0cm)}
+% ]
+%   % planes
+%   \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black]  (-1,0,0) -- (-1,-1,0)  -- (1,-1,0) -- (1,0,0);
+%   \filldraw[fill=gray!70, fill opacity=0.7, draw=black] (-1,0,1) -- (-1,0,-1) -- (1,0,-1) -- (1,0,1) -- cycle node[pos=0.5, anchor=south, yshift=0mm, text=black] {\footnotesize Incident Plane};
+%   \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black] (-1,0,0) -- (-1,1,0) -- (1,1,0) -- (1,0,0);
+%   \draw[dashed] (-1,0,0) -- (-1,0,-1);
+
+%   % incoming/outgoing rays
+%   \draw[->, red, thick] (-1.8,0,0.4) -- (0,0,0);
+%   \draw[->, red, thick] (0,0,0) -- (1.8,0,0.4);
+
+%   % polarization vectors
+%   \draw[->, black, thick] (0,0,0) -- (0,0.5,0) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_s$};
+%   \draw[->, black, thick] (0,0,0) -- (0,0,0.5) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_p$};
+% \end{tikzpicture}
+% \]
+
+
+
 \subsection{Mach Zehnder Interferometer}\label{sec:mach-zehnder-interferometer}
-
-
-
-\[
-\begin{tikzpicture}[
-  line join=round,
-  line cap=round,
-  >=Stealth,
-  x={(2.0cm,0.0cm)},
-  y={(-1cm,-1.2cm)},
-  z={(0.0cm,2.0cm)}
-]
-  % planes
-  \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black]  (-1,0,0) -- (-1,-1,0)  -- (1,-1,0) -- (1,0,0);
-  \filldraw[fill=gray!70, fill opacity=0.7, draw=black] (-1,0,1) -- (-1,0,-1) -- (1,0,-1) -- (1,0,1) -- cycle node[pos=0.5, anchor=south, yshift=0mm, text=black] {\footnotesize Incident Plane};
-  \filldraw[fill=cyan!20!white, fill opacity=0.7, draw=black] (-1,0,0) -- (-1,1,0) -- (1,1,0) -- (1,0,0);
-  \draw[dashed] (-1,0,0) -- (-1,0,-1);
-
-  % incoming/outgoing rays
-  \draw[->, red, thick] (-1.8,0,0.4) -- (0,0,0);
-  \draw[->, red, thick] (0,0,0) -- (1.8,0,0.4);
-
-  % polarization vectors
-  \draw[->, black, thick] (0,0,0) -- (0,0.5,0) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_s$};
-  \draw[->, black, thick] (0,0,0) -- (0,0,0.5) node[pos=1.0, anchor=east] {\footnotesize$\vect{E}_p$};
-\end{tikzpicture}
-\]
+can be considered a variant of double-slit experiment.
 
 
 
@@ -889,86 +901,180 @@ They can proceed as follows.
 
 \[
 \begin{tikzpicture}[
-  x=1cm, y=1cm,
-  mirror/.style={line width=2.0pt, draw=black!90},
-  bsplate/.style={line width=7pt, draw=black!20},
-  bsedge/.style={line width=1.2pt, draw=black!70},
-  ray/.style={line width=1.6pt, draw=black!90},
+  % line join=round,
+  % line cap=round,
+  font=\footnotesize,
+  x=0.8cm, y=0.8cm,
+  bsplate/.style={line width=0.6pt, draw=blue!70, fill=cyan!20!white, opacity=0.8},
+  bsedge/.style={line width=1.2pt, draw=cyan!80!green, opacity=0.6, outer sep=0.2em, inner sep=0em},
+  mirror/.style={line width=1.2pt, draw=blue!70, opacity=0.9, outer sep=0.4em, inner sep=0em},
+  ray/.style={line width=1.0pt, draw=black!70, densely dotted},
   arr/.style={-{Stealth[length=4mm,width=2.2mm]}, line width=1.1pt, draw=black!90}
 ]
   % dimensions
   \def\W{7.0}      % arm width
   \def\H{4.0}      % arm height
-  \def\Lin{2.0}    % input extension
-  \def\Lout{1.3}   % output extension
-  \def\D{0.70}     % half-length of diagonal optics (45 deg)
-  \def\Dash{1.75}  % dashed detector/input branch length
+  \def\L{2.0}      % extension
+  \def\D{0.50}     % half-length of diagonal optics (45 deg)
+  \def\d{0.05}     % for the split
   \def\R{0.45}     % detector radius
-  \def\SW{1.15}    % sample width
-  \def\SH{0.90}    % sample height
+
 
   % key coordinates
+  \coordinate (axislabels) at (-3, 2);
+  \coordinate (In)  at (-\L,0);
   \coordinate (BS1) at (0,0);
-  \coordinate (M2)  at (\W,0);
   \coordinate (BS2) at (\W,\H);
   \coordinate (M1)  at (0,\H);
-  \coordinate (In)  at (-\Lin,0);
-  \coordinate (Out) at (\W+\Lout,\H);
-  \coordinate (Bin) at (0,-\Dash);
-  \coordinate (Top) at (\W,\H+\Dash);
+  \coordinate (M2)  at (\W,0);
+  \coordinate (D1) at (\W+\L,\H);
+  \coordinate (D2) at (\W,\H+\L);
   \path ($ (M1)!0.5!(BS2) $) coordinate (S);
 
-  % optical elements (all diagonals at 45 deg)
-  \draw[bsplate] ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$);
-  \draw[bsedge]  ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$)
-    node[pos=1.0, anchor=north west, xshift=-1mm, yshift=-1mm] {Beam-splitter};
-  \draw[bsplate] ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$);
-  \draw[bsedge]  ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$)
-    node[pos=1.0, anchor=south west, xshift=-1mm, yshift=-1mm] {Beam-splitter};
-  \draw[mirror] ($(M1)+(-\D,-\D)$) -- ($(M1)+(\D,\D)$)
-    node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
-  \draw[mirror] ($(M2)+(-\D,-\D)$) -- ($(M2)+(\D,\D)$)
-    node[pos=1.0, anchor=north west, xshift=1mm] {Mirror};
+
+  % axes
+  \draw[->] (axislabels) -- ($(axislabels)+(1,0)$) node[pos=1.0, anchor=west] {$x$};
+  \draw[->] (axislabels) -- ($(axislabels)+(0,1)$) node[pos=1.0, anchor=south] {$y$};
+
 
   % rays
-  \draw[ray] (In) -- (M2);
-  \draw[ray] (BS1) -- (M1);
-  \draw[ray] (M1) -- (Out);
-  \draw[ray] (M2) -- (BS2);
-  \draw[dashed, line width=1.6pt, draw=black!90] (BS1) -- (Bin)
-    node[pos=1.0, anchor=north] {$\hat{b}_{in}$};
-  \draw[dashed, line width=1.6pt, draw=black!90] (BS2) -- (Top);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.25 with {\arrow{stealth}}}] (In) -- (BS1);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.5 with {\arrow{stealth}}}] (BS1) -- (M2);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.75 with {\arrow{stealth}}}] (BS1) -- (M1);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.75 with {\arrow{stealth}}}] (M1) -- (BS2);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.5 with {\arrow{stealth}}}] (M2) -- (BS2);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.75 with {\arrow{stealth}}}] (BS2) -- (D1);
+  \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.75 with {\arrow{stealth}}}] (BS2) -- (D2);
 
-  % direction arrows
-  \draw[arr] ($(In)!0.25!(BS1)$) -- ($(In)!0.45!(BS1)$);
-  \draw[arr] ($(BS1)!0.40!(M2)$) -- ($(BS1)!0.48!(M2)$);
-  \draw[arr] ($(BS1)!0.30!(M1)$) -- ($(BS1)!0.48!(M1)$);
-  \draw[arr] ($(M2)!0.32!(BS2)$) -- ($(M2)!0.50!(BS2)$);
-  \draw[arr] ($(M1)!0.37!(BS2)$) -- ($(M1)!0.46!(BS2)$);
-  \draw[arr] ($(BS2)!0.28!(Out)$) -- ($(BS2)!0.72!(Out)$);
 
-  % sample + phase
-  \filldraw[fill=orange!70, draw=red!80!black, line width=1.2pt, opacity=0.9]
-    ($(S)+(-0.5*\SW,-0.5*\SH)$) rectangle ($(S)+(0.5*\SW,0.5*\SH)$);
-  \node[text=red!80!black, font=\small] at ($(S)+(0,0.95)$) {Sample};
-  \node at ($(S)+(0,-0.80)$) {$\theta$};
+  % measure
+  \def\SW{1.15}    % measure width
+  \def\SH{0.70}    % measure height
+  \filldraw[fill=orange!70, draw=red!80!black, line width=1.2pt, opacity=0.6] ($(S)+(-0.5*\SW,-0.5*\SH)$) rectangle ($(S)+(0.5*\SW,0.5*\SH)$);
+  \node[text=red!80!black, font=\footnotesize] at ($(S)+(0,0.55)$) {measure};
+
 
   % mode label
-  \node[anchor=east] at (In) {$\hat{a}_{in}$};
+  \node[anchor=east] at (In) {$\gamma$};
 
-  % detectors: both are semicircles
-  \draw[line width=1.2pt] ($(Out)+(0,\R)$) -- ($(Out)+(0,-\R)$)
-    arc[start angle=-90, end angle=90, radius=\R]
-    node[pos=1.0, anchor=west, rotate=-90, xshift=1mm] {Detector 1};
-  \draw[line width=1.2pt] ($(Top)+(-\R,0)$) arc[start angle=180, end angle=0, radius=\R]
-    node[pos=1.0, anchor=south east, yshift=2mm] {Detector 2};
+
+  % optical elements 
+  \draw[bsplate] ($(BS1)+(-\D,-\D)+(\d,0)$) -- ($(BS1)+(\D,-\D)$) -- ($(BS1)+(\D,\D)+(0,-\d)$) -- cycle;
+  \draw[bsplate] ($(BS1)+(-\D,-\D)+(0,\d)$) -- ($(BS1)+(-\D,\D)$) -- ($(BS1)+(\D,\D)+(-\d,0)$) -- cycle;
+  \draw[bsedge]  ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$) node[pos=1.0, anchor=south west, xshift=-0em, yshift=0mm, opacity=1.0] {BS1};
+
+  \draw[bsplate] ($(BS2)+(-\D,-\D)+(\d,0)$) -- ($(BS2)+(\D,-\D)$) -- ($(BS2)+(\D,\D)+(0,-\d)$) -- cycle;
+  \draw[bsplate] ($(BS2)+(-\D,-\D)+(0,\d)$) -- ($(BS2)+(-\D,\D)$) -- ($(BS2)+(\D,\D)+(-\d,0)$) -- cycle;
+  \draw[bsedge]  ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$) node[pos=1.0, anchor=south west, xshift=-0em, yshift=0mm, opacity=1.0] {BS2};
+
+  \draw[mirror] ($(M1)+(-\D,-\D)+(0,\d)$) -- ($(M1)+(\D,\D)+(-\d,0)$) node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
+  \draw[mirror] ($(M2)+(-\D,-\D)+(\d,0)$) -- ($(M2)+(\D,\D)+(0,-\d)$) node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
+
+
+  % detectors
+  \draw[line width=1.2pt] ($(D1)+(0,\R)$) -- ($(D1)+(0,-\R)$) arc[start angle=-90, end angle=90, radius=\R] node[pos=0.5, anchor=west, rotate=0, xshift=0mm] {Detector 1} -- cycle;
+  \draw[line width=1.2pt] ($(D2)+(-\R,0)$) -- ($(D2)+(\R,0)$) arc[start angle=0, end angle=180, radius=\R] node[pos=0.5, anchor=south] {Detector 2} -- cycle;
 \end{tikzpicture}
 \]
 
 
+A symmetric 50/50 beam splitter acts on the state of the photon with
+\[
+\ket{x} \mapsto \frac{1}{\sqrt{2}}\left(\ket{x} + \iu \ket{y}\right)
+\qquad
+\ket{y} \mapsto \frac{1}{\sqrt{2}}\left(\ket{y} + \iu \ket{x}\right)
+\]
+where the $\iu$ accounts for the 90° phase shift ($\frac{\pi}{2}$) a reflected photon picks up compare to the transmitted one.
+The effect of the mirrors is
+\[
+\ket{x} \mapsto \eu^{\iu \phi_m} \ket{y} 
+\qquad
+\ket{y} \mapsto \eu^{\iu \phi_m} \ket{x} 
+\]
+where $\phi_m$ is the phase shift the photon picks up at the mirror (e.g. $0$, $\frac{\pi}{2}$, $\pi$, depending on the physical implementation).
+
+
+So as the photon moves through the device, its state evolves as follows
+\[
+\ket{x} 
+\xmapsto{\text{BS1}}
+\frac{1}{\sqrt{2}}\left(\ket{x} + \iu \ket{y}\right)
+\xmapsto{\text{Mirrors}}
+\frac{1}{\sqrt{2}}\left(\eu^{\iu \phi_m} \ket{y} + \iu \eu^{\iu \phi_m} \ket{x}\right)
+\xmapsto{\text{BS2}}
+\eu^{\iu \left(\phi_m + \frac{\pi}{2}\right)} \ket{x}
+\]
+and therefore it will be measured at Detector 1 with certainty.
+
+If, however, one \emph{measures} wether tha photon has gone through the upper or lower arm of the interferometer,
+then the state before the second beam splitter is either $\ket{x}$ or $\ket{y}$.
+In the second beam splitter the state of the photon is then mapped to either
+$\frac{1}{\sqrt{2}}\left(\ket{x} + \iu \ket{y}\right)$
+or
+$\frac{1}{\sqrt{2}}\left(\ket{y} + \iu \ket{x}\right)$.
+In both cases, the photon is detected in either of the detectors with equal probability.
 
 
 
+\subsection{Quantum Bit}
+
+To transfer a bit $b \in \{0, 1\}$ into the quantum world, we associate $0$ and $1$ with two orthogonal vectors, usually with the standard basis vectors,
+\[
+\ket{0} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}
+\qquad
+\ket{1} = \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+\]
+A general quantum state can then be written as a superpositions
+\[
+\ket{\psi} = \alpha \ket{0} + \beta \ket{1}
+\]
+with $\alpha, \beta \in \C$ and $|\alpha|^2 + |\beta|^2 = 1$.
+Measuring $\ket{\psi}$ in the standard basis yields $0$ with probability $|\alpha|^2$ and $1$ with probability $|\beta|^2$.
+
+Quantum circuits are composed of quantum gates, i.e, \emph{unitary maps}.
+
+An important one is the \hl{Hadamard gate},
+\[
+\matr{H} 
+=
+\frac{1}{\sqrt{2}}
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix}
+\]
+which maps the basis states to superpositions 
+\[
+\matr{H} \ket{0} = \frac{1}{\sqrt{2}}\left(\ket{0} + \ket{1}\right)
+\qquad
+\matr{H} \ket{1} = \frac{1}{\sqrt{2}}\left(\ket{0} - \ket{1}\right)
+\]
+and when applied twice, yields the basis states again, i.e.,
+$\matr{H}^2 \ket{0} = \ket{0}$
+and
+$\matr{H}^2 \ket{1} = \ket{1}$.
+
+Another interesting gate is 
+\[
+\matr{F} 
+=
+\frac{1}{\sqrt{2 \iu}}
+\begin{bmatrix}
+1 & \iu \\
+\iu & 1
+\end{bmatrix}
+\]
+because applying it twice yields the NOT-gate,
+\[
+\matr{F}^2 
+=
+\begin{bmatrix}
+0 & 1 \\
+1 & 0
+\end{bmatrix}
+\]
+which is why it is called ``square root of NOT'', $\matr{F} = \sqrt{\text{NOT}}$.
+There is no classical gate that yields the NOT-gate in this way.
 
 
 
@@ -979,6 +1085,8 @@ They can proceed as follows.
 
 \clearpage
 
+
+hello
 
 
 
