@@ -39,7 +39,7 @@
 
 % ===================== TikZ / plots =====================
 \usepackage{tikz}
-\usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings}
+\usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings,shapes.geometric}
 \usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
 \usepackage{pgfplots}
 \usetikzlibrary{external}
@@ -82,6 +82,64 @@
   }[\PackageError{hl}{Undefined highlight level: #1}{}]%
   \endgroup
 }
+
+
+% --- Soul + hyperlinks, references, citations etc. ---
+
+% --- hyperref core ---
+\soulregister\href7
+\soulregister\url7
+\soulregister\hyperref7
+\soulregister\nameref7
+\soulregister\Nameref7
+\soulregister\autoref7
+
+% --- cleveref / varioref ---
+\soulregister\cref7
+\soulregister\Cref7
+\soulregister\cpageref7
+\soulregister\Cpageref7
+\soulregister\vref7
+\soulregister\Vref7
+
+% --- standard LaTeX referencing commands ---
+\soulregister\ref7
+\soulregister\pageref7
+\soulregister\eqref7
+\soulregister\label7   % rarely needed but safe
+
+% --- biblatex / natbib ---
+\soulregister\cite7
+\soulregister\parencite7
+\soulregister\footcite7
+\soulregister\textcite7
+\soulregister\autocite7
+\soulregister\Cite7
+\soulregister\Citeauthor7
+\soulregister\Citeyear7
+\soulregister\citeauthor7
+\soulregister\citeyear7
+
+% --- glossaries, acronyms, etc. ---
+\soulregister\gls7
+\soulregister\Gls7
+\soulregister\glspl7
+\soulregister\Glspl7
+\soulregister\acrshort7
+\soulregister\acrlong7
+\soulregister\acrfull7
+\soulregister\Acrshort7
+\soulregister\Acrlong7
+\soulregister\Acrfull7
+
+% --- misc. text-formatting macros ---
+\soulregister\textbf7
+\soulregister\textit7
+\soulregister\emph7
+\soulregister\underline7
+\soulregister\textcolor7
+\soulregister\color7
+\soulregister\foreignlanguage7
 
 % ===================== colors / emphasis =====================
 \definecolor{funblue}{rgb}{0.10,0.35,0.66}
@@ -289,6 +347,8 @@
 \renewcommand{\theHdigression}{\theHremark}
 \makeatother
 
+
+
 % ===================== license / cleveref =====================
 \usepackage[type={CC},modifier={by},version={4.0}]{doclicense}
 \usepackage{cleveref}
@@ -303,6 +363,8 @@ Fabian Bosshard
 \vspace{1em}
 
 \tableofcontents
+
+\pagebreak
 
 \section{Basic Stuff}
 
@@ -357,6 +419,10 @@ $p_{X\mid Y}(x\mid y)
 % \hline
 \end{tabular}
 \end{center}
+
+
+
+\pagebreak
 
 \section{Probability Spaces}
 
@@ -458,6 +524,34 @@ expressing that more information corresponds to a finer partition and thus a lar
 Often, we encounter situations with infinitely many events and we want to assign probabilities to the case that all of them occur simultaneously.
 This is possible, as long as the number of events involved is at most countably infinite.
 
+
+\begin{definition}\label{def:countable-set}
+A set $S$ is \emph{countable} if $S = \varnothing$ or there exists a surjection $f : \mathbb{N} \to S$.
+\end{definition}
+
+\begin{theorem}
+The Cartesian product of two countably infinite sets is countably infinite.
+\end{theorem}
+\begin{proof}
+Let $A$ and $B$ be two countably infinite sets.
+Then there exist surjections $f_A : \mathbb{N} \to A$ and $f_B : \mathbb{N} \to B$.
+We can define a surjection $f : \mathbb{N} \to A \times B$ by
+\[
+f(n) := (f_A(p_1(n)), f_B(p_2(n)))
+\]
+where $p_1(n)$ and $p_2(n)$ are the row and column indices of the $n$-th element in the diagonal enumeration of $\mathbb{N} \times \mathbb{N}$, i.e.,
+\[
+\begin{array}{c|cccccccccc}
+n      & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & \cdots\\
+\hline
+p_1(n) & 1 & 2 & 1 & 3 & 2 & 1 & 4 & 3 & 2 & \cdots\\
+p_2(n) & 1 & 1 & 2 & 1 & 2 & 3 & 1 & 2 & 3 & \cdots
+\end{array}
+\]
+This shows that $A \times B$ is countable.
+\end{proof}
+
+
 \begin{definition}[$\sigma$-algebra]\label{def:sigma-algebra}
 A set $\mathcal{F}\subseteq 2^\Omega$ is called a \emph{$\sigma$-algebra} on $\Omega$ if
 \begin{enumerate}[label=(\roman*)]
@@ -516,18 +610,27 @@ We have
 \hl{The power set $2^\Omega$ is always the largest $\sigma$-algebra on $\Omega$.}
 In contrast, the smallest $\sigma$-algebra is given by $\mathcal{F} = \{\varnothing,\Omega\}$.
 
+\tikzexternaldisable
 \begin{theorem}[Generated $\sigma$-algebra]\label{thm:generated-sigma-algebra}
 Let $\mathcal{A}\subseteq 2^\Omega$.
-If we define the set
+If we define the \tikzmarknode{mathcalannot}{set}
+\begin{tikzpicture}[overlay,remember picture]
+\node[anchor=north west, rectangle, draw=none, font=\footnotesize, text width=7em,align=left] at ($(mathcalannot.east)+(2em,0)$) {$\mathcal{A}$ is a family of subsets of $\Omega$};
+\end{tikzpicture}
 \[
-\mathcal{M} := \{\mathcal{F} \mid \mathcal{A} \subseteq \mathcal{F} \subseteq 2^\Omega\ \text{and}\ \mathcal{F}\ \text{is a }\sigma\text{-algebra}\},
+{\color{red}\boxed{\color{black}
+\mathcal{M} := \{\mathcal{F} \mid \mathcal{A} \subseteq \mathcal{F} \subseteq 2^\Omega\ \text{and}\ \mathcal{F}\ \text{is a }\sigma\text{-algebra}\}
+}}
 \]
 the smallest $\sigma$-algebra such that $\mathcal{A} \subseteq \sigma(\mathcal{A})$ is given by
 \[
-  \sigma(\mathcal{A}) := \bigcap_{\mathcal{F} \in \mathcal{M}} \mathcal{F},
+{\color{red}\boxed{\color{black}
+  \sigma(\mathcal{A}) := \bigcap_{\mathcal{F} \in \mathcal{M}} \mathcal{F}
+}}
 \]
-which is called the $\sigma$-algebra generated by $\mathcal{A}$.
+which is called the \hl[5]{$\sigma$-algebra generated by $\mathcal{A}$}.
 \end{theorem}
+\tikzexternalenable
 
 \begin{proof}
 $\mathcal{M}$ is non-empty since $\mathcal{A}\subset 2^\Omega$.
@@ -547,6 +650,44 @@ Therefore, $A \in \sigma(\mathcal{A})$.
 
 Thus $\sigma(\mathcal{A})$ is a $\sigma$-algebra.
 The minimality is a consequence of its definition.
+\end{proof}
+
+\begin{lemma}[Monotonicity]\label{lem:sigma-monotone}
+Let $\mathcal{A},\mathcal{C} \subseteq 2^\Omega$ with
+\(
+\mathcal{A} \subseteq \mathcal{C}
+\).
+Then
+\(
+\sigma(\mathcal{A}) \subseteq \sigma(\mathcal{C})
+\).
+\end{lemma}
+
+\begin{proof}
+Since $\sigma(\mathcal{C})$ is a $\sigma$-algebra containing $\mathcal{C}$, it also contains $\mathcal{A}$.
+By the minimality of $\sigma(\mathcal{A})$ (\autoref{thm:generated-sigma-algebra}), we obtain
+\(
+\sigma(\mathcal{A}) \subseteq \sigma(\mathcal{C})
+\).
+\end{proof}
+
+\begin{corollary}[Idempotency]\label{cor:sigma-idempotent}
+For every $\mathcal{A} \subseteq 2^\Omega$,
+\(
+\sigma(\sigma(\mathcal{A})) = \sigma(\mathcal{A})
+\).
+\end{corollary}
+
+\begin{proof}
+Since $\mathcal{A} \subseteq \sigma(\mathcal{A})$, monotonicity (\autoref{lem:sigma-monotone}) yields
+\(
+\sigma(\mathcal{A}) \subseteq \sigma(\sigma(\mathcal{A}))
+\).
+On the other hand, $\sigma(\mathcal{A})$ is itself a $\sigma$-algebra containing $\sigma(\mathcal{A})$, so by minimality of the generated $\sigma$-algebra,
+\(
+\sigma(\sigma(\mathcal{A})) \subseteq \sigma(\mathcal{A})
+\).
+Thus equality holds.
 \end{proof}
 
 \begin{example}
@@ -959,7 +1100,531 @@ for all $a < b$.
 
 
 
+\pagebreak
+\section{Lebesgue measure}
+\subsection{Borel sets}
 
+While $\sigma$-algebras formalize measurability, we often require concepts related to continuity.
+The latter is assessed by means of a topology.
+To bring these two concepts together, one considers the $\sigma$-algebra generated by a \emph{topology}.
+
+\begin{definition}\label{def:topology}
+A set $\mathcal{T} \subseteq 2^\Omega$ is called a \emph{topology} on $\Omega$ if
+\begin{enumerate}[label=(\roman*)]
+  \item $\varnothing, \Omega \in \mathcal{T}$
+  \item $O_1,O_2 \in \mathcal{T} \implies O_1 \cap O_2 \in \mathcal{T}$
+  \item $\mathcal{A} \subseteq \mathcal{T} \implies \left(\bigcup_{O \in \mathcal{A}} O\right) \in \mathcal{T}$
+\end{enumerate}
+
+Sets $O \in \mathcal{T}$ are called \emph{open} and sets $A$ with $A^\complement \in \mathcal{T}$ are called \emph{closed}.
+The tuple $(\Omega,\mathcal{T})$ is a \emph{topological space}.
+\end{definition}
+
+
+\begin{example}%[Canonical topology]
+In the case $\Omega = \R^d$ for some $d \in \N$, the \hl[5]{canonical topology} is induced by the Euclidean norm
+\[
+\|\vect{x}\|_2
+=
+\sqrt{\sum_{i=1}^d x_i^2}
+\]
+This is seen as follows.
+Define the ball 
+\[
+B_r(\vect{x}) 
+\coloneq 
+\{\vect{y} \in \R^d : \|\vect{y} - \vect{x}\|_2 < r\}
+\]
+with radius $r > 0$ and center $\vect{x} \in \R^d$.
+Then, for the union of all these balls
+\[
+\mathcal{G} 
+=
+\{B_r(\vect{x}) : \vect{x} \in \R^d, r > 0\}
+\subseteq 2^{\R^d}
+\]
+there holds
+\[
+\begin{verticalhack}
+\mathcal{T} 
+=
+\left\{\left(\bigcup_{A \in \mathcal{A}} A\right) : \mathcal{A} \subseteq \mathcal{G}\right\}
+\end{verticalhack}
+\qedhere
+\]
+\end{example}
+
+
+\begin{definition}[Borel sets]
+\hl[2]{Let $(\Omega,\mathcal{T})$ be a topological space (\autoref{def:topology}).
+The $\sigma$-field generated by $\mathcal{T}$ (\autoref{thm:generated-sigma-algebra}), i.e., $\mathcal{B}(\Omega) := \sigma(\mathcal{T})$, is called the \emph{Borel $\sigma$-field} and the sets in $\mathcal{B}(\Omega)$ are called \emph{Borel sets}.}
+\end{definition}
+
+% \begin{caution}
+% Given a topological space $(\Omega, \mathcal{T})$, every open set is a Borel set, i.e.
+% \[
+% \mathcal{T} \subseteq \sigma(\mathcal{T}) = \mathcal{B}(\Omega)
+% \]
+% but not every Borel set is an open set!
+% \end{caution}
+\begin{caution}
+Let $(\Omega,\mathcal{T})$ be a topological space.
+Since the $\sigma$-algebra generated by $\mathcal{T}$ contains $\mathcal{T}$,
+we have
+\[
+\mathcal{T} \subseteq \sigma(\mathcal{T}) = \mathcal{B}(\Omega)
+\]
+i.e. every open set is a Borel set. 
+In general, however, not every Borel set is open!
+\end{caution}
+
+\begin{example}
+The Borel $\sigma$-algebra $\mathcal{B}(\R^d)$ can also be generated by any of the following sets
+\[
+\begin{gathered}
+\{B_r(\vect{x}) : \vect{x} \in \R^d, r > 0\} \\
+\{A \subseteq \R^d : \text{$A$ is open}\} \qquad \{A \subseteq \R^d : \text{$A$ is closed}\} \qquad \{A \subseteq \R^d : \text{$A$ is compact}\} \\
+\{B_r(\vect{x}) : \vect{x} \in \Q^d, r \in \Q^{+}\} \\
+\{(\vect{a},\vect{b}) : \vect{a},\vect{b} \in \Q^d, \vect{a} < \vect{b}\} \qquad \{[\vect{a},\vect{b}] : \vect{a},\vect{b} \in \Q^d, \vect{a} < \vect{b}\} \\
+\{(\vect{a},\vect{b}] : \vect{a},\vect{b} \in \Q^d, \vect{a} < \vect{b}\} \qquad \{[\vect{a},\vect{b}) : \vect{a},\vect{b} \in \Q^d, \vect{a} < \vect{b}\} \\
+\{(-\infty,\vect{b}) : \vect{b} \in \Q^d\} \qquad \{(\vect{a},\infty) : \vect{a} \in \Q^d\} \\
+\{(-\infty,\vect{b}] : \vect{b} \in \Q^d\} \qquad \{[\vect{a},\infty) : \vect{a} \in \Q^d\}
+\end{gathered}
+\]
+that is 
+\[
+\mathcal{B}(\R^d) = \sigma(\mathcal{E})
+\] 
+for any of the above sets $\mathcal{E}$.
+% Therein, we denote by $\Q^{+}$ the set of positive rational numbers.
+Recall that a set is \emph{compact} if it is closed and bounded, where the latter means that it fits inside a ball of finite radius.
+Moreover, for $\vect{a}, \vect{b} \in \R^d$, we write $\vect{a} < \vect{b}$ if and only if $a_i < b_i$ for all $i = 1,\dots,d$.
+For $\vect{a} < \vect{b}$, we define the open rectangle as the Cartesian product
+\[
+(\vect{a},\vect{b}) = \bigtimes_{i=1}^d (a_i,b_i)
+\]
+and $[\vect{a},\vect{b}]$, $(\vect{a},\vect{b}]$, $[\vect{a},\vect{b})$ are defined analogously.
+At the open end of intervals, we allow for $-\vect{\infty}$ and $\vect{\infty}$.
+\end{example}
+
+
+
+\definecolor{XFill}{HTML}{\eat #8ee5e9}
+\definecolor{YFill}{HTML}{\eat #ed9d86}
+% \definecolor{PreimageFill}{HTML}{\eat #ece896}
+\definecolor{ImageFill}{HTML}{\eat #f9f854}
+\definecolor{PreimageFill}{HTML}{\eat #dedab0}
+
+\begin{definition}[Topological Continuity]
+Let $(X, \mathcal{T}_X)$ and $(Y, \mathcal{T}_Y)$ be \hyperref[def:topology]{topological spaces}.
+A function $f : X \to Y$ is called \emph{topologically continuous} if for all open subsets $V \in \mathcal{T}_Y$ the preimage 
+\[
+f^{-1}(V) \coloneq \{x \in X : f(x) \in V\}
+\]
+is an open subset of $X$, i.e., $f^{-1}(V) \in \mathcal{T}_X$, visualized as follows:
+\[
+% Source - https://tex.stackexchange.com/a/457595
+% Posted by user121799
+% Retrieved 2026-03-14, License - CC BY-SA 4.0
+\begin{tikzpicture}[font=\footnotesize]
+  \pgfmathsetlengthmacro{\scale}{0.9}
+  \pgfmathsetlengthmacro{\sep}{\scale*6cm}
+  \pgfmathsetlengthmacro{\ew}{\scale*4cm}
+  \pgfmathsetlengthmacro{\eh}{\scale*2cm}
+  \pgfmathsetlengthmacro{\preimagew}{\scale*1.4cm}
+  \pgfmathsetlengthmacro{\preimageh}{\scale*0.7cm}
+  \pgfmathsetlengthmacro{\imagesize}{\scale*1cm}
+
+  \coordinate (XC) at (0,0);
+  \coordinate (YC) at (\sep,0);
+
+  % fill with XFill but use even odd rule to crop out the f^{-1}(V) part
+  \fill[XFill, even odd rule]
+    (XC) ellipse [x radius=\ew/2, y radius=\eh/2]
+    (XC) ++(-\preimagew/2,-\preimageh/2) rectangle ++(\preimagew,\preimageh);
+
+  % fill with YFill but use even odd rule to crop out the V part
+  \fill[YFill, even odd rule]
+    (YC) ellipse [x radius=\ew/2, y radius=\eh/2]
+    (YC) circle [radius=\imagesize/2];
+
+  % \draw (XC) ellipse [x radius=\ew/2, y radius=\eh/2];
+  % \draw (YC) ellipse [x radius=\ew/2, y radius=\eh/2];
+  \node[draw, ellipse, minimum width=\ew, minimum height=\eh] (X) at (XC)  {};
+  \node[draw, ellipse, minimum width=\ew, minimum height=\eh] (Y) at (YC)  {};
+
+  % \node[label=below:$X$] at ($(XC)+(0,-\eh/2)$) {};
+  % \node[label=below:$Y$] at ($(YC)+(0,-\eh/2)$) {};
+  \node[] at ($(XC)!0.8!(X.north west)$) {$X$};
+  \node[] at ($(YC)!0.8!(Y.north east)$) {$Y$};
+
+  \node[dashed, draw, minimum width=\preimagew, minimum height=\preimageh, inner sep=0pt, fill=PreimageFill] (preimage) at (XC) {$f^{-1}(V)$};
+  \node[circle, dashed, draw, minimum size=\imagesize, fill=ImageFill] (V) at (YC) {$V$};
+
+  \draw[->] ($(XC)+(\ew/2,0)$) -- ($(YC)+(-\ew/2,0)$) node[midway, above] {$f$};
+  \draw[->] (V) to[bend left] (preimage.south east);
+\end{tikzpicture}
+\qedhere
+\]
+\end{definition}
+
+
+
+
+\begin{definition}[$\varepsilon$-$\delta$ Continuity]
+A function $f : \R \to \R$ is called \emph{continuous} at $x_0 \in \R$ if for every $\varepsilon > 0$ there exists $\delta > 0$ such that
+\(
+|x-x_0| < \delta \implies |f(x)-f(x_0)| < \varepsilon
+\).
+% \[
+% % Source - https://tex.stackexchange.com/a/485692
+% % Posted by user121799
+% % Retrieved 2026-03-14, License - CC BY-SA 4.0
+% \begin{tikzpicture}[holdot/.style={circle,draw,fill=white,inner sep=1pt}, font=\footnotesize, scale=0.8]
+%  \draw[line width=4mm,XFill] (3,0)--(3,4);
+%  \draw[very thick,red!80!pink,dashed] (2.8,0) -- (2.8,4);
+%  \draw[double distance=4mm,very thick,double=YFill,red!80!pink] (0,4) -- (5,4);
+%  \draw[very thick,red!80!pink,dashed] (3.2,0) -- (3.2,4.2);
+%  \draw[thick,-latex] (-2,0) -- (6,0);
+%  \draw[thick,-latex] (0,-1) -- (0,6);
+%  \draw[very thick,blue!50!cyan] (-0.8,0.2) -- (3.5,4.5) to[out=45,in=135] 
+%  node[pos=0.5,above]{$y=f(x)$} (5.5,4.5);
+%  \draw[very thick,dashed] (0,4) node[left] (L) {$L$} -| (3,0) node[below] (x0) {$x_0$};
+%  \draw[very thick,blue!50!cyan,fill=white] (3,4) circle[radius=2pt];
+%  \draw (L) -- ++(120:0.7) node[above] {$L+\varepsilon$}
+%  (L) -- ++(-120:0.7) node[below] {$L-\varepsilon$}
+%  (x0) -- ++(-45:0.7) node[below right] {$x_0+\delta$}
+%  (x0) -- ++(-135:0.7) node[below left] {$x_0-\delta$};
+% \end{tikzpicture}
+% \qedhere
+% \]
+% \[
+% % Source - https://tex.stackexchange.com/a/563373
+% % Posted by Evion, modified by community. See post 'Timeline' for change history
+% % Retrieved 2026-03-14, License - CC BY-SA 4.0
+%     \begin{tikzpicture}[>=stealth]
+%         % grid and Axis
+%         % \draw[help lines, color=gray!30, dashed] (-3 , -3) grid (5 , 4);
+%     \draw[->] (-1 , 0) -- (5 , 0) node[right]{$x$}; 
+%     \draw[->] (0 , -1) -- (0, 4) node[above]{$y$}; 
+%     % Bounds and function value
+%     \draw[dashed,color=black] (3.5, 0) node[below right]
+%             {$\scriptstyle x_0+\delta$} -- (3.5 , 3.1) -- (0 , 3.1)
+%             node[left] {$\scriptstyle f(x_0)+\varepsilon$}; %Upper
+%     \draw[dashed,] (3  , 0) node[below = 1.5 mm] 
+%             {$\scriptstyle x_0$} -- (3 , 2.55) -- (0 , 2.55)
+%             node[left] {$\scriptstyle f(x_0)$}; % f(x_0)
+%     \draw[dashed,color=black] (2.5 ,  0) node[below left]
+%             {$\scriptstyle x_0-\delta$} -- (2.5 , 2.0) -- (0 , 2.0)
+%             node[left] {$\scriptstyle f(x_0)-\varepsilon$}; % Lower
+%     \draw[thick,black,domain=-1.8 : 3.25 , samples = 20] {} 
+%             plot ((\x + 2 , {exp(\x + 1.5)/(2 +  exp(\x)}); % f(x)
+%     % Annotations
+%     \draw [|-|, ultra thick, green ] (2.5 , 0) -- (3.0 , 0) 
+%         node[midway, below = 2.50mm]{$\scriptstyle \delta$}; 
+%     \draw [<-> , thin , black] (0.25 , 2.55) -- (0.25 , 3.1)
+%         node[midway, right] {$\scriptstyle \varepsilon$}; % Upper Arrow
+%     \draw [<-> , thin , black] (0.25 , 2) -- (0.25 , 2.55)
+%             node[midway, right] {$\scriptstyle \varepsilon$}; % Lower Arrow     
+%     \end{tikzpicture}
+% \qedhere
+% \]
+% It is called \emph{$\varepsilon$-$\delta$-continuous} if it is $\varepsilon$-$\delta$-continuous at every $x_0 \in \R$.
+\end{definition}
+
+\begin{proposition}
+For a function $f : \R \to \R$ topological continuity is equivalent to the usual $\varepsilon$-$\delta$-continuity.
+\end{proposition}
+\begin{proof} % assignment 3, problem 4
+We show both implications.
+\begin{itemize}
+
+\item[$\Rightarrow$:]
+Fix $x_0 \in \R$ and $\varepsilon > 0$ and consider
+\(
+V \coloneq (f(x_0)-\varepsilon,f(x_0)+\varepsilon)
+\),
+which is an open subset of $\R$.
+Hence by topological continuity also $f^{-1}(V)$ is open.
+Since $f(x_0) \in V$, we have $x_0 \in f^{-1}(V)$.
+As $f^{-1}(V)$ is open, there exists $\delta > 0$ such that
+\(
+(x_0-\delta,x_0+\delta) \subseteq f^{-1}(V)
+\):
+\[
+\begin{tikzpicture}[>=stealth, scale=1.5]
+
+    % parameters
+    \pgfmathsetmacro{\xzero}{1.7}
+    \pgfmathsetmacro{\del}{0.25}
+    \pgfmathsetmacro{\eps}{0.55}
+
+    % function
+    % use \f{<x>} to evaluate f(x)
+    \newcommand{\f}[1]{2*exp(2*(#1 - 1.5))/(1 + exp(2*(#1 - 1.5)))}
+    \newcommand{\finv}[1]{1.5 + 0.5*ln((#1)/(2 - (#1)))}
+
+    % derived values
+    \pgfmathsetmacro{\fxzero}{\f{\xzero}}
+    \pgfmathsetmacro{\ymin}{\fxzero-\eps}
+    \pgfmathsetmacro{\ymax}{\fxzero+\eps}
+    \pgfmathsetmacro{\xmin}{\finv{\ymin}}
+    \pgfmathsetmacro{\xmax}{\finv{\ymax}}
+    \pgfmathsetmacro{\deltaleft}{\xzero - \del}
+    \pgfmathsetmacro{\deltaright}{\xzero + \del}
+
+    % axes
+    \draw[->] (-0.5,0) -- (3.5,0) node[right] {$x$};
+    \draw[->] (0,-0.5) -- (0,2.5) node[below right] {$y$};
+
+    % boundaries and function value
+    \draw[dashed] (\xmax,-0.5) 
+        -- (\xmax,\ymax) -- (0,\ymax)
+        node[left] {$\scriptstyle f(x_0)+\varepsilon$};
+
+    \draw[densely dotted] (\xzero,0) node[below=0.0mm] {$\scriptstyle x_0$}
+        -- (\xzero,\fxzero) -- (0,\fxzero)
+        node[left] {$\scriptstyle f(x_0)$};
+
+    \draw[dashed] (\xmin,-0.5) 
+        -- (\xmin,\ymin) -- (0,\ymin)
+        node[left] {$\scriptstyle f(x_0)-\varepsilon$};
+
+    \draw[{Parenthesis}-{Parenthesis}, ImageFill, thick] (0, \ymin) -- (0,\ymax);
+
+    % function graph
+    \draw[thick,domain=-0.5:3.5,samples=200]
+        plot (\x,{\f{\x}});
+
+    % delta marker
+    \draw[{Parenthesis}-{Parenthesis}, PreimageFill, thick] (\xmin,0) -- node[pos=0.5,below=3.0mm, black] {$\scriptstyle f^{-1}(V)$} (\xmax,0);
+
+    \draw [{Parenthesis}-{Parenthesis}, thick, purple ] (\deltaleft , 0) -- node[pos=0.25, black, above= 0mm]{$\scriptstyle \delta$} node[pos=0.75, black, above= 0mm]{$\scriptstyle \delta$} (\deltaright , 0); 
+    
+    % ticks
+    \draw [thick, black] (\xzero, -0.05) -- (\xzero, 0.05);
+    \draw [thick, black] (-0.05, \fxzero) -- (0.05, \fxzero);
+
+    % epsilon markers
+    \draw[<->] (0.25,\fxzero) -- (0.25,\ymax)
+        node[midway,right] {$\scriptstyle \varepsilon$};
+
+    \draw[<->] (0.25,\ymin) -- (0.25,\fxzero)
+        node[midway,right] {$\scriptstyle \varepsilon$};
+
+\end{tikzpicture}
+\]
+Therefore, if $|x-x_0|<\delta$, then $x \in f^{-1}(V)$, i.e.
+\(
+f(x) \in (f(x_0)-\varepsilon,f(x_0)+\varepsilon)
+\),
+and thus
+\(
+|f(x)-f(x_0)|<\varepsilon
+\).
+So $f$ is $\varepsilon$-$\delta$-continuous at $x_0$.
+
+\item[$\Leftarrow$:]
+Let $V \subseteq \R$ be open.
+% We show that $f^{-1}(V)$ is open.
+Take any $x_0 \in f^{-1}(V)$.
+Then $f(x_0) \in V$.
+Since $V$ is open, there exists $\varepsilon > 0$ such that
+\(
+(f(x_0)-\varepsilon,f(x_0)+\varepsilon) \subseteq V
+\).
+By $\varepsilon$-$\delta$-continuity at $x_0$, there exists $\delta > 0$ such that
+\(
+|x-x_0|<\delta \Rightarrow |f(x)-f(x_0)|<\varepsilon
+\):
+\[
+\begin{tikzpicture}[>=stealth, scale=1.5]
+
+    % parameters
+    \pgfmathsetmacro{\xzero}{2.0}
+    \pgfmathsetmacro{\del}{0.3}
+    \pgfmathsetmacro{\eps}{0.35}
+
+    % function
+    % use \f{<x>} to evaluate f(x)
+    \newcommand{\f}[1]{2*exp(2*(#1 - 1.5))/(1 + exp(2*(#1 - 1.5)))}
+    \newcommand{\finv}[1]{1.5 + 0.5*ln((#1)/(2 - (#1)))}
+
+    % derived values
+    \pgfmathsetmacro{\fxzero}{\f{\xzero}}
+    \pgfmathsetmacro{\ymin}{1.87}
+    \pgfmathsetmacro{\ymax}{0.6}
+    \pgfmathsetmacro{\xmin}{\finv{\ymin}}
+    \pgfmathsetmacro{\xmax}{\finv{\ymax}}
+    \pgfmathsetmacro{\epsilonlower}{\fxzero-\eps}
+    \pgfmathsetmacro{\epsilonupper}{\fxzero+\eps}
+    \pgfmathsetmacro{\xepsilonleft}{\finv{\epsilonlower}}
+    \pgfmathsetmacro{\xepsilonright}{\finv{\epsilonupper}}
+    \pgfmathsetmacro{\deltaleft}{\xzero - \del}
+    \pgfmathsetmacro{\deltaright}{\xzero + \del}
+
+    % axes
+    \draw[->] (-0.5,0) -- (3.5,0) node[right] {$x$};
+    \draw[->] (0,-0.5) -- (0,2.5) node[below right] {$y$};
+
+    % boundaries and function value
+    \draw[dashed] (\xmax,-0.5) -- (\xmax,\ymax) -- (-0.5,\ymax);
+
+    \draw[densely dotted] (\xzero,0) node[below=0.0mm] {$\scriptstyle x_0$}-- (\xzero,\fxzero) -- (0,\fxzero);
+        % node[left] {$\scriptstyle f(x_0)$};
+
+    \draw[dashed] (\xmin,-0.5) -- (\xmin,\ymin) -- (-0.5,\ymin);
+
+
+    \draw[dashed, purple] (0,\epsilonlower) -- (\xepsilonleft, \epsilonlower) -- (\xepsilonleft, 0);
+    \draw[dashed, purple] (0,\epsilonupper) -- (\xepsilonright, \epsilonupper) -- (\xepsilonright, 0);
+
+    \draw[{Parenthesis}-{Parenthesis}, ImageFill, thick] (0, \ymin) -- node[pos=0.5,left=3.0mm, black] {$\scriptstyle V$} (0,\ymax);
+
+    % function graph
+    \draw[thick,domain=-0.5:3.5,samples=200]
+        plot (\x,{\f{\x}});
+
+    % delta marker
+    \draw[{Parenthesis}-{Parenthesis}, PreimageFill, thick] (\xmin,0) -- node[pos=0.5,below=3.0mm, black] {$\scriptstyle f^{-1}(V)$} (\xmax,0);
+
+    \draw [{Parenthesis}-{Parenthesis}, thick, green!50!black ] (\deltaleft , 0) -- node[pos=0.25, black, above= 0mm]{$\scriptstyle \delta$} node[pos=0.75, black, above= 0mm]{$\scriptstyle \delta$} (\deltaright , 0); 
+    
+
+
+    % epsilon
+    \draw [{Parenthesis}-{Parenthesis}, thick, purple ] (0 , \epsilonlower) -- node[pos=0.25, black, left= 0mm]{$\scriptstyle \epsilon$} node[pos=0.75, black, left= 0mm]{$\scriptstyle \epsilon$} (0 , \epsilonupper); 
+
+
+
+
+
+    % ticks
+    \draw [thick, black] (\xzero, -0.05) -- (\xzero, 0.05);
+    \draw [thick, black] (-0.05, \fxzero) -- (0.05, \fxzero);
+
+
+\end{tikzpicture}
+\]
+Hence
+\(
+|x-x_0|<\delta \Rightarrow f(x) \in (f(x_0)-\varepsilon,f(x_0)+\varepsilon) \subseteq V
+\),
+so
+\(
+(x_0-\delta,x_0+\delta) \subseteq f^{-1}(V)
+\).
+Thus every point of $f^{-1}(V)$ is an interior point, and therefore $f^{-1}(V)$ is open.
+\end{itemize}
+
+This proves the equivalence.
+\end{proof}
+
+
+
+
+
+
+
+\subsection{Construction of the Lebesgue-Borel measure}
+Given a cuboid fo the form $[\vect{a},\vect{b}]$, $(\vect{a},\vect{b}]$, $[\vect{a},\vect{b})$ or $(\vect{a},\vect{b})$, it seems natural to assign the volume
+\[
+\mu([\vect{a}, \vect{b}])
+=
+\mu((\vect{a}, \vect{b}])
+=
+\mu([\vect{a}, \vect{b}))
+=
+\mu((\vect{a}, \vect{b}))
+=
+\prod_{i=1}^d (b_i - a_i)
+\]
+to it.
+In the following, we will see that this set function can uniquely be extended to $\mathcal{B}(\R^d)$ in a unique fashion.
+The resulting extension is called \emph{Lebesgue-Borel measure}.
+
+\begin{definition}
+A set $\mathcal{S} \subseteq 2^\Omega$ is called a \emph{semiring} if
+\begin{enumerate}[label=(\roman*)]
+\item $\varnothing \in \mathcal{S}$
+\item $A,B \in \mathcal{S} \implies A \cap B \in \mathcal{S}$
+\item $A,B \in \mathcal{S}, B \subseteq A \implies \text{there exist } C_1,\dots,C_n \in \mathcal{S}, C_i \cap C_j = \varnothing \text{ such that}$
+\[
+\begin{verticalhack}
+A \setminus B = \bigcup_{k=1}^n C_k
+\end{verticalhack}
+\qedhere
+\]
+\end{enumerate}
+\end{definition}
+
+\begin{example}[Half-open rectangles] % assignment 3, problem 5
+Let $d \in \N$. 
+The half-open rectangles
+\[
+\mathcal{C} 
+\coloneq
+\{(\vect{a}, \vect{b}] : \vect{a},\vect{b} \in \R^d, \vect{a} < \vect{b}\} \cup \{\varnothing\}
+\]
+form a semiring:
+\begin{enumerate}[label=(\roman*)]
+\item $\varnothing \in \mathcal{C}$ by definition. $\checkmark$
+
+\item Let $A = (\vect{a},\vect{b}], B = (\vect{c},\vect{d}] \in \mathcal{C}$.
+Then
+\[
+A \cap B
+=
+\begin{cases}
+\varnothing & \text{if $a_i \geq d_i$ or $c_i \geq b_i$ for some $i = 1,\dots,d$} \\
+(\max(\vect{a},\vect{c}), \min(\vect{b},\vect{d})] & \text{otherwise}
+\end{cases}
+\]
+where $\max$ and $\min$ are taken componentwise.
+In both cases, $A \cap B \in \mathcal{C}$. $\checkmark$
+
+\item Let $A = (\vect{a},\vect{b}]$ and $B = (\vect{\alpha},\vect{\beta}]$ be in $\mathcal{C}$ with $B \subseteq A$.
+For every dimension $i = 1,\dots,d$, define three intervals
+\[
+I_i(L) = (a_i,\alpha_i] 
+\qquad
+I_i(M) = (\alpha_i,\beta_i]
+\qquad
+I_i(R) = (\beta_i,b_i]
+\]
+where we use the convention that $I_i( \cdot ) = \varnothing$ if the left endpoint is equal to the right endpoint (Since $B \subseteq A$, it cannot be greater than the right endpoint).
+Every vector $\vect{s} = [s_1,\dots,s_d] \in \{L,M,R\}^d$ corresponds to a rectangle 
+\[
+C(\vect{s}) \coloneq \bigtimes_{i=1}^d I_i(s_i)
+\]
+which is in $\mathcal{C}$.
+Note that rectangles corresponding to different vectors are disjoint.
+Furthermore, the rectangle corresponding to $\vect{s} = [M,\dots,M]$ is exactly $B$, i.e. $C([M,\dots,M]) = B$
+and
+the union of all rectangles corresponding to all possible $3^d$ vectors $\vect{s} \in \{L,M,R\}^d$ is exactly $A$, i.e. $\bigcup_{\vect{s} \in \{L,M,R\}^d} C(\vect{s}) = A$.
+Therefore, we can write $A \setminus B$ as
+\[
+A \setminus B
+=
+\bigcup_{\substack{\vect{s} \in \{L,M,R\}^d\\ \vect{s} \neq [M,\dots,M]}} C(\vect{s})
+\]
+where $\vect{s} = [s_1,\dots,s_d]$ and $s_i \in \{L,M,R\}$ for $i = 1,\dots,d$.
+The union is over (at most) $3^d - 1$ sets, hence finite. $\checkmark$
+\qedhere
+\end{enumerate}
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
 
 
 
