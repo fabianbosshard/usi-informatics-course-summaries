@@ -1725,6 +1725,44 @@ A \setminus B = \bigcup_{k=1}^n C_k
 \end{enumerate}
 \end{definition}
 
+Overview over set systems:
+\tikzexternaldisable
+\[
+\begin{tikzpicture}[
+    >=Latex,
+    node distance=1cm and 1.4cm,
+    every node/.style={font=\footnotesize},
+    box/.style={
+        draw,
+        fill=green!10,
+        minimum width=2cm,
+        minimum height=0.5cm,
+        align=center
+    }
+]
+
+\node[box] (sigmaalg) at (0,4.5) {\hyperref[def:sigma-algebra]{$\sigma$-algebra}};
+
+\node[box] (alg)      at (-3,3) {\hyperref[def:algebra]{algebra}};
+\node[box] (sigmaring) at (3,3) {$\sigma$-ring};
+% \node[box] (lambda)   at (4,2) {$\lambda$-system};
+
+\node[box] (ring)     at (0,1.5) {ring};
+\node[box] (semiring) at (0,0) {\hyperref[def:semiring]{semiring}};
+
+\draw[->] (alg) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaalg);
+\draw[->] (sigmaring) -- node[above, sloped] {$\Omega\in\mathcal A$} (sigmaalg);
+% \draw[->] (lambda) -- node[above, sloped] {$\cap$-stable} (sigmaalg);
+
+\draw[->] (ring) -- node[above, sloped] {$\Omega\in\mathcal A$} (alg);
+\draw[->] (ring) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaring);
+
+\draw[->] (semiring) -- node[right] {$\cup$-stable} (ring);
+
+\end{tikzpicture}
+\]
+\tikzexternalenable
+
 \begin{example}[Half-open rectangles] % assignment 3, problem 5
 Let $d \in \N$. 
 The half-open rectangles
