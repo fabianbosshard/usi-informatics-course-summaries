@@ -101,7 +101,7 @@
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
 
-\renewcommand{\emph}[1]{\textcolor{highlightpurple}{\textsl{#1}}}
+\renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
 
 \usepackage{thmtools}
 \newlength{\thmspace}
@@ -693,8 +693,9 @@ The angles are a bit different though, because classical polarization intensitie
 \]
 where $\varphi$ is the angle between the intial polarization direction and the polarizer axis:
 \[
+% Image Source: https://tikz.net/malus-law/
 \begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
-	
+
 \node[align=left, every text node part/.style={align=left}] at (6,-6)
 {\fontsize{5pt}{2pt}\selectfont%
 Image Source:\\[-5.5pt]
@@ -1078,6 +1079,123 @@ There is no classical gate that yields the NOT-gate in this way.
 
 
 
+\subsection{The Aspect/Gisin/Zeilinger Experiments}
+
+A pair of Qbits (e.g. polarized photons) can exhibit correlations that cannot be explained as merely two independent systems plus shared classical randomness.  
+This happens when the two Qbits are prepared in an \emph{entangled} state.
+
+A first example is
+\(
+\frac{1}{\sqrt{2}}\left(\ket{0}\otimes\ket{0}+\ket{1}\otimes\ket{1}\right)
+\).
+If Alice and Bob both measure in the standard basis, they always obtain the same bit.  
+This looks similar to a classical correlation, but quantum theory says that the individual outcomes are still random and only become fixed upon measurement.
+
+% This led Einstein, Podolsky, and Rosen (EPR) to suggest that quantum theory is incomplete and that the outcomes should in fact already be determined by hidden variables in the preparation stage.
+\begin{claim}[Einstein, Podolsky, Rosen, 1935]\label{claim:epr}
+Quantum theory is incomplete and must be augmented by ``hidden parameters'' completely determining the measurement outcomes of all alternative measurements.
+\end{claim}
+
+
+30 years later, Bell came up with an idea challenges \autoref{claim:epr} by allowing Alice and Bob to choose between different measurement bases.  
+\begin{claim}[Bell, 1964]\label{claim:bell}
+\autoref{claim:epr} is in doubt:
+There exist quantum correlations that go beyond the explanatory power of shared classical information.
+\end{claim}
+
+
+
+For that purpose, consider the \emph{singlet} state
+\[
+\ket{\Psi^{-}}
+\coloneq
+\frac{\ket{0} \otimes \ket{1} - \ket{1} \otimes \ket{0}}{\sqrt{2}}
+\]
+which is related to the one above, but has nicer transformation properties.
+
+
+If both parties measure $\ket{\Psi^{-}}$ in the same basis, then their outcomes are perfectly anti-correlated.  
+If the two measurement bases differ by an angle $\alpha$, then the probability of opposite outcomes is
+\(
+\Prob(\text{opposite})=\cos^2(\alpha)
+\).
+
+
+
+Assume, in the spirit of \autoref{claim:epr}, that the outcomes of all possible measurements are already fixed in the preparation stage.  
+Then Alice has two potential output bits, $A_1$ and $A_2$, corresponding to her two possible measurement bases, and Bob analogously has $B_1$ and $B_2$.  
+Here, index $1$ denotes the standard basis, while index $2$ denotes the rotated basis.  
+Even though in a single run each party chooses only one basis and therefore reveals only one of these bits, the hidden-variable assumption says that all four bits exist simultaneously.
+
+To make this concrete, let Alice choose between two measurement bases:
+the standard basis (output $A_1$) and a basis rotated by $30^\circ$ (output $A_2$).
+Let Bob analogously choose between the standard basis (output $B_1$) and a basis rotated by $-30^\circ$ (output $B_2$).
+Thus, the angle between the bases for the pairs $(A_1,B_2)$ and $(A_2,B_1)$ is $30^\circ$, whereas the angle between the bases for $(A_2,B_2)$ is $60^\circ$.
+
+Since for the singlet the probability of opposite outcomes is $\cos^2(\alpha)$ when the bases differ by an angle $\alpha$, we obtain
+\[
+\Prob(A_1 = B_1)=1,
+\qquad
+\Prob(A_1 = B_2)=\cos^2(30^\circ)=\frac{3}{4},
+\qquad
+\Prob(A_2 = B_1)=\cos^2(30^\circ)=\frac{3}{4}.
+\]
+Here we follow the usual convention of flipping Bob's output bit, so that equal bases give correlation instead of anti-correlation.
+\[
+\begin{tikzpicture}[
+  scale=0.7, 
+  every node/.style={inner sep=1pt, font=\small}
+  ]
+  % Nodes
+  \node[outer sep=0.3em] (A1) at (0,2) {$A_1$};
+  \node[outer sep=0.3em] (B1) at (4,2) {$B_1$};
+  \node[outer sep=0.3em] (A2) at (0,0) {$A_2$};
+  \node[outer sep=0.3em] (B2) at (4,0) {$B_2$};
+
+  % Top horizontal double edge
+  \draw[double distance=0.8pt] (A1) -- node[midway, above, outer sep=0.2em, font=\scriptsize] {$1$} (B1);
+
+  % Bottom red double edge
+  \draw[red, double distance=0.8pt] (A2) -- (B2);
+
+  % Crossing double edges
+  \draw[double distance=0.8pt] (A1) -- node[pos=0.15, below left, font=\scriptsize] {$3/4$}(B2);
+  \draw[double distance=0.8pt] (A2) -- node[pos=0.15, above left, font=\scriptsize] {$3/4$}(B1);
+
+\end{tikzpicture}
+\]
+
+
+
+To derive (one example of a) Bell inequality, let Alice choose between two bases giving outputs $A_1,A_2$, and Bob between two bases giving outputs $B_1,B_2$.  
+If all outputs were predetermined by hidden variables, then these four bits would exist simultaneously and satisfy
+\[
+\Prob(A_2 \neq B_2)
+\leq
+\Prob(A_1 \neq B_1) + \Prob(A_1 \neq B_2) + \Prob(A_2 \neq B_1)
+= 
+0 + \frac{1}{4} + \frac{1}{4}
+= \frac{1}{2}
+\]
+by the transitivity of equality and the union bound.
+
+But, according to quantum theory, we have
+\[
+\Prob(A_2 = B_2) = \cos^2(60^\circ) = \frac{1}{4}
+\]
+and therefore
+\[
+\Prob(A_2 \neq B_2) = 1 - \Prob(A_2 = B_2) = \frac{3}{4} 
+\]
+which violates the Bell inequality.
+
+So the observed correlations cannot be explained by pre-shared classical information.  
+Quantum correlations are therefore stronger than any correlations obtainable from local hidden variables.
+
+This phenomenon is called \emph{Bell non-locality}.  
+It shows that entanglement produces correlations that arise only upon measurement and that cannot be understood in the classical way as predetermined data carried by the particles.
+
+
 
 
 
@@ -1086,7 +1204,7 @@ There is no classical gate that yields the NOT-gate in this way.
 \clearpage
 
 
-hello
+\section{Information is Physical}
 
 
 
