@@ -115,6 +115,7 @@
 \declaretheorem[style=assertionstyle, name=Conjecture,  sibling=theorem]{conjecture}
 \declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
 \declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
+\declaretheorem[style=assertionstyle, name=Law,        sibling=theorem]{law}
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{definitionstyle}
 \declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
 \declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
@@ -278,6 +279,7 @@
 \renewcommand{\theHconjecture}{\theHtheorem}
 \renewcommand{\theHclaim}{\theHtheorem}
 \renewcommand{\theHfact}{\theHtheorem}
+\renewcommand{\theHlaw}{\theHtheorem}
 \renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
 \renewcommand{\theHproblem}{\theHdefinition}
 \renewcommand{\theHexercise}{\thesection.\arabic{exercise}} % Solution is numbered=no → no counter, no \theHsolution needed
@@ -299,6 +301,8 @@
 \renewcommand{\propositionautorefname}{Proposition}
 \renewcommand{\conjectureautorefname}{Conjecture}
 \renewcommand{\claimautorefname}{Claim}
+\renewcommand{\factautorefname}{Fact}
+\renewcommand{\lawautorefname}{Law}
 \renewcommand{\exampleautorefname}{Example}
 \renewcommand{\remarkautorefname}{Remark}
 \renewcommand{\cautionautorefname}{Caution}
@@ -1106,6 +1110,8 @@ There is no classical gate that yields the NOT-gate in this way.
 
 
 
+
+
 \subsection{The Aspect/Gisin/Zeilinger Experiments}
 
 A pair of Qbits (e.g. polarized photons) can exhibit correlations that cannot be explained as merely two independent systems plus shared classical randomness.  
@@ -1122,7 +1128,8 @@ This looks similar to a classical correlation, but quantum theory says that the 
 Quantum theory is incomplete and must be augmented by ``hidden parameters'' completely determining the measurement outcomes of all alternative measurements.
 \end{claim}
 
-Almost 30 years later, Bell came up with the idea that \autoref{claim:epr} can be tested by allowing Alice and Bob to choose between different measurement bases.  
+Almost 30 years later, Bell came up with the idea that \autoref{claim:epr} can be tested by allowing Alice and Bob to choose between different measurement bases.
+
 \begin{claim}[Bell, 1964]\label{claim:bell}
 \autoref{claim:epr} is in doubt:
 There exist quantum correlations that go beyond the explanatory power of shared classical information.
@@ -1132,11 +1139,10 @@ For that purpose, consider the \emph{singlet} state
 \[
 \ket{\Psi^{-}}
 \coloneq
-\frac{\ket{0} \otimes \ket{1} - \ket{1} \otimes \ket{0}}{\sqrt{2}}
+\frac{\ket{0}\otimes\ket{1}-\ket{1}\otimes\ket{0}}{\sqrt{2}}
 \]
-which is related to the one above, but has nicer transformation properties.
 
-We want to rewrite the singlet in a basis $\{\ket{0'}, \ket{1'}\}$ rotated w.r.t. the standard basis $\{\ket{0}, \ket{1}\}$ by an angle $\alpha$:
+We rewrite the singlet in rotated measurement bases of Alice and Bob.
 \[
 \begin{bmatrix}
 \ket{0}\\[0.2em]
@@ -1153,101 +1159,97 @@ We want to rewrite the singlet in a basis $\{\ket{0'}, \ket{1'}\}$ rotated w.r.t
 \end{bmatrix}
 \]
 
-
-\subsubsection*{Alice \& Bob both rotate with the same angle:}
-% \(
-% \ket{0}=c\ket{0'}-s\ket{1'}
-% \),
-% \(
-% \ket{1}=s\ket{0'}+c\ket{1'}
-% \)
-% where
-% \(
-% c\coloneq \cos(\alpha)
-% \),
-% \(
-% s\coloneq \sin(\alpha)
-% \).
-
-If both parties rotate by the same angle and thus measure $\ket{\Psi^{-}}$ in the same basis, then their outcomes are perfectly anti-correlated:
+Let Alice rotate her basis by an angle $\alpha_A$ and Bob by $\alpha_B$.
+% \[
+% \begin{aligned}
+% \ket{0}_A &= \cos(\alpha_A)\ket{0_A'}-\sin(\alpha_A)\ket{1_A'} \\
+% \ket{1}_A &= \sin(\alpha_A)\ket{0_A'}+\cos(\alpha_A)\ket{1_A'} \\
+% \\
+% \ket{0}_B &= \cos(\alpha_B)\ket{0_B'}-\sin(\alpha_B)\ket{1_B'} \\
+% \ket{1}_B &= \sin(\alpha_B)\ket{0_B'}+\cos(\alpha_B)\ket{1_B'}
+% \end{aligned}
+% \]
+Substituting this into the singlet state yields
 \[
 \begin{aligned}
 \ket{\Psi^-}
 &=
 \frac{1}{\sqrt{2}}
 \Bigl(
-(c\ket{0'}-s\ket{1'})\otimes(s\ket{0'}+c\ket{1'})
+\ket{0}_A\otimes\ket{1}_B
 -
-(s\ket{0'}+c\ket{1'})\otimes(c\ket{0'}-s\ket{1'})
+\ket{1}_A\otimes\ket{0}_B
 \Bigr)
-\\[0.4em]
+\\
 &=
 \frac{1}{\sqrt{2}}
 \Bigl(
-cs\,\ket{0' 0'}
-+
-c^2\,\ket{0' 1'}
+(\cos\alpha_A\ket{0_A'}-\sin\alpha_A\ket{1_A'})
+\otimes
+(\sin\alpha_B\ket{0_B'}+\cos\alpha_B\ket{1_B'})
+\\
+&\hspace{1.6cm}
 -
-s^2\,\ket{1' 0'}
--
-sc\,\ket{1' 1'}
-% \\
-% &\hspace{1.6cm}
--
-sc\,\ket{0' 0'}
-+
-s^2\,\ket{0' 1'}
--
-c^2\,\ket{1' 0'}
-+
-cs\,\ket{1' 1'}
-\Bigr)
-\\[0.4em]
+(\sin\alpha_A\ket{0_A'}+\cos\alpha_A\ket{1_A'})
+\otimes
+(\cos\alpha_B\ket{0_B'}-\sin\alpha_B\ket{1_B'})
+\Bigr)\\
 &=
 \frac{1}{\sqrt{2}}
 \Bigl(
-\cancel{(cs-sc)\,\ket{0'}\otimes\ket{0'}}
+\sin(\alpha_A-\alpha_B)\ket{0_A'}\otimes\ket{0_B'}
 +
-(c^2+s^2)\ket{0'}\otimes\ket{1'}
+\cos(\alpha_A-\alpha_B)\ket{0_A'}\otimes\ket{1_B'}
+\\
+&\hspace{1.6cm}
 -
-(s^2+c^2)\ket{1'}\otimes\ket{0'}
+\cos(\alpha_A-\alpha_B)\ket{1_A'}\otimes\ket{0_B'}
 +
-\cancel{(-sc+cs)\,\ket{1'}\otimes\ket{1'}}
+\sin(\alpha_A-\alpha_B)\ket{1_A'}\otimes\ket{1_B'}
 \Bigr)
-\\[0.4em]
-&=
-\frac{1}{\sqrt{2}}
-\left(
-\ket{0'}\otimes\ket{1'}
--
-\ket{1'}\otimes\ket{0'}
-\right)
 \end{aligned}
 \]
 
 
-\subsubsection*{Alice rotates $\alpha=30^\circ$, Bob $\alpha=-30^\circ$:}
 
-Alice chooses between the standard basis and a basis rotated by $30^\circ$.
-Bob chooses between the standard basis and a basis rotated by $-30^\circ$.
-Thus, the angle between the bases for the pairs $(A_1,B_2)$ and $(A_2,B_1)$ is $30^\circ$, whereas the angle between the bases for $(A_2,B_2)$ is $60^\circ$.
+Thus the probabilities depend only on the difference of the angles,
+\(
+\Delta \coloneq \alpha_A-\alpha_B
+\):
+\[
+\begin{aligned}
+\Prob(\text{same})
+&=
+\Prob(0_A'0_B')+\Prob(1_A'1_B')
+=
+\sin^2(\Delta)
+\\
+\Prob(\text{opposite})
+&=
+\Prob(0_A'1_B')+\Prob(1_A'0_B')
+=
+\cos^2(\Delta)
+\end{aligned}
+\]
 
-% \[
-% \begin{aligned}
-% \ket{0}_A&=c\ket{0'}-s\ket{1'},
-% &\qquad
-% \ket{1}_A&=s\ket{0'}+c\ket{1'},
-% \\
-% \ket{0}_B&=c\ket{0'}+s\ket{1'},
-% &\qquad
-% \ket{1}_B&=-s\ket{0'}+c\ket{1'} .
-% \end{aligned}
-% \]
+% Hence if the measurement bases differ by an angle $\Delta$ then
+% \(
+% \Prob(\text{opposite})=\cos^2(\Delta)
+% \).
+In particular, if both parties measure in the same basis
+\(
+\Delta=0
+\)
+then
+\(
+\Prob(\text{opposite})=1
+\),
+so their outcomes are perfectly anti-correlated.
 
-
+For Bell's experiment, Alice chooses between the standard basis and a basis rotated by $30^\circ$, while Bob chooses between the standard basis and a basis rotated by $-30^\circ$.
 \[
 \begin{tikzpicture}[x=1cm, y=1cm, scale=0.75, font=\footnotesize]
-  \colorlet{basisstatecolor}{blue!85!black}
+  \definecolor{basisstatecolor}{HTML}{\eat #20a61e}
 
   % #1 = prefix, #2 = shift, #3 = angle between bases (from the ' basis to the standard basis)
   \newcommand{\basispanel}[3]{%
@@ -1294,106 +1296,25 @@ Thus, the angle between the bases for the pairs $(A_1,B_2)$ and $(A_2,B_1)$ is $
 \end{tikzpicture}
 \]
 
-We rewrite the state again in the respective measurement bases of Alice and Bob:
-\[
-\begin{aligned}
-\ket{\Psi^-}
-&=
-\frac{1}{\sqrt{2}}
-\Bigl(
-(c\ket{0'}-s\ket{1'})\otimes(-s\ket{0'}+c\ket{1'})
--
-(s\ket{0'}+c\ket{1'})\otimes(c\ket{0'}+s\ket{1'})
-\Bigr)
-\\[0.4em]
-&=
-\frac{1}{\sqrt{2}}
-\Bigl(
--cs\,\ket{0' 0'}
-+
-c^2\,\ket{0' 1'}
-+
-s^2\,\ket{1' 0'}
--
-sc\,\ket{1' 1'}
-% \\
-% &\hspace{1.6cm}
--
-sc\,\ket{0' 0'}
--
-s^2\,\ket{0' 1'}
--
-c^2\,\ket{1' 0'}
--
-cs\,\ket{1' 1'}
-\Bigr)
-\\[0.4em]
-&=
-\frac{1}{\sqrt{2}}
-\Bigl(
--2cs\,\ket{0'}\otimes\ket{0'}
-+
-(c^2-s^2)\ket{0'}\otimes\ket{1'}
-+
-(s^2-c^2)\ket{1'}\otimes\ket{0'}
--
-2cs\,\ket{1'}\otimes\ket{1'}
-\Bigr)
-\\[0.4em]
-&=
--\frac{\sqrt{3}}{2\sqrt{2}}\,\ket{0'}\otimes\ket{0'}
-+
-\frac{1}{2\sqrt{2}}\,\ket{0'}\otimes\ket{1'}
--
-\frac{1}{2\sqrt{2}}\,\ket{1'}\otimes\ket{0'}
--
-\frac{\sqrt{3}}{2\sqrt{2}}\,\ket{1'}\otimes\ket{1'}
-\end{aligned}
-\]
-where we used the trigonometric identities in the last step:
-\[
-\sin(30^\circ)
-=
-\frac{l/2}{l}
-=
-\frac{1}{2}
-\qquad
-\cos(30^\circ)
-=
-\sqrt{1-\left(\frac{1}{2}\right)^2}
-=
-\frac{\sqrt{3}}{2}\tikzmark{triangleanchor}
-\begin{tikzpicture}[scale=2.4, font=\footnotesize, overlay, remember picture]%
-  \def\h{0.55}
-  \pgfmathsetmacro{\x}{sqrt(3)*\h}
-
-  \begin{scope}[shift={($(pic cs:triangleanchor)+(0.6cm,-0.1cm)$)}]
-  \coordinate (A) at (0,0);
-  \coordinate (B) at (\x,\h);
-  \coordinate (C) at (\x,0);
-  \coordinate (M) at (\x,0);
-
-  \draw (A)-- node[midway, above left] {$l$} (B)-- node[pos=0.5, right] {$\frac{l}{2}$} (C)--cycle;
-  \draw[black] (0.25,0) arc (0:30:0.25) node[pos=0.7, right] {$30^\circ$};
-  \draw[black] ($(B)-(0,0.25)$) arc (-90:-150:0.25) node[pos=0.3, below left, outer sep=0.0em, inner sep=0.1em] {$60^\circ$};
-
-  % right-angle marker at M
-  \draw ($(M)+(-0.10cm,0)$) -- ($(M)+(-0.10cm,0.10cm)$) -- ($(M)+(0,0.10cm)$);
-  \end{scope}
-\end{tikzpicture}
-\]%
+Thus the angle between the bases for the pairs
+\(
+(A_1,B_2)
+\) and
+\(
+(A_2,B_1)
+\)
+is $30^\circ$, while the angle between
+\(
+(A_2,B_2)
+\)
+is $60^\circ$.
 
 
+Assume now, in the spirit of \autoref{claim:epr}, that the outcomes of all possible measurements are already fixed in the preparation stage.
 
+Then Alice has two potential output bits $A_1,A_2$ and Bob analogously $B_1,B_2$.
 
-Assume now, in the spirit of \autoref{claim:epr}, that the outcomes of all possible measurements are already fixed in the preparation stage.  
-Then Alice has two potential output bits, $A_1$ and $A_2$, corresponding to her two possible measurement bases, and Bob analogously has $B_1$ and $B_2$.  
-Here, index $1$ denotes the standard basis, while index $2$ denotes the rotated basis.  
-% Even though in a single run each party chooses only one basis and therefore reveals only one of these bits, the hidden-variable assumption says that all four bits exist simultaneously.
-In any single run, Alice and Bob each choose only one basis, so only one pair of outputs is actually observed.
-However, according to \autoref{claim:epr}, all four hypothetical outputs
-$A_1,A_2,B_1,B_2$
-already must have predetermined values before the measurements are chosen.
+In any single run each party reveals only one of these bits, but the hidden-variable assumption says that all four bits already have predetermined values.
 
 For convenience, we flip Bob's output bit, so that equal bases lead to correlation instead of anti-correlation.  
 Therefore,
@@ -1446,29 +1367,218 @@ Hence we obtain (the simplest example of) a so-called Bell inequality
 \]
 by the transitivity of equality and the union bound.
 
-But according to quantum theory, the angle between the corresponding bases for $(A_2,B_2)$ is $60^\circ$, so
+But quantum theory predicts
 \[
-\Prob(A_2 = B_2) = \cos^2(60^\circ) = \frac{1}{4}
+\Prob(A_2=B_2)=\cos^2(60^\circ)=\frac14
 \]
 and therefore
 \[
-\Prob(A_2 \neq B_2) = 1 - \Prob(A_2 = B_2) = \frac{3}{4}
+\Prob(A_2\neq B_2)=\frac34
 \]
 which violates the Bell inequality.
 
-So the observed correlations cannot be explained by pre-shared classical information.  
-Quantum correlations are therefore stronger than any correlations obtainable from local hidden variables.
+Thus the observed correlations cannot be explained by pre-shared classical information.
 
-This phenomenon is called \emph{Bell non-locality}.  
-It shows that entanglement produces correlations that arise only upon measurement and that cannot be understood in the classical way as predetermined data carried by the particles.
+Quantum correlations are stronger than any correlations obtainable from local hidden variables.
+
+This phenomenon is called \emph{Bell non-locality}.
+It shows that entanglement produces correlations that arise only upon measurement and cannot be understood as predetermined data carried by the particles.
 
 
+% maybe add something about PR box???
+
+This challenges the ``Reichenbach principle'':
+\begin{quote}
+Any correlation between two observed events must arise either from a common cause in their shared past, or from a direct causal influence between the events.
+\end{quote}
+
+Bell's result rules out the first explanation.
+The correlations cannot be explained by shared classical information created in the common past.
+
+The second explanation would contradict the spirit of relativity theory, since the speed of that influence would have to be highly superluminal.
+
+Experiments have repeatedly confirmed the predictions of quantum theory.
+In some experiments the measurements are spacelike separated, meaning that in each observer's reference frame their own measurement occurs first.
+
+
+
+To study how strong the correlations can be, Popescu and Rohrlich proposed an idealized device called a \emph{PR box}:
+\[\begin{tikzpicture}[scale=1.2, font=\footnotesize]
+
+\definecolor{prbox}{RGB}{214,140,60}
+
+\node[
+draw=prbox,
+fill=prbox!15,
+rounded corners=4pt,
+thick,
+minimum width=2cm,
+minimum height=0.7cm,
+outer sep=0.5em
+] (box) at (0,0)
+{$P(a,b\mid x,y)$};
+
+\node (x) at (-0.4,0.8) {$x$};
+\node (y) at (0.4,0.8) {$y$};
+
+\node (a) at (-0.4,-0.8) {$a$};
+\node (b) at (0.4,-0.8) {$b$};
+
+\draw[->] (x) -- (-0.4,0.4);
+\draw[->] (y) -- (0.4,0.4);
+
+\draw[->] (-0.4,-0.4) -- (a);
+\draw[->] (0.4,-0.4) -- (b);
+
+\end{tikzpicture}\]
+
+
+
+It has two inputs 
+\(
+x,y \in \{0,1\}
+\)
+and two outputs
+\(
+a,b \in \{0,1\}
+\)
+with the constraint
+\[
+a \oplus b = x y
+\]
+
+This gives four equations
+\[
+\begin{aligned}
+a_1 \oplus b_1 &= x_1 y_1 \\
+a_1 \oplus b_2 &= x_1 y_2 \\
+a_2 \oplus b_1 &= x_2 y_1 \\
+a_2 \oplus b_2 &= x_2 y_2
+\end{aligned}
+\]
+which, when added modulo \(2\) yield
+\[
+0 = (x_1 \oplus x_2)(y_1 \oplus y_2)
+\]
+But the RHS equals \(1\), since \(x_1 \neq x_2\) and \(y_1 \neq y_2\).
+Therefore the system cannot be satisfied simultaneously.
+
+At most three out of the four equations can hold.
+Thus any classical strategy can succeed with probability at most
+\(
+\frac{3}{4}
+\).
+% This bound is exactly the classical limit appearing in Bell's inequality.
 
 
 \clearpage
 
 
 \section{Information is Physical}
+
+\begin{law}[First law of thermodynamics: Energy]\label{law:first-law-thermodynamics-energy}
+In a closed system, the total energy is constant.
+\end{law}
+\begin{law}[Second law of thermodynamics: Entropy]\label{law:second-law-thermodynamics-entropy}
+In a closed system, the total entropy (``disorder'') does not decrease.
+\end{law}
+A remarkable feature of \autoref{law:second-law-thermodynamics-entropy} is that it is \emph{asymmetric} in time, whereas, e.g., the laws of classical mechanics are time-symmetric.
+
+
+
+\textbf{Maxwell's demon}:
+Imagine a creature sitting at a separation wall  in a gas container with a frictionless door.
+The demon can open whenever a molecule moves towards the door.
+In linear time in the numbrer of particles the gas will be ``sorted'', i.e., compressed - revoltingly unfaithful to \autoref{law:second-law-thermodynamics-entropy}.
+
+
+The understanding of twhat is wrong with this argument is one of the first success stories of the synergy between physics and
+
+\subsection{Information Theory}
+
+
+\[
+\begin{tikzpicture}[font=\footnotesize, scale=0.76, transform shape]
+  \definecolor{flowviolet}{RGB}{162,163,232}
+  \definecolor{flowolive}{RGB}{208,199,141}
+  \definecolor{flowpink}{RGB}{225,164,199}
+  \definecolor{flowred}{RGB}{242,152,152}
+  \definecolor{personfill}{RGB}{247,227,204}
+  \definecolor{persondraw}{RGB}{238,178,107}
+
+  \tikzset{
+    flowbox/.style={
+      draw=none,
+      rounded corners=3pt,
+      minimum height=0.9cm,
+      inner sep=0pt,
+      outer sep=0.2em,
+      align=left
+    },
+    person/.style={
+      minimum width=1.4cm,
+      draw=persondraw,
+      line width=1pt,
+      fill=personfill,
+      rounded corners=7pt,
+      minimum height=0.8cm,
+      inner sep=4pt,
+      align=center
+    },
+    flowarrow/.style={->, line width=0.8pt}
+  }
+
+  \node[person, font=\normalsize] (alice) at (0.0,1.5) {Alice};
+  
+  \node[flowbox, fill=flowolive, minimum width=1.3cm] (storage) at (3.0,2.0) {Data\\storage};
+  
+  \node[flowbox, fill=flowviolet, minimum width=2.0cm] (source) at (0.0,0.0) {Information\\source};
+  \node[flowbox, fill=flowolive, minimum width=2.0cm] (compress) at (3.0,0.0) {Data\\compression};
+  \node[flowbox, fill=flowpink, minimum width=2.0cm] (encrypt) at (6.0,0.0) {Encryption};
+  
+  \node[flowbox, fill=flowred, minimum width=1.6cm] (coding) at (4.5,-2.0) {Channel\\Coding};
+  \node[flowbox, fill=flowred, minimum width=1.6cm] (noisy) at (7.0,-2.0) {Noisy\\Channel};
+  \node[flowbox, fill=flowred, minimum width=1.6cm] (decoding) at (9.5,-2.0) {Channel\\Decoding};
+  
+  \node[flowbox, fill=flowpink, minimum width=2.0cm] (decrypt) at (8.0,-4.0) {Decryption};
+  \node[flowbox, fill=flowolive, minimum width=2.0cm] (decompress) at (11.0,-4.0) {Data\\decompression};
+  \node[flowbox, fill=flowviolet, minimum width=2.0cm] (info) at (14.0,-4.0) {Information};
+  
+  \node[person, font=\normalsize] (bob) at (14.0,-2.5) {Bob};
+
+  \draw[flowarrow] (source.east) -- (compress.west);
+  \draw[flowarrow] (compress.east) -- (encrypt.west);
+  \draw[flowarrow] (compress.north) -- (storage.south);
+
+  \draw[flowarrow] (encrypt.south) to[out=-90, in=90] ($(coding.north)+(0.15,0.0)$);
+  \draw[flowarrow] (coding.east) -- (noisy.west);
+  \draw[flowarrow] (noisy.east) -- (decoding.west);
+
+  \draw[flowarrow] (decoding.south) to[out=-90, in=90] ($(decrypt.north)+(0.10,0.0)$);
+  \draw[flowarrow] (decrypt.east) -- (decompress.west);
+  \draw[flowarrow] (decompress.east) -- (info.west);
+\end{tikzpicture}
+\]
+
+
+\begin{definition}[Entropy]\label{def:entropy}
+The entropy of a random variable $X$ over $\mathcal{X}$ with distribution $\Prob_X(x) = p_x$ is
+\[
+\begin{verticalhack}
+H(X)
+\coloneq
+\Exp[-\log_2 \Prob_X(X)]
+=
+- \sum_{x \in \mathcal{X}} p_x \log_2 p_x
+\end{verticalhack}
+\qedhere
+\]
+\end{definition}
+
+
+
+
+
 
 
 
