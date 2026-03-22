@@ -1825,7 +1825,7 @@ derived by Boltzmann in the 1870s and \href{https://en.wikipedia.org/wiki/Boltzm
 
 
 
-\begin{example}[$1$-Molecule Gas]
+\begin{example}[$1$-Molecule Gas]\label{ex:one-molecule-gas}
 Consider a ``one-molecule gas'' in a container of volume $V$.
 The first macrostate corresponds to the particle being anywhere in the container, where for the second, smaller macrostate, the particle is confined to the left half of the container.
 
@@ -1856,12 +1856,14 @@ H(\text{macrostate 2}) - H(\text{macrostate 1})
 -1
 % \end{aligned}
 \]
-or, in terms of physical entropy, $\Delta S = \kB \ln(2) \Delta H = -\kB \ln(2)$.
+or, in terms of physical entropy, $\Delta S_{\text{gas}}
+ = \kB \ln(2) \Delta H = -\kB \ln(2)$.
 \end{example}
 
 
 \begin{example}[$N$-Molecule Gas]
 Consider a gas of $N$ molecules in a container of volume $V$.
+We regard the gas as the \emph{system} and the surroundings as a heat reservoir (the \emph{environment}) at temperature $T$.
 \[
 \begin{tikzpicture}[line cap=round, line join=round, scale=0.5]
   % Box dimensions
@@ -1932,23 +1934,24 @@ Compare the following two macrostates:
   \item macrostate $2$: all molecules are confined to the left half of the container (volume $V/2$)
 \end{itemize}
 
-As in the one-molecule case, we discretize space into cells of volume $\delta^3$.
+As in the one-molecule case, we discretize position space into cells of volume $\delta^3$.
 Then the number of position microstates for a single molecule is proportional to the accessible volume.
+Since the momentum space is the same in both macrostates, it cancels in the ratio, so it suffices to consider position space.
 
-Since the molecules are (assumed to be) independent, the total number of microstates is
+Assuming the molecules are non-interacting so that their positions are independent, the total number of microstates is
 \(
 \Omega_1 \propto V^N
 \),
 \(
 \Omega_2 \propto \left({V}/{2}\right)^N
 \).
-Hence
-\[
-\frac{\Omega_2}{\Omega_1}
-=
-\left(\frac{1}{2}\right)^N
-\]
-
+% Hence
+% \[
+% \frac{\Omega_2}{\Omega_1}
+% =
+% \left(\frac{1}{2}\right)^N
+% \]
+% Since each molecule independently has probability $\frac{1}{2}$ of being in the left half of the container, the probability that all $N$ molecules are in the left half is also $2^{-N}$.
 Therefore, the entropy difference is
 \[
 % \begin{aligned}
@@ -1964,14 +1967,15 @@ Therefore, the entropy difference is
 % \end{aligned}
 \]
 or, in physical units,
-\[
-\Delta S
+\(
+\Delta S_{\text{gas}}
 =
 \kB \ln(2)\, \Delta H
 =
 - N \kB \ln(2)
-\]
+\).
 This transition (compressing all mole\-cules into half the volume) is highly improbable, with probability $2^{-N}$, but it can be enforced by investing work, e.g., by using a piston to compress the gas.
+We now interpret this entropy decrease thermodynamically and relate it to the energy required to enforce the compression.
 The gas is then not an isolated system: work is performed on it and, after thermalization, energy is transferred as heat to the environment, increasing the entropy around the gas container,
 so there is no contradiction to \autoref{law:second-law-thermodynamics-entropy}.
 \[
@@ -1987,9 +1991,9 @@ so there is no contradiction to \autoref{law:second-law-thermodynamics-entropy}.
   % Labels
   \node[anchor=west, font=\footnotesize] at (0.3,4.25) {temp $T$};
   \node[anchor=west, font=\footnotesize] at (10.0,4.05) {heat $\Delta Q$};
-  \node[anchor=west, font=\footnotesize] at (0.5,0.85) {work $\Delta W$};
-  \node[font=\footnotesize] at ($(innerSW)!0.5!(innerNE)$) {$\Delta S_{\text{sys}} < 0$};
-  \node[font=\footnotesize] at (12,1.95) {$0 < \Delta S_{\text{env}} = \frac{\Delta Q}{T}$};
+  \node[anchor=west, font=\footnotesize] at (0.3,0.85) {work $\Delta W$};
+  \node[font=\footnotesize] at ($(innerSW)!0.5!(innerNE)$) {$\Delta S_{\text{gas}} < 0$};
+  \node[font=\footnotesize] at (12,1.55) {$0 <  \Delta S_{\text{env}} = \frac{\Delta Q}{T}$};
 
   % Symmetric curved arrows (same deltas and same in/out angles)
   \def\arrowDx{1.20}
@@ -2007,20 +2011,45 @@ so there is no contradiction to \autoref{law:second-law-thermodynamics-entropy}.
 
 \end{tikzpicture}
 \]
-A certain amount of work $\Delta W$ is invested to compress the gas, which is then dissipated as heat to the environment.
-It is that dissipation that, after thermalization, is responsible for the increase of entropy in the environment, which is necessary to compensate for the decrease of entropy in the gas and thus to avoid a violation of \autoref{law:second-law-thermodynamics-entropy}.
-A heat reservoir of temperature $T$ that receives an amount $\Delta Q$ of heat energy, increases its entropy by at most a value proportional to $1/T$.
-Boltzmann's constant $\kB$ is defined such that we have
+A certain amount of work $\Delta W$ is invested to compress the gas, which, after thermalization, is dissipated as heat $\Delta Q$ to the environment (\autoref{law:first-law-thermodynamics-energy}).
+It is that heat transfer that is responsible for the increase of entropy in the environment, which is necessary to compensate for the decrease of entropy in the gas and thus to avoid a violation of \autoref{law:second-law-thermodynamics-entropy}.
+
+% A heat reservoir of temperature $T$ that receives an amount $\Delta Q$ of heat energy increases its entropy by at least $\frac{\Delta Q}{T}$, with equality in the reversible case (Clausius).
+% For a thermodynamic system at temperature $T$, Clausius gives
+% For the environment (an ideal heat reservoir), Clausius gives
+% \[
+% \Delta S_{\text{env}} = \frac{\Delta Q}{T}
+% \]
+% where $T$ is the temperature of the heat reservoir.
+% A heat reservoir is defined to be ideal in the sense that it is completely reversible, i.e. the heat transfer occurs without any additional entropy production (i.e. excluding processes such as heat flow across a finite temperature difference, friction, diffusion, chemical reactions, or other irreversible processes).
+
+For the environment, modeled as a heat reservoir at temperature $T$, the entropy change is
 \[
 \Delta S_{\text{env}} = \frac{\Delta Q}{T}
 \]
-with equality in the case of a reversible process.
-Thus, the minimal investemtn in terms of free energy to enforce the entropy decrease
+where $\Delta Q>0$ denotes the heat transferred to the environment.
+A heat reservoir is an idealized system that remains in internal equilibrium at fixed temperature $T$ while exchanging heat with other systems. 
+% This does not imply that the overall process is reversible: 
+% additional entropy production may still occur elsewhere, for example due to heat flow across a finite temperature difference, friction, diffusion, or other irreversible effects.
+
+\autoref{law:second-law-thermodynamics-entropy} requires
 \[
-\Delta Q \geq - T \Delta S = N \kB T \ln(2)     
+\Delta S_{\text{tot}} = \Delta S_{\text{gas}} + \Delta S_{\text{env}} \geq 0
+\]
+where equality holds only in the reversible case, i.e. without any additional entropy production (i.e. excluding irreversible processes such as heat flow across a finite temperature difference, friction, diffusion, turbulence, chemical reactions, ...).
+Thus, the minimal required work to enforce this entropy decrease is obtained in the reversible case:
+\[
+\Delta W
+=
+\Delta Q 
+=
+- T 
+\Delta S_{\text{gas}} 
+=
+N \kB T \ln(2)
 \]
 
-Note that we obtain the same result by using the ideal gas law to compute the work needed to compress the gas from volume \(V_0\) to volume \(V_0/2\):
+We obtain the same result by using the ideal gas law to compute the work needed to compress the gas from volume \(V\) to volume \(V/2\): 
 \[
 p V = N \kB T 
 \quad
@@ -2031,9 +2060,9 @@ p(V) = \frac{N \kB T}{V}
 and thus
 \[
 \begin{verticalhack}
-- \int_{V_0}^{V_0/2} p(V) \dif V
+- \int_{V}^{V/2} p(V) \dif V
 =
-- \int_{V_0}^{V_0/2} \frac{N \kB T}{V} \dif V
+- \int_{V}^{V/2} \frac{N \kB T}{V} \dif V
 =
 N \kB T \ln(2)
 \end{verticalhack}
@@ -2042,6 +2071,34 @@ N \kB T \ln(2)
 \end{example}
 
 
+We can interpret the molecule in \autoref{ex:one-molecule-gas} as storing one bit of information, $0$ if it is in the left halft and $1$ if it is in the right half of the container.
+If we force the molecule to be in the left half, it corresponds to erasing that bit of information, in the sense that its state is $0$ at the end, regardless of its initial state.
+% The price of this erasure is $\kB T \ln(2)$ of work.
+\begin{claim}[Landauer's principle]\label{claim:landauer-principle}
+Erasing one bit - irrelevant by what physical system it is stored - requires at least
+\[
+\kB T \ln(2) \quad(\approx 3 \cdot 10^{-21} \text{Joule} \quad \text{at room temperature})
+\]
+of free energy, which, in the process, must be dissipated as heat to the environment.
+\end{claim}
+
+\subsection{Converse of \nameref{claim:landauer-principle}}
+
+The inverse process of erasure, let's call it \emph{randomization}, allows for gaining free energy.
+\begin{example}
+The work value of the all-$0$-string of length $N$, however it is represented physcially, is $N \kB T \ln(2)$.
+This amount of environmental heat energy can be transformed into work.
+\end{example}
+
+
+
+\begin{example}
+The work value of the first $N$ ditis of the 
+\end{example}
+
+\begin{example}
+
+\end{example}
 
 
 \end{document}
