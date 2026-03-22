@@ -378,17 +378,17 @@ Contingency table: displays the multivariate frequency distribution of the varia
 
 \subsubsection*{Events}
 
-\underline{Conditional probability}
+\underline{\smash[b]{Conditional probability}}
 \[
 \mathrm{P}(A\mid B) = \frac{\mathrm{P}(A \cap B)}{\mathrm{P}(B)}
 \]
 
-\underline{Bayes' theorem}
+\underline{\smash[b]{Bayes' theorem}}
 \[
 \mathrm{P}(A\mid B) = \frac{\mathrm{P}(B\mid A)\,\mathrm{P}(A)}{\mathrm{P}(B)}
 \]
 
-\underline{Total probability}
+\underline{\smash[b]{Total probability}}
 
 Let $(A_i)_i$ be a partition of $\Omega$. Then
 \[
@@ -409,13 +409,13 @@ If $X,Y$ are random variables, the same structure appears at the level of distri
 \begin{tabular}{@{}p{0.45\linewidth}p{0.45\linewidth}@{}}
 \textbf{Discrete case (pmf)} & \textbf{Continuous case (pdf)}\\[0.5ex]
 % \hline
-\underline{Joint distribution} & \underline{Joint distribution}\\[0.0ex]
+\underline{\smash[b]{Joint distribution}} & \underline{\smash[b]{Joint distribution}}\\[0.0ex]
 $p_{X,Y}(x,y) = \mathrm{P}(X = x, Y = y)$ & $f_{X,Y}(x,y)$\\[1.5ex]
-\underline{Marginal distribution} & \underline{Marginal distribution}\\[0.0ex]
+\underline{\smash[b]{Marginal distribution}} & \underline{\smash[b]{Marginal distribution}}\\[0.0ex]
 $p_Y(y) = \sum_x p_{X,Y}(x,y)$ & $f_Y(y) = \int f_{X,Y}(x,y)\,\mathrm{d}x$\\[1.5ex]
-\underline{Conditional distribution} & \underline{Conditional distribution}\\[0.0ex]
+\underline{\smash[b]{Conditional distribution}} & \underline{\smash[b]{Conditional distribution}}\\[0.0ex]
 $p_{X\mid Y}(x\mid y) = \dfrac{p_{X,Y}(x,y)}{p_Y(y)}$ & $f_{X\mid Y}(x\mid y) = \dfrac{f_{X,Y}(x,y)}{f_Y(y)}$\\[1.5ex]
-\underline{Bayes' theorem} & \underline{Bayes' theorem}\\[0.0ex]
+\underline{\smash[b]{Bayes' theorem}} & \underline{\smash[b]{Bayes' theorem}}\\[0.0ex]
 $p_{X\mid Y}(x\mid y)
   = \dfrac{p_{Y\mid X}(y\mid x)\,p_X(x)}{\sum_u p_{Y\mid X}(y\mid u)\,p_X(u)}$ &
 \makebox[0.45\linewidth][l]{$f_{X\mid Y}(x\mid y)
@@ -559,7 +559,7 @@ This shows that $A \times B$ is countable.
 \begin{definition}[$\sigma$-algebra]\label{def:sigma-algebra}
 A set $\mathcal{F}\subseteq 2^\Omega$ is called a \emph{$\sigma$-algebra} on $\Omega$ if
 \begin{enumerate}[label=(\roman*)]
-  \item $\mathcal{F}$ is an algebra on $\Omega$,\label{item:sigma-algebra-is-algebra}
+  \item $\mathcal{F}$ is an algebra (\autoref{def:algebra}) on $\Omega$,\label{item:sigma-algebra-is-algebra}
   \item for any $A_1,A_2,\dots\in\mathcal{F}$ we have $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$.\label{item:sigma-algebra-closed-under-countable-union}
 \end{enumerate}
 The sets in $\mathcal{F}$ are called \hl{measurable} and the tuple $(\Omega,\mathcal{F})$ is called a \emph{measurable space}.
@@ -1213,6 +1213,14 @@ At the open end of intervals, we allow for $-\vect{\infty}$ and $\vect{\infty}$.
 \end{example}
 
 
+\begin{remark}[Open sets in $\R^d$]\label{rem:open-sets-in-Rd}
+Let $G \subseteq \R^d$.  
+By \autoref{ex:canonical-topology}, $G$ is open in the canonical topology if and only if for every $\vect{x}\in G$ there exists $r>0$ such that
+\(
+B_r(\vect{x}) \subseteq G
+\).
+Equivalently, every point of an open set is an interior point.
+\end{remark}
 
 \begin{proposition}[Rational open rectangles generate the Borel $\sigma$-algebra] % Assigment 3, Problem 3
 Let
@@ -1224,7 +1232,7 @@ Let
 Then
 \begin{enumerate}[label=(\alph*)]
 \item $\mathcal{R}$ is countable
-\item every open rectangle in $\R^d$ can be written as a countable union of elements of $\mathcal{R}$
+\item every open rectangle in $\R^d$ can be written as a countable union of elements of $\mathcal{R}$ \label{item:open-rectangles-countable-union-rational-open-rectangles}
 \item
 \(
 \mathcal{B}(\R^d)=\sigma(\mathcal{R})
@@ -1312,35 +1320,46 @@ Since this rectangle appears in the union on the right-hand side, we conclude th
 \end{itemize}
 
 Thus every open rectangle in \(\R^d\) is a countable union of elements of \(\mathcal{R}\).
-
 \item
-Let \(U \subseteq \R^d\) be open. 
-Then \(U \in \mathcal{B}(\R^d)\).
-Then for every \(\vect{x} \in U\), there exists \(r > 0\) and \(\vect{y} \in \R^d\) such that
+\begin{itemize}
+\item[`$\subseteq$':]
+% Since \(\mathcal{B}(\R^d) = \sigma(\mathcal{T})\), where \(\mathcal{T}\) denotes the collection of open sets, it suffices to show that every open set belongs to \(\sigma(\mathcal{R})\).
+
+Let \(U \subseteq \R^d\) be open, i.e. \(U \in \mathcal{T}\).
+By \autoref{rem:open-sets-in-Rd}, for every \(\vect{x} \in U\), there exists \(r > 0\) such that
 \(
-\vect{x} \in B_r(\vect{y}) \subseteq U
+B_r(\vect{x}) \subseteq U
 \).
 
-We construct an open rectangle around \(\vect{x}\) contained in \(B_r(\vect{y})\).
+We construct an open rectangle around \(\vect{x}\) contained in \(B_r(\vect{x})\).
 Let \(\rho > 0\) such that
 \[
-\rho < \frac{r - \|\vect{x}-\vect{y}\|_2}{\sqrt{d}}
+\rho < \frac{r}{\sqrt{d}}
 \]
 and define
 \(
-(\vect{a},\vect{b}) := (\vect{x} - \rho \vect{1}, \vect{x} + \rho \vect{1})
+(\vect{a},\vect{b}) := (\vect{x} - \rho \vect{1},\, \vect{x} + \rho \vect{1})
 \).
-Then by the $\triangle$-inequality, for every \(\vect{z} \in (\vect{a},\vect{b})\),
+Then for every \(\vect{z} \in (\vect{a},\vect{b})\),
 \[
-\|\vect{z} - \vect{y}\|_2
-\leq \|\vect{z} - \vect{x}\|_2 + \|\vect{x} - \vect{y}\|_2
-< \sqrt{d}\,\rho + \|\vect{x} - \vect{y}\|_2
-< r
+\|\vect{z} - \vect{x}\|_2 
+=
+\sqrt{\textstyle\sum_{i=1}^d (z_i - x_i)^2}
+< 
+\sqrt{\textstyle\sum_{i=1}^d \rho^2}
+=
+\sqrt{d}\,\rho 
+< 
+r
 \]
-hence \((\vect{a},\vect{b}) \subseteq B_r(\vect{y}) \subseteq U\).
+so \(\vect{z} \in B_r(\vect{x})\). 
+Hence
+\(
+(\vect{a},\vect{b}) \subseteq B_r(\vect{x}) \subseteq U
+\).
 
-By part (b), we can write \((\vect{a},\vect{b})\) as a countable union of elements of \(\mathcal{R}\).
-Thus for every \(\vect{x} \in U\), there exists a rectangle \(Q \in \mathcal{R}\) such that
+By part \ref{item:open-rectangles-countable-union-rational-open-rectangles}, \((\vect{a},\vect{b})\) can be written as a countable union of elements of \(\mathcal{R}\).
+Thus for every \(\vect{x} \in U\), there exists \(Q \in \mathcal{R}\) with
 \(
 \vect{x} \in Q \subseteq U
 \).
@@ -1350,38 +1369,32 @@ Hence
 U = \bigcup_{\substack{Q \in \mathcal{R}\\ Q \subseteq U}} Q
 \]
 and this union is countable since \(\mathcal{R}\) is countable.
-Therefore \(U \in \sigma(\mathcal{R})\), which implies
+Therefore \(U \in \sigma(\mathcal{R})\).
+Thus \(\mathcal{T} \subseteq \sigma(\mathcal{R})\) and by \autoref{lem:sigma-monotone},
 \(
-\mathcal{B}(\R^d) \subseteq \sigma(\mathcal{R})
+\mathcal{B}(\R^d) 
+= 
+\sigma(\mathcal{T})
+\subseteq 
+\sigma(\mathcal{R})
 \).
 
-On the other hand, every set in \(\mathcal{R}\) is an open rectangle with rational endpoints, hence open in \(\R^d\), and therefore Borel.
+\item[`$\supseteq$':]
+Every set in \(\mathcal{R}\) is an open rectangle, hence open in \(\R^d\), and therefore Borel.
 Thus
-\[
+\(
 \mathcal{R} \subseteq \mathcal{B}(\R^d)
-\]
-and by monotonicity of \(\sigma(\cdot)\),
+\).
+By \autoref{lem:sigma-monotone} of \(\sigma(\cdot)\),
 \(
 \sigma(\mathcal{R}) \subseteq \mathcal{B}(\R^d)
 \).
-
-Combining both inclusions yields
-\(
-\mathcal{B}(\R^d) = \sigma(\mathcal{R})
-\).
 \qedhere
+\end{itemize}
 \end{enumerate}
 \end{proof}
 
 
-\begin{remark}[Open sets in $\R^d$]
-Let $G \subseteq \R^d$.  
-By \autoref{ex:canonical-topology}, $G$ is open in the canonical topology if and only if for every $\vect{x}\in G$ there exists $r>0$ such that
-\(
-B_r(\vect{x}) \subseteq G
-\).
-Equivalently, every point of an open set is an interior point.
-\end{remark}
 
 
 
@@ -1391,7 +1404,7 @@ Equivalently, every point of an open set is an interior point.
 \begin{proposition}[Open sets as countable unions of balls]\label{prop:open-sets-balls} % Assignment 3, Problem 2
 Let $G \subseteq \R^d$ be an open set in the canonical topology. Then:
 \begin{enumerate}[label=(\alph*)]
-\item 
+\item \label{item:every-point-in-open-set-is-interior-point}
 for every $\vect{x} \in G$ there exists $r>0$ such that the open ball
 \[
 B_r(\vect{x}) = \{\vect{y} \in \R^d : \|\vect{y} - \vect{x}\|_2 < r\}
@@ -1439,10 +1452,10 @@ If
 \vect{x}\in \bigcup_{\vect{z}\in G} B_{r(\vect{z})}(\vect{z})
 \),
 then $\exists \vect{y}\in G$ such that $\vect{x}\in B_{r(\vect{y})}(\vect{y})$.
-Since $B_{r(\vect{y})}(\vect{y})\subseteq G$ by (a), we get $\vect{x}\in G$.
+Since $B_{r(\vect{y})}(\vect{y})\subseteq G$ by \ref{item:every-point-in-open-set-is-interior-point}, we get $\vect{x}\in G$.
 \end{itemize}
 
-\item Let $\vect{x}\in G$. By (a), there exists $r>0$ such that $B_r(\vect{x})\subseteq G$.
+\item Let $\vect{x}\in G$. By \ref{item:every-point-in-open-set-is-interior-point}, there exists $r>0$ such that $B_r(\vect{x})\subseteq G$.
 By the density of $\Q^d$ in $\R^d$, choose $\vect{q}\in\Q^d$ with 
 \(
 \|\vect{x}-\vect{q}\|_2<\frac r2
@@ -2096,11 +2109,11 @@ The half-open rectangles
 \[
 \mathcal{C} 
 \coloneq
-\{(\vect{a}, \vect{b}] : \vect{a},\vect{b} \in \R^d, \vect{a} < \vect{b}\} \cup \{\varnothing\}
+\{(\vect{a}, \vect{b}] : \vect{a},\vect{b} \in \R^d, \vect{a} \leq \vect{b}\}
 \]
 form a semiring:
 \begin{enumerate}[label=(\roman*)]
-\item $\varnothing \in \mathcal{C}$ by definition. \cmark
+\item $\varnothing = (\vect{a}, \vect{a}] \in \mathcal{C}$. \cmark
 
 \item Let $A = (\vect{a},\vect{b}], B = (\vect{c},\vect{d}] \in \mathcal{C}$.
 Then

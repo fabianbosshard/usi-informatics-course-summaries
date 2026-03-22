@@ -87,7 +87,7 @@
 \usepackage{pifont}
 
 \usepackage{tikz}
-\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings, shapes.multipart, angles, quotes}
 \usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
@@ -147,7 +147,7 @@
 \usepackage[italicComments=false]{algpseudocodex} % macht probleme mit TikZ externalization
 
 
-% ===================== operators / notation =====================
+% ===================== operators, notation, constant =====================
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\Span}{span}
@@ -169,6 +169,23 @@
 \newcommand{\eu}{e}
 % \newcommand{\iu}{\mathrm{i}}
 \newcommand{\iu}{\imath}
+
+
+
+% \newcommand{\kld}[2]{D_{\mathrm{KL}}\!\left(#1 \,\middle\|\, #2\right)}
+
+\DeclarePairedDelimiterX{\kldelimiter}[2]{(}{)}{%
+  #1\:\delimsize\|\:#2%
+}
+\newcommand{\kld}{D_{\mathrm{KL}}\kldelimiter}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+
+
+\newcommand{\kB}{k_{\mathrm{B}}} % Boltzmann constant
+
+
+
 \newcommand{\sign}{\operatorname{sgn}}
 
 \newcommand{\oo}{\infty}
@@ -633,8 +650,6 @@ This questions both the \emph{stability} and the \emph{independence} of the spin
 \subsubsection{Superposition}
 
 {%
-% Tikz Library
-\usetikzlibrary{3d, shapes.multipart, angles, quotes}
 % Tikz Styles
 \tikzset{>=latex}
 \tikzset{axis/.style={black, ->}}
@@ -701,7 +716,7 @@ where $\varphi$ is the angle between the intial polarization direction and the p
 % Image Source: https://tikz.net/malus-law/
 \begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
 
-\node[align=left, every text node part/.style={align=left}] at (6,-6)
+\node[align=left, every text node part/.style={align=left}, transform shape, scale=0.6] at (5.5,8)
 {\fontsize{5pt}{2pt}\selectfont%
 Image Source:\\[-5.5pt]
 \fontsize{5pt}{2pt}\selectfont\url{https://tikz.net/malus-law/}};
@@ -1476,6 +1491,61 @@ Thus any classical strategy can succeed with probability at most
 
 \section{Information is Physical}
 
+
+% Quantum physics is all about fundamental particles and how they interact.
+% But all particles and interactions are about confining, exchanging, or otherwise doing something with energy.
+% Even mass is a form of energy (the binding energy due to the strong force is the source of most mass).
+% But energy by itself cannot give the whole picture of reality.
+% % We need one more ingredient.
+% We need a description of the energy states of matter: information.
+% Essentially, energy and information make up our reality.
+% In fact, one may think of the properties of a particle as information that can, at least in principle, be encoded.
+% But information is also related to entropy.a
+
+% To understand \autoref{law:second-law-thermodynamics-entropy}, we need to understand what entropy is.
+% Entropy is often described as a ``measure of disorder of the system''.
+% But that definition is somewhat subjective and can be an oversimplification.
+% A better way to think about it is in terms of the \hl[2]{amount of information needed to describe a system}.
+
+% In the 19th century, Austrian physicist Ludwig Boltzmann was able to bridge the gap between the macroscopic laws of thermodynamics and the microscopic behavior of atoms and molecules.
+% He hypothesized that the entropy of a system is related to the number of ways that the system's particles can be arranged.
+% In other words, the more ways the particles of a system can be arranged, the higher the entropy of the system.
+% He quantified this mathematically with his famous equation
+% \[
+% S = \kB \ln(\Omega)
+% \]
+% where \(\Omega\) is the number of microstates corresponding to a system's overall macrostate.
+% This number of microstates is also related to the amount of information necessary to describe the system.
+% The more information is necessary, the higher the entropy.
+% This can also reflect the degree of \emph{disorder} or \emph{randomness} in a system.
+% A system with high entropy has many possible arrangements, and thus describing its exact state requires more information.
+
+Quantum physics describes fundamental particles and their interactions, which ultimately involve the exchange and transformation of energy.
+Even mass itself is a form of energy.
+However, energy alone does not fully describe a physical system.
+We also need information: a specification of the system's possible states.
+Thus, physical reality is characterized by the interplay between energy and information.
+
+To understand \autoref{law:second-law-thermodynamics-entropy}, we need a precise notion of entropy.
+It is often described as a ``measure of disorder'', but this interpretation is subjective and can be misleading.
+A more precise viewpoint is that entropy quantifies the \hl[2]{amount of information required to describe a system}.
+
+In the $19^{\text{th}}$ century, Ludwig Boltzmann connected thermodynamics with the microscopic behavior of particles.
+He showed that entropy is related to the number of possible microscopic configurations (microstates) corresponding to a macroscopic state (macrostate).
+If \(\Omega\) denotes this number, then
+\[
+\begin{boxed}
+{
+S = \kB \ln(\Omega)
+}
+\end{boxed}
+\]
+which is the famous equation that is engraved on his tombstone.
+Thus, systems with many possible configurations have high entropy, since specifying their exact state requires more information.
+
+
+
+
 \begin{law}[First law of thermodynamics: Energy]\label{law:first-law-thermodynamics-energy}
 In a closed system, the total energy is constant.
 \end{law}
@@ -1492,7 +1562,7 @@ The demon can open whenever a molecule moves towards the door.
 In linear time in the numbrer of particles the gas will be ``sorted'', i.e., compressed - revoltingly unfaithful to \autoref{law:second-law-thermodynamics-entropy}.
 
 
-The understanding of twhat is wrong with this argument is one of the first success stories of the synergy between physics and
+The understanding of what is wrong with this argument is one of the first success stories of the synergy between physics and
 
 \subsection{Information Theory}
 
@@ -1562,27 +1632,414 @@ The understanding of twhat is wrong with this argument is one of the first succe
 
 
 \begin{definition}[Entropy]\label{def:entropy}
-The entropy of a random variable $X$ over $\mathcal{X}$ with distribution $\Prob_X(x) = p_x$ is
+The entropy (or uncertainty) of a random variable $X$ over $\mathcal{X}$ with PMF $p_X(\cdot)$ is
 \[
 \begin{verticalhack}
+\boxed{
 H(X)
 \coloneq
-\Exp[-\log_2 \Prob_X(X)]
+\Exp[-\log_2 p_X(X)]
 =
-- \sum_{x \in \mathcal{X}} p_x \log_2 p_x
+- \sum_{x \in \mathcal{X}} p_X(x) \log_2 p_X(x)
+}
+\end{verticalhack}
+\qedhere
+\]
+\end{definition}
+\nameref{def:entropy} describes the uncertainty of a random experiment with given PMF.
+
+An important observation is that the entropy of $X$ does not depend on the actual values of $X$, but only on the probabilities $p_X(x)$.
+Hence, \autoref{def:entropy} can easily be extended to random vectors, by just replacing $X$ with $\vect{X}$ and $x$ with $\vect{x}$ in the equation.
+
+\begin{definition}[Mutual information]\label{def:mutual-information}
+The mutual information between two random variables $X$, $Y$ is
+\[
+I(X;Y)
+\coloneq
+H(X) - H(X \mid Y)
+=
+H(Y) - H(Y \mid X)
+\qedhere
+\]
+\end{definition}
+
+Another nice form for the mutual information is
+\[
+I(X;Y) 
+=
+H(X) + H(Y) - H(X, Y)
+\]
+because it shows its symmetry.
+
+\begin{definition}[Kullback-Leibler divergence]\label{def:kullback-leibler-divergence}
+Let $P(\cdot)$ and $Q(\cdot)$ be two PMFs over the same finite or countable alphabet $\mathcal{X}$.
+The \emph{relative entropy} or \emph{Kullback-Leibler divergence} between $P$ and $Q$ is
+\[
+\begin{verticalhack}
+% D_{\text{KL}}(P \| Q)
+\kld{P}{Q}
+\coloneq
+\Exp_{X \sim P}\left[\log_2 \frac{P(X)}{Q(X)}\right]
+=
+\sum_{x \in \mathcal{X}} P(x) \log_2 \frac{P(x)}{Q(x)}
 \end{verticalhack}
 \qedhere
 \]
 \end{definition}
 
+Unlike \nameref{def:mutual-information}, \nameref{def:kullback-leibler-divergence} is not symmetric.
+It should not be thought of as a distance, but rather as an ``energy'' (it actually describes the inefficiency of assuming that the PMF is $Q(\cdot)$ when the true distribution is $P(\cdot)$.).
+
+\nameref{def:mutual-information} and \nameref{def:kullback-leibler-divergence} are related to one another via
+\[
+I(X;Y)
+=
+\kld{p_{X,Y}}{p_X \cdot p_Y}
+\]
+
+\nameref{def:mutual-information} can therefore be interpreted as deviance of the actual joint distribution from if they were treated independently (while keeping the same marginals).
+
+\begin{example}\label{ex:entropy-uniform-distribution}
+In case of a uniform distribution, i.e. $p_X(x) = 1/|\mathcal{X}|$ for all $x \in \mathcal{X}$, the entropy of $X$ is the logarithm of the size of its range, i.e., $H(X) = \log_2 |\mathcal{X}|$.
+\end{example}
+
+\subsection{Connection to Thermodynamics}
+
+
+\colorlet{myblue}{blue!20}
+\colorlet{mydarkblue}{blue!50!black}
+\colorlet{myred}{black!50!red}
+
+% CUBE
+\tikzset{
+  cube/.pic={
+    \tikzset{every edge quotes/.append style={midway,auto},/cube/.cd,#1}
+    \def\csize{2*\cubesize}
+    \draw [every edge/.append style={pic actions,densely dashed,opacity=.5},pic actions]
+    (0,0,0) coordinate (o)
+            edge coordinate [pos=1] (g) ++(0,0,-\csize)
+        --++(0,\csize,0) coordinate (a)
+        --++(\csize,0,0) coordinate (b)
+        --++(0,-\csize,0) coordinate (c) -- cycle
+    (a) --++(0,0,-\csize) coordinate (d) edge (g)
+        --++(\csize,0,0) coordinate (e) -- (b) -- cycle
+    (c) -- (b) -- (e)
+        --++(0,-\csize,0) coordinate (f) edge (g) -- cycle;
+    \path [every edge/.append style={pic actions, |-|}];
+  },
+  z={(-0.334,-0.334)},
+  /cube/.search also={/tikz},
+  /cube/.cd,
+  size/.store in=\cubesize, size=1,
+}
+
+% GAS MOLECULE with vector
+\tikzset{
+  gasparticle/.pic={
+    \tikzset{/gasparticle/.cd,#1}
+    \draw[->,green!60!black] (0,0) -- (\vec);
+    \node[circle,fill,inner sep=.8,fill=black!80!blue] at (0,0,0) {};
+  }
+  /gasparticle/.search also={/tikz},
+  /gasparticle/.cd,
+  vec/.store in=\vec, vec={90:0.5},
+}
 
 
 
+\autoref{ex:entropy-uniform-distribution} can be carried over to thermodynamics:
+``The entropy of a macrostate is the logarithm of the number of microstates corresponding to it.''
+The \emph{microstate} of a physical system, e.g., a gas, specifies the position and momentum of each molecule.
+The \emph{macrostate} is simply a set  of microstates, typically with a short description (specifying, e.g., the gas type, volume, temperature and pressure).
+
+% side-by-side: macrostate (left) and microstate (right)
+\begin{figure}[h]
+\centering
+
+\begin{minipage}[t]{0.41\textwidth}
+\makebox[\textwidth][c]{%
+\begin{tikzpicture}[>=latex]
+  \pic[fill=blue!5] at (0,0,0) {cube={size=1}};
+  \node[below,black!80!blue,fill=blue!5,inner sep=1pt] at (0.8,0.95,-1) {$V,\ T,\ P$};
+\end{tikzpicture}%
+}
+
+\vspace{0.5em}
+\small
+\textbf{Macrostate:} 
+coarse description of the system by macroscopic quantities such as volume, temperature, and pressure.
+\end{minipage}
+\hspace{0.08\textwidth}
+\begin{minipage}[t]{0.41\textwidth}
+\makebox[\textwidth][c]{%
+\begin{tikzpicture}[>=latex]
+  \pic at (0,0,0) {cube={size=1}};
+  \pic at (0.6,1.0,-1.0) {gasparticle={vec={-40:0.5}}};
+  \pic at (0.2,1.0,-0.6) {gasparticle={vec={-110:0.6}}};
+  \pic at (0.2,1.7,-0.6) {gasparticle={vec={-10:0.7}}};
+  \pic at (0.5,0.3,-0.3) {gasparticle={vec={45:0.5}}};
+  \pic at (0.9,0.1,-0.2) {gasparticle={vec={-10:0.5}}};
+  \pic at (1.6,0.4,-0.3) {gasparticle={vec={-170:0.4}}};
+  \pic at (1.5,1.9,-1.5) {gasparticle={vec={160:0.3}}};
+  \pic at (0.2,1.8,-1.8) {gasparticle={vec={-10:0.6}}};
+  \pic at (1.4,0.6,-0.9) {gasparticle={vec={120:0.3}}};
+  \pic at (0.8,1.6,-1.5) {gasparticle={vec={30:0.5}}};
+  \pic at (1.8,1.1,-1.0) {gasparticle={vec={75:0.6}}};
+  \pic at (1.8,0.2,-1.9) {gasparticle={vec={150:0.4}}};
+  \pic at (1.9,0.2,-0.7) {gasparticle={vec={30:0.3}}};
+  \pic at (1.2,1.2,-1.1) {gasparticle={vec={30:0.5}}};
+\end{tikzpicture}%
+}
+
+\vspace{0.5em}
+\small
+\textbf{Microstate:} 
+complete specification of the positions and momenta of all individual molecules.
+\end{minipage}
+
+\end{figure}
+
+If all microstates in a macrostates ``look roughly the same'' (this condition is the translation of the uniformity condition from \autoref{ex:entropy-uniform-distribution}), we have
+\[
+H(\text{macrostate})
+\approx
+\log_2(\text{\# corresponding microstates})
+\]
+
+The ``physical entropy'', as opposed to the information-theoretic one, is usually denoted by $S$ and has an additional factor of 
+$\kB \ln(2)$,
+where $\kB \approx 1.38 \cdot 10^{-23} \text{Joule}/\text{Kelvin}$ is the Boltzmann constant
+and
+the $\ln(2)$ is a common view at the border between nature and abstraction since $2$ is a ``logical'' constant and $\eu$ is a ``natural'' constant.
+If we denote $\Omega \coloneq \text{\# microstates}$, we obtain the famous formula
+\[
+S
+=
+\kB 
+\ln(2) 
+H
+=
+\kB \ln(\Omega)
+\]
+derived by Boltzmann in the 1870s and \href{https://en.wikipedia.org/wiki/Boltzmann%27s_entropy_formula}{engraved on his tombstone}.
 
 
 
+\begin{example}[$1$-Molecule Gas]
+Consider a ``one-molecule gas'' in a container of volume $V$.
+The first macrostate corresponds to the particle being anywhere in the container, where for the second, smaller macrostate, the particle is confined to the left half of the container.
+
+\underline{Remark:}
+% \begin{itemize}
+% \item
+% Obviously, not all microstates in a macrostate look the ame; forn instance it is probably much more likely that the particle is close to the middle of the container than to one of its corners.
+% \item
+We cannot simply \emph{count} the number of possible positions and momenta of the particle, since it is (uncountably) infinite for both macrostates.
+Indeed, there also exist definitions of entropy for the continuous case, but we do not need that here as long as we are only interested in entropy \emph{differences}:
+Assume that we distinguish different microstates only up to some fixed finite precision, i.e., we put a grid of certain ``density'' (e.g. cubes with side length $\delta$) into the respective volumes and the particles position is described by the coordinates of the cube it is in.
+% \end{itemize}
+
+Then, no matter the actual value of $\delta$, there are exactly twice as many microstates corresponding to the first macrostate than to the second.
+If we denote the number of microstates corresponding to the first macrostate by $\Omega_1$ and the number of microstates corresponding to the second macrostate by $\Omega_2 = \Omega_1 / 2$, we have, the entropy difference thus is
+\[
+% \begin{aligned}
+\Delta H 
+=
+H(\text{macrostate 2}) - H(\text{macrostate 1}) 
+=
+\log_2(\Omega_2) - \log_2(\Omega_1) 
+=
+\log_2\left(\frac{\Omega_2}{\Omega_1}\right) 
+% =
+% \log_2\left(\frac{1}{2}\right)
+=
+-1
+% \end{aligned}
+\]
+or, in terms of physical entropy, $\Delta S = \kB \ln(2) \Delta H = -\kB \ln(2)$.
+\end{example}
 
 
+\begin{example}[$N$-Molecule Gas]
+Consider a gas of $N$ molecules in a container of volume $V$.
+\[
+\begin{tikzpicture}[line cap=round, line join=round, scale=0.5]
+  % Box dimensions
+  \def\W{4}   % width of each box
+  \def\H{2.0} % height of each box
+
+  % Coordinates for left and right boxes
+  \coordinate (L) at (0,0);
+  \coordinate (R) at (12,0); % horizontal separation between boxes
+
+  % Unpartitioned left box with random gas particles
+  \draw (L) rectangle ++(\W,\H);
+  \node[font=\footnotesize, anchor=south west, inner xsep=0pt, outer xsep=0pt] at ($(L)+(0,\H)$) {macrostate $1$};
+  \node[font=\scriptsize, anchor=north west, inner xsep=0pt, outer xsep=0pt] at ($(L)+(0,0)$) {higher entropy};
+  \pgfmathsetseed{42}
+  \foreach \i in {1,...,80}{%
+    \pgfmathsetmacro{\px}{\W/2 + rand*\W/2} % random x in [0,\W]
+    \pgfmathsetmacro{\py}{\H/2 + rand*\H/2} % random y in [0,\H]
+    \fill ($(L)+(\px,\py)$) circle (0.035cm);%
+  }
+
+  % Partitioned right box: random gas only in left half
+  \draw (R) rectangle ++(\W,\H);
+  \node[font=\footnotesize, anchor=south west, inner xsep=0pt, outer xsep=0pt] at ($(R)+(0,\H)$) {macrostate $2$};
+  \node[font=\scriptsize, anchor=north west, inner xsep=0pt, outer xsep=0pt] at ($(R)+(0,0)$) {lower entropy};
+  \draw ($(R)+(0.5*\W,0)$) -- ++(0,\H); % partition line
+  \pgfmathsetseed{7}
+  \foreach \i in {1,...,80}{%
+    \pgfmathsetmacro{\px}{\W/4 + rand*0.5*\W/2} % x in [0,0.5*\W]
+    \pgfmathsetmacro{\py}{\H/2 + rand*\H/2}     % y in [0,\H]
+    \fill ($(R)+(\px,\py)$) circle (0.035cm);%
+  }
+
+
+  %% Central annotation setup
+
+  % Midpoint between the right edge of the left box and the left edge of the right box
+  \coordinate (C) at ($ (L)+(\W,0) !0.5! (R) $);
+  \def\arrowOffset{0.15}  % distance of arrows from the center line
+  \def\arrowHalfLen{3.2}  % half‑length of arrows
+
+  % Derived y‑coordinates
+  \pgfmathsetmacro{\yImprob}{\H/2 + \arrowOffset}
+  \pgfmathsetmacro{\yProb}{\H/2 - \arrowOffset}
+
+  % Labels and dots
+  \node[font=\footnotesize, outer sep=0.15em, inner sep=0pt] (problabel) at ($(C)+(0,\H+0.6)$) {prob. $2^{-N}$};
+  
+  % Top arrow (improbable) with hooks arrow tips at both ends
+  \draw[->,line width=0.4pt]  ($(C)+(-\arrowHalfLen,\yImprob)$) -- ($(C)+(\arrowHalfLen,\yImprob)$);
+  \node[font=\footnotesize, outer sep=0.15em, inner sep=0pt, anchor=south, yshift=0.1em] (improbablelabel) at ($(C)+(0,\yImprob)$) {improbable};
+
+  % Bottom arrow (probable) with hooks arrow tips at both ends
+  \draw[<-,line width=0.4pt]  ($(C)+(-\arrowHalfLen,\yProb)$) -- ($(C)+(\arrowHalfLen,\yProb)$);
+  \node[font=\footnotesize, outer sep=0.15em, inner sep=0pt, anchor=north, yshift=-0.1em] (probablelabel) at($(C)+(0,\yProb)$) {probable};
+
+  \node[font=\footnotesize, outer sep=0.15em, inner sep=0pt] (worklabel) at  ($(C)+(0,-0.6)$) {work can be extracted};
+
+  \draw[densely dotted] (problabel) -- (improbablelabel);
+  \draw[densely dotted] (probablelabel) -- (worklabel);
+
+\end{tikzpicture}
+\]
+
+Compare the following two macrostates:
+\begin{itemize}
+  \item macrostate $1$: all molecules may be anywhere in the container (volume $V$)
+  \item macrostate $2$: all molecules are confined to the left half of the container (volume $V/2$)
+\end{itemize}
+
+As in the one-molecule case, we discretize space into cells of volume $\delta^3$.
+Then the number of position microstates for a single molecule is proportional to the accessible volume.
+
+Since the molecules are (assumed to be) independent, the total number of microstates is
+\(
+\Omega_1 \propto V^N
+\),
+\(
+\Omega_2 \propto \left({V}/{2}\right)^N
+\).
+Hence
+\[
+\frac{\Omega_2}{\Omega_1}
+=
+\left(\frac{1}{2}\right)^N
+\]
+
+Therefore, the entropy difference is
+\[
+% \begin{aligned}
+\Delta H
+=
+\log_2(\Omega_2) - \log_2(\Omega_1)
+=
+\log_2\!\left(\frac{\Omega_2}{\Omega_1}\right)
+=
+\log_2\!\left(2^{-N}\right)
+=
+- N
+% \end{aligned}
+\]
+or, in physical units,
+\[
+\Delta S
+=
+\kB \ln(2)\, \Delta H
+=
+- N \kB \ln(2)
+\]
+This transition (compressing all mole\-cules into half the volume) is highly improbable, with probability $2^{-N}$, but it can be enforced by investing work, e.g., by using a piston to compress the gas.
+The gas is then not an isolated system: work is performed on it and, after thermalization, energy is transferred as heat to the environment, increasing the entropy around the gas container,
+so there is no contradiction to \autoref{law:second-law-thermodynamics-entropy}.
+\[
+\begin{tikzpicture}[line cap=round, line join=round, scale=0.4]
+
+  % Geometry
+  \coordinate (innerSW) at (5.1,1.2);
+  \coordinate (innerNE) at ($(innerSW)+(3.8,2.6)$);
+
+  \draw[rounded corners=0.2cm] (0,0) rectangle (15,5);
+  \draw (innerSW) rectangle (innerNE);
+
+  % Labels
+  \node[anchor=west, font=\footnotesize] at (0.3,4.25) {temp $T$};
+  \node[anchor=west, font=\footnotesize] at (10.0,4.05) {heat $\Delta Q$};
+  \node[anchor=west, font=\footnotesize] at (0.5,0.85) {work $\Delta W$};
+  \node[font=\footnotesize] at ($(innerSW)!0.5!(innerNE)$) {$\Delta S_{\text{sys}} < 0$};
+  \node[font=\footnotesize] at (12,1.95) {$0 < \Delta S_{\text{env}} = \frac{\Delta Q}{T}$};
+
+  % Symmetric curved arrows (same deltas and same in/out angles)
+  \def\arrowDx{1.20}
+  \def\arrowDy{0.25}
+  \def\edgeDy{0.55}
+
+  \coordinate (workStart) at ($(innerSW)+(-\arrowDx,-\arrowDy)$);
+  \coordinate (workEnd)   at ($(innerSW)+(\edgeDy,\edgeDy)$);
+  \coordinate (heatStart) at ($(innerNE)+(-\edgeDy,-\edgeDy)$);
+  \coordinate (heatEnd)   at ($(innerNE)+(\arrowDx,\arrowDy)$);
+
+  \draw[->] (workStart) to[out=0, in=240] (workEnd);
+  \draw[->] (heatStart) to[out=60, in=180] (heatEnd);
+  \draw[->] (11.55,3.45) -- (11.55,2.45);
+
+\end{tikzpicture}
+\]
+A certain amount of work $\Delta W$ is invested to compress the gas, which is then dissipated as heat to the environment.
+It is that dissipation that, after thermalization, is responsible for the increase of entropy in the environment, which is necessary to compensate for the decrease of entropy in the gas and thus to avoid a violation of \autoref{law:second-law-thermodynamics-entropy}.
+A heat reservoir of temperature $T$ that receives an amount $\Delta Q$ of heat energy, increases its entropy by at most a value proportional to $1/T$.
+Boltzmann's constant $\kB$ is defined such that we have
+\[
+\Delta S_{\text{env}} = \frac{\Delta Q}{T}
+\]
+with equality in the case of a reversible process.
+Thus, the minimal investemtn in terms of free energy to enforce the entropy decrease
+\[
+\Delta Q \geq - T \Delta S = N \kB T \ln(2)     
+\]
+
+Note that we obtain the same result by using the ideal gas law to compute the work needed to compress the gas from volume \(V_0\) to volume \(V_0/2\):
+\[
+p V = N \kB T 
+\quad
+\Longleftrightarrow
+\quad
+p(V) = \frac{N \kB T}{V}
+\]
+and thus
+\[
+\begin{verticalhack}
+- \int_{V_0}^{V_0/2} p(V) \dif V
+=
+- \int_{V_0}^{V_0/2} \frac{N \kB T}{V} \dif V
+=
+N \kB T \ln(2)
+\end{verticalhack}
+\qedhere
+\]
+\end{example}
 
 
 
