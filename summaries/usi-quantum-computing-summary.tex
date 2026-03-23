@@ -2129,4 +2129,211 @@ is the binary entropy function.
 \end{example}
 
 
+
+\begin{example}
+$r$ copies of the same, perhaps incompressible string of length $N$ have work value at least $(r - 1) N \kB T \ln(2)$.
+\end{example}
+
+
+\subsection{Benett's Solution to Maxwell's Demon}
+
+In the face of \nameref{claim:landauer-principle}, the paradox disappears:
+The demon must erase the information it gathers during the sorting process. 
+This erasure requires a minimal amount of work and leads to heat dissipation into the environment, which compensates exactly for the entropy decrease created in the gas.
+
+The demon must maintain an internal memory storing measurement outcomes. 
+Even a one-bit memory must be reset after each step, and overwriting information necessarily involves erasure. 
+Thus, forgetting information has a thermodynamic cost.
+If the demon has a large memory, it can temporarily store many observations (effectively recording the initial disorder of the gas).
+However, to reuse its memory, it must eventually erase this information, and this erasure restores the total entropy balance.
+
+Conversely, possessing information (or redundancy) allows one to extract work: 
+knowing the state of a system (e.g. in \autoref{ex:one-molecule-gas}, if the molecule is in the left half or the right half of the container) can be used to convert environmental heat energy into free mechanical energy. 
+In this sense, information has an energetic value (``knowledge is energy'').
+
+Nevertheless, no perpetuum mobile of the second kind arises. 
+Any work gained through such knowledge must ultimately be paid for when the demon resets its memory, ensuring consistency with \autoref{law:second-law-thermodynamics-entropy}.
+
+\subsection{Reversible Computing}
+
+% Can computation be made locially reversible?
+If, in the course of a computation, information is lost about ``which branch the computation came from'', then free energy $\kB T \ln(2)$ must be invested, which is dissipates as heat to the evironment.
+In other words, the \emph{logical} irreversibility of a computation (``information is lost'') implies its \emph{thermodynamic} irreversibility (``free energy is lost'').
+Thus, it appears advantageous if a computaiton does not have such collisions of branches.
+
+As it turns out, it is (at least in principle) possible to carry out any logically reversible computation in a thermodynamically reversible way: \nameref{claim:landauer-principle} is {``tight''} in this sense.
+
+
+
+
+% to be continued....!!!
+
+
+
+
+\clearpage
+\section{Quantum Physics (chatGPT version)}
+
+\subsection{Black-Body Radiation}
+
+Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\).
+The cavity contains electromagnetic radiation.
+Because the field must satisfy boundary conditions at the walls, only certain standing waves are allowed.
+
+\subsubsection{Mode counting}
+
+A standing wave in the cavity is described by three positive integers
+\[
+\vect{n} = (n_1,n_2,n_3)\in \N_{>0}^3
+\]
+which specify how many half-wavelengths fit into the three spatial directions.
+For such a mode,
+\[
+k_x = \frac{\pi n_1}{l},
+\qquad
+k_y = \frac{\pi n_2}{l},
+\qquad
+k_z = \frac{\pi n_3}{l}
+\]
+and therefore the wave vector has length
+\[
+|\vect{k}| = \frac{\pi}{l} |\vect{n}|.
+\]
+Since electromagnetic waves satisfy
+\[
+\omega = c |\vect{k}|,
+\]
+their angular frequency is
+\[
+\omega = \frac{c\pi}{l} |\vect{n}|.
+\]
+
+Hence the allowed modes correspond to lattice points \(\vect{n}\) in the first octant of \(\R^3\), and the frequency is proportional to the distance of that lattice point from the origin.
+
+We now ask: how many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
+Equivalently, how many lattice points \(\vect{n}\) lie in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\)?
+
+For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
+Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of modes in that shell scales like
+\[
+|\vect{n}|^2 \,\dif |\vect{n}|.
+\]
+Because
+\[
+\omega \propto |\vect{n}|,
+\]
+it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) scales like
+\[
+\omega^2 \,\dif\omega.
+\]
+
+Thus the \emph{density of modes} grows quadratically with the frequency.
+
+\subsubsection{Classical equipartition and the Rayleigh--Jeans law}
+
+In classical statistical mechanics, the equipartition theorem says that every quadratic degree of freedom contributes an average energy of \(\frac12 \kB T\).
+Each electromagnetic mode contributes two such quadratic terms (one electric and one magnetic), so the average energy per mode is of order
+\[
+\kB T.
+\]
+
+Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\omega]\) is proportional to
+\[
+(\text{number of modes in }[\omega,\omega+\dif\omega]) \times \kB T
+\]
+and hence the spectral energy density satisfies
+\[
+u(\omega)\,\dif\omega \propto \omega^2 \kB T \,\dif\omega.
+\]
+
+Up to the exact proportionality constant, this is the \hl[2]{Rayleigh--Jeans law}:
+\[
+u(\omega) \propto \omega^2.
+\]
+
+So classical physics predicts that the energy density grows without bound as the frequency increases.
+
+\subsubsection{Ultraviolet catastrophe}
+
+The total energy density is obtained by integrating over all frequencies:
+\[
+\int_0^\infty u(\omega)\,\dif\omega.
+\]
+But if
+\[
+u(\omega) \propto \omega^2,
+\]
+then
+\[
+\int_0^\infty \omega^2 \,\dif\omega = \infty.
+\]
+Thus classical theory predicts an infinite amount of energy stored in the electromagnetic field inside the cavity.
+
+This is the \hl[2]{ultraviolet catastrophe}.
+The term refers to the absurd prediction that most of the energy should be concentrated at very high frequencies (ultraviolet, X-ray, and beyond).
+If that were true, ordinary objects at room temperature would emit enormous amounts of high-energy radiation, which is not observed.
+
+Experimentally, the Rayleigh--Jeans law is only correct for low frequencies.
+For high frequencies, the spectral energy density does \emph{not} continue to grow quadratically; instead, it decreases rapidly.
+
+\subsubsection{Planck's quantization idea}
+
+Max Planck resolved this problem by abandoning the classical assumption that energy can be exchanged continuously.
+He postulated that a mode of frequency \(\omega\) can absorb or emit energy only in discrete packets,
+\[
+E_n = n \hbar \omega,
+\qquad n = 0,1,2,\dots
+\]
+where
+\[
+\hbar \approx 1.054 \times 10^{-34}\,\mathrm{J\,s}.
+\]
+
+This changes the statistics drastically.
+A high-frequency mode requires a large minimum energy \(\hbar\omega\) to become excited at all.
+At temperature \(T\), states of energy \(E\) are weighted by the Boltzmann factor
+\[
+\eu^{-E/(\kB T)}.
+\]
+Hence the occupation of a mode with frequency \(\omega\) is suppressed by a factor of order
+\[
+\eu^{-\hbar\omega/(\kB T)}.
+\]
+So although the number of modes still grows like \(\omega^2\), the probability of significantly exciting very high-frequency modes decreases exponentially.
+
+This removes the divergence: the high-frequency contribution is no longer too large.
+
+\subsubsection{Planck law}
+
+The resulting spectral energy density is
+\[
+u(\omega)
+=
+\frac{\hbar \omega^3}{\pi^2 c^3}
+\frac{1}{\eu^{\hbar\omega/(\kB T)}-1}.
+\]
+For small \(\omega\), one has
+\[
+\eu^{\hbar\omega/(\kB T)} - 1 \approx \frac{\hbar\omega}{\kB T},
+\]
+so
+\[
+u(\omega) \approx \frac{\kB T}{\pi^2 c^3}\,\omega^2,
+\]
+which reproduces the Rayleigh--Jeans law at low frequencies.
+
+For large \(\omega\), the denominator behaves like \(\eu^{\hbar\omega/(\kB T)}\), so
+\[
+u(\omega) \sim \omega^3 \eu^{-\hbar\omega/(\kB T)},
+\]
+which decays exponentially and avoids the ultraviolet catastrophe.
+
+\begin{remark}
+The key conflict is therefore not in the counting of modes, but in the classical assumption that every mode receives roughly the same thermal energy.
+There are more and more modes at higher frequencies, and classical equipartition assigns energy to all of them.
+Planck's quantization changes this by making high-frequency modes energetically expensive to excite.
+\end{remark}
+
+
+
 \end{document}
