@@ -370,7 +370,6 @@
 \end{tikzpicture}
 \]
 
-\section{Information is Physical}
 
 \subsection{Stern/Gerlach Experiment}
 
@@ -2086,18 +2085,47 @@ of free energy, which, in the process, must be dissipated as heat to the environ
 
 The inverse process of erasure, let's call it \emph{randomization}, allows for gaining free energy.
 \begin{example}
-The work value of the all-$0$-string of length $N$, however it is represented physcially, is $N \kB T \ln(2)$.
+The work value of the all-$0$-string of length $N$, however it is represented physically, is $N \kB T \ln(2)$.
 This amount of environmental heat energy can be transformed into work.
 \end{example}
 
 
+The Bennett work value of a general string $s$ of length $N$ is approximately
+\[
+W \approx (N - K(s)) \, \kB T \ln(2)
+\]
+where $K(s)$ denotes the Kolmogorov complexity of the string $s$, i.e., the length of the shortest program that outputs $s$.
 
-\begin{example}
-The work value of the first $N$ ditis of the 
+
+
+\autoref{claim:landauer-principle} and its converse can be extended to $b$-ary digits:
+If, instead of binary digits, we work with $b$-ary digits, the work value of the all-$0$-string of length $N$ is $N \kB T \ln(b)$.
+
+\begin{example}\label{ex:pi-work-value}
+The string $\pi_N$ admits a short description: there exists a fixed program
+that computes the digits of $\pi$, together with an encoding of the number $N$
+specifying how many digits to output. Therefore,
+\[
+K(\pi_N) = O(\log N)
+\]
+since encoding the integer $N$ requires about $\log N$ bits.
+
+Therefore the Bennett work value of the first $N$ decimal digits of $\pi$ is approximately
+\[
+W \approx \bigl(N \ln(10) - O(\log N)\bigr)\,\kB T
+\]
+which, for large $N$, is essentially $N\kB T \ln(10)$, i.e.,maximal.
 \end{example}
 
+\autoref{ex:pi-work-value} shows that the work value is related to \emph{reversible data compression}: 
+Exaclty those strings have work value that can be compressed to a shorter length in a lossless fashion.
 \begin{example}
-
+A string of length $N$ resulting from flips of an unfair coin with probabilities $p$ and $(1-p)$ has, most likely, work value 
+$(1 - h(p)) N \kB T \ln(2)$, where 
+\[
+h(p) \coloneq -p \log_2 p - (1-p) \log_2 (1-p)
+\]
+is the binary entropy function.
 \end{example}
 
 
