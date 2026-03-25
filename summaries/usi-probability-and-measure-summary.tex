@@ -728,6 +728,33 @@ The union of two rectangles in general is not a rectangle.
 Hence the family is not even an algebra, and therefore certainly not a $\sigma$-algebra.
 If it were closed under complements, closure under unions would follow by De Morgan's laws, leading to a contradiction.
 \end{example}
+\begin{example} % Assignment 1, Problem 3
+Let $\Omega_1 = \Omega_2 = \mathbb{N}$ and $\mathcal{F}_1 = \mathcal{F}_2 = 2^{\mathbb{N}}$. Consider
+\[
+  \mathcal{R} := \{A_1 \times A_2 : A_1 \in \mathcal{F}_1,\ A_2 \in \mathcal{F}_2\}
+\]
+
+Define
+\(
+  R_n := \{n\} \times \{n\}
+\), $n \in \mathbb{N}$.
+Clearly, $\{n\} \in 2^{\N}$, so $R_n \in \mathcal{R}$ for all $n \in \mathbb{N}$.
+Consider
+\[
+  D := \bigcup_{n \in \mathbb{N}} R_n = \{(n,n) : n \in \mathbb{N}\}
+\]
+which is the set of integer points on the diagonal of $\mathbb{N} \times \mathbb{N}$.
+
+We claim that $D \notin \mathcal{R}$. 
+Indeed, suppose $D = A \times B$ for some $A,B \subseteq \mathbb{N}$. 
+Now take any $n_1, n_2 \in \mathbb{N}$ with $n_1 \neq n_2$.
+% Since $(n_1,n_1), (n_2,n_2) \in D$, we have $n_1, n_2 \in A$ and $n_1, n_2 \in B$, hence $(n_1,n_2) \in A \times B = D$, a contradiction.
+Since $(n_1,n_1) \in D$, we have $n_1 \in A$ and $n_1 \in B$. 
+Since $(n_2,n_2) \in D$, we have $n_2 \in A$ and $n_2 \in B$.
+Thus, $n_1, n_2 \in A$ and $n_1, n_2 \in B$, hence $(n_1,n_2), (n_2,n_1) \in A \times B = D$, a contradiction.
+
+Thus $\mathcal{R}$ is not closed under countable unions and therefore not a $\sigma$-algebra.
+\end{example}
 
 \subsection{Measures}
 
@@ -1202,7 +1229,7 @@ that is
 \] 
 for any of the above sets $\mathcal{E}$.
 % Therein, we denote by $\Q^{+}$ the set of positive rational numbers.
-Recall that a set is \emph{compact} if it is closed and bounded, where the latter means that it fits inside a ball of finite radius.
+Recall that a set is \emph{compact} if it is closed and bounded, where the latter means that it fits inside a ball of finite radius (\autoref{def:bounded-set}).
 Moreover, for $\vect{a}, \vect{b} \in \R^d$, we write $\vect{a} < \vect{b}$ if and only if $a_i < b_i$ for all $i = 1,\dots,d$.
 For $\vect{a} < \vect{b}$, we define the open rectangle as the Cartesian product
 \[
@@ -1212,6 +1239,7 @@ and $[\vect{a},\vect{b}]$, $(\vect{a},\vect{b}]$, $[\vect{a},\vect{b})$ are defi
 At the open end of intervals, we allow for $-\vect{\infty}$ and $\vect{\infty}$.
 \end{example}
 
+\pagebreak[3]
 
 \begin{remark}[Open sets in $\R^d$]\label{rem:open-sets-in-Rd}
 Let $G \subseteq \R^d$.  
@@ -1896,7 +1924,7 @@ Given a cuboid of the form $[\vect{a},\vect{b}]$, $(\vect{a},\vect{b}]$, $[\vect
 \]
 to it.
 In the following, we will see that this set function can uniquely be extended to $\mathcal{B}(\R^d)$ in a unique fashion.
-The resulting extension is called \emph{Lebesgue-Borel measure}.
+The resulting extension is called \emph{Lebesgue-Borel measure} (\autoref{thm:lebesgue-borel-measure}).
 
 \begin{definition}[Semiring]\label{def:semiring}
 A set $\mathcal{S} \subseteq 2^\Omega$ is called a \emph{semiring} if
@@ -2103,7 +2131,7 @@ Largest: \(2^\Omega\)
 
 
 
-\begin{example}[Half-open rectangles] % assignment 3, problem 5
+\begin{example}[Half-open rectangles]\label{ex:half-open-rectangles} % assignment 3, problem 5
 Let $d \in \N$. 
 The half-open rectangles
 \[
@@ -2182,7 +2210,7 @@ We say that $\mu$ is
 \end{definition}
 
 On a semiring, additivity is sufficient to guarantee finite subadditivity:
-\begin{lemma}
+\begin{lemma}\label{lem:on-semiring-additivity-implies-finite-subadditivity}
 Let $\mathcal{S} \subseteq 2^\Omega$ be a semiring and $\mu : \mathcal{S} \to [0,\infty]$ be an additive set function.
 Then $\mu$ is also finitely subadditive, i.e. for any $A \in \mathcal{S}$ and any $A_1, \ldots, A_n \in \mathcal{S}$ with
 $A \subseteq \bigcup_{i=1}^n A_i$, 
@@ -2268,13 +2296,13 @@ is a disjoint union, additivity yields
 \]
 
 Moreover, the sets \(B_1,\dots,B_n\) are pairwise disjoint and
-\[
+\begin{equation}\label{eq:A-subset-union-Cki}
 A \subseteq \bigcup_{k=1}^n A_k 
 = 
 \bigsqcup_{k=1}^n B_k
 =
 \bigsqcup_{k=1}^n \bigsqcup_{i=1}^{c_k} C_{k,i}
-\]
+\end{equation}
 Hence
 \[
 A
@@ -2282,14 +2310,14 @@ A
 \bigsqcup_{k=1}^n \bigsqcup_{i=1}^{c_k} (C_{k,i} \cap A)
 \]
 where the union is disjoint.
-By additivity and monotonicity,
+By additivity, we have
 \[
 \mu(A)
-=
+= % why?
 \sum_{k=1}^n \sum_{i=1}^{c_k} \mu(C_{k,i} \cap A)
-\leq
+\leq % why?
 \sum_{k=1}^n \sum_{i=1}^{c_k} \mu(C_{k,i})
-\leq
+\leq % why?
 \sum_{k=1}^n \mu(A_k)
 \]
 Hence \(\mu\) is finitely subadditive.
@@ -2311,7 +2339,7 @@ such that $\tilde{\mu}(E) = \mu(E)$ for all $E \in \mathcal{S}$.
 \end{theorem}
 
 Using \autoref{thm:caratheodory-extension}, we are now able to prove the following result:
-\begin{theorem}
+\begin{theorem}\label{thm:lebesgue-borel-measure}
 There exists a uniquely determined measure $\lambda^d$ on $(\R^d, \mathcal{B}(\R^d))$ with the property that
 \[
 \lambda^d((\vect{a}, \vect{b}]) 
@@ -2321,6 +2349,271 @@ There exists a uniquely determined measure $\lambda^d$ on $(\R^d, \mathcal{B}(\R
 for all $\vect{a},\vect{b} \in \R^d$ with $\vect{a} < \vect{b}$.
 The measure $\lambda^d$ is called the \emph{Lebesgue-Borel measure}.
 \end{theorem}
+
+\begin{definition}
+% [Bounded]
+\label{def:bounded-set}
+A set $K \subseteq \R^d$ is called \emph{bounded} if there exist $\vect{x}\in\R^d$ and $r>0$ such that
+\[
+K \subseteq B_r(\vect{x})
+\]
+where $B_r(\vect{x})$ is the open ball defined in \autoref{ex:canonical-topology}.
+\end{definition}
+\begin{definition}
+An \emph{open cover} of a set $K \subseteq \R^d$ is a family $(O_i)_{i\in I}$ with $O_i \in \mathcal{T}$\footnote{$\mathcal{T}$ denotes the canonical topology on $\R^d$, see \autoref{ex:canonical-topology}} for all $i\in I$ such that
+\[
+K \subseteq \bigcup_{i\in I} O_i
+\]
+A \emph{finite subcover} is a finite subfamily \(O_{i_1},\dots,O_{i_n}\) with
+\[
+\begin{verticalhack}
+K \subseteq \bigcup_{k=1}^n O_{i_k}
+\end{verticalhack}
+\qedhere
+\]
+\end{definition}
+\begin{remark}
+In $\R^d$, the following definitions of compact sets are equivalent:
+\begin{itemize}
+\item $K$ is closed (\autoref{def:topology}) and bounded (\autoref{def:bounded-set})
+\item every open cover of $K$ admits a finite subcover 
+\end{itemize}
+This is the Heine--Borel theorem.
+\end{remark}
+
+
+\begin{proof}[of \autoref{thm:lebesgue-borel-measure}]
+Let
+\(
+\mathcal{C}
+\)
+be the semiring of half-open rectangles from \autoref{ex:half-open-rectangles}, and define
+\[
+\mu\bigl((\vect{a},\vect{b}]\bigr)
+:=
+\prod_{j=1}^d (b_j-a_j)
+\]
+This set function \(\mu\) is additive, since the volume of a box equals the sum of the volumes of finitely many disjoint boxes forming it.
+Hence, in order to apply \autoref{thm:caratheodory-extension}, it remains to verify that \(\mu\) is \(\sigma\)-subadditive and \(\sigma\)-finite.
+
+We first show \(\sigma\)-subadditivity. Let
+\(
+(\vect{a},\vect{b}],\ (\vect{a}^{(1)},\vect{b}^{(1)}],\ (\vect{a}^{(2)},\vect{b}^{(2)}],\dots \in \mathcal{C}
+\)
+with
+\[
+(\vect{a},\vect{b}] \subseteq \bigcup_{i=1}^{\infty} (\vect{a}^{(i)},\vect{b}^{(i)}]
+\]
+We show that
+\begin{equation}
+\mu\bigl((\vect{a},\vect{b}]\bigr)
+\le
+\sum_{i=1}^{\infty} \mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}]\bigr)
+\label{eq:mu-sigma-subadditivity-rectangles}
+\end{equation}
+
+To this end, we use a compactness argument to reduce \eqref{eq:mu-sigma-subadditivity-rectangles} to finite subadditivity.
+Let \(\varepsilon>0\). For every \(i\in\N\), choose
+\(
+\vect{b}^{(i)}_\varepsilon > \vect{b}^{(i)}
+\)
+(componentwise) such that
+\begin{equation}\label{eq:lebesgue-borel-choose-b-epsilon}
+\mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}_\varepsilon]\bigr)
+\le
+\mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}]\bigr) + \varepsilon 2^{-i-1}
+\end{equation}
+Further choose \(\vect{a}_\varepsilon \in (\vect{a},\vect{b})\) such that
+\begin{equation}\label{eq:lebesgue-borel-choose-a-epsilon}
+\mu\bigl((\vect{a}_\varepsilon,\vect{b}]\bigr)
+\ge
+\mu\bigl((\vect{a},\vect{b}]\bigr) - \frac{\varepsilon}{2}
+\end{equation}
+
+Then we have the inclusions
+\[
+[\vect{a}_\varepsilon,\vect{b}]
+\subseteq
+(\vect{a},\vect{b}]
+\subseteq
+\bigcup_{i=1}^{\infty} (\vect{a}^{(i)},\vect{b}^{(i)}]
+\subseteq
+\bigcup_{i=1}^{\infty} (\vect{a}^{(i)},\vect{b}^{(i)}_\varepsilon)
+\]
+% Indeed, the last union is now a union of open rectangles, hence an open cover of the compact set \([\vect{a}_\varepsilon,\vect{b}]\).
+% Since \([\vect{a}_\varepsilon,\vect{b}]\) is compact, there exists \(N\in\N\) such that
+Since \([\vect{a}_\varepsilon,\vect{b}]\) is compact and the last union is an open cover of it, there exists \(N\in\N\) such that
+\[
+(\vect{a}_\varepsilon,\vect{b}]
+\subseteq
+[\vect{a}_\varepsilon,\vect{b}]
+\subseteq
+\bigcup_{i=1}^{N} (\vect{a}^{(i)},\vect{b}^{(i)}_\varepsilon)
+\subseteq
+\bigcup_{i=1}^{N} (\vect{a}^{(i)},\vect{b}^{(i)}_\varepsilon]
+\]
+
+
+Since \(\mu\) is finitely subadditive on \(\mathcal{C}\) (see \autoref{lem:on-semiring-additivity-implies-finite-subadditivity}), we obtain
+\begin{equation}\label{eq:lebesgue-borel-finite-subadditivity}
+\mu\bigl((\vect{a}_\varepsilon,\vect{b}]\bigr)
+\le
+\sum_{i=1}^{N} \mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}_\varepsilon]\bigr)
+\end{equation}
+Combining \eqref{eq:lebesgue-borel-choose-a-epsilon}, \eqref{eq:lebesgue-borel-finite-subadditivity} and \eqref{eq:lebesgue-borel-choose-b-epsilon}, we conclude
+\[
+\mu\bigl((\vect{a},\vect{b}]\bigr)
+\le
+\frac{\varepsilon}{2}
++
+\sum_{i=1}^{N}
+\left(
+\mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}]\bigr)
++
+\varepsilon 2^{-i-1}
+\right)
+\]
+Hence
+\[
+\mu\bigl((\vect{a},\vect{b}]\bigr)
+\le
+\frac{\varepsilon}{2}
++
+\sum_{i=1}^{N}\mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}]\bigr)
++
+\sum_{i=1}^{N}\varepsilon 2^{-i-1}
+\le
+\varepsilon
++
+\sum_{i=1}^{\infty}\mu\bigl((\vect{a}^{(i)},\vect{b}^{(i)}]\bigr)
+\]
+since 
+% \(\sum_{i=1}^{\infty} 2^{-i-1} = \frac{1}{2}\) and
+\(\mu(\cdot) \geq 0\).
+Letting \(\varepsilon \downarrow 0\) yields \eqref{eq:mu-sigma-subadditivity-rectangles}. Thus \(\mu\) is \(\sigma\)-subadditive.
+
+It remains to check \(\sigma\)-finiteness. 
+But
+\(
+\R^d
+=
+\bigcup_{n=1}^{\infty} (-n,n]^d
+\)
+and
+\(
+\mu\bigl((-n,n]^d\bigr) = (2n)^d < \infty
+\)
+for all $n\in\N$.
+Hence \(\mu\) is \(\sigma\)-finite.
+
+All assumptions of \autoref{thm:caratheodory-extension} are therefore satisfied. 
+Consequently, there exists a unique \(\sigma\)-finite measure
+\(
+\lambda^d : \mathcal{B}(\R^d)=\sigma(\mathcal{C}) \to [0,\infty]
+\)
+such that
+\(
+\lambda^d\bigl((\vect{a},\vect{b}]\bigr)
+=
+\mu\bigl((\vect{a},\vect{b}]\bigr)
+=
+\prod_{j=1}^d (b_j-a_j)
+\)
+for all \(\vect{a},\vect{b}\in\R^d\) with \(\vect{a}<\vect{b}\).
+This is the Lebesgue--Borel measure.
+\end{proof}
+
+
+
+
+
+
+
+
+
+\begin{definition}[Semicontinuity]
+A function $f : \R \to \R$ is called 
+\begin{itemize}
+\item 
+\emph{upper semicontinuous} if for every $x_0 \in \R$ and every $\varepsilon > 0$ there exists $\delta > 0$ such that
+\[
+|x-x_0| < \delta \implies f(x) < f(x_0) + \varepsilon
+\]
+\item 
+\emph{lower semicontinuous} if for every $x_0 \in \R$ and every $\varepsilon > 0$ there exists $\delta > 0$ such that
+\[
+|x-x_0| < \delta \implies f(x) > f(x_0) - \varepsilon
+\]
+\end{itemize}
+\begin{figure}[ht]
+  \newcommand{\leftrightcontcolor}{black}
+  \centering
+  \captionsetup[subfigure]{labelformat=empty}
+  \subfloat[upper semicontinuous, but \\not lower semicontinuous at $x_0$]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$x$},ylabel={$f(x)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$x_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{0.4};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+  \hspace{5em}
+  \subfloat[lower semicontinuous, but \\not upper semicontinuous at $x_0$]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$x$},ylabel={$f(x)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$x_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{1.0};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+\end{figure}
+A real-valued function $f$ is upper (respectively, lower) semicontinuous at a point $x_0$ if, roughly speaking, the function values for arguments near $x_0$ are not much higher (respectively, lower) than $f\left(x_0\right)$. 
+Equivalently, a function on a domain $X$ is lower semi-continuous if its epigraph $\{(x, t) \in X \times \mathbb{R}: t \geq f(x)\}$ is closed in $X \times \R$, and upper semi-continuous if $-f$ is lower semi-continuous.
+\end{definition}
 
 
 

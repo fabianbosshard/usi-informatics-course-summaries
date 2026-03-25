@@ -2172,70 +2172,150 @@ As it turns out, it is (at least in principle) possible to carry out any logical
 
 
 \clearpage
-\section{Quantum Physics (chatGPT version)}
+\section{Quantum Physics}
 
+
+% chatgpt start
 \subsection{Black-Body Radiation}
 
 Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\).
-The cavity contains electromagnetic radiation.
-Because the field must satisfy boundary conditions at the walls, only certain standing waves are allowed.
-
-\subsubsection{Mode counting}
-
-A standing wave in the cavity is described by three positive integers
 \[
-\vect{n} = (n_1,n_2,n_3)\in \N_{>0}^3
+% Source - https://tex.stackexchange.com/a/288101
+% Posted by cfr, modified by community. See post 'Timeline' for change history
+% Retrieved 2026-03-25, License - CC BY-SA 3.0
+\tikzset{
+  annotated cuboid/.pic={
+    \tikzset{
+      every edge quotes/.append style={midway, auto},
+      /cuboid/.cd,
+      #1
+    }
+    \draw [every edge/.append style={pic actions, densely dotted, opacity=.5}, pic actions]
+    (0,0,0) coordinate (o)
+      -- ++(-\cubescale*\cubex,0,0) coordinate (a)
+      -- ++(0,-\cubescale*\cubey,0) coordinate (b)
+      edge coordinate [pos=1] (g) ++(0,0,-\cubescale*\cubez)
+      -- ++(\cubescale*\cubex,0,0) coordinate (c) -- cycle
+    (o) -- ++(0,0,-\cubescale*\cubez) coordinate (d)
+      -- ++(0,-\cubescale*\cubey,0) coordinate (e)
+      edge (g) -- (c) -- cycle
+    (o) -- (a)
+      -- ++(0,0,-\cubescale*\cubez) coordinate (f)
+      edge (g) -- (d) -- cycle;
+
+    \path [every edge/.append style={pic actions, |-|}]
+    (b) +(0,-5pt) coordinate (b1) edge ["\cubexlabel"'] (b1 -| c)
+    (b) +(-5pt,0) coordinate (b2) edge ["\cubeylabel"] (b2 |- a)
+    (c) +(3.5pt,-3.5pt) coordinate (c2) edge ["\cubezlabel"'] ([xshift=3.5pt,yshift=-3.5pt]e);
+  },
+  /cuboid/.search also={/tikz},
+  /cuboid/.cd,
+  width/.store in=\cubex,
+  height/.store in=\cubey,
+  depth/.store in=\cubez,
+  xlabel/.store in=\cubexlabel,
+  ylabel/.store in=\cubeylabel,
+  zlabel/.store in=\cubezlabel,
+  scale/.store in=\cubescale,
+  width=5,
+  height=5,
+  depth=5,
+  xlabel={$10\,\mathrm{cm}$},
+  ylabel={$10\,\mathrm{cm}$},
+  zlabel={$10\,\mathrm{cm}$},
+  scale=.1,
+}
+\begin{tikzpicture}[font=\footnotesize]
+  \pic {annotated cuboid={
+    width=5,
+    height=5,
+    depth=5,
+    xlabel={$l$},
+    ylabel={$l$},
+    zlabel={$l$},
+    scale=.2
+  }};
+\end{tikzpicture}
 \]
-which specify how many half-wavelengths fit into the three spatial directions.
-For such a mode,
+The cavity contains EM radiation.
+Because the field must satisfy boundary conditions at the walls, only certain standing waves are allowed.
+A standing wave in the cavity is then a superposition of three standing waves, each corresponding to one spatial dimension.
+% \subsubsection{Mode counting}
+Thus, it is described by 
 \[
-k_x = \frac{\pi n_1}{l},
-\qquad
-k_y = \frac{\pi n_2}{l},
-\qquad
-k_z = \frac{\pi n_3}{l}
+\vect{n} 
+= 
+\left[n_1,n_2,n_3\right]
+\in 
+\N_{>0}^3
+\]
+which specify the number of half-wavelengths fit into the three spatial directions.
+For such a mode,
+% \[
+% k_x = \frac{\pi n_1}{l}%,
+% \qquad
+% k_y = \frac{\pi n_2}{l}%,
+% \qquad
+% k_z = \frac{\pi n_3}{l}
+% \]
+\[
+\vect{k}
+=
+\left[
+k_x,
+k_y,
+k_z
+\right]
+=
+\left[
+\frac{\pi n_1}{l},
+\frac{\pi n_2}{l},
+\frac{\pi n_3}{l}
+\right]
+=
+\frac{\pi}{l} \vect{n}
 \]
 and therefore the wave vector has length
-\[
-|\vect{k}| = \frac{\pi}{l} |\vect{n}|.
-\]
-Since electromagnetic waves satisfy
-\[
-\omega = c |\vect{k}|,
-\]
+\(
+|\vect{k}| = \frac{\pi}{l} |\vect{n}|
+\).
+Since EM waves satisfy
+\(
+\omega = c |\vect{k}|
+\),
 their angular frequency is
-\[
-\omega = \frac{c\pi}{l} |\vect{n}|.
-\]
+\(
+\omega = \frac{c\pi}{l} |\vect{n}|
+\).
 
 Hence the allowed modes correspond to lattice points \(\vect{n}\) in the first octant of \(\R^3\), and the frequency is proportional to the distance of that lattice point from the origin.
 
-We now ask: how many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
+We now ask: How many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
 Equivalently, how many lattice points \(\vect{n}\) lie in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\)?
 
 For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
 Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of modes in that shell scales like
-\[
-|\vect{n}|^2 \,\dif |\vect{n}|.
-\]
+\(
+|\vect{n}|^2 \,\dif |\vect{n}|
+\).
 Because
-\[
-\omega \propto |\vect{n}|,
-\]
+\(
+\omega \propto |\vect{n}|
+\),
 it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) scales like
-\[
-\omega^2 \,\dif\omega.
-\]
+\(
+\omega^2 \,\dif\omega
+\).
 
 Thus the \emph{density of modes} grows quadratically with the frequency.
 
 \subsubsection{Classical equipartition and the Rayleigh--Jeans law}
 
 In classical statistical mechanics, the equipartition theorem says that every quadratic degree of freedom contributes an average energy of \(\frac12 \kB T\).
-Each electromagnetic mode contributes two such quadratic terms (one electric and one magnetic), so the average energy per mode is of order
-\[
-\kB T.
-\]
+Each EM mode contributes two such quadratic terms (one electric and one magnetic), so the average energy per mode is of order
+\(
+\kB T
+\).
 
 Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\omega]\) is proportional to
 \[
@@ -2251,7 +2331,7 @@ Up to the exact proportionality constant, this is the \hl[2]{Rayleigh--Jeans law
 u(\omega) \propto \omega^2.
 \]
 
-So classical physics predicts that the energy density grows without bound as the frequency increases.
+So classical physics predicts that the energy density grows quadraticallywithout bound as the frequency increases.
 
 \subsubsection{Ultraviolet catastrophe}
 
@@ -2267,7 +2347,7 @@ then
 \[
 \int_0^\infty \omega^2 \,\dif\omega = \infty.
 \]
-Thus classical theory predicts an infinite amount of energy stored in the electromagnetic field inside the cavity.
+Thus classical theory predicts an infinite amount of energy stored in the EM field inside the cavity.
 
 This is the \hl[2]{ultraviolet catastrophe}.
 The term refers to the absurd prediction that most of the energy should be concentrated at very high frequencies (ultraviolet, X-ray, and beyond).
@@ -2334,6 +2414,57 @@ There are more and more modes at higher frequencies, and classical equipartition
 Planck's quantization changes this by making high-frequency modes energetically expensive to excite.
 \end{remark}
 
+
+% chatGPT stop
+
+
+
+
+\subsection{Wave-Particle Dualism}
+
+plane wave:
+\begin{equation}\label{eq:plane-wave}
+\psi(\vect{x}, t) = C \cdot \eu^{\iu (\vect{k} \cdot \vect{x} - \omega t)}
+\end{equation}
+\begin{itemize}
+\item $\vect{k}$: wave vector, perpendicular to the wavefronts
+\item $\lambda = 2 \pi / |\vect{k}|$: wavelength (distance between wavefronts)
+\item $\Delta t = 2 \pi / \omega$: period (time between passage of two wavefronts)
+\item $v = \omega / |\vect{k}|$: phase velocity (speed of wavefronts)
+\end{itemize}
+
+\begin{remark}[Hilbert spaces]
+The state spaces of quantym-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete complex inner product spaces.
+\emph{Quantum informatics} happens in \emph{finite}-dimensional Hilbert spaces, but in general, they can be (uncountably) infinite-dimensional.
+%
+An important result states that, for a given dimension, there exists exactly one Hilbert space (up to isomorphism).
+
+ $\psi$ in \autoref{eq:plane-wave} is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
+\[
+\braket{\psi_1 | \psi_2} 
+=
+\int_{\R^3} \psi_1^*(\vect{x}, t) \psi_2(\vect{x}, t) \dif \vect{x}
+\]
+For the integral to be well-defined, we have to restict to the square-integrable functions.
+In order to allow for a normalization, the factor $C$ in \autoref{eq:plane-wave} has to be an evelope that makes the integral finite.
+This yields a wave packet that is then again a superposition of plane waves.
+\end{remark}
+
+
+
+
+
+\clearpage
+
+
+\subsection{Observables}
+
+
+
+
+
+
+\subsection{Postulates}
 
 
 \end{document}
