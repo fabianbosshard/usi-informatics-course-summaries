@@ -200,11 +200,11 @@
 
 
 % commands for probability
-\newcommand{\Var}{\operatorname{Var}}
-\newcommand{\Cov}{\operatorname{Cov}}
-\newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Var}{\operatorname{\mathbb{Var}}}
+\newcommand{\Cov}{\operatorname{\mathbb{Cov}}}
+\newcommand{\Exp}{\operatorname{\mathbb{E}}}
 % \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
-\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\Prob}{\operatorname{\mathbb{P}}}
 \newcommand{\numof}{\ensuremath{\# \,}} % number of elements in a set
 \newcommand{\blackheight}{\operatorname{bh}}
 
@@ -2174,8 +2174,6 @@ As it turns out, it is (at least in principle) possible to carry out any logical
 \clearpage
 \section{Quantum Physics}
 
-
-% chatgpt start
 \subsection{Black-Body Radiation}
 
 Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\):
@@ -2291,9 +2289,7 @@ where $c$ denotes the speed of light.
 
 Hence the allowed modes correspond to lattice points \(\vect{n}\) in the first octant of \(\R^3\), and the frequency is proportional to the distance of that lattice point from the origin.
 
-How many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
-Equivalently, how many lattice points \(\vect{n}\) lie in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\)?
-
+The number of modes with frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\) is determined by the number of lattice points \(\vect{n}\) in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\).
 For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
 Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of modes in that shell scales like
 \(
@@ -2318,10 +2314,28 @@ Each EM mode contributes two such quadratic terms (one electric and one magnetic
 \(
 \kB T
 \).
-
+This can also be seen directly from the Boltzmann distribution
+\[
+\Prob(E) \propto \eu^{-E/(\kB T)}
+\]
+Classically, each EM mode behaves like a harmonic oscillator with continuous energy
+\(
+E \in [0,\infty)
+\),
+and one obtains
+\[
+\Exp[E]
+=
+\frac{\int_0^\infty E\,\eu^{-E/(\kB T)} \dif E}{\int_0^\infty \eu^{-E/(\kB T)} \dif E}
+=
+\kB T
+\]
+which is \hl[4]{independent of the frequency \(\omega\)}.
+Thus even very high-frequency modes carry the same average energy \(\kB T\).
+% So the Boltzmann factor does \emph{not} suppress high-frequency modes in the classical theory; every mode still carries average energy \(\kB T\).
 Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\omega]\) is proportional to
 \[
-(\text{number of modes in }[\omega,\omega+\dif\omega]) \times \kB T
+(\text{number of modes in $[\omega,\omega+\dif\omega]$}) \cdot \kB T
 \]
 and hence the spectral energy density satisfies
 \(
@@ -2332,7 +2346,7 @@ Up to the exact proportionality constant, this is the \hl[2]{Rayleigh-Jeans law}
 \[
 u(\omega) \propto \omega^2 \propto |\vect{n}|^2
 \]
-and hence predicts that the energy density grows quadraticallywithout bound as the frequency increases.
+and hence predicts that the energy density grows quadratically without bound as the frequency increases.
 
 \subsubsection{Ultraviolet catastrophe}
 
@@ -2357,8 +2371,6 @@ If that were true, ordinary objects at room temperature would emit enormous amou
 Experimentally, the Rayleigh-Jeans law is only correct for low frequencies.
 For high frequencies, the spectral energy density does \emph{not} continue to grow quadratically; instead, it decreases rapidly.
 
-
-
 \subsubsection{Quantization}
 
 Max Planck resolved this problem by abandoning the classical assumption that energy can be exchanged continuously.
@@ -2375,25 +2387,34 @@ with \(n \in \N_0\) and
 \)
 (reduced Planck constant).
 
+The Boltzmann factor is still the same as in the classical case,
+\[
+\Prob(E) \propto \eu^{-E/(\kB T)}
+\]
+but now the allowed energies are no longer continuous.
+Instead of all \(E \in [0,\infty)\), only the discrete values
+\(
+0,\hbar\omega,2\hbar\omega,\dots
+\)
+are possible.
+
 This changes the statistics drastically.
-A high-frequency mode requires a large minimum energy \(\hbar\omega\) to become excited at all.
-At temperature \(T\), states of energy \(E\) are weighted by the Boltzmann factor
-\(
-\eu^{-E/(\kB T)}
-\).
-Hence the occupation of a mode with frequency \(\omega\) is suppressed by a factor of order
-\(
-\eu^{-\hbar\omega/(\kB T)}
-\).
-So although the number of modes still grows like \(\omega^2\), the \hl[1]{probability} of significantly exciting very high-frequency modes decreases exponentially.% in \(\hbar\omega/(\kB T)\).
+For large \(\omega\), even the first excited state already has the large energy \(\hbar\omega\), so the probability that the mode is excited at all is strongly suppressed by the Boltzmann factor.
+Thus high-frequency modes no longer carry average energy of order \(\kB T\).
 
-% This removes the divergence: the high-frequency contribution is no longer too large.
+In fact, the average energy of one mode becomes
+\[
+\Exp[E]
+=
+\frac{\sum_{n=0}^{\infty} n\hbar\omega\,\eu^{-n\hbar\omega/(\kB T)}}{\sum_{n=0}^{\infty}\eu^{-n\hbar\omega/(\kB T)}}
+=
+\frac{\hbar\omega}{\eu^{\hbar\omega/(\kB T)}-1}
+\]
+which is \hl[4]{\emph{not} independent of \(\omega\)} anymore!
+For small \(\omega\), however, this is still approximately \(\kB T\), so the classical result is recovered.
+But for large \(\omega\) it decreases exponentially.
 
-
-
-
-% \underline{Planck law:}
-The resulting spectral energy density is
+Multiplying again by the number of modes, which scales like \(\omega^2\), yields the spectral energy density
 \[
 u(\omega)
 =
@@ -2418,15 +2439,6 @@ which is known as the \hl[2]{Planck law}.
 % \)
 % which decays exponentially and avoids the ultraviolet catastrophe.
 % \end{itemize}
-
-
-% The problem was therefore not in the counting of modes, but in the classical assumption that every mode receives roughly the same thermal energy.
-% There are more and more modes at higher frequencies, and classical equipartition assigns energy to all of them.
-% Planck's quantization changes this by making high-frequency modes energetically expensive to excite.
-
-
-
-
 
 
 
