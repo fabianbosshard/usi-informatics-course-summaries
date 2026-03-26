@@ -2247,7 +2247,7 @@ Thus, it is described by
 \in 
 \N_{>0}^3
 \]
-which specify the number of half-wavelengths fit into the three spatial directions.
+which specify the number of half-wavelengths that fit into the three spatial directions.
 For such a mode,
 % \[
 % k_x = \frac{\pi n_1}{l}%,
@@ -2289,21 +2289,73 @@ where $c$ denotes the speed of light.
 
 Hence the allowed modes correspond to lattice points \(\vect{n}\) in the first octant of \(\R^3\), and the frequency is proportional to the distance of that lattice point from the origin.
 
-The number of modes with frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\) is determined by the number of lattice points \(\vect{n}\) in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\).
-For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
-Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of modes in that shell scales like
-\(
-|\vect{n}|^2 \,\dif |\vect{n}|
-\).
+% The number of modes with frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\) is determined by the number of lattice points \(\vect{n}\) in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\).
+% For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
+% Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of modes in that shell scales like
+% \(
+% |\vect{n}|^2 \,\dif |\vect{n}|
+% \).
+% From \eqref{eq:mode-frequency}, we have
+% \(
+% \omega \propto |\vect{n}|
+% \),
+% so
+% it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) also scales like
+% \(
+% \omega^2 \,\dif\omega
+% \).
+
+Let \(N(\omega)\) denote the number of EM modes with frequency at most \(\omega\).
+Then the number of modes in the interval \([\omega,\omega+\dif\omega]\) is \(\dif N\).
+% The number of modes with frequency in a small interval \([\omega,\omega+\dif\omega]\) is determined by the number of lattice points \(\vect{n}\) in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\).
+To estimate \(\dif N\), we count the lattice points \(\vect{n}\) in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif|\vect{n}|\).
+For large \(|\vect{n}|\), we approximate this by the volume of that shell in \(\vect{n}\)-space.
+Since only the first octant is allowed, the shell volume is
+\[
+\frac18 \cdot 4\pi |\vect{n}|^2 \,\dif |\vect{n}|
+=
+\frac{\pi}{2} |\vect{n}|^2 \,\dif |\vect{n}|
+\]
+Moreover, each wave vector corresponds to two independent polarization states (the two transverse polarizations of the EM field),  % previously we said its about magnetic and electric???
+so the number of EM modes is
+\begin{equation}\label{eq:mode-counting}
+\dif N % what is N?
+=
+2 \cdot \frac{\pi}{2} |\vect{n}|^2 \,\dif |\vect{n}|
+=
+\pi |\vect{n}|^2 \,\dif |\vect{n}|
+\end{equation}
 From \eqref{eq:mode-frequency}, we have
 \(
-\omega \propto |\vect{n}|
-\),
-so
-it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) also scales like
+|\vect{n}| = \frac{l}{\pi c}\omega
+\) and
 \(
-\omega^2 \,\dif\omega
+\dif |\vect{n}| = \frac{l}{\pi c}\,\dif\omega
 \).
+Substituting these into \eqref{eq:mode-counting}, we obtain
+\[
+\dif N
+=
+\pi
+\left(\frac{l}{\pi c}\omega\right)^2
+\left(\frac{l}{\pi c}\,\dif\omega\right)
+=
+\frac{l^3}{\pi^2 c^3}\omega^2 \,\dif\omega
+\]
+Dividing by the cavity volume \(l^3\), we obtain the number of modes per unit volume in the frequency interval \([\omega,\omega+\dif\omega]\),
+\[
+\frac{\dif N}{l^3}
+=
+g(\omega)\,\dif\omega
+=
+\frac{\omega^2}{\pi^2 c^3}\,\dif\omega
+\]
+where
+\(
+g(\omega)=\frac{\omega^2}{\pi^2 c^3}
+\)
+is the density of modes per unit volume per unit angular frequency.
+
 
 % Thus the \emph{density of modes} grows quadratically with the frequency.
 
@@ -2333,43 +2385,61 @@ and one obtains
 which is \hl[4]{independent of the frequency \(\omega\)}.
 Thus even very high-frequency modes carry the same average energy \(\kB T\).
 % So the Boltzmann factor does \emph{not} suppress high-frequency modes in the classical theory; every mode still carries average energy \(\kB T\).
-Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\omega]\) is proportional to
-\[
-(\text{number of modes in $[\omega,\omega+\dif\omega]$}) \cdot \kB T
-\]
-and hence the spectral energy density satisfies
-\(
-u(\omega)\,\dif\omega \propto \omega^2 \kB T \,\dif\omega
-\).
+% Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\omega]\) is proportional to
+% \[
+% (\text{number of modes in $[\omega,\omega+\dif\omega]$}) \cdot \kB T
+% \]
+% and hence the spectral energy density satisfies
+% \(
+% u(\omega)\,\dif\omega \propto \omega^2 \kB T \,\dif\omega
+% \).
 
-Up to the exact proportionality constant, this is the \hl[2]{Rayleigh-Jeans law},
-\[
-u(\omega) \propto \omega^2 \propto |\vect{n}|^2
-\]
-and hence predicts that the energy density grows quadratically without bound as the frequency increases.
+Therefore, the spectral energy density is obtained by multiplying the mode density by the average energy per mode:
+% \[
+% u(\omega)\,\dif\omega
+% =
+% g(\omega)\,\dif\omega
+% \cdot 
+% \kB T
+% \]
+% % Hence
+% Dividing by \(\dif\omega\), we obtain
+\begin{equation}\label{eq:rayleigh-jeans-law}
+% \boxed{
+  u(\omega)
+  =
+  g(\omega) \cdot \kB T
+%   =
+%   g(\omega) \cdot
+% \kB T
+=
+  \frac{\kB T}{\pi^2 c^3}\,\omega^2
+% }
+\end{equation}
+which is the \hl[2]{Rayleigh-Jeans law}.
+Thus the energy density grows quadratically without bound as the frequency increases.
 
 \subsubsection{Ultraviolet catastrophe}
 
 The total energy density is obtained by integrating over all frequencies,
 \[
 \int_0^\infty u(\omega)\,\dif\omega
+\overset{\text{\eqref{eq:rayleigh-jeans-law}}}{=}
+\frac{\kB T}{\pi^2 c^3}\int_0^\infty \omega^2\,\dif\omega
+=
+\infty
 \]
-but if
-\(
-u(\omega) \propto \omega^2
-\),
-then
-\(
-\int_0^\infty \omega^2 \,\dif\omega = \infty
-\).
 Thus classical theory predicts an infinite amount of energy stored in the EM field inside the cavity.
 
 This is the \hl[2]{ultraviolet catastrophe}.
 The term refers to the absurd prediction that most of the energy should be concentrated at very high frequencies (ultraviolet, X-ray, and beyond).
 If that were true, ordinary objects at room temperature would emit enormous amounts of high-energy radiation, which is not observed.
 
-Experimentally, the Rayleigh-Jeans law is only correct for low frequencies.
+Experimentally, the Rayleigh-Jeans law (fortunately for us) is only correct for low frequencies.
 For high frequencies, the spectral energy density does \emph{not} continue to grow quadratically; instead, it decreases rapidly.
+
+
+
 
 \subsubsection{Quantization}
 
@@ -2399,8 +2469,10 @@ Instead of all \(E \in [0,\infty)\), only the discrete values
 are possible.
 
 This changes the statistics drastically.
-For large \(\omega\), even the first excited state already has the large energy \(\hbar\omega\), so the probability that the mode is excited at all is strongly suppressed by the Boltzmann factor.
-Thus high-frequency modes no longer carry average energy of order \(\kB T\).
+For large \(\omega\), even the first excited state already has the large energy \(\hbar\omega\), 
+% so the probability that the mode is excited at all is strongly suppressed by the Boltzmann factor.
+so nonzero occupation of the mode is strongly suppressed by the Boltzmann factor.
+Thus the average energy per mode decreases for large \(\omega\).
 
 In fact, the average energy of one mode becomes
 \[
@@ -2414,12 +2486,15 @@ which is \hl[4]{\emph{not} independent of \(\omega\)} anymore!
 For small \(\omega\), however, this is still approximately \(\kB T\), so the classical result is recovered.
 But for large \(\omega\) it decreases exponentially.
 
-Multiplying again by the number of modes, which scales like \(\omega^2\), yields the spectral energy density
+% Multiplying again by the number of modes, which scales like \(\omega^2\), yields the spectral energy density
+Multiplying again by the density of modes \(g(\omega)\) yields the spectral energy density
 \[
+\boxed{
 u(\omega)
 =
 \frac{\hbar \omega^3}{\pi^2 c^3}
 \frac{1}{\eu^{\hbar\omega/(\kB T)}-1}
+}
 \]
 which is known as the \hl[2]{Planck law}.
 % \begin{itemize}
@@ -2439,6 +2514,18 @@ which is known as the \hl[2]{Planck law}.
 % \)
 % which decays exponentially and avoids the ultraviolet catastrophe.
 % \end{itemize}
+
+
+
+
+
+\subsection{Photoelectric Effect}
+
+
+
+
+
+
 
 
 
