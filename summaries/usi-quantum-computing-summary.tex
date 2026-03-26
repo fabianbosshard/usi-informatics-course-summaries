@@ -2178,7 +2178,7 @@ As it turns out, it is (at least in principle) possible to carry out any logical
 % chatgpt start
 \subsection{Black-Body Radiation}
 
-Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\).
+Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\):
 \[
 % Source - https://tex.stackexchange.com/a/288101
 % Posted by cfr, modified by community. See post 'Timeline' for change history
@@ -2284,13 +2284,14 @@ Since EM waves satisfy
 \omega = c |\vect{k}|
 \),
 their angular frequency is
-\(
+\begin{equation}\label{eq:mode-frequency}
 \omega = \frac{c\pi}{l} |\vect{n}|
-\).
+\end{equation}
+where $c$ denotes the speed of light.
 
 Hence the allowed modes correspond to lattice points \(\vect{n}\) in the first octant of \(\R^3\), and the frequency is proportional to the distance of that lattice point from the origin.
 
-We now ask: How many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
+How many modes have frequency in a small interval between \(\omega\) and \(\omega + \dif \omega\)?
 Equivalently, how many lattice points \(\vect{n}\) lie in a thin spherical shell between radii \(|\vect{n}|\) and \(|\vect{n}|+\dif |\vect{n}|\)?
 
 For large \(|\vect{n}|\), the number of such lattice points is approximately proportional to the volume of that shell in \(\vect{n}\)-space.
@@ -2298,18 +2299,19 @@ Since the shell has surface area proportional to \(|\vect{n}|^2\), the number of
 \(
 |\vect{n}|^2 \,\dif |\vect{n}|
 \).
-Because
+From \eqref{eq:mode-frequency}, we have
 \(
 \omega \propto |\vect{n}|
 \),
-it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) scales like
+so
+it follows that the number of modes with frequencies in \([\omega,\omega+\dif\omega]\) also scales like
 \(
 \omega^2 \,\dif\omega
 \).
 
-Thus the \emph{density of modes} grows quadratically with the frequency.
+% Thus the \emph{density of modes} grows quadratically with the frequency.
 
-\subsubsection{Classical equipartition and the Rayleigh--Jeans law}
+\subsubsection{Classical equipartition and the Rayleigh-Jeans law}
 
 In classical statistical mechanics, the equipartition theorem says that every quadratic degree of freedom contributes an average energy of \(\frac12 \kB T\).
 Each EM mode contributes two such quadratic terms (one electric and one magnetic), so the average energy per mode is of order
@@ -2322,100 +2324,111 @@ Therefore, the energy contained in the frequency interval \([\omega,\omega+\dif\
 (\text{number of modes in }[\omega,\omega+\dif\omega]) \times \kB T
 \]
 and hence the spectral energy density satisfies
-\[
-u(\omega)\,\dif\omega \propto \omega^2 \kB T \,\dif\omega.
-\]
+\(
+u(\omega)\,\dif\omega \propto \omega^2 \kB T \,\dif\omega
+\).
 
-Up to the exact proportionality constant, this is the \hl[2]{Rayleigh--Jeans law}:
+Up to the exact proportionality constant, this is the \hl[2]{Rayleigh-Jeans law},
 \[
-u(\omega) \propto \omega^2.
+u(\omega) \propto \omega^2 \propto |\vect{n}|^2
 \]
-
-So classical physics predicts that the energy density grows quadraticallywithout bound as the frequency increases.
+and hence predicts that the energy density grows quadraticallywithout bound as the frequency increases.
 
 \subsubsection{Ultraviolet catastrophe}
 
-The total energy density is obtained by integrating over all frequencies:
+The total energy density is obtained by integrating over all frequencies,
 \[
-\int_0^\infty u(\omega)\,\dif\omega.
+\int_0^\infty u(\omega)\,\dif\omega
 \]
-But if
-\[
-u(\omega) \propto \omega^2,
-\]
+but if
+\(
+u(\omega) \propto \omega^2
+\),
 then
-\[
-\int_0^\infty \omega^2 \,\dif\omega = \infty.
-\]
+\(
+\int_0^\infty \omega^2 \,\dif\omega = \infty
+\).
 Thus classical theory predicts an infinite amount of energy stored in the EM field inside the cavity.
 
 This is the \hl[2]{ultraviolet catastrophe}.
 The term refers to the absurd prediction that most of the energy should be concentrated at very high frequencies (ultraviolet, X-ray, and beyond).
 If that were true, ordinary objects at room temperature would emit enormous amounts of high-energy radiation, which is not observed.
 
-Experimentally, the Rayleigh--Jeans law is only correct for low frequencies.
+Experimentally, the Rayleigh-Jeans law is only correct for low frequencies.
 For high frequencies, the spectral energy density does \emph{not} continue to grow quadratically; instead, it decreases rapidly.
 
-\subsubsection{Planck's quantization idea}
+
+
+\subsubsection{Quantization}
 
 Max Planck resolved this problem by abandoning the classical assumption that energy can be exchanged continuously.
 He postulated that a mode of frequency \(\omega\) can absorb or emit energy only in discrete packets,
 \[
-E_n = n \hbar \omega,
-\qquad n = 0,1,2,\dots
+E_n = n \hbar \omega
 \]
-where
-\[
-\hbar \approx 1.054 \times 10^{-34}\,\mathrm{J\,s}.
-\]
+with \(n \in \N_0\) and
+\(
+\hbar 
+=
+\frac{h}{2\pi}
+\approx 1.054 \cdot 10^{-34}\,\mathrm{J\,s}
+\)
+(reduced Planck constant).
 
 This changes the statistics drastically.
 A high-frequency mode requires a large minimum energy \(\hbar\omega\) to become excited at all.
 At temperature \(T\), states of energy \(E\) are weighted by the Boltzmann factor
-\[
-\eu^{-E/(\kB T)}.
-\]
+\(
+\eu^{-E/(\kB T)}
+\).
 Hence the occupation of a mode with frequency \(\omega\) is suppressed by a factor of order
-\[
-\eu^{-\hbar\omega/(\kB T)}.
-\]
-So although the number of modes still grows like \(\omega^2\), the probability of significantly exciting very high-frequency modes decreases exponentially.
+\(
+\eu^{-\hbar\omega/(\kB T)}
+\).
+So although the number of modes still grows like \(\omega^2\), the \hl[1]{probability} of significantly exciting very high-frequency modes decreases exponentially.% in \(\hbar\omega/(\kB T)\).
 
-This removes the divergence: the high-frequency contribution is no longer too large.
+% This removes the divergence: the high-frequency contribution is no longer too large.
 
-\subsubsection{Planck law}
 
+
+
+% \underline{Planck law:}
 The resulting spectral energy density is
 \[
 u(\omega)
 =
 \frac{\hbar \omega^3}{\pi^2 c^3}
-\frac{1}{\eu^{\hbar\omega/(\kB T)}-1}.
+\frac{1}{\eu^{\hbar\omega/(\kB T)}-1}
 \]
-For small \(\omega\), one has
-\[
-\eu^{\hbar\omega/(\kB T)} - 1 \approx \frac{\hbar\omega}{\kB T},
-\]
-so
-\[
-u(\omega) \approx \frac{\kB T}{\pi^2 c^3}\,\omega^2,
-\]
-which reproduces the Rayleigh--Jeans law at low frequencies.
-
-For large \(\omega\), the denominator behaves like \(\eu^{\hbar\omega/(\kB T)}\), so
-\[
-u(\omega) \sim \omega^3 \eu^{-\hbar\omega/(\kB T)},
-\]
-which decays exponentially and avoids the ultraviolet catastrophe.
-
-\begin{remark}
-The key conflict is therefore not in the counting of modes, but in the classical assumption that every mode receives roughly the same thermal energy.
-There are more and more modes at higher frequencies, and classical equipartition assigns energy to all of them.
-Planck's quantization changes this by making high-frequency modes energetically expensive to excite.
-\end{remark}
+which is known as the \hl[2]{Planck law}.
+% \begin{itemize}
+% \item small \(\omega\):
+% \(
+% \eu^{\hbar\omega/(\kB T)} - 1 \approx \frac{\hbar\omega}{\kB T}
+% \),
+% so
+% \(
+% u(\omega) \approx \frac{\kB T}{\pi^2 c^3}\,\omega^2
+% \),
+% which reproduces the Rayleigh-Jeans law at low frequencies.
+% \item large \(\omega\): 
+% the denominator behaves like \(\eu^{\hbar\omega/(\kB T)}\), so
+% \(
+% u(\omega) \approx \omega^3 \eu^{-\hbar\omega/(\kB T)}
+% \)
+% which decays exponentially and avoids the ultraviolet catastrophe.
+% \end{itemize}
 
 
-% chatGPT stop
+% The problem was therefore not in the counting of modes, but in the classical assumption that every mode receives roughly the same thermal energy.
+% There are more and more modes at higher frequencies, and classical equipartition assigns energy to all of them.
+% Planck's quantization changes this by making high-frequency modes energetically expensive to excite.
+
+
+
+
+
+
 
 
 
