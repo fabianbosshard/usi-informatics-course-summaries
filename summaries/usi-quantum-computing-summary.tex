@@ -200,8 +200,8 @@
 
 
 % commands for probability
-\newcommand{\Var}{\operatorname{\mathbb{Var}}}
-\newcommand{\Cov}{\operatorname{\mathbb{Cov}}}
+\newcommand{\Var}{\operatorname{\mathbb{V}ar}}
+\newcommand{\Cov}{\operatorname{\mathbb{C}ov}}
 \newcommand{\Exp}{\operatorname{\mathbb{E}}}
 % \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
 \newcommand{\Prob}{\operatorname{\mathbb{P}}}
@@ -2456,6 +2456,7 @@ with \(n \in \N_0\) and
 \approx 1.054 \cdot 10^{-34}\,\mathrm{J\,s}
 \)
 (reduced Planck constant).
+For black-body radiation, it is sufficient to consider the thermal excitation energies \(n\hbar\omega\), i.e. we ignore the zero-point offset \(\frac12\hbar\omega\), since it does not affect the frequency-dependent thermal spectrum.
 
 The Boltzmann factor is still the same as in the classical case,
 \[
@@ -2522,12 +2523,112 @@ which is known as the \hl[2]{Planck law}.
 \subsection{Photoelectric Effect}
 
 
+In 1887, Heinrich Hertz studied the emission of electrons from a metal surface illuminated by light.
+
+% \subsubsection{Classical expectation}
+
+Classically, light is an EM wave whose energy is carried continuously by the wave amplitude.
+Thus one would expect:
+Increasing the intensity increases the energy transferred to each electron,
+ therefore the kinetic energy of the emitted electrons should increase with intensity.
+The color of the light, i.e. its frequency, should play no essential role.
+Even low-frequency light should eventually eject electrons if one waits long enough (there should be a \emph{lag time}).
 
 
 
+% \subsubsection{Observation}
 
+But, these expectations are not confirmed experimentally, instead the observed behavior is:
+Increasing the intensity increases mainly the \emph{number} of emitted electrons.
+The kinetic energy of the emitted electrons depends on the frequency of the light.
+Below a certain threshold frequency \(\omega_0\), no electrons are emitted at all, regardless of the intensity or duration of illumination.
+The emission is essentially immediate once the frequency is above the threshold.
 
+Thus the crucial quantity is not the intensity, but the frequency.
 
+% \subsubsection{Einstein's explanation}
+
+In 1905, Einstein explained this by assuming that light is absorbed in discrete quanta, later called \hl[2]{photons}.
+A photon of angular frequency \(\omega\) carries the energy
+\[
+\boxed{
+E_{\gamma} 
+= 
+\hbar \omega
+=
+\frac{h c}{\lambda}
+}
+\]
+where \(\lambda\) is the wavelength of the light.
+To remove an electron from the metal, one must overcome the \hl[2]{work function}
+\[
+W = \hbar \omega_0
+\]
+where \(\omega_0\) is the threshold frequency.
+Hence emission is possible only if
+\(
+\hbar \omega \geq W
+\), regardless of the intensity of the light.
+\[
+\begin{tikzpicture}[scale=0.7]
+  % Axes
+  \draw[->] (-0.5,0) -- (5,0) node [anchor=north, font=\footnotesize] {$\omega$};
+  \draw[->] (0,-2.0) -- (0,2.5) node [anchor=west, font=\footnotesize] {kinetic energy};
+
+  % Piecewise kinetic energy curve
+  \draw[red!85!black, thick] (0,0) -- (2,0);
+  \draw[red!85!black, thick] (2,0) -- (5,2);
+  \node[circle, draw=red!85!black, fill=red!85!black, inner sep=0.9pt] at (2,0) {};
+  \draw[black] (-0.1, -4/3) -- (0.1, -4/3);
+  \draw[red!85!black, thick, densely dotted] (0,-4/3) -- node[pos=0, anchor=east, black, font=\footnotesize] {$-\hbar \omega_0$}  (2,0) node[anchor=north west, font=\footnotesize] {$\omega_0$};
+\end{tikzpicture}
+\]
+The kinetic energy of the emitted electron is then
+% \begin{equation}\label{eq:photoelectric}
+\[
+E_{\mathrm{kin}} 
+= 
+\hbar \omega - W
+=
+\hbar (\omega - \omega_0)
+\]
+% \end{equation}
+Thus:
+\begin{itemize}
+  \item increasing the frequency increases the energy of each photon and therefore the kinetic energy of the emitted electrons
+  \item increasing the intensity increases only the number of photons and therefore mainly the number of emitted electrons (if the frequency is above the threshold)
+\end{itemize}
+
+% \subsubsection{Stopping potential}
+
+% If one applies a reverse voltage \(U_{\mathrm{stop}}\) just strong enough to stop the fastest emitted electrons, then
+% \[
+% e U_{\mathrm{stop}} = E_{\mathrm{kin,max}}
+% \]
+% and therefore
+% \[
+% e U_{\mathrm{stop}} = \hbar \omega - W
+% \]
+
+% So \(U_{\mathrm{stop}}\) depends linearly on the frequency:
+% \[
+% U_{\mathrm{stop}} = \frac{\hbar}{e}\omega - \frac{W}{e}
+% \]
+
+% This linear relation was confirmed experimentally.
+
+% \subsubsection{Significance}
+
+The photoelectric effect shows that light cannot be understood as a purely classical wave.
+Its energy is exchanged in discrete packets.
+Together with black-body radiation, this was one of the key pieces of evidence for quantization.
+
+At the same time, light still exhibits interference and polarization phenomena.
+Thus quantum theory combines both aspects:
+\begin{itemize}
+\item waves behave like particles
+\item particles behave like waves
+\end{itemize}
 
 
 
@@ -2546,21 +2647,23 @@ plane wave:
 \end{itemize}
 
 \begin{remark}[Hilbert spaces]
-The state spaces of quantym-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete complex inner product spaces.
+The state spaces of quantum-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete complex inner product spaces.
 \emph{Quantum informatics} happens in \emph{finite}-dimensional Hilbert spaces, but in general, they can be (uncountably) infinite-dimensional.
 %
-An important result states that, for a given dimension, there exists exactly one Hilbert space (up to isomorphism).
+An important result states that, for a given dimension, there exists (up to isomorphism) exactly one Hilbert space.
 
- $\psi$ in \autoref{eq:plane-wave} is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
+$\psi$ in \eqref{eq:plane-wave} is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
 \[
 \braket{\psi_1 | \psi_2} 
 =
 \int_{\R^3} \psi_1^*(\vect{x}, t) \psi_2(\vect{x}, t) \dif \vect{x}
 \]
 For the integral to be well-defined, we have to restict to the square-integrable functions.
-In order to allow for a normalization, the factor $C$ in \autoref{eq:plane-wave} has to be an evelope that makes the integral finite.
+In order to allow for a normalization, the factor $C$ in \eqref{eq:plane-wave} has to be an evelope that makes the integral finite.
 This yields a wave packet that is then again a superposition of plane waves.
 \end{remark}
+
+
 
 
 
