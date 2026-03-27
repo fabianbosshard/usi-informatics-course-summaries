@@ -71,7 +71,9 @@
 
 \usepackage{cancel}
 \usepackage{accents}
+
 \usepackage{braket}
+\usepackage{siunitx}
 
 \usepackage{enumitem}
 \renewcommand{\labelitemi}{\textbullet}
@@ -2497,7 +2499,127 @@ u(\omega)
 \frac{1}{\eu^{\hbar\omega/(\kB T)}-1}
 }
 \]
-which is known as the \hl[2]{Planck law}.
+which is known as the \emph{Planck law}.%
+% Author: Izaak Neutelings (March 2019)
+\tikzset{>=latex} % for LaTeX arrow head
+\pgfplotsset{
+  compat=1.13, % TikZ coordinates <-> axes coordinates
+  /pgf/number format/1000 sep={},
+  legend image code/.code={
+    \draw[mark repeat=2,mark phase=2]
+    plot coordinates {(0cm,0cm) (0.22cm,0cm) (0.44cm,0cm)};%
+  }
+} 
+% redraw axis on top
+\makeatletter \newcommand{\pgfplotsdrawaxis}{\pgfplots@draw@axis} \makeatother
+\pgfplotsset{axis line on top/.style={after end axis/.append code={\pgfplotsdrawaxis}}
+}
+% CUSTOM COLORS
+% See https://tikz.net/blackbody_color/
+\definecolor{1000K}{rgb}{1,0.0337,0}
+\definecolor{2000K}{rgb}{1,0.2647,0.0033}
+\definecolor{3000K}{rgb}{1,0.4870,0.1411}
+\definecolor{4000K}{rgb}{1,0.6636,0.3583}
+\definecolor{5000K}{rgb}{1,0.7992,0.6045}
+\definecolor{6000K}{rgb}{1,0.9019,0.8473}
+\definecolor{8000K}{rgb}{0.7874,0.8187,1}
+\definecolor{10000K}{rgb}{0.6268,0.7039,1}
+\pgfdeclareverticalshading{rainbow}{100bp}{
+  color(0bp)=(red); color(25bp)=(red); color(35bp)=(yellow);
+  color(45bp)=(green); color(55bp)=(cyan); color(65bp)=(blue);
+  color(75bp)=(violet); color(100bp)=(violet)
+}
+\colorlet{myred}{red!70!black}
+\colorlet{mygreen}{green!70!black}
+\colorlet{wiencolor}{green!0!black}
+%
+% PLANCK & RAYLEIGH-JEANS
+% 2hc^2/lambda^5 = 2 * 6.62607015e-34 * 299792458^2
+%                = 1.191042972e-16
+%    W.m -> kW.nm: 1.191042972e26
+%  hc/k lambda T = 6.62607015e-34*299792458/(1.38064852e-23)
+%                = 0.01438777378
+%         m -> nm: 0.01438777378e9
+% 2ckT/lambda^4  = 2 * 299792458 * 1.38064852e-23
+%                = 8.278160269e-15
+%    W.m -> kW.nm: 8.278160269e18
+\pgfmathdeclarefunction{planck}{2}{%
+  \pgfmathparse{1.191042972e26/(#1^5)/(exp(0.01439e9/(#1*#2))-1)}%
+}
+\pgfmathdeclarefunction{rayleighjeans}{2}{%
+  \pgfmathparse{8.278160269e18*#2/(#1^4)}%
+}
+\pgfmathdeclarefunction{wien}{2}{%
+  \pgfmathparse{1.191042972e26/(#1^5)*exp(-0.01439e9/(#1*#2))}%
+}
+\pgfmathdeclarefunction{lampeak}{1}{% % Wien's displacement law
+  \pgfmathparse{2.898e6/#1}%
+}
+\[
+% BLACK BODY - 3000, 4000, 5000K, Wien's displacement law
+\begin{tikzpicture}[font=\footnotesize]
+  \message{^^JBlack body, Wien's displacement law}
+  \def\N{60}
+  \def\xmax{3100}
+  \def\ymax{1.36e10}
+  \def\tick#1#2{\draw[thick] (#1+.01*\ymax) -- (#1-.01*\ymax) node[below=-.5pt,scale=0.75] {#2};}
+  \begin{axis}[
+      every axis plot/.style={
+        very thick,mark=none,samples=\N,domain=5:\xmax,smooth},
+      xmin=(-.05*\xmax), xmax=(1.05*\xmax),
+      ymin=(-.08*\ymax), ymax=(1.08*\ymax),
+      restrict y to domain=0:\ymax,
+      axis lines=middle,
+      axis line style=thick,
+      %enlargelimits=upper, % extend the axes a bit to the right and top
+      tick style={black,thick},
+      ticklabel style={scale=0.8},
+      %xtick style={draw=none},xticklabels=none,
+      max space between ticks=26,
+      xlabel={Wavelength $\lambda$ [nm]},
+      ylabel={Power $P$ [kW/sr\,m$^2$\,nm]},
+      xlabel style={at={(rel axis cs:0.5,0)},below=-1pt,font=\footnotesize},
+      ylabel style={at={(rel axis cs:-0.11,0.5)},rotate=90, font=\footnotesize},
+      width=9cm, height=7cm,
+      %clip=false
+      tick scale binop=\times,
+      every y tick scale label/.style={at={(rel axis cs:0,1)},anchor=south}]
+    ]
+    
+    % RAINBOW
+    \shade[shading=rainbow,shading angle=90,opacity=0.5] (380,0) rectangle (740,\ymax);
+    \node[above=-1pt,scale=0.8] at (200,\ymax) {\strut UV}; % 10 - 400 nm
+    \node[above=-1pt,scale=0.8] at (570,\ymax) {\strut optical}; % 380 - 740 nm
+    \node[above=-1pt,scale=0.8] at (920,\ymax) {\strut IR}; % 740 - 1050 nm
+    
+    % PLANCK
+    \addplot[red]    {planck(x,3000)};
+    \addplot[orange] {planck(x,4000)};
+    \addplot[blue,samples=3*\N] {planck(x,5000)};
+    \addplot[dashed,thick,blue,domain=1000:3500] {rayleighjeans(x,5000)};
+    
+    % MAXIMUM (Wien's displacement law)
+    \addplot[wiencolor,thick,variable=T,domain=2200:4000,samples=40]
+      ({lampeak(T)},{planck(lampeak(T),T)});
+    \addplot[wiencolor,thick,variable=T,domain=4000:5200,samples=100]
+      ({lampeak(T)},{planck(lampeak(T),T)});
+    \fill[wiencolor!80!black] ({lampeak(3000)},{planck(lampeak(3000),3000)}) circle(1.5pt);
+    \fill[wiencolor!80!black] ({lampeak(4000)},{planck(lampeak(4000),4000)}) circle(1.5pt);
+    \fill[wiencolor!80!black] ({lampeak(5000)},{planck(lampeak(5000),5000)}) circle(1.5pt);
+    
+    % LABELS
+    \node[above=0pt,scale=0.75,red] at (1150,{planck(1150,3000)}) {\SI{3000}{K}};
+    \node[above right=-1pt,scale=0.75,orange!80!black] at (740,{planck(740,4000)}) {\SI{4000}{K}};
+    \node[above right=-1pt,scale=0.75,blue] at (800,{planck(800,5000)}) {\SI{5000}{K}};
+    \node[above right=-1pt,scale=0.75,blue] at (1500,{rayleighjeans(1500,5000)}) {\SI{5000}{K} Rayleigh-Jeans};
+    
+  \end{axis}
+\end{tikzpicture}
+\]
+
+
+
+
 % \begin{itemize}
 % \item small \(\omega\):
 % \(
@@ -2548,9 +2670,9 @@ Thus the crucial quantity is not the intensity, but the frequency.
 
 % \subsubsection{Einstein's explanation}
 
-In 1905, Einstein explained this by assuming that light is absorbed in discrete quanta, later called \hl[2]{photons}.
+In 1905, Einstein explained this by assuming that light is absorbed in discrete quanta, later called \emph{photons}.
 A photon of angular frequency \(\omega\) carries the energy
-\[
+\begin{equation}\label{eq:photon-energy}
 \boxed{
 E_{\gamma} 
 = 
@@ -2558,9 +2680,9 @@ E_{\gamma}
 =
 \frac{h c}{\lambda}
 }
-\]
+\end{equation}
 where \(\lambda\) is the wavelength of the light.
-To remove an electron from the metal, one must overcome the \hl[2]{work function}
+To remove an electron from the metal, one must overcome the \emph{work function}
 \[
 W = \hbar \omega_0
 \]
@@ -2572,15 +2694,16 @@ Hence emission is possible only if
 \[
 \begin{tikzpicture}[scale=0.7]
   % Axes
-  \draw[->] (-0.5,0) -- (5,0) node [anchor=north, font=\footnotesize] {$\omega$};
+  \draw[->] (-0.5,0) -- (5.5,0) node [anchor=north, font=\footnotesize] {$\omega$};
   \draw[->] (0,-2.0) -- (0,2.5) node [anchor=west, font=\footnotesize] {kinetic energy};
 
   % Piecewise kinetic energy curve
-  \draw[red!85!black, thick] (0,0) -- (2,0);
-  \draw[red!85!black, thick] (2,0) -- (5,2);
-  \node[circle, draw=red!85!black, fill=red!85!black, inner sep=0.9pt] at (2,0) {};
+  \draw[gray!50!black, thick] (0,0) -- (2,0);
+  \draw[gray!50!black, thick] (2,0) -- (5,2);
   \draw[black] (-0.1, -4/3) -- (0.1, -4/3);
-  \draw[red!85!black, thick, densely dotted] (0,-4/3) -- node[pos=0, anchor=east, black, font=\footnotesize] {$-\hbar \omega_0$}  (2,0) node[anchor=north west, font=\footnotesize] {$\omega_0$};
+  \draw[gray!50!black, thick, densely dotted] (0,-4/3) -- node[pos=0, anchor=east, black, font=\footnotesize] {$-\hbar \omega_0$}  (2,0) node[anchor=north west, black, font=\footnotesize] {$\omega_0$};
+  % \node[circle, draw=black, fill=black, inner sep=0.9pt] at (2,0) {};
+  \draw[black] (2, -0.1) -- (2, 0.1);
 \end{tikzpicture}
 \]
 The kinetic energy of the emitted electron is then
@@ -2598,6 +2721,7 @@ Thus:
   \item increasing the frequency increases the energy of each photon and therefore the kinetic energy of the emitted electrons
   \item increasing the intensity increases only the number of photons and therefore mainly the number of emitted electrons (if the frequency is above the threshold)
 \end{itemize}
+
 
 % \subsubsection{Stopping potential}
 
@@ -2633,6 +2757,8 @@ Thus quantum theory combines both aspects:
 
 
 
+
+
 \subsection{Wave-Particle Dualism}
 
 plane wave:
@@ -2645,6 +2771,54 @@ plane wave:
 \item $\Delta t = 2 \pi / \omega$: period (time between passage of two wavefronts)
 \item $v = \omega / |\vect{k}|$: phase velocity (speed of wavefronts)
 \end{itemize}
+\tikzset{>={Classical TikZ Rightarrow[]}} % for TikZ arrow head
+\[
+\begin{tikzpicture}[
+  scale=0.8,
+  x={(1cm,0cm)},
+  y={(0.42cm,0.28cm)},
+  z={(0cm,1cm)},
+  font=\footnotesize,
+  % line join=round,
+  % line cap=round
+]
+
+\def\lam{3}
+
+% wavefront 1 (plane x=0)
+\coordinate (P1) at (0,-1.0,-1.0);
+\coordinate (P2) at (0, 1.0,-1.0);
+\coordinate (P3) at (0, 1.0, 1.0);
+\coordinate (P4) at (0,-1.0, 1.0);
+
+% wavefront 2 (plane x=lambda)
+\coordinate (Q1) at (\lam,-1.0,-1.0);
+\coordinate (Q2) at (\lam, 1.0,-1.0);
+\coordinate (Q3) at (\lam, 1.0, 1.0);
+\coordinate (Q4) at (\lam,-1.0, 1.0);
+
+% propagation direction k
+\draw[thick] (-0.9,0,0) -- (0, 0,0);
+
+% semi-transparent wavefronts 1
+\filldraw[fill=red!80, fill opacity=0.7, draw=black, thick] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
+
+% propagation direction k
+\draw[thick] (0,0,0) -- (\lam, 0,0);
+
+% wavelength annotation
+\draw[<->] (0,0,0.5) -- node[above=0pt] {$\lambda={2\pi}/{|\vect{k}|}$} (\lam,0,0.5);
+
+% semi-transparent wavefronts 2
+\filldraw[fill=red!80, fill opacity=0.7, draw=black, thick] (Q1) -- (Q2) -- (Q3) -- (Q4) -- cycle;
+
+% propagation direction k
+\draw[-{stealth[length=2mm,width=1mm]}, thick] (\lam,0,0) -- (4.6,0,0) node[below] {$\vect{k}$};
+
+
+\end{tikzpicture}
+\]
+
 
 \begin{remark}[Hilbert spaces]
 The state spaces of quantum-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete complex inner product spaces.
@@ -2656,10 +2830,10 @@ $\psi$ in \eqref{eq:plane-wave} is an element of an infinite-dimensional Hilbert
 \[
 \braket{\psi_1 | \psi_2} 
 =
-\int_{\R^3} \psi_1^*(\vect{x}, t) \psi_2(\vect{x}, t) \dif \vect{x}
+\int_{\R^3} \psi_1^*(\vect{x}, t) \psi_2(\vect{x}, t)\,\dif\vect{x}
 \]
-For the integral to be well-defined, we have to restict to the square-integrable functions.
-In order to allow for a normalization, the factor $C$ in \eqref{eq:plane-wave} has to be an evelope that makes the integral finite.
+For the integral to be well-defined, we have to restrict to square-integrable functions.
+In order to allow for normalization, the factor $C$ in \eqref{eq:plane-wave} has to be an envelope that makes the integral finite.
 This yields a wave packet that is then again a superposition of plane waves.
 \end{remark}
 
@@ -2667,19 +2841,105 @@ This yields a wave packet that is then again a superposition of plane waves.
 
 
 
-
-
-\clearpage
-
-
 \subsection{Observables}
 
+Physical quantities in quantum mechanics are represented by operators acting on the wave function.
+The probability density for finding a particle at position $\vect{x}$ at time $t$ is $|\psi(\vect{x},t)|^2$, and expectation values are computed by integrating this density against the corresponding operator.
 
+\begin{itemize}
+  \item The expected position is obtained from the \emph{position operator} $A$ defined by $(A\psi)(\vect{x},t) = \vect{x}\,\psi(\vect{x},t)$:
+  \[
+    \Exp_\psi[\vect{x}] = \int_{\R^3} |\psi(\vect{x},t)|^2\,\vect{x}\,\dif\vect{x}
+    = \braket{\psi|A|\psi}
+  \]
+  \item The \emph{momentum operator} is
+  \[
+    \hat{\vect{p}} = \frac{\hbar}{\iu}
+    \nabla
+  \]
+  and the expectation value of the momentum is $\braket{\psi|\hat{\vect{p}}|\psi}$.
+  \item The \emph{energy operator} is
+  \[
+    \hat{E} = \iu\hbar\,\partial_t
+  \]
+  which leads to the expectation value $\braket{\psi|\hat{E}|\psi}$.
+  \item In quantum mechanics, \hl[2]{observables correspond to Hermitian operators}.  The adjoint $A^\dagger$ of $A$ is defined by $\braket{\psi_1|A\psi_2} = \braket{A^\dagger\psi_1|\psi_2}$; an operator is \emph{Hermitian} if $A^\dagger = A$.
+  \item The \hl[2]{correspondence principle} promotes classical observables to quantum operators, for example
+  \[
+    E = \frac{p^2}{2m}
+    \quad\longrightarrow\quad
+    \hat{E} = \frac{\hat{\vect{p}}^2}{2m}
+    = -\frac{\hbar^2}{2m}\,\Delta
+  \]
+  where $\Delta$ is the Laplace operator.
+  \item For a free particle the Hamiltonian is $H = -\frac{\hbar^2}{2m}\,\Delta$ and the \hl[2]{Schrödinger equation} reads
+  \[
+    \iu\hbar\,\partial_t\psi = H\,\psi
+  \]
+  \item The general solution of the Schrödinger equation can be written as
+  \[
+    \psi(t) = U(t)\,\psi(0),
+    \quad
+    U(t) = \exp\bigl(-\iu H t/\hbar\bigr)
+  \]
+  The time evolution operator $U(t)$ is \hl[2]{unitary}, i.e. $U(t)^\dagger U(t)=\mathbb{1}$, and therefore preserves the norm of the state vector.
+\end{itemize}
 
-
-
+\begin{remark}[Hermitian and unitary operators]
+The adjoint $A^\dagger$ of an operator $A$ satisfies $\braket{\psi_1|A\psi_2} = \braket{A^\dagger\psi_1|\psi_2}$.
+A linear operator is called \emph{self-adjoint} or \emph{Hermitian} if $A^\dagger=A$, and \emph{unitary} if $U\,U^\dagger = \mathbb{1}$.
+If $H=H^\dagger$ then $\exp\bigl(-\iu H t/\hbar\bigr)$ is unitary and thus the Schrödinger evolution is reversible.
+\end{remark}
 
 \subsection{Postulates}
+
+The formal structure of quantum mechanics is encapsulated in a few postulates.  In the following we restrict to finite-dimensional Hilbert spaces (as is common in quantum information) but the principles extend to the infinite-dimensional case.
+
+\begin{enumerate}
+  \item \textbf{State space.}  A closed quantum system is described by a unit vector $\ket{\psi}$ in a complex Hilbert space $\mathcal{H}$, meaning $\braket{\psi|\psi}=1$.  In the position representation this corresponds to $\int_{\R^3} |\psi(\vect{x},t)|^2\,\dif\vect{x} = 1$.  \hl[2]{Superposition} is an intrinsic feature: any linear combination
+  \[
+    \alpha\ket{\psi_1} + \beta\ket{\psi_2}
+  \]
+  with $|\alpha|^2+|\beta|^2=1$ is again a valid state, giving rise to interference phenomena.
+
+  \item \textbf{Time evolution.}  The evolution of an isolated system is governed by the Schrödinger equation
+  \[
+    \iu\hbar\,\partial_t\ket{\psi(t)} = H\,\ket{\psi(t)}
+  \]
+  where $H$ is a Hermitian operator called the Hamiltonian.  If $H$ is time-independent the solution is
+  \[
+    \ket{\psi(t)} = U(t)\,\ket{\psi(0)},
+    \quad
+    U(t) = \exp\bigl(-\iu H t/\hbar\bigr)
+  \]
+  and $U(t)$ is unitary so that $\|\psi(t)\|=1$ for all $t$.
+
+  \item \textbf{Measurement.}  Measurable quantities correspond to Hermitian operators $A$ with spectral decomposition
+  \[
+    A = \sum_i \lambda_i P_{\phi_i},
+    \quad P_{\phi_i} = \ket{\phi_i}\bra{\phi_i}
+  \]
+  where the eigenvalues $\lambda_i\in\R$ and the projectors $P_{\phi_i}$ are onto orthonormal eigenvectors $\ket{\phi_i}$.  Measuring $A$ in the state $\ket{\psi}$ yields the outcome $\lambda_i$ with probability
+  \[
+    P(\lambda_i) = \bigl\|P_{\phi_i}\ket{\psi}\bigr\|^2 = |\braket{\phi_i|\psi}|^2
+  \]
+  and the expectation value is
+  \[
+    \Exp_\psi[A] = \braket{\psi|A|\psi} = \sum_i \lambda_i\,P(\lambda_i)
+  \]
+
+  \item \textbf{Composition of systems.}  For subsystems $A$ and $B$ with Hilbert spaces $\mathcal{H}_A$ and $\mathcal{H}_B$, the joint system has state space $\mathcal{H}_A\otimes \mathcal{H}_B$.  Product states $\ket{\psi_A}\otimes\ket{\psi_B}$ represent uncorrelated systems, while superpositions of such products can yield \hl[2]{entangled states}, which have no classical analogue.
+
+  \item \textbf{Dirac notation and trace.}  In a finite-dimensional Hilbert space, kets $\ket{\psi}$ are column vectors and bras $\bra{\psi}$ are their conjugate transpose.  An operator $A$ is represented by a matrix with entries $\braket{k|A|\ell}$ relative to a chosen basis $\{\ket{k}\}$, and projectors are written as $\ket{\phi_i}\bra{\phi_i}$.  The \hl[2]{trace} of $A$ is
+  \[
+    \mathrm{Tr}(A) = \sum_k \braket{k|A|k}
+  \]
+  and does not depend on the basis.  A useful identity is the resolution of the identity $\sum_i\ket{\phi_i}\bra{\phi_i}=\mathbb{1}$, which can be inserted to simplify expressions.
+\end{enumerate}
+
+
+
+
 
 
 \end{document}
