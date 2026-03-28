@@ -103,6 +103,7 @@
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
+\definecolor{interludecolor}{HTML}{\eat #7f7f7f}
 
 \renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
 
@@ -139,6 +140,8 @@
 \declaretheorem[style=smallremarkstyle, name=Remark, sibling=remark]{smallremark}
 \declaretheoremstyle[headfont=\bfseries\color{amethyst}, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\color{amethyst}\blacktriangleleft}, postheadspace=1em]{digressionstyle}
 \declaretheorem[style=digressionstyle, name=Digression, sibling=remark]{digression}
+\declaretheoremstyle[headfont=\bfseries\color{interludecolor}, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\color{interludecolor}\blacktriangleleft}, postheadspace=1em]{interludestyle}
+\declaretheorem[style=interludestyle, name=Interlude, sibling=remark]{interlude}
 
 \numberwithin{equation}{section} % equations numbered within sections
 
@@ -188,6 +191,8 @@
 
 
 
+
+\newcommand{\id}{\operatorname{id}}
 \newcommand{\sign}{\operatorname{sgn}}
 
 \newcommand{\oo}{\infty}
@@ -1128,7 +1133,7 @@ There is no classical gate that yields the NOT-gate in this way.
 
 
 
-\subsection{The Aspect/Gisin/Zeilinger Experiments}
+\subsection{The Aspect/Gisin/Zeilinger Experiments}\label{sec:aspect-gisin-zeilinger-experiments}
 
 A pair of Qbits (e.g. polarized photons) can exhibit correlations that cannot be explained as merely two independent systems plus shared classical randomness.  
 This happens when the two Qbits are prepared in an \emph{entangled} state.
@@ -2774,7 +2779,7 @@ plane wave:
 \tikzset{>={Classical TikZ Rightarrow[]}} % for TikZ arrow head
 \[
 \begin{tikzpicture}[
-  scale=0.8,
+  scale=0.9,
   x={(1cm,0cm)},
   y={(0.42cm,0.28cm)},
   z={(0cm,1cm)},
@@ -2798,10 +2803,10 @@ plane wave:
 \coordinate (Q4) at (\lam,-1.0, 1.0);
 
 % propagation direction k
-\draw[thick] (-0.9,0,0) -- (0, 0,0);
+\draw[thick] (-1.5,0,0) -- (0, 0,0);
 
 % semi-transparent wavefronts 1
-\filldraw[fill=red!80, fill opacity=0.7, draw=black, thick] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
+\filldraw[fill=red!80, fill opacity=0.7, draw=black,] (P1) -- (P2) -- (P3) -- (P4) -- cycle;
 
 % propagation direction k
 \draw[thick] (0,0,0) -- (\lam, 0,0);
@@ -2810,86 +2815,341 @@ plane wave:
 \draw[<->] (0,0,0.5) -- node[above=0pt] {$\lambda={2\pi}/{|\vect{k}|}$} (\lam,0,0.5);
 
 % semi-transparent wavefronts 2
-\filldraw[fill=red!80, fill opacity=0.7, draw=black, thick] (Q1) -- (Q2) -- (Q3) -- (Q4) -- cycle;
+\filldraw[fill=red!80, fill opacity=0.7, draw=black,] (Q1) -- (Q2) -- (Q3) -- (Q4) -- cycle;
 
 % propagation direction k
-\draw[-{stealth[length=2mm,width=1mm]}, thick] (\lam,0,0) -- (4.6,0,0) node[below] {$\vect{k}$};
+\draw[-{stealth[length=2mm,width=1mm]}, thick] (\lam,0,0) -- (4.5,0,0) node[below] {$\vect{k}$};
 
 
 \end{tikzpicture}
 \]
 
 
-\begin{remark}[Hilbert spaces]
-The state spaces of quantum-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete complex inner product spaces.
+
+\begin{interlude}[Hilbert spaces]\label{interlude:hilbert-spaces}
+The state spaces of quantum-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete vector space over the complex numbers with an inner product.
 \emph{Quantum informatics} happens in \emph{finite}-dimensional Hilbert spaces, but in general, they can be (uncountably) infinite-dimensional.
 %
 An important result states that, for a given dimension, there exists (up to isomorphism) exactly one Hilbert space.
 
 $\psi$ in \eqref{eq:plane-wave} is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
-\[
+\begin{equation}\label{eq:inner-product}
 \braket{\psi_1 | \psi_2} 
-=
+\coloneq
 \int_{\R^3} \psi_1^*(\vect{x}, t) \psi_2(\vect{x}, t)\,\dif\vect{x}
-\]
+\end{equation}
 For the integral to be well-defined, we have to restrict to square-integrable functions.
 In order to allow for normalization, the factor $C$ in \eqref{eq:plane-wave} has to be an envelope that makes the integral finite.
 This yields a wave packet that is then again a superposition of plane waves.
+\end{interlude}
+
+
+
+% idea by de Broglie:
+% link parameters of \eqref{eq:plane-wave} to particle properties (correspondence principle):
+% \begin{itemize}
+% \item if wavefronts walk in direction $\vect{k}$, then corresponding particle probably also moves in that direction
+% \item de Broglie linked $\vect{k}$ to the particle's momentum: % $\vect{p}$: 
+% \(
+% \vect{p} = \hbar \vect{k}
+% \)
+% \begin{remark}
+% Note that $\hbar$ is always the constant that connects the macroscopic (wave) with the microscopic (particle).
+% \end{remark}
+% \item what about $\omega$? we still have the energy
+% \item free particle does not have a potential. but it has energy. so a free particle has a mass, velocity/momentum, (kinetic) energy
+% \item kinetic energy for a non-relativistic particle is $E = \frac{\|\vect{p}\|^2}{2m}$
+% \item to link $\omega$ to the particle, we use the same approach as for the photon \eqref{eq:photon-energy}, plancks formula: 
+% \(
+% E = \hbar \omega
+% \)
+% \end{itemize}
+
+Now we want to relate the parameters of \eqref{eq:plane-wave} to particle properties:
+\begin{itemize}
+\item 
+Louis de Broglie had the idea to associate the momentum of a particle with its quantum mechanical wave vector as
+\[
+\vect{p} = \hbar \vect{k}
+\]
+and, thus:
+\(
+\vect{k} = \vect{p} / \hbar
+\)
+\item 
+We already introduced the energy in \eqref{eq:photon-energy}.
+As in classical, non-relativistic mechanics, we relate it to the momentum as
+\[
+E = \hbar \omega = \frac{\|\vect{p}\|^2}{2m}
+\]
+and, thus: 
+\(
+\omega = \|\vect{p}\|^2 / (2 m \hbar)
+\)
+\end{itemize}
+
+\medskip
+
+matter wave of a free particle (no potential, no walls) with mass $m$ and momentum $\vect{p}$:
+\begin{equation}\label{eq:matter-wave}
+\boxed{
+\psi(\vect{x}, t) = C(\vect{x}, t) \cdot \eu^{\iu (\vect{p} \cdot \vect{x} - \frac{\|\vect{p}\|^2}{2 m} t)/\hbar}
+}
+\end{equation}
+
+\begin{remark}
+If C in \eqref{eq:matter-wave} does not depend on $\vect{x}$ and $t$, then $\psi(\vect{x}, t)$ is the perfectly free particle, a plane wave that is spatially extended infintely in all directions.
+That corresponds to a particle that is not localized in space at all, so it kind of everywhere equally.
+But when the idea came up that the wave characterizes the probability of finding the particle at a certain position, it was realized that such a perfectly free particle cannot exist, since there is no uniform probability distribution over the whole space that is normalized.
+Therefore, $C(\vect{x}, t)$ is usually some kind of a Gaussian or other envelope that limits the spatial extent of the wave.
+% For example, an electron in a hydrogen atom, would have some kind of a circular distribution.
 \end{remark}
 
 
+What possible equation of motion would lead to a solution of the form \eqref{eq:matter-wave}?
 
+People were looking for a linear equation, because they observed interference effects (e.g. in double-slit experiments).
+Interference effects are marking for linear behaviors.
+
+For simplicity, we assume that $C$ is constant and analyze the time evolution:
+% time evolution:
+\[
+\begin{aligned}
+\frac{\partial}{\partial t}\psi(\vect{x}, t)
+&= \psi(\vect{x}, t) \cdot \frac{\iu}{\hbar} \cdot \left(-\frac{\|\vect{p}\|^2}{2 m}\right) \\
+&= \left(p_x^2 + p_y^2 + p_z^2\right) \cdot \psi(\vect{x}, t) \cdot \left(\frac{- \iu}{2 m \hbar}\right)\tikzmark{timederivative} \\
+\begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
+\node [anchor=south west, align=left, text width=3.8cm] at (pic cs:timederivative) {what linear operation could we also apply to $\psi$ that would also lead to these factors?};
+\end{tikzpicture}%
+&= -\hbar^2 
+\cdot 
+\left(\tfrac{\partial^2}{\partial x^2} + \tfrac{\partial^2}{\partial y^2} + \tfrac{\partial^2}{\partial z^2}\right) \psi(\vect{x}, t) 
+\cdot 
+\left(\frac{- \iu}{2 m \hbar}\right) \\
+&= \hbar \cdot \Delta \psi(\vect{x}, t) \cdot \frac{\iu}{2 m}\tikzmark{laplace}
+\begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
+\node [anchor=west, align=left, text width=3.8cm] at ($(pic cs:laplace)+(0.5,1ex/2)$) {$\Delta$ is the Laplace operator};
+\end{tikzpicture}%
+\end{aligned}
+\]
+which directly corresponds to the Schrödinger equation for a free particle:
+\begin{equation}\label{eq:schroedinger-free-particle}
+\boxed{
+\iu \hbar \cdot \frac{\partial}{\partial t}\psi(\vect{x}, t) = -\frac{\hbar^2}{2 m} \cdot \Delta \psi(\vect{x}, t)
+}
+\end{equation}
+
+The left side of the Schrödinger equation always looks like in \eqref{eq:schroedinger-free-particle}.
+The right side changes is we have a particle that is not free, e.g. in a potential $V(\vect{x})$.
+
+
+
+\begin{interlude}[continues=interlude:hilbert-spaces]
+The scalar product \eqref{eq:inner-product} defines a norm 
+\begin{equation}\label{eq:norm}
+  \|\psi\| 
+  = 
+  \sqrt{\braket{\psi|\psi}}
+  =
+  \left(\int_{\R^3} |\psi(\vect{x}, t)|^2 \,\dif\vect{x}\right)^{\!\!1/2}
+\end{equation}
+on the Hilbert space $\mathcal{H}$.
+\end{interlude}
+
+Properties:
+\begin{itemize}
+  \item linearity: 
+  if $\psi_1$ and $\psi_2$ are solutions, then any linear combination $\alpha \psi_1 + \beta \psi_2$ with $|\alpha|^2 + |\beta|^2 = 1$ is again a solution.
+  \begin{itemize}
+    \item not surprising, since we derived it to be linear. this makes quantum mechanics a linear theory.
+    \item entanglement (\autoref{sec:aspect-gisin-zeilinger-experiments}) comes out of this: if we have two Qbits, i.e. $\ket{00}$ and $\ket{11}$ are both possible states of the system, then $\alpha \ket{00} + \beta \ket{11}$ is also a possible state, and now we have an entangled state.
+  \end{itemize}
+  \item preserves inner product:
+  A solution can be written as $\psi(\vect{x}, t) = U(t) \psi(\vect{x}, t_0)$.
+  Define $\psi_0 = \psi(\cdot, t_0)$.
+  Then the norm square can be written as
+  \[
+  \|\psi(\cdot, t)\|^2
+  =
+  \braket{U(t)\psi_0|U(t)\psi_0}
+  =
+  \braket{\psi_0|U(t)^* U(t)\psi_0}
+  \overset{!}{=}
+  \braket{\psi_0|\psi_0} 
+  = 
+  1
+  \]
+  where the penultimate step holds iff $U(t)$ is unitary, i.e. $U(t)^* U(t) = \id$.
+  Thus, the time evolution operator $U(t)$ is required to be unitary.
+  This also implies that time evolution in quantum mechanics is reversible with $U(t)^{-1} = U(t)^*$.
+  \begin{itemize}
+  \item $\int_{\R^3} |\psi(\vect{x}, t_0)|^2 \,\dif\vect{x} = 1$ implies $\int_{\R^3} |\psi(\vect{x}, t)|^2 \,\dif\vect{x} = 1$ for all $t \in \R$.
+  \end{itemize}
+\end{itemize}
+
+
+
+\begin{definition}[adjoint operator]
+The adjoint $A^*$ of a linear operator $A$ is defined as
+\[
+\braket{\psi_1|A\psi_2} = \braket{A^*\psi_1|\psi_2}
+\]
+where $\braket{\cdot|\cdot}$ denotes the inner product defined in \eqref{eq:inner-product}.
+\end{definition}
+\begin{definition}%[Hemitian]
+\label{def:hermitian}
+a linear operator $A$ is \hl[2]{self-adjoint} or Hermitian iff $A^* = A$
+\end{definition}
+\begin{definition}%[unitary]
+\label{def:unitary}
+a linear operator $U$ is \hl[2]{unitary} iff $U U^* = \id$, or, equivalently, $U^* = U^{-1}$
+\end{definition}
+
+
+
+
+
+
+
+
+
+
+\clearpage
 
 
 \subsection{Observables}
 
-Physical quantities in quantum mechanics are represented by operators acting on the wave function.
+% Physical quantities in quantum mechanics are represented by operators acting on the wave function.
+Correspondence principle: measurable physical quantities in classical mechanics can be translated to quantum mechanics by using the corresponding self-adjoint (Hermitian) operator, so-calles \emph{observable}.
 The probability density for finding a particle at position $\vect{x}$ at time $t$ is $|\psi(\vect{x},t)|^2$, and expectation values are computed by integrating this density against the corresponding operator.
+We use \eqref{eq:matter-wave} to derive some important observables:
 
+\medskip
+\hrule
+\textbf{Position}
+\[
+\begin{aligned}
+\Exp_\psi[\vect{x}]
+&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot \vect{x} \,\dif\vect{x} \\
+&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \vect{x} \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
+% &= \int_{\R^3} \psi^*(\vect{x}, t) A(\psi)(\vect{x}, t) \,\dif\vect{x} \\
+&= \braket{\psi | \vect{x} \cdot \psi}
+\end{aligned}
+\]
+operator: 
+$
+\psi \mapsto \vect{x} \cdot \psi
+$
+\medskip
+\hrule
+\textbf{Momentum}
+\[
+\begin{aligned}
+\Exp_\psi[\vect{p}]
+&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot \vect{p} \,\dif\vect{x} \\
+&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \vect{p} \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
+&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \tfrac{\hbar}{\iu} \nabla \psi(\vect{x}, t) \,\dif\vect{x} \\
+&= \braket{\psi | \tfrac{\hbar}{\iu} \nabla \psi}
+\end{aligned}
+\]
+operator:
+$
+\psi \mapsto \tfrac{\hbar}{\iu} \nabla \psi
+$
+\medskip
+\hrule
+\textbf{Energy}
+\[
+\begin{aligned}
+\Exp_\psi[E]
+&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot E \,\dif\vect{x} \\
+&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot E \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
+&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \iu \hbar \tfrac{\partial}{\partial t} \psi(\vect{x}, t) \,\dif\vect{x} \\
+&= \braket{\psi | \iu \hbar \tfrac{\partial}{\partial t} \psi}
+\end{aligned}
+\]
+operator:
+$
+\psi \mapsto \iu \hbar \tfrac{\partial}{\partial t} \psi
+$
+\medskip
+\hrule
+\medskip
+
+
+In classical mechanics, the energy of a free particle is $E = {\|\vect{p}\|^2}/{(2 m)}$.
+If we replace the left side with 
+$E = \iu \hbar \tfrac{\partial}{\partial t}$ 
+and the right side with 
+$(\tfrac{\hbar}{\iu} \nabla)^2 / (2 m)$, 
+we return to the Schrödinger equation \eqref{eq:schroedinger-free-particle} for a free particle.
+
+The general, non-relativistic, time-dependent Schrödinger equation for a particle in a potential $V(\vect{x}, t)$ is
+\begin{equation}\label{eq:schroedinger}
+\boxed{
+\iu \hbar \frac{\partial}{\partial t}\psi(\vect{x}, t) = \left(-\frac{\hbar^2}{2 m} \Delta + V(\vect{x}, t)  \right) \psi(\vect{x}, t)
+}
+\end{equation}
+which can be written as
+\[
+\iu \hbar  \frac{\partial}{\partial t}\psi(\vect{x}, t) = H  \psi(\vect{x}, t)
+\]
+where
+\[
+H = -\tfrac{\hbar^2}{2 m} \Delta + V(\vect{x}, t)
+\]
+is the Hamiltonian operator
+% \[
+% H 
+% % = 
+% % T + V
+% =
+% -\frac{\hbar^2}{2 m} \Delta + V(\vect{x}, t)
+% \]
+corresponding to the total (kinetic + potential) energy of the system. 
+For fixed $t$, $H$ is Hermitian.
+
+For a free particle, 
+% $H = -\tfrac{\hbar^2}{2m}\Delta$ since 
+$V(\vect{x}, t) = 0$, and \eqref{eq:schroedinger} reduces to \eqref{eq:schroedinger-free-particle}.
+In that case, 
+$H = -\tfrac{\hbar^2}{2m}\Delta$ 
+and 
+the general solution is
+\[
+  \psi(\vect{x}, t) = \eu^{\iu H (t - t_0) / \hbar} \psi(\vect{x}, t_0)
+\]
+where $\eu^{A} = \sum_{n=0}^\infty \frac{A^n}{n!}$.
+This yields the time evolution operator $U(t) = \eu^{\iu H (t - t_0) / \hbar}$.
+
+Since $H$ is Hermitian (\autoref{def:hermitian}), we have
+\[
+\eu^{\iu H (t - t_0) / \hbar} \left(\eu^{\iu H (t - t_0) / \hbar}\right)^*
+=
+\eu^{\iu H (t - t_0) / \hbar} \eu^{-\iu H^* (t - t_0) / \hbar}
+=
+\eu^{\iu (H - H^*) (t - t_0) / \hbar}
+=
+\eu^{0}
+=
+\id
+\]
+and hence $U(t)$ is unitary and therefore preserves the norm of the state vector.
+In general, the exponential of a Hermitian operator is unitary.
+Furthermore,
 \begin{itemize}
-  \item The expected position is obtained from the \emph{position operator} $A$ defined by $(A\psi)(\vect{x},t) = \vect{x}\,\psi(\vect{x},t)$:
-  \[
-    \Exp_\psi[\vect{x}] = \int_{\R^3} |\psi(\vect{x},t)|^2\,\vect{x}\,\dif\vect{x}
-    = \braket{\psi|A|\psi}
-  \]
-  \item The \emph{momentum operator} is
-  \[
-    \hat{\vect{p}} = \frac{\hbar}{\iu}
-    \nabla
-  \]
-  and the expectation value of the momentum is $\braket{\psi|\hat{\vect{p}}|\psi}$.
-  \item The \emph{energy operator} is
-  \[
-    \hat{E} = \iu\hbar\,\partial_t
-  \]
-  which leads to the expectation value $\braket{\psi|\hat{E}|\psi}$.
-  \item In quantum mechanics, \hl[2]{observables correspond to Hermitian operators}.  The adjoint $A^\dagger$ of $A$ is defined by $\braket{\psi_1|A\psi_2} = \braket{A^\dagger\psi_1|\psi_2}$; an operator is \emph{Hermitian} if $A^\dagger = A$.
-  \item The \hl[2]{correspondence principle} promotes classical observables to quantum operators, for example
-  \[
-    E = \frac{p^2}{2m}
-    \quad\longrightarrow\quad
-    \hat{E} = \frac{\hat{\vect{p}}^2}{2m}
-    = -\frac{\hbar^2}{2m}\,\Delta
-  \]
-  where $\Delta$ is the Laplace operator.
-  \item For a free particle the Hamiltonian is $H = -\frac{\hbar^2}{2m}\,\Delta$ and the \hl[2]{Schrödinger equation} reads
-  \[
-    \iu\hbar\,\partial_t\psi = H\,\psi
-  \]
-  \item The general solution of the Schrödinger equation can be written as
-  \[
-    \psi(t) = U(t)\,\psi(0),
-    \quad
-    U(t) = \exp\bigl(-\iu H t/\hbar\bigr)
-  \]
-  The time evolution operator $U(t)$ is \hl[2]{unitary}, i.e. $U(t)^\dagger U(t)=\mathbb{1}$, and therefore preserves the norm of the state vector.
+  \item $U(t_1) \cdot U(t_2) = U(t_1 + t_2)$
+  \item $U(t_0) = \id$
+  \item $U(t)^{-1} = U(t)^* = U(-t)$
 \end{itemize}
 
-\begin{remark}[Hermitian and unitary operators]
-The adjoint $A^\dagger$ of an operator $A$ satisfies $\braket{\psi_1|A\psi_2} = \braket{A^\dagger\psi_1|\psi_2}$.
-A linear operator is called \emph{self-adjoint} or \emph{Hermitian} if $A^\dagger=A$, and \emph{unitary} if $U\,U^\dagger = \mathbb{1}$.
-If $H=H^\dagger$ then $\exp\bigl(-\iu H t/\hbar\bigr)$ is unitary and thus the Schrödinger evolution is reversible.
-\end{remark}
+
+
+
+
+
+
+
 
 \subsection{Postulates}
 
