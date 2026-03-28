@@ -2830,9 +2830,9 @@ plane wave:
 The state spaces of quantum-mechanical systems are generally \emph{Hilbert spaces}, i.e., complete vector space over the complex numbers with an inner product.
 \emph{Quantum informatics} happens in \emph{finite}-dimensional Hilbert spaces, but in general, they can be (uncountably) infinite-dimensional.
 %
-An important result states that, for a given dimension, there exists (up to isomorphism) exactly one Hilbert space.
+An important result states that, up to isomorphism, Hilbert spaces are classified by the dimension of an orthonormal basis.
 
-$\psi$ in \eqref{eq:plane-wave} is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
+A normalized wave packet $\psi$ is an element of an infinite-dimensional Hilbert space, and the inner product is defined as
 \begin{equation}\label{eq:inner-product}
 \braket{\psi_1 | \psi_2} 
 \coloneq
@@ -2898,9 +2898,9 @@ matter wave of a free particle (no potential, no walls) with mass $m$ and moment
 \end{equation}
 
 \begin{remark}
-If C in \eqref{eq:matter-wave} does not depend on $\vect{x}$ and $t$, then $\psi(\vect{x}, t)$ is the perfectly free particle, a plane wave that is spatially extended infintely in all directions.
+If C in \eqref{eq:matter-wave} does not depend on $\vect{x}$ and $t$, then $\psi(\vect{x}, t)$ is a plane wave, i.e. an idealized free-particle state that is spatially extended infinitely in all directions.
 That corresponds to a particle that is not localized in space at all, so it kind of everywhere equally.
-But when the idea came up that the wave characterizes the probability of finding the particle at a certain position, it was realized that such a perfectly free particle cannot exist, since there is no uniform probability distribution over the whole space that is normalized.
+But when the idea came up that the wave characterizes the probability of finding the particle at a certain position, it was realized that such a plane wave is not a normalizable physical state, since there is no uniform probability distribution over the whole space that is normalized.
 Therefore, $C(\vect{x}, t)$ is usually some kind of a Gaussian or other envelope that limits the spatial extent of the wave.
 % For example, an electron in a hydrogen atom, would have some kind of a circular distribution.
 \end{remark}
@@ -2909,7 +2909,7 @@ Therefore, $C(\vect{x}, t)$ is usually some kind of a Gaussian or other envelope
 What possible equation of motion would lead to a solution of the form \eqref{eq:matter-wave}?
 
 People were looking for a linear equation, because they observed interference effects (e.g. in double-slit experiments).
-Interference effects are marking for linear behaviors.
+Interference effects are characteristic for linear behaviors.
 
 For simplicity, we assume that $C$ is constant and analyze the time evolution:
 % time evolution:
@@ -2939,8 +2939,8 @@ which directly corresponds to the Schrödinger equation for a free particle:
 }
 \end{equation}
 
-The left side of the Schrödinger equation always looks like in \eqref{eq:schroedinger-free-particle}.
-The right side changes is we have a particle that is not free, e.g. in a potential $V(\vect{x})$.
+The left hand side of the (non-relativistic) Schrödinger equation always looks like in \eqref{eq:schroedinger-free-particle}.
+The right hand side changes if we have a particle that is not free, e.g. in a potential $V(\vect{x})$.
 
 
 
@@ -2959,14 +2959,14 @@ on the Hilbert space $\mathcal{H}$.
 Properties:
 \begin{itemize}
   \item linearity: 
-  if $\psi_1$ and $\psi_2$ are solutions, then any linear combination $\alpha \psi_1 + \beta \psi_2$ with $|\alpha|^2 + |\beta|^2 = 1$ is again a solution.
+  if $\psi_1$ and $\psi_2$ are solutions, then any linear combination $\alpha \psi_1 + \beta \psi_2$ is also a solution.
   \begin{itemize}
     \item not surprising, since we derived it to be linear. this makes quantum mechanics a linear theory.
     \item entanglement (\autoref{sec:aspect-gisin-zeilinger-experiments}) comes out of this: if we have two Qbits, i.e. $\ket{00}$ and $\ket{11}$ are both possible states of the system, then $\alpha \ket{00} + \beta \ket{11}$ is also a possible state, and now we have an entangled state.
   \end{itemize}
   \item preserves inner product:
-  A solution can be written as $\psi(\vect{x}, t) = U(t) \psi(\vect{x}, t_0)$.
-  Define $\psi_0 = \psi(\cdot, t_0)$.
+  A solution can be written as $\psi(\vect{x}, t) = U(t) \psi(\vect{x}, 0)$.
+  Define $\psi_0 = \psi(\cdot, 0)$.
   Then the norm square can be written as
   \[
   \|\psi(\cdot, t)\|^2
@@ -2983,7 +2983,7 @@ Properties:
   Thus, the time evolution operator $U(t)$ is required to be unitary.
   This also implies that time evolution in quantum mechanics is reversible with $U(t)^{-1} = U(t)^*$.
   \begin{itemize}
-  \item $\int_{\R^3} |\psi(\vect{x}, t_0)|^2 \,\dif\vect{x} = 1$ implies $\int_{\R^3} |\psi(\vect{x}, t)|^2 \,\dif\vect{x} = 1$ for all $t \in \R$.
+  \item $\int_{\R^3} |\psi(\vect{x}, 0)|^2 \,\dif\vect{x} = 1$ implies $\int_{\R^3} |\psi(\vect{x}, t)|^2 \,\dif\vect{x} = 1$ for all $t \in \R$.
   \end{itemize}
 \end{itemize}
 
@@ -3014,65 +3014,96 @@ a linear operator $U$ is \hl[2]{unitary} iff $U U^* = \id$, or, equivalently, $U
 
 
 
-\clearpage
+\pagebreak[3]
 
 
 \subsection{Observables}
 
 % Physical quantities in quantum mechanics are represented by operators acting on the wave function.
-Correspondence principle: measurable physical quantities in classical mechanics can be translated to quantum mechanics by using the corresponding self-adjoint (Hermitian) operator, so-calles \emph{observable}.
+Correspondence principle: measurable physical quantities in classical mechanics can be translated to quantum mechanics by using the corresponding self-adjoint (Hermitian) operator, so-called \emph{observable}.
 The probability density for finding a particle at position $\vect{x}$ at time $t$ is $|\psi(\vect{x},t)|^2$, and expectation values are computed by integrating this density against the corresponding operator.
 We use \eqref{eq:matter-wave} to derive some important observables:
 
 \medskip
 \hrule
-\textbf{Position}
+\textbf{Position}:
 \[
-\begin{aligned}
+% \begin{aligned}
+% \Exp_\psi[\vect{x}]
+% &= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot \vect{x} \,\dif\vect{x} \\
+% &= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \vect{x} \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
+% % &= \int_{\R^3} \psi^*(\vect{x}, t) A(\psi)(\vect{x}, t) \,\dif\vect{x} \\
+% &= \braket{\psi | \vect{x} \cdot \psi}
+% \end{aligned}
 \Exp_\psi[\vect{x}]
-&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot \vect{x} \,\dif\vect{x} \\
-&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \vect{x} \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
-% &= \int_{\R^3} \psi^*(\vect{x}, t) A(\psi)(\vect{x}, t) \,\dif\vect{x} \\
-&= \braket{\psi | \vect{x} \cdot \psi}
-\end{aligned}
+=
+\int_{\R^3} |\psi(\vect{x}, t)|^2 \, \vect{x} \,\dif\vect{x}
+=
+\int_{\R^3} \psi^*(\vect{x}, t) \, \vect{x} \, \psi(\vect{x}, t) \,\dif\vect{x} 
+=
+\braket{\psi | \vect{x}  \psi}
 \]
 operator: 
 $
-\psi \mapsto \vect{x} \cdot \psi
+\psi \mapsto \vect{x}  \psi
 $
 \medskip
 \hrule
-\textbf{Momentum}
+\textbf{Momentum}:
+
+For the plane wave \eqref{eq:matter-wave},
+\(
+\nabla \psi(\vect{x}, t)
+=
+\frac{\iu}{\hbar}\,\vect{p}\,\psi(\vect{x}, t)
+\)
+and thus
+\(
+\frac{\hbar}{\iu}\nabla \psi(\vect{x}, t)
+=
+\vect{p}\,\psi(\vect{x}, t)
+\).
+This motivates the momentum operator
 \[
-\begin{aligned}
-\Exp_\psi[\vect{p}]
-&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot \vect{p} \,\dif\vect{x} \\
-&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \vect{p} \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
-&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \tfrac{\hbar}{\iu} \nabla \psi(\vect{x}, t) \,\dif\vect{x} \\
-&= \braket{\psi | \tfrac{\hbar}{\iu} \nabla \psi}
-\end{aligned}
-\]
-operator:
-$
 \psi \mapsto \tfrac{\hbar}{\iu} \nabla \psi
-$
-\medskip
-\hrule
-\textbf{Energy}
-\[
-\begin{aligned}
-\Exp_\psi[E]
-&= \int_{\R^3} |\psi(\vect{x}, t)|^2 \cdot E \,\dif\vect{x} \\
-&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot E \cdot \psi(\vect{x}, t) \,\dif\vect{x} \\
-&= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \iu \hbar \tfrac{\partial}{\partial t} \psi(\vect{x}, t) \,\dif\vect{x} \\
-&= \braket{\psi | \iu \hbar \tfrac{\partial}{\partial t} \psi}
-\end{aligned}
 \]
-operator:
-$
+and the expectation value
+\[
+% \begin{aligned}
+\Exp_\psi[\vect{p}]
+= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \tfrac{\hbar}{\iu} \nabla \psi(\vect{x}, t) \,\dif\vect{x} 
+= \braket{\psi | \tfrac{\hbar}{\iu} \nabla \psi}
+% \end{aligned}
+\]
+% \medskip
+\hrule
+\textbf{Energy}:
+
+For the plane wave \eqref{eq:matter-wave},
+\(
+\frac{\partial}{\partial t}\psi(\vect{x}, t)
+=
+-\frac{\iu E}{\hbar}\,\psi(\vect{x}, t)
+\)
+and thus
+\(
+\iu \hbar \frac{\partial}{\partial t}\psi(\vect{x}, t)
+=
+E\,\psi(\vect{x}, t)
+\).
+This motivates the energy operator
+\[
 \psi \mapsto \iu \hbar \tfrac{\partial}{\partial t} \psi
-$
-\medskip
+\]
+and the expectation value
+\[
+% \begin{aligned}
+\Exp_\psi[E]
+= \int_{\R^3} \psi^*(\vect{x}, t) \cdot \iu \hbar \tfrac{\partial}{\partial t} \psi(\vect{x}, t) \,\dif\vect{x} 
+= \braket{\psi | \iu \hbar \tfrac{\partial}{\partial t} \psi}
+% \end{aligned}
+\]
+% \medskip
 \hrule
 \medskip
 
@@ -3106,7 +3137,7 @@ is the Hamiltonian operator
 % =
 % -\frac{\hbar^2}{2 m} \Delta + V(\vect{x}, t)
 % \]
-corresponding to the total (kinetic + potential) energy of the system. 
+corresponding to the total (kinetic + potential) non-relativistic energy of the system. 
 For fixed $t$, $H$ is Hermitian.
 
 For a free particle, 
@@ -3117,85 +3148,33 @@ $H = -\tfrac{\hbar^2}{2m}\Delta$
 and 
 the general solution is
 \[
-  \psi(\vect{x}, t) = \eu^{\iu H (t - t_0) / \hbar} \psi(\vect{x}, t_0)
+  \psi(\vect{x}, t) = \eu^{- \iu H t / \hbar} \psi(\vect{x}, 0)
 \]
-where $\eu^{A} = \sum_{n=0}^\infty \frac{A^n}{n!}$.
-This yields the time evolution operator $U(t) = \eu^{\iu H (t - t_0) / \hbar}$.
-
+where $\eu^{A} \coloneq \sum_{n=0}^\infty \frac{A^n}{n!}$ (convergent for some assumptions on the operator $A$).
+This yields the time evolution operator $U(t) = \eu^{- \iu H t / \hbar}$.
 Since $H$ is Hermitian (\autoref{def:hermitian}), we have
 \[
-\eu^{\iu H (t - t_0) / \hbar} \left(\eu^{\iu H (t - t_0) / \hbar}\right)^*
+\eu^{- \iu H t / \hbar} \left(\eu^{- \iu H t / \hbar}\right)^*
 =
-\eu^{\iu H (t - t_0) / \hbar} \eu^{-\iu H^* (t - t_0) / \hbar}
+\eu^{- \iu H t / \hbar} \eu^{\iu H^* t / \hbar}
 =
-\eu^{\iu (H - H^*) (t - t_0) / \hbar}
+\eu^{\iu (H^* - H) t / \hbar}
 =
 \eu^{0}
 =
 \id
 \]
 and hence $U(t)$ is unitary and therefore preserves the norm of the state vector.
-In general, the exponential of a Hermitian operator is unitary.
-Furthermore,
+In general, if $A$ is Hermitian, then $\eu^{\iu A}$ is unitary.
+Furthermore, we have the properties
 \begin{itemize}
   \item $U(t_1) \cdot U(t_2) = U(t_1 + t_2)$
-  \item $U(t_0) = \id$
+  \item $U(0) = \id$
   \item $U(t)^{-1} = U(t)^* = U(-t)$
 \end{itemize}
 
 
 
-
-
-
-
-
-
-\subsection{Postulates}
-
-The formal structure of quantum mechanics is encapsulated in a few postulates.  In the following we restrict to finite-dimensional Hilbert spaces (as is common in quantum information) but the principles extend to the infinite-dimensional case.
-
-\begin{enumerate}
-  \item \textbf{State space.}  A closed quantum system is described by a unit vector $\ket{\psi}$ in a complex Hilbert space $\mathcal{H}$, meaning $\braket{\psi|\psi}=1$.  In the position representation this corresponds to $\int_{\R^3} |\psi(\vect{x},t)|^2\,\dif\vect{x} = 1$.  \hl[2]{Superposition} is an intrinsic feature: any linear combination
-  \[
-    \alpha\ket{\psi_1} + \beta\ket{\psi_2}
-  \]
-  with $|\alpha|^2+|\beta|^2=1$ is again a valid state, giving rise to interference phenomena.
-
-  \item \textbf{Time evolution.}  The evolution of an isolated system is governed by the Schrödinger equation
-  \[
-    \iu\hbar\,\partial_t\ket{\psi(t)} = H\,\ket{\psi(t)}
-  \]
-  where $H$ is a Hermitian operator called the Hamiltonian.  If $H$ is time-independent the solution is
-  \[
-    \ket{\psi(t)} = U(t)\,\ket{\psi(0)},
-    \quad
-    U(t) = \exp\bigl(-\iu H t/\hbar\bigr)
-  \]
-  and $U(t)$ is unitary so that $\|\psi(t)\|=1$ for all $t$.
-
-  \item \textbf{Measurement.}  Measurable quantities correspond to Hermitian operators $A$ with spectral decomposition
-  \[
-    A = \sum_i \lambda_i P_{\phi_i},
-    \quad P_{\phi_i} = \ket{\phi_i}\bra{\phi_i}
-  \]
-  where the eigenvalues $\lambda_i\in\R$ and the projectors $P_{\phi_i}$ are onto orthonormal eigenvectors $\ket{\phi_i}$.  Measuring $A$ in the state $\ket{\psi}$ yields the outcome $\lambda_i$ with probability
-  \[
-    P(\lambda_i) = \bigl\|P_{\phi_i}\ket{\psi}\bigr\|^2 = |\braket{\phi_i|\psi}|^2
-  \]
-  and the expectation value is
-  \[
-    \Exp_\psi[A] = \braket{\psi|A|\psi} = \sum_i \lambda_i\,P(\lambda_i)
-  \]
-
-  \item \textbf{Composition of systems.}  For subsystems $A$ and $B$ with Hilbert spaces $\mathcal{H}_A$ and $\mathcal{H}_B$, the joint system has state space $\mathcal{H}_A\otimes \mathcal{H}_B$.  Product states $\ket{\psi_A}\otimes\ket{\psi_B}$ represent uncorrelated systems, while superpositions of such products can yield \hl[2]{entangled states}, which have no classical analogue.
-
-  \item \textbf{Dirac notation and trace.}  In a finite-dimensional Hilbert space, kets $\ket{\psi}$ are column vectors and bras $\bra{\psi}$ are their conjugate transpose.  An operator $A$ is represented by a matrix with entries $\braket{k|A|\ell}$ relative to a chosen basis $\{\ket{k}\}$, and projectors are written as $\ket{\phi_i}\bra{\phi_i}$.  The \hl[2]{trace} of $A$ is
-  \[
-    \mathrm{Tr}(A) = \sum_k \braket{k|A|k}
-  \]
-  and does not depend on the basis.  A useful identity is the resolution of the identity $\sum_i\ket{\phi_i}\bra{\phi_i}=\mathbb{1}$, which can be inserted to simplify expressions.
-\end{enumerate}
 
 
 
