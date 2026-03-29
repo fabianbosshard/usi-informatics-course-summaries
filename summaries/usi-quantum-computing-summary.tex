@@ -121,6 +121,10 @@
 \declaretheorem[style=assertionstyle, name=Law,        sibling=theorem]{law}
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{definitionstyle}
 \declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
+
+\declaretheorem[style=definitionstyle, name=Notation, sibling=definition]{notation}
+\declaretheorem[style=definitionstyle, name=Notation, numbered=no]{notation*} % unnumbered notation
+
 \declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ding{45}, postheadspace=1em]{exercisestyle}
 \declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
@@ -134,6 +138,10 @@
 \declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
 \declaretheoremstyle[headfont=\bfseries\color{funblue}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{funblue}\blacktriangleleft}, postheadspace=1em]{examplestyle}
 \declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+
+\declaretheorem[style=remarkstyle,name=Convention, sibling=remark]{convention}
+\declaretheorem[style=remarkstyle,name=Convention, numbered=no]{convention*} % unnumbered convention
+
 \declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft}, postheadspace=1em]{cautionstyle}
 \declaretheorem[style=cautionstyle, name=Caution, sibling=remark]{caution}
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont\footnotesize, spaceabove=\thmspace, spacebelow=\thmspace, postheadspace=1em]{smallremarkstyle}
@@ -3126,9 +3134,9 @@ which can be written as
 \iu \hbar  \frac{\partial}{\partial t}\psi(\vect{x}, t) = H  \psi(\vect{x}, t)
 \]
 where
-\[
+\begin{equation}\label{eq:hamiltonian}
 H = -\tfrac{\hbar^2}{2 m} \Delta + V(\vect{x}, t)
-\]
+\end{equation}
 is the Hamiltonian operator
 % \[
 % H 
@@ -3177,6 +3185,1004 @@ Furthermore, we have the properties
 
 
 
+
+
+
+
+
+
+\subsection{Digression on Operators}
+
+\subsubsection{Bounded Operators}
+
+\begin{definition}\label{def:compact-operator}
+Suppose $X$ and $Y$ are Banach spaces and $U$ is the open unit ball in $X$.
+A linear map $T \colon X \to Y$ is said to be \emph{compact} if the closure of $T(U)$ is compact in $Y$.
+It is clear that $T$ is then also bounded.
+Thus $T \in B(X,Y)$.
+\end{definition}
+Equivalently, $T$ is compact if and only if every bounded sequence $(x_n)_n$ in $X$ contains a subsequence $(x_{n_i})_i$ such that $(Tx_{n_i})_i$ converges to a point of $Y$.
+
+Compact operators are as similar to linear operators on finite-dimensional spaces as one has any right to expect from operators on infinite-dimensional spaces. 
+In particular, these similarities show up in their spectral properties.
+
+\begin{definition}
+Suppose $X$ is a Banach space.
+Then $B(X) \coloneq B(X,X)$ is not merely a Banach space but also an algebra:
+If $S,T \in B(X)$, one defines $ST \in B(X)$ by
+\(
+(ST)x = S(T(x))
+\), $x \in X$.
+The inequality $\|ST\| \leq \|S\| \|T\|$ is easy to verify.
+In particular, powers of $T \in B(X)$ can be defined:
+$T^0 = \id$, the identity mapping on $X$, and $T^n = T^{n-1}T$ for $n \geq 1$.
+\end{definition}
+
+\begin{definition}
+An operator $T \in B(X)$ is said to be \emph{invertible} if there exists $S \in B(X)$ such that $ST = TS = \id$.
+In this case, we write $S = T^{-1}$.
+By the open mapping theorem, this happens if and only if $N(T) = \{0\}$ and $R(T) = X$.
+\end{definition}
+
+
+\begin{definition}\label{def:spectrum}
+The \emph{spectrum} $\sigma(T)$ of an operator $T \in B(X)$ is the set of all scalars $\lambda \in \C$ such that $T - \lambda \id$ is not invertible.
+Thus, $\lambda \in \sigma(T)$ if and only if at least one of the following statements is true:
+\begin{enumerate}[label=(\roman*)]
+\item The range of $T - \lambda \id$ is not all of $X$.
+\item $T - \lambda \id$ is not one-to-one (i.e., it is not injective, i.e. it has a non-trivial kernel). \label{item:not-one-to-one}
+\end{enumerate}
+If \ref{item:not-one-to-one} holds, $\lambda$ is said to be an \emph{eigenvalue} of $T$;
+the corresponding \emph{eigenspace} is $N(T - \lambda \id)$;
+each $x \in N(T - \lambda \id)$ except $x = 0$ is an \emph{eigenvector} of $T$ corresponding to $\lambda$;
+it satisfies $Tx = \lambda x$.
+\end{definition}
+
+\begin{theorem}
+Let $X$ and $Y$ be Banach spaces.
+\begin{enumerate}[label=(\alph*)]
+  \item If $T \in B(X, Y)$ and $\dim R(T) < \infty$, then $T$ is compact.
+  \item If $T \in B(X, Y)$, $T$ is compact, and $R(T)$ is closed, then $\dim R(T) < \infty$.
+  \item The compact operators form a closed subspace of $B(X, Y)$ in its norm topology.
+  \item If $T \in B(X)$, $T$ is compact, and $\lambda \neq 0$, then $\dim N(T - \lambda \id) < \infty$.
+  \item If $\dim X = \infty$, $T \in B(X)$, and $T$ is compact, then $0 \in \sigma(T)$.
+  \item If $S \in B(X)$, $T \in B(X)$, and $T$ is compact, so are $ST$ and $TS$.
+  \qedhere
+\end{enumerate}
+\end{theorem}
+
+
+
+
+\begin{definition}
+\label{def:normal-hermitian-unitary-projection}
+an operator $T \in B(\mathcal{H})$ is said to be
+\begin{enumerate}[label=(\alph*)]
+\item \emph{normal} if $T^* T = T T^*$ \label{item:normal}
+\item \emph{self-adjoint} (or \emph{Hermitian}) if $T^* = T$ \label{item:hermitian}
+\item \emph{unitary} if $T^* T = \id = T T^*$, where $\id$ is the identity operator on $\mathcal{H}$ \label{item:unitary}
+\item a \emph{projection} if $T^2 = T$ \label{item:projection}
+\qedhere
+\end{enumerate}
+\end{definition}
+
+It is clear that self-adjoint operators and unitary operators are normal.
+Many results are about normal operators.
+This algebraic requirement, namely that $T$ commutes with its adjoint, has strong analytic and geometric consequences.
+
+
+\begin{theorem}
+An operator $T \in B(\mathcal{H})$ is normal if and only if $\|Tx\| = \|T^* x\|$ for every $x \in \mathcal{H}$.
+If $T$ is normal, then the following properties hold:
+\begin{enumerate}[label=(\alph*)]
+\item $N(T) = N(T^*)$
+\item $R(T)$ is dense in $\mathcal{H}$ if and only if $T$ is one-to-one
+\item $T$ is invertible if and only if there exists $\delta > 0$ such that $\|Tx\| \geq \delta \|x\|$ for every $x \in \mathcal{H}$
+\item If $Tx = \alpha x$ for some $x \in \mathcal{H}$ and $\alpha \in \C$, then $T^* x = \alpha^* x$
+\item If $\alpha$ and $\beta$ are distinct eigenvalues of $T$, then the corresponding eigenspaces are orthogonal to each other.
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}\label{thm:projection-properties}
+Each of the following four properties of a projection $P \in B(\mathcal{H})$ (\autoref{def:normal-hermitian-unitary-projection}) implies the other three:
+\begin{itemize}
+  \item $P$ is self-adjoint
+  \item $P$ is normal
+  \item $R(P) = N(P)^\perp$
+  \item $\braket{Px | x} = \|Px\|^2$ for every $x \in \mathcal{H}$
+\end{itemize}
+Moreover, two self-adjoint projections $P$ and $Q$ have $R(P) \perp R(Q)$ if and only if $PQ = 0$.
+\end{theorem}
+
+\begin{theorem}
+\begin{enumerate}[label=(\alph*)]
+\item If $U$ is unitary and $\lambda \in \sigma(U)$, then $|\lambda| = 1$.
+\item If $S$ is hermitian (self-adjoint) and $\lambda \in \sigma(S)$, then $\lambda$ is real.
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+
+
+\begin{definition}\label{def:resolution-of-identity}
+Let $\mathfrak{M}$ be a $\sigma$-algebra on a set $\Omega$, and let $\mathcal{H}$ be a Hilbert space.
+A \hl{\emph{resolution of the identity}} (on $\mathfrak{M}$) is a map %mapping
+\[
+E \colon \mathfrak{M} \to B(\mathcal{H})
+\]
+with the following properties:
+\begin{enumerate}[label=(\alph*)]
+\item $E(\emptyset) = 0$, $E(\Omega) = \id$ \label{item:Eemptyset-zero-EOmega-identity}
+\item Each $E(\omega)$ is a self-adjoint projection (see \autoref{def:normal-hermitian-unitary-projection}) \label{item:each-Eomega-self-adjoint-projection}
+\item $E(\omega_1 \cap \omega_2) = E(\omega_1) E(\omega_2)$ \label{item:Eomega1capomega2-is-Eomega1-times-Eomega2}
+\item If $\omega_1 \cap \omega_2 = \emptyset$, then $E(\omega_1 \cup \omega_2) = E(\omega_1) + E(\omega_2)$ \label{item:if-disjoint-then-Eomega1cupomega2-is-sum}
+\item For every $x,y \in \mathcal{H}$, the set function $E_{x,y}$ defined by
+\[
+E_{x,y}(\omega) = \braket{E(\omega)x | y}
+\]
+is a complex measure on $\mathfrak{M}$. \label{item:resolution-of-identity-complex-measure-via-inner-product}
+\qedhere
+\end{enumerate}
+\end{definition}
+When $\mathfrak{M}$ is the $\sigma$-algebra of all Borel sets on a compact or locally compact Hausdorff space, it is customary to add another requirement to \ref{item:resolution-of-identity-complex-measure-via-inner-product}:
+Each $E_{x,y}$ should be a \emph{regular} Borel measure (this is automatically satisfied on compact metric spaces).
+
+
+Some immediate consequences of the properties in \autoref{def:resolution-of-identity}:
+\begin{itemize}
+\item 
+  By \ref{item:each-Eomega-self-adjoint-projection} and \ref{item:resolution-of-identity-complex-measure-via-inner-product}, we have
+  \[
+  E_{x,x}(\omega) 
+  = 
+  \braket{E(\omega)x | x} 
+  =
+  \braket{E(\omega)^2 x | x}
+  =
+  \braket{E(\omega) x | E(\omega) x}
+  =
+  \|E(\omega)x\|^2
+  \]
+  for every $x \in \mathcal{H}$ so that each $E_{x,x}$ is a positive measure on $\mathfrak{M}$ with total variation $\|E_{x,x}\| = E_{x,x}(\Omega) = \|x\|^2$.
+\item 
+  By \ref{item:Eomega1capomega2-is-Eomega1-times-Eomega2}, any two of the projections $E(\omega)$ commute with each other.
+\item 
+  If $\omega_1 \cap \omega_2 = \emptyset$, \ref{item:Eemptyset-zero-EOmega-identity} and \ref{item:Eomega1capomega2-is-Eomega1-times-Eomega2} show that the ranges of $E(\omega_1)$ and $E(\omega_2)$ are orthogonal to each other (\autoref{thm:projection-properties}).
+\end{itemize}
+
+
+\begin{proposition}
+If $E$ is a resolution of the identity, and if $x \in \mathcal{H}$, then
+\[
+\omega \mapsto E(\omega)x
+\]
+is countably additive $\mathcal{H}$-valued measure on $\mathfrak{M}$.
+\end{proposition}
+
+
+Next we tackle the integration of functions with respect to the projection-valued measures defined in \autoref{def:resolution-of-identity}.
+
+\begin{theorem}\label{thm:integration-projection-valued-measure}
+If $E$ is a resolution of the identity, then there exists an isometric *-isomorphism 
+$
+\Psi
+$
+of the Banach algebra $L^\infty(E)$ onto a closed normal subalgebra $\mathcal{A}$ of $B(\mathcal{H})$, which is related to $E$ by
+\[
+\braket{\Psi(f)x | y} = \int_\Omega f \,\dif E_{x,y}
+\]
+for every $f \in L^\infty(E)$ and every $x,y \in \mathcal{H}$.
+This justifies the notation $\Psi(f) = \int_\Omega f \,\dif E$.
+Moreover,
+\[
+\|\Psi(f)x\|^2 = \int_\Omega |f|^2 \,\dif E_{x,x}
+\]
+for every $f \in L^\infty(E)$ and every $x \in \mathcal{H}$
+and
+an operator $Q \in B(\mathcal{H})$ commutes with every $E(\omega)$ if and only if $Q$ commutes with every $\Psi(f)$.
+
+Recall that a \emph{normal} subalgebra $\mathcal{A}$ of $B(\mathcal{H})$ is a commutative one which contains $T^*$ for every $T \in \mathcal{A}$.
+To say that $\Psi$ is a *-isomorphism means that $\Psi$ is one-to-one, linear, multiplicative and that $\Psi(f^*) = \Psi(f)^*$ for every $f \in L^\infty(E)$.
+\end{theorem}
+
+
+The principal assertion of \autoref{thm:spectral-theorem} is that every bounded normal operator $T$ on a Hilbert space induces (in a canonical way) a resolution $E$ of the identity on the Borel subsets of its spectrum $\sigma(T)$ and that $T$ can be reconstructed from $E$ by an integral of the type discussed in \autoref{thm:integration-projection-valued-measure}. 
+A large part of the theory of normal operators depends on this fact.
+
+\begin{theorem}[Spectral theorem]\label{thm:spectral-theorem}
+If $T \in B(\mathcal{H})$ and $T$ is normal (\autoref{def:normal-hermitian-unitary-projection}), then there exists a unique resolution of the identity $E$ (\autoref{def:resolution-of-identity}) on the Borel subsets of $\sigma(T)$ (\autoref{def:spectrum}) such that
+\begin{equation}\label{eq:spectral-theorem}
+\boxed{
+T = \int_{\sigma(T)} \lambda \,\dif E(\lambda)
+}
+\end{equation}
+% where 
+% \[
+% \sigma(T) = \{\lambda \in \C : T - \lambda \id \text{ is not invertible}\}
+% \]
+% is the spectrum of $T$.
+Moreover, every projection $E(\omega)$ commutes with every $S \in B(\mathcal{H})$ which commutes with $T$.
+\end{theorem}
+
+We call $E$ the \emph{spectral decomposition} of $T$.
+
+Sometimes it is convenient to think of $E$  as being defined for all Borel sets in $\C$;
+to achieve this put $E(\omega) = 0$ if $\omega \cap \sigma(T) = \emptyset$.
+
+
+
+\begin{notation}[Symbolic Calculus for Normal Operators]
+If $E$ is the spectral decomposition of a normal operator $T \in B(\mathcal{H})$, and if $f$ is a bounded Borel function on $\sigma(T)$, it is customary to denote the operator
+\(
+\Psi(f) = \int_{\sigma(T)} f \,\dif E
+\)
+by $f(T)$.
+\end{notation}
+% Using this notation, parts of \autoref{thm:integration-projection-valued-measure} and \autoref{thm:spectral-theorem} can be summarized as follows:
+
+
+\begin{theorem}
+A normal $T \in B(\mathcal{H})$ is 
+\begin{enumerate}[label=(\alph*)]
+\item hermitian if and only if $\sigma(T)$ lies on the real axis
+\item unitary if and only if $\sigma(T)$ lies on the unit circle
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Unbounded operators}
+
+Let $\mathcal H$ be a Hilbert space.
+By an \emph{operator} in $\mathcal H$ we mean a linear map
+\(
+T \colon D(T) \to \mathcal H
+\),
+where the \emph{domain} $D(T)$ is a linear subspace of $\mathcal H$.
+% Its \emph{range} is
+% \(
+% R(T) \coloneq \{Tx : x \in D(T)\}
+% \).
+If $D(T)$ is dense in $\mathcal H$, we say that $T$ is \hl{\emph{densely defined}}.
+
+% \begin{definition}
+The \emph{graph} of an operator $T$ is
+\(
+G(T) \coloneq \{(x,Tx) : x \in D(T)\} \subseteq \mathcal H \times \mathcal H
+\).
+The operator $T$ is said to be \emph{closed} if $G(T)$ is closed in $\mathcal H \times \mathcal H$.
+It is said to be \emph{closable} if the closure of $G(T)$ is itself the graph of an operator.
+% \end{definition}
+
+Equivalently, $T$ is closed if whenever $x_n \in D(T)$, $x_n \to x$ in $\mathcal H$, and $Tx_n \to y$ in $\mathcal H$, then $x \in D(T)$ and $Tx = y$.
+
+% \begin{definition}
+Suppose $T$ is densely defined.
+An element $y \in \mathcal H$ is said to lie in the domain of the \emph{adjoint} $T^*$ if the map
+\(
+x \mapsto \braket{Tx \mid y}
+\),
+\(
+x \in D(T)
+\),
+is a bounded linear functional on $D(T)$ (with the norm inherited from $\mathcal H$).
+By Hahn-Banach and the Riesz representation theorem, there is then a unique vector $T^*y \in \mathcal H$ such that
+\[
+\braket{Tx \mid y} = \braket{x \mid T^*y}
+\]
+for every $x \in D(T)$.
+Thus
+\[
+D(T^*) \coloneq \left\{y \in \mathcal H : x \mapsto \braket{Tx \mid y}
+\text{ is bounded on } D(T)\right\}
+\]
+and $T^* \colon D(T^*) \to \mathcal H$ is an operator in $\mathcal H$.
+% \end{definition}
+If $T \in B(\mathcal H)$, this agrees with the usual adjoint of a bounded operator.
+
+% \begin{definition}
+A densely defined operator $T$ is called
+\begin{enumerate}[label=(\alph*)]
+\item 
+\emph{symmetric} if
+\(
+\braket{Tx \mid y} = \braket{x \mid Ty}
+\)
+for every $x,y \in D(T)$, or,
+equivalently,
+\(
+T \subseteq T^*
+\)
+\item 
+\emph{self-adjoint} if
+\(
+T = T^*
+\)
+\end{enumerate}
+% \end{definition}
+
+Unlike for bounded operators, symmetry and self-adjointness are not the same for unbounded operators.
+
+% \begin{definition}
+If $S$ and $T$ are operators in $\mathcal H$, their sum and product are defined on the natural domains
+\[
+D(S+T) = D(S)\cap D(T)
+\qquad
+D(ST) = \{x \in D(T) : Tx \in D(S)\}
+\]
+% \end{definition}
+With these definitions, the associative laws remain valid, but one must always watch domains carefully.
+
+\begin{theorem}
+If $T$ is densely defined, then $T^*$ is closed.
+In particular, every self-adjoint operator is closed.
+\end{theorem}
+
+\begin{theorem}
+If $T$ is densely defined and closed, then 
+\begin{enumerate}[label=(\roman*)]
+\item
+$D(T^*)$ is dense in $\mathcal H$ and
+\(
+T^{**} = T
+\).
+\item
+\(
+I + T^*T
+\)
+is a one-to-one mapping of
+\(
+D(T^*T)=\{x\in D(T): Tx\in D(T^*)\}
+\)
+onto $\mathcal H$.
+Its inverse
+\(
+(I+T^*T)^{-1}
+\)
+belongs to $B(\mathcal H)$.
+\item
+$T^*T$ is self-adjoint and positive, i.e.,
+\(
+\braket{T^*Tx \mid x} = \|Tx\|^2 \ge 0
+\)
+for all $x \in D(T^*T)$.
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}
+The \emph{resolvent set} of an operator $T$ is the set of all $\lambda \in \mathbb C$ such that
+\(
+T-\lambda I
+\)
+is one-to-one, maps $D(T)$ onto $\mathcal H$, and has bounded inverse in $B(\mathcal H)$.
+Its complement is the \emph{spectrum} $\sigma(T)$.
+\end{definition}
+
+\begin{definition}\label{def:domain-of-Psi}
+Let $E$ be a resolution of the identity on a measurable space $(\Omega,\mathfrak M)$, and let
+\(
+f \colon \Omega \to \mathbb C
+\)
+be measurable.
+Define
+\(
+D_f \coloneq \{x \in \mathcal H : \int_\Omega |f|^2 \, \dif E_{x,x} < \infty \}
+\).
+Then $D_f$ is a dense subspace of $\mathcal H$.
+The operator $\Psi(f)$ is defined by the requirement
+\[
+\braket{\Psi(f)x \mid y}
+=
+\int_\Omega f \, \dif E_{x,y}
+\]
+for every $x \in D_f$ and every $y \in \mathcal H$.
+\end{definition}
+
+\begin{theorem}[Functional calculus for measurable functions]
+With the notation above, $\Psi(f)$ is a densely defined closed operator with domain $D_f$, and
+\[
+\|\Psi(f)x\|^2 = \int_\Omega |f|^2\, \dif E_{x,x}
+\]
+for every $x \in D_f$.
+If $f$ and $g$ are measurable, then
+\(
+\Psi(f)\Psi(g) \subseteq \Psi(fg)
+\),
+and
+\(
+\Psi(f)^* = \Psi(f^*)
+\).
+Hence
+\(
+\Psi(f)^*\Psi(f)=\Psi(|f|^2)=\Psi(f)\Psi(f)^*
+\).
+So every operator of the form $\Psi(f)$ is normal.
+\end{theorem}
+
+
+\begin{definition}\label{def:normal-operator}
+A (not necessarily bounded) linear operator $T$ in $\mathcal{H}$ is said to be \hl[2]{\emph{normal}} if $T$ is closed, densely defined, and $T^* T = T T^*$.
+\end{definition}
+
+\begin{theorem}
+If $N$ is normal, then
+\begin{enumerate}[label=(\alph*)]
+\item $D(N)=D(N^*)$
+\item $\|Nx\|=\|N^*x\|$ for every $x\in D(N)$
+\item $N$ is \emph{maximally normal}: if $M$ is normal and $N\subseteq M$, then $M=N$
+\qedhere
+\end{enumerate}
+\end{theorem}
+
+
+
+\begin{theorem}[Spectral theorem]\label{thm:spectral-theorem-unbounded}
+Every normal operator $T$ in $\mathcal H$ has a unique spectral decomposition $E$\footnote{%
+In the unbounded case, a resolution of the identity means exactly the same thing as before (\autoref{def:resolution-of-identity}): a projection-valued measure
+\(
+E:\mathfrak M\to B(\mathcal H)
+\).
+What is new is that for measurable \(f\), the operator
+\(
+\Psi(f)
+\)
+need not be bounded; its domain is
+\(
+D_f=\{x\in\mathcal H:\int |f|^2\,\dif E_{x,x}<\infty\}
+\)
+(see \autoref{def:domain-of-Psi}).%
+}, which satisfies
+\[
+% \boxed{
+\braket{Tx \mid y} = \int_{\sigma(T)} \lambda \,\dif E_{x,y}(\lambda)
+% }
+\]
+for $x \in D(T) \overset{\text{\hyperref[def:domain-of-Psi]{def}}}{=} \{x\in\mathcal H:\int_{\sigma(T)} |\lambda|^2\,\dif E_{x,x}(\lambda)<\infty\}$ and $y \in \mathcal H$.
+Equivalently:
+\[
+\boxed{
+T=\int_{\sigma(T)} \lambda\, \dif E(\lambda)
+}
+\]
+Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sigma(T)$ and every $S \in B(\mathcal H)$ which commutes with $T$ in the sense that $ST \subseteq TS$.
+\end{theorem}
+
+
+\clearpage
+
+
+
+
+
+\subsection{Postulates}
+
+\subsubsection{The state}
+
+To isolated quantum system we associate a complex Hilbert space $\mathcal{H}$.
+A \emph{state} of the system is represented by a normalized vector
+\(
+\psi \in \mathcal{H}
+\)
+with
+\(
+\|\psi\| = 1
+\).
+If $\mathcal{H}$ is realized as a space of wave functions, for example $\mathcal{H} = L^2(\R^3)$, then, as already introduced in \eqref{eq:inner-product},  the scalar product is
+\[
+\braket{\psi_1 | \psi_2}
+\coloneq
+\int_{\R^3} \psi_1(\vect{x}, t)^* \, \psi_2(\vect{x}, t) \,\dif \vect{x} \tikzmark{innerproduct}
+\]
+% \begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
+% \node [anchor=west, align=left, text width=3.8cm] at ($(pic cs:innerproduct)+(0.5,1ex/2)$) {as already introduced in \eqref{eq:inner-product}};
+% \end{tikzpicture}%
+and the normalization condition becomes
+\(
+\|\psi\|^2
+=
+\braket{\psi | \psi}
+=
+\int_{\R^3} |\psi(\vect{x}, t)|^2 \,\dif \vect{x}
+=
+1
+\).
+In that case, $|\psi(\vect{x}, t)|^2$ is interpreted as probability density.
+
+The linear structure of $\mathcal{H}$ gives the \emph{superposition principle}:
+if $\psi_1,\psi_2 \in \mathcal{H}$ and $\alpha,\beta \in \C$, then also
+\(
+\alpha \psi_1 + \beta \psi_2 \in \mathcal{H}
+\).
+If, in addition,
+\(
+\|\alpha \psi_1 + \beta \psi_2\| = 1
+\),
+then this superposition again represents a physical state.
+
+Thus quantum states behave like waves:
+linear combinations of states are again states.
+This is the mathematical source of interference phenomena.  % [oai_citation:0‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+
+\subsubsection{The time evolution}
+
+As already introduced in \eqref{eq:schroedinger}, the time evolution of a quantum state is governed by the Schrödinger equation
+\[
+\iu \hbar  \frac{\partial}{\partial t}\psi(\vect{x}, t) = H  \psi(\vect{x}, t) \tikzmark{schroedinger}
+\]
+% \begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
+% \node [anchor=west, align=left, text width=3.8cm] at ($(pic cs:schroedinger)+(0.5,1ex/2)$) {as already introduced in \eqref{eq:schroedinger}};
+% \end{tikzpicture}%
+where $H$ is the Hamiltonian operator \eqref{eq:hamiltonian}.
+It is linear: any linear combination of solutions constitutes again a solution.
+
+We assume the Hermitian Hamiltonian $H$ to be time-independent.
+Then, the solutions to \eqref{eq:schroedinger} can be written as
+\[
+\psi(t) = \eu^{- \iu H t / \hbar} \psi(0)
+\]
+with $\psi(0)$ being the state at some initial time $t_0$.
+If $H$ is self-adjoint, then $\eu^{- \iu H t / \hbar}$ is unitary
+and therefore preserves the norm, i.e. if
+\(\braket{\psi(0) | \psi(0)} = 1\), then
+\(
+\braket{\psi(t) | \psi(t)}
+=
+1
+\) for all $t \in \R$.
+Consequently, the states $\psi(t)$ are normalized if the inital state $\psi(0)$ is.
+
+
+
+\subsubsection{Observables}
+
+A measurable physical quantity is represented by an observable, that is, by a Hermitian operator
+\(
+A = A^*
+\).
+The expectation value of $A$ in a state $\psi$ is
+\(
+\braket{A}_{\psi}
+\coloneq
+\braket{\psi | A \psi}
+\).
+The possible outcomes of a measurement of $A$ are given by the spectrum of $A$.
+
+
+
+% \begin{theorem}[Spectral theorem, shorter version]\label{thm:spectral-theorem-short}
+% Let $\mathcal{H}$ be a complex Hilbert space and let
+% \[
+% A \colon \mathcal{D}(A) \subseteq \mathcal{H} \to \mathcal{H}
+% \]
+% be a densely defined self-adjoint operator.
+
+% Then there exists a unique projection-valued measure
+% \[
+% E_A \colon \mathcal{B}(\R) \to \operatorname{Proj}(\mathcal{H})
+% \]
+% such that
+% \[
+% A = \int_{\R} \lambda \,\dif E_A(\lambda)
+% \]
+
+% If $A$ has purely discrete spectrum, this reduces to
+% \[
+% A = \sum_i \lambda_i P_i
+% \]
+% where $\lambda_i \in \R$ are the eigenvalues and $P_i$ are the orthogonal projections onto the corresponding eigenspaces.
+
+% If, moreover, $\mathcal{H}$ is finite-dimensional, then there exists an orthonormal basis of eigenvectors $\{\varphi_i\}_i$ of $A$, and
+% \[
+% A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+% \]
+% \end{theorem}
+
+In the finite-dimensional case, the spectral theorem says that a linear operator $A$ is self-adjoint if and only if there exists an orthonormal basis of eigenvectors $\{\varphi_i\}_i$ and real eigenvalues $\lambda_i \in \R$ such that
+\[
+A = \sum_i \lambda_i P_{\varphi_i}
+\]
+where
+\[
+P_{\varphi_i}\psi = (\varphi_i,\psi)\varphi_i
+\]
+is the orthogonal projector onto $\Span\{\varphi_i\}$.
+
+Equivalently,
+\[
+A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\]
+once Dirac notation is introduced.
+
+In the general infinite-dimensional case, the corresponding statement is the spectral theorem in its projection-valued form:
+to every self-adjoint operator $A$ there corresponds a projection-valued measure $E_A$ on $\R$ such that
+\[
+A = \int_{\R} \lambda \,\dif E_A(\lambda)
+\]
+in the sense of spectral integration.
+
+Thus, in general, the spectrum need not consist only of discrete eigenvalues.
+It may also contain continuous parts.
+
+If the system is in the normalized state $\psi$, then the probability that a measurement of $A$ yields a value in a Borel set $B \subseteq \R$ is
+\[
+\Prob_A^\psi(B) = (\psi, E_A(B)\psi)
+\]
+
+In the purely discrete case, this reduces to
+\[
+\Prob(\lambda_i)
+=
+\|P_{\varphi_i}\psi\|^2
+=
+(\psi, P_{\varphi_i}\psi)
+=
+|(\varphi_i,\psi)|^2
+\]
+
+Indeed,
+\[
+P_{\varphi_i}\psi = (\varphi_i,\psi)\varphi_i
+\]
+and hence
+\[
+\|P_{\varphi_i}\psi\|^2
+=
+((\varphi_i,\psi)\varphi_i, (\varphi_i,\psi)\varphi_i)
+=
+|(\varphi_i,\psi)|^2 (\varphi_i,\varphi_i)
+=
+|(\varphi_i,\psi)|^2
+\]
+
+The expectation value is then the weighted average of all possible outcomes:
+\[
+\braket{A}_{\psi}
+=
+\braket{\psi | A \psi}
+=
+\sum_i \lambda_i |(\varphi_i,\psi)|^2
+\]
+in the discrete case.
+
+Indeed,
+\[
+\braket{\psi | A \psi}
+=
+\left(
+\psi,
+\sum_i \lambda_i P_{\varphi_i}\psi
+\right)
+=
+\sum_i \lambda_i (\psi, P_{\varphi_i}\psi)
+=
+\sum_i \lambda_i |(\varphi_i,\psi)|^2
+\]
+
+More generally, in the spectral-measure formulation,
+\[
+\braket{A}_{\psi}
+=
+(\psi, A\psi)
+=
+\int_{\R} \lambda \,\dif (\psi, E_A(\lambda)\psi)
+\]
+
+After an ideal measurement with outcome corresponding to a projector $P$, the post-measurement state is the normalized projected vector
+\[
+\psi
+\longmapsto
+\frac{P\psi}{\|P\psi\|}
+\]
+provided $P\psi \neq 0$.  % [oai_citation:2‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:3‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
+
+\subsubsection{Joint systems and composition}
+
+If two systems are described by Hilbert spaces $\mathcal{H}_A$ and $\mathcal{H}_B$, then the joint system is described by the tensor product space
+\[
+\mathcal{H}_A \otimes \mathcal{H}_B
+\]
+
+If the two subsystems are in pure states $\psi_A \in \mathcal{H}_A$ and $\psi_B \in \mathcal{H}_B$, then the corresponding product state is
+\[
+\psi_A \otimes \psi_B \in \mathcal{H}_A \otimes \mathcal{H}_B
+\]
+
+The tensor product is bilinear:
+\[
+(\psi_1 + \psi_2)\otimes \varphi
+=
+\psi_1 \otimes \varphi + \psi_2 \otimes \varphi
+\]
+\[
+\psi \otimes (\varphi_1 + \varphi_2)
+=
+\psi \otimes \varphi_1 + \psi \otimes \varphi_2
+\]
+\[
+a(\psi \otimes \varphi)
+=
+(a\psi)\otimes\varphi
+=
+\psi\otimes(a\varphi)
+\]
+
+This preserves the superposition principle when passing from subsystems to the composite system.
+
+However, not every vector in $\mathcal{H}_A \otimes \mathcal{H}_B$ is a product state.
+A pure state is called \emph{separable} if it can be written as
+\[
+\psi = \varphi_A \otimes \varphi_B
+\]
+for some $\varphi_A \in \mathcal{H}_A$ and $\varphi_B \in \mathcal{H}_B$.
+If this is not possible, the state is called \emph{entangled}.
+
+For example,
+\[
+\frac{1}{\sqrt{2}}
+\left(
+\ket{0}\otimes\ket{1}
+-
+\ket{1}\otimes\ket{0}
+\right)
+\]
+is an entangled state.
+
+Thus the state space of a composite quantum system is much richer than the Cartesian product of classical state spaces:
+it also contains superpositions of product states, and these are precisely what give rise to entanglement.  % [oai_citation:4‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+
+\subsubsection{Abstraction and simplification}
+
+For quantum information theory, we now restrict to the case where the Hilbert space is finite-dimensional.
+Then
+\[
+\mathcal{H} \cong \C^n
+\]
+for some $n \in \N$.
+
+This allows us to work with vectors and matrices instead of general Hilbert-space operators and spectral measures.
+
+With respect to a fixed orthonormal basis, a vector $\varphi \in \mathcal{H}$ is represented by a column vector
+\[
+\ket{\varphi}
+=
+\begin{bmatrix}
+\varphi_1 \\
+\varphi_2 \\
+\vdots \\
+\varphi_n
+\end{bmatrix}
+\]
+called a \emph{ket}.
+
+Its adjoint is the row vector
+\[
+\bra{\varphi}
+=
+\ket{\varphi}^*
+=
+\begin{bmatrix}
+\overline{\varphi_1} &
+\overline{\varphi_2} &
+\cdots &
+\overline{\varphi_n}
+\end{bmatrix}
+\]
+called a \emph{bra}.
+
+The scalar product becomes
+\[
+(\varphi,\psi)
+=
+\bra{\varphi}\ket{\psi}
+=
+\sum_{i=1}^n \overline{\varphi_i}\psi_i
+\]
+
+Projectors onto one-dimensional subspaces can be written as
+\[
+P_{\varphi} = \ket{\varphi}\bra{\varphi}
+\]
+because
+\[
+\ket{\varphi}\bra{\varphi}\ket{\psi}
+=
+\braket{\varphi|\psi}\ket{\varphi}
+\]
+
+Thus, if
+\[
+A = \sum_i \lambda_i P_{\varphi_i}
+\]
+then
+\[
+A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\]
+
+More generally, if $\{\ket{k}\}_k$ is an orthonormal basis, then every operator $A$ can be expanded as
+\[
+A = \sum_{k,l} \braket{k|A|l} \ket{k}\bra{l}
+\]
+
+A useful identity is the resolution of the identity
+\[
+\id = \sum_i \ket{i}\bra{i}
+\]
+which can be inserted into calculations at convenient places.  % [oai_citation:5‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:6‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
+
+\subsubsection{The trace}
+
+For an operator $A \in \operatorname{End}(\mathcal{H})$ on a finite-dimensional Hilbert space, the trace is defined by
+\[
+\Trace(A)
+\coloneq
+\sum_k \braket{k|A|k}
+\]
+where $\{\ket{k}\}_k$ is any orthonormal basis.
+
+The trace is basis-independent.
+A key identity is
+\[
+\Trace(AB) = \Trace(BA)
+\]
+
+Hence for a unitary change of basis $U$,
+\[
+\Trace(UAU^*)
+=
+\Trace(U^*UA)
+=
+\Trace(A)
+\]
+
+For a pure state $\ket{\psi}$ and an observable $A$, the expectation value can be written as
+\[
+\langle A \rangle_{\psi}
+=
+\braket{\psi|A|\psi}
+=
+\Trace\bigl(\ket{\psi}\bra{\psi}A\bigr)
+\]
+which is the form that extends naturally to mixed states.  % [oai_citation:7‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:8‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
+
+\subsubsection{Density matrices}
+
+So far, states were pure states.
+More generally, one may only know a probability distribution over pure states.
+This describes a \emph{statistical mixture}, not a superposition.
+
+Such a state is represented by a density operator $\rho$.
+
+In finite dimension, a density matrix is a positive trace-one operator:
+\[
+\rho = \rho^*
+\qquad
+\rho \geq 0
+\qquad
+\Trace(\rho) = 1
+\]
+
+Equivalently, by the spectral theorem,
+\[
+\rho = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\]
+with
+\[
+\lambda_i \geq 0
+\qquad
+\sum_i \lambda_i = 1
+\]
+
+Thus the eigenvalues of $\rho$ may be interpreted as probabilities.
+
+Pure states are exactly those density matrices of the form
+\[
+\rho = \ket{\psi}\bra{\psi}
+\]
+for some normalized $\psi$.
+
+The time evolution of density matrices is
+\[
+\rho(t) = U(t)\rho(0)U(t)^*
+\]
+
+If
+\[
+A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\]
+is an observable, then the probability of obtaining the outcome $\lambda_i$ is
+\[
+\Prob(\lambda_i)
+=
+\Trace\bigl(\ket{\varphi_i}\bra{\varphi_i}\rho\bigr)
+\]
+
+The expectation value of $A$ in the state $\rho$ is
+\[
+\langle A \rangle_{\rho}
+=
+\Trace(\rho A)
+\]
+
+Indeed,
+\[
+\Trace(\rho A)
+=
+\Trace\left(
+\rho \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\right)
+=
+\sum_i \lambda_i \Trace\bigl(\ket{\varphi_i}\bra{\varphi_i}\rho\bigr)
+\]
+so it is again the weighted sum over the possible measurement outcomes.  % [oai_citation:9‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+
+\subsubsection{Parts of entangled systems and partial trace}
+
+If a bipartite system has density matrix
+\[
+\rho_{AB} \in \operatorname{End}(\mathcal{H}_A \otimes \mathcal{H}_B)
+\]
+then the state of subsystem $A$ alone is described by the reduced density matrix
+\[
+\rho_A = \Trace_B(\rho_{AB})
+\]
+where the partial trace is defined by linear extension of
+\[
+\Trace_B(S \otimes T) = \Trace(T)S
+\]
+
+Similarly,
+\[
+\rho_B = \Trace_A(\rho_{AB})
+\]
+
+For the singlet state
+\[
+\ket{\psi^-}
+=
+\frac{1}{\sqrt{2}}
+\left(
+\ket{0}_A \otimes \ket{1}_B
+-
+\ket{1}_A \otimes \ket{0}_B
+\right)
+\]
+we have
+\[
+\rho_{AB} = \ket{\psi^-}\bra{\psi^-}
+\]
+and
+\[
+\rho_A = \Trace_B(\rho_{AB}) = \frac{\id_A}{2}
+\qquad
+\rho_B = \Trace_A(\rho_{AB}) = \frac{\id_B}{2}
+\]
+
+Thus each subsystem is maximally mixed although the total state is pure.
+
+Moreover, local measurement statistics are determined entirely by the reduced density matrix.
+If Alice measures a projector $P_{\varphi_i}$ on her subsystem, then
+\[
+\Prob(\lambda_i)
+=
+\Trace\bigl((P_{\varphi_i} \otimes \id_B)\rho_{AB}\bigr)
+=
+\Trace\bigl(P_{\varphi_i}\rho_A\bigr)
+\]
+
+Hence operations performed only on Bob's subsystem do not alter Alice's local outcome probabilities.
+This is the formal reason why entanglement alone does not allow signalling.  % [oai_citation:10‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
 
 
 
