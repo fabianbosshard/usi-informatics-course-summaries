@@ -3677,7 +3677,7 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 \end{theorem}
 
 
-\clearpage
+
 
 
 
@@ -3784,8 +3784,138 @@ The expectation value of $A$ in a state $\psi$ is
 provided $\psi \in D(A)$.
 The possible outcomes of a measurement of $A$ are given by the spectrum $\sigma(A)$ of $A$.
 
-The finite-dimensional case serves as the guiding example.
-If $A$ is self-adjoint, then by the spectral theorem it admits an orthonormal basis of eigenvectors $\{\varphi_i\}_{i=1}^n$ with real eigenvalues $\sigma(A) = \{\lambda_i\}_{i=1}^n$, so that
+% This is the calculation one would like to preserve in general Hilbert spaces.
+% The difficulty is that in infinite-dimensional Hilbert spaces a self-adjoint operator need not admit an orthonormal basis of eigenvectors: there may be continuous spectrum 
+
+In a general Hilbert space $\mathcal{H}$, every self-adjoint operator $A$ admits a spectral decomposition
+(see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator} and \autoref{thm:spectral-theorem-unbounded}).
+Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
+By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
+\[
+E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H) % why bounded? because each E_A(omega) is a projection, hence a bounded operator
+\]
+on the Borel sets of $\sigma_A$ such that
+\(
+A = \int_{\sigma_A} \lambda \,\dif E_A(\lambda)
+\).
+Here each $E_A(\omega)$ is a self-adjoint projection, and by \autoref{def:resolution-of-identity} and the remarks following it,
+\[
+\braket{\psi|E_A(\omega)\psi} = \|E_A(\omega)\psi\|^2 \ge 0
+\]
+for every Borel set $\omega \subseteq \sigma_A$.
+Moreover,
+\(
+E_A(\sigma_A)=\id
+\) and
+\(
+E_A(\emptyset)=0
+\),
+so for normalized $\psi$ we have
+\(
+\braket{\psi|E_A(\sigma_A)\psi} = \braket{\psi|\psi} = 1
+\).
+Therefore, 
+for every normalized state $\psi$,
+the map
+\begin{equation}\label{eq:probability-measure-from-spectral-decomposition}
+\mu_\psi^A(\omega)
+\coloneq
+\braket{\psi|E_A(\omega)\psi}
+\overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
+\braket{E_A(\omega)\psi|\psi}
+\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+E_{\psi,\psi}(\omega)
+\end{equation}
+for $\omega \in \mathcal{B}(\sigma_A)$, 
+defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
+This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
+This is called the \emph{Born rule}.
+
+% So the generalization of the discrete formula
+% \(
+% p_i = \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% \)
+% is not, in general, a pdf, but a probability measure
+% \[
+% \Prob_A^\psi(B)
+% =
+% \mu_\psi^A(B)
+% =
+% \braket{\psi|E_A(B)\psi}
+% \]
+% for Borel sets $B \in \mathcal B(\sigma_A)$.
+% This is the precise infinite-dimensional analogue of the Born rule.
+
+% \[
+% \begin{aligned}
+% \braket{A}_{\psi}
+% &=
+% \braket{\psi|A\psi}
+% \\
+% &=
+% \Braket{\psi | \int_{\sigma_A} \lambda \,\dif E_A(\lambda)\, \psi}
+% \\
+% &=
+% \int_{\sigma_A} \lambda \, \dif \braket{\psi|E_A(\lambda)\psi}
+% \\
+% &=
+% \int_{\sigma_A} \lambda \, \dif \mu_\psi^A(\lambda)
+% \end{aligned}
+% \]
+
+With this notation, the expectation value is obtained as 
+\[
+\begin{aligned}
+\braket{A}_{\psi}
+&=
+\braket{\psi|A\psi}
+\overset{\text{\ref{def:symmetric-self-adjoint-unbounded}.\ref{item:densely-defined-self-adjoint}}}{=}
+\braket{A\psi|\psi}
+\\
+&\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
+\int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
+% \\
+% &\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+% \int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
+\\
+&\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
+\int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
+\end{aligned}
+\]
+% where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
+which is precisely the probabilistic expectation of the measurement outcomes with respect to the spectral probability measure.
+In case the spectrum has both discrete and continuous parts, then $\mu_\psi^A$ automatically contains both.
+
+% If the measure happens to be absolutely continuous with respect to Lebesgue measure, then one may write
+% \[
+% \mu_\psi^A(B) = \int_B \rho_\psi^A(\lambda)\,\dif\lambda
+% \]
+% for some density $\rho_\psi^A$.
+% But pedagogically the fundamental object is the measure $\mu_\psi^A$, not necessarily a density.
+
+After an ideal measurement, the state updates by projection.
+If one only knows that the outcome lies in a Borel set $\omega$, then the post-measurement state is
+\begin{equation}\label{eq:post-measurement-state}
+\psi
+\longmapsto
+\frac{E_A(\omega)\psi}{\|E_A(\omega)\psi\|}
+\end{equation}
+provided $E_A(\omega)\psi \neq 0$.
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{example}[Finite-dimensional case]
+% The finite-dimensional case serves as the guiding example.
+If $A$ is self-adjoint, then by the (finite-dimensional) spectral theorem it admits an orthonormal basis of eigenvectors $\{\varphi_i\}_{i=1}^n$ with real eigenvalues $\sigma(A) = \{\lambda_i\}_{i=1}^n$, so that
 \[
 A = \sum_{i=1}^n \lambda_i P_{\varphi_i}
 \]
@@ -3825,85 +3955,29 @@ form
 \braket{A}_{\psi} = \sum_{i = 1}^n \lambda_i p_i
 \).
 
-This is the calculation one would like to preserve in general Hilbert spaces.
-The difficulty is that in infinite-dimensional Hilbert spaces a self-adjoint operator need not admit an orthonormal basis of eigenvectors: there may be continuous spectrum (see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator}).
-So the sum over eigenvalues must be replaced by the spectral decomposition (\autoref{thm:spectral-theorem-unbounded}).
-Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
-By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
-\[
-E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H)
-\]
-on the Borel sets of $\sigma_A$ such that
-\(
-A = \int_{\sigma_A} \lambda \,\dif E_A(\lambda)
-\).
-Here each $E_A(B)$ is a self-adjoint projection, and by \autoref{def:resolution-of-identity} and the remarks following it,
-\[
-\braket{\psi|E_A(B)\psi} = \|E_A(B)\psi\|^2 \ge 0
-\]
-for every Borel set $B \subseteq \sigma_A$.
-Moreover,
-\(
-E_A(\sigma_A)=\id
-\) and
-\(
-E_A(\emptyset)=0
-\),
-so for normalized $\psi$ we have
-\(
-\braket{\psi|E_A(\sigma_A)\psi} = \braket{\psi|\psi} = 1
-\).
-Therefore, 
-for every normalized state $\psi$,
-the map
-\begin{equation}\label{eq:probability-measure-from-spectral-decomposition}
-\mu_\psi^A(B)
-\coloneq
-\braket{\psi|E_A(B)\psi}
-\overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
-\braket{E_A(B)\psi|\psi}
-\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
-E_{\psi,\psi}(B)
-\end{equation}
-for $B \in \mathcal B(\sigma_A)$, 
-defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
-This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
-This is the precise infinite-dimensional analogue of the Born rule.
 
-% So the generalization of the discrete formula
-% \(
-% p_i = \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% \)
-% is not, in general, a pdf, but a probability measure
-% \[
-% \Prob_A^\psi(B)
-% =
-% \mu_\psi^A(B)
-% =
-% \braket{\psi|E_A(B)\psi}
-% \]
-% for Borel sets $B \in \mathcal B(\sigma_A)$.
-% This is the precise infinite-dimensional analogue of the Born rule.
 
+
+The general formulas above reduce to the familiar discrete ones. 
 Indeed, in the purely discrete case one has
 \[
-E_A(B) = \sum_{\lambda_i \in B} P_{\varphi_i}
+E_A(\omega) = \sum_{\lambda_i \in \omega} P_{\varphi_i}
 \]
 and therefore
 \[
 \begin{aligned}
-\mu_\psi^A(B)
+\mu_\psi^A(\omega)
 &=
-\braket{\psi|E_A(B)\psi}
+\braket{\psi|E_A(\omega)\psi}
 \\
 &=
-\Braket{\psi | \sum_{\smash[b]{\lambda_i} \in B} P_{\varphi_i}\psi}
+\Braket{\psi | \sum_{\smash[b]{\lambda_i} \in \omega} P_{\varphi_i}\psi}
 \\
 &=
-\sum_{\lambda_i \in B} \braket{\psi|P_{\varphi_i}\psi}
+\sum_{\lambda_i \in \omega} \braket{\psi|P_{\varphi_i}\psi}
 \\
 &=
-\sum_{\lambda_i \in B} \bigl|\braket{\varphi_i|\psi}\bigr|^2
+\sum_{\lambda_i \in \omega} \bigl|\braket{\varphi_i|\psi}\bigr|^2
 \end{aligned}
 \]
 which recovers exactly the usual formula.
@@ -3912,7 +3986,64 @@ In particular,
 \Prob_A^\psi(\{\lambda_i\}) = \bigl|\braket{\varphi_i|\psi}\bigr|^2
 \]
 
-Now we perform the same calculation for the expectation value as in the discrete case, but with the spectral integral instead of the spectral sum:
+
+
+
+
+In the finite-dimensional non-degenerate case, where $\omega=\{\lambda_i\}$ and $E_A(\omega)=P_{\varphi_i}$, \eqref{eq:post-measurement-state} reduces to
+\[
+\psi
+\longmapsto
+\frac{P_{\varphi_i}\psi}{\|P_{\varphi_i}\psi\|}
+=
+\varphi_i \eu^{\iu \theta}
+\]
+for some phase $\theta \in [0,2\pi)$.
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \subsubsection{Observables} \label{sec:observables}
+
+% A measurable physical quantity is represented by an observable, that is, by a self-adjoint operator
+% \(
+% A = A^*
+% \)
+% (see Definition \ref{def:hermitian}, \ref{def:normal-hermitian-unitary-projection} \ref{item:hermitian}, \ref{def:symmetric-self-adjoint-unbounded}, \autoref{thm:spectral-theorem}, \autoref{thm:spectral-theorem-unbounded}).
+% The expectation value of $A$ in a state $\psi$ is
+% \[
+% \braket{A}_{\psi}
+% =
+% \braket{\psi | A | \psi}
+% \coloneq
+% \braket{\psi | A\psi}
+% \]
+% provided $\psi \in D(A)$.
+% The possible outcomes of a measurement of $A$ are given by the spectrum $\sigma(A)$ of $A$.
+
+% The finite-dimensional case serves as the guiding example.
+% If $A$ is self-adjoint, then by the spectral theorem it admits an orthonormal basis of eigenvectors $\{\varphi_i\}_{i=1}^n$ with real eigenvalues $\sigma(A) = \{\lambda_i\}_{i=1}^n$, so that
+% \[
+% A = \sum_{i=1}^n \lambda_i P_{\varphi_i}
+% \]
+% where
+% \(
+% P_{\varphi_i}\psi \coloneq \braket{\varphi_i|\psi} \varphi_i
+% \).
+% Substituting this decomposition into the expectation value gives
 % \[
 % \begin{aligned}
 % \braket{A}_{\psi}
@@ -3920,64 +4051,186 @@ Now we perform the same calculation for the expectation value as in the discrete
 % \braket{\psi|A\psi}
 % \\
 % &=
-% \Braket{\psi | \int_{\sigma_A} \lambda \,\dif E_A(\lambda)\, \psi}
+% \Braket{\psi | \sum_{i=1}^n \lambda_i P_{\varphi_i}\psi}
 % \\
 % &=
-% \int_{\sigma_A} \lambda \, \dif \braket{\psi|E_A(\lambda)\psi}
+% \sum_{i=1}^n \lambda_i  \braket{\psi| \braket{\varphi_i|\psi} \varphi_i }
 % \\
 % &=
-% \int_{\sigma_A} \lambda \, \dif \mu_\psi^A(\lambda)
+% \sum_{i=1}^n \lambda_i  \braket{\psi|\varphi_i}\braket{\varphi_i|\psi}
+% \\
+% &=
+% \sum_{i=1}^n \lambda_i  \bigl|\braket{\varphi_i|\psi}\bigr|^2
 % \end{aligned}
 % \]
-\[
-\begin{aligned}
-\braket{A}_{\psi}
-&=
-\braket{\psi|A\psi}
-\overset{\text{\ref{def:symmetric-self-adjoint-unbounded}.\ref{item:densely-defined-self-adjoint}}}{=}
-\braket{A\psi|\psi}
-\\
-&\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
-\int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
-% \\
-% &\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
-% \int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
-\\
-&\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
-\int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
-\end{aligned}
-\]
-% where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
-Thus the expectation value is again the probabilistic expectation of the measurement outcomes, only now with respect to the spectral probability measure instead of a finite list of probabilities.
-This is the exact analogue of
-\(
-\sum_i \lambda_i p_i
-\).
-If the spectrum has both discrete and continuous parts, then $\mu_\psi^A$ automatically contains both.
+% Thus the numbers
+% \(
+% p_i \coloneq \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% \)
+% are precisely the probabilities of obtaining the outcomes $\lambda_i$.
+% So in the discrete case the expectation value has the familiar 
+% %probabilistic 
+% form
+% \(
+% \braket{A}_{\psi} = \sum_{i = 1}^n \lambda_i p_i
+% \).
 
-% If the measure happens to be absolutely continuous with respect to Lebesgue measure, then one may write
+% This is the calculation one would like to preserve in general Hilbert spaces.
+% The difficulty is that in infinite-dimensional Hilbert spaces a self-adjoint operator need not admit an orthonormal basis of eigenvectors: there may be continuous spectrum (see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator}).
+% So the sum over eigenvalues must be replaced by the spectral decomposition (\autoref{thm:spectral-theorem-unbounded}).
+% Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
+% By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
 % \[
-% \mu_\psi^A(B) = \int_B \rho_\psi^A(\lambda)\,\dif\lambda
+% E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H)
 % \]
-% for some density $\rho_\psi^A$.
-% But pedagogically the fundamental object is the measure $\mu_\psi^A$, not necessarily a density.
+% on the Borel sets of $\sigma_A$ such that
+% \(
+% A = \int_{\sigma_A} \lambda \,\dif E_A(\lambda)
+% \).
+% Here each $E_A(B)$ is a self-adjoint projection, and by \autoref{def:resolution-of-identity} and the remarks following it,
+% \[
+% \braket{\psi|E_A(B)\psi} = \|E_A(B)\psi\|^2 \ge 0
+% \]
+% for every Borel set $B \subseteq \sigma_A$.
+% Moreover,
+% \(
+% E_A(\sigma_A)=\id
+% \) and
+% \(
+% E_A(\emptyset)=0
+% \),
+% so for normalized $\psi$ we have
+% \(
+% \braket{\psi|E_A(\sigma_A)\psi} = \braket{\psi|\psi} = 1
+% \).
+% Therefore, 
+% for every normalized state $\psi$,
+% the map
+% \begin{equation}\label{eq:probability-measure-from-spectral-decomposition}
+% \mu_\psi^A(B)
+% \coloneq
+% \braket{\psi|E_A(B)\psi}
+% \overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
+% \braket{E_A(B)\psi|\psi}
+% \overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+% E_{\psi,\psi}(B)
+% \end{equation}
+% for $B \in \mathcal B(\sigma_A)$, 
+% defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
+% This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
+% This is the precise infinite-dimensional analogue of the Born rule.
 
-After an ideal measurement, the state updates by projection.
-If one only knows that the outcome lies in a Borel set $B$, then the post-measurement state is
-\[
-\psi
-\longmapsto
-\frac{E_A(B)\psi}{\|E_A(B)\psi\|}
-\]
-provided $E_A(B)\psi \neq 0$.
-In the finite-dimensional non-degenerate case, where $B=\{\lambda_i\}$ and $E_A(B)=P_{\varphi_i}$, this reduces to
-\[
-\psi
-\longmapsto
-\frac{P_{\varphi_i}\psi}{\|P_{\varphi_i}\psi\|}
-=
-\varphi_i
-\]
+% % So the generalization of the discrete formula
+% % \(
+% % p_i = \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% % \)
+% % is not, in general, a pdf, but a probability measure
+% % \[
+% % \Prob_A^\psi(B)
+% % =
+% % \mu_\psi^A(B)
+% % =
+% % \braket{\psi|E_A(B)\psi}
+% % \]
+% % for Borel sets $B \in \mathcal B(\sigma_A)$.
+% % This is the precise infinite-dimensional analogue of the Born rule.
+
+% Indeed, in the purely discrete case one has
+% \[
+% E_A(B) = \sum_{\lambda_i \in B} P_{\varphi_i}
+% \]
+% and therefore
+% \[
+% \begin{aligned}
+% \mu_\psi^A(B)
+% &=
+% \braket{\psi|E_A(B)\psi}
+% \\
+% &=
+% \Braket{\psi | \sum_{\smash[b]{\lambda_i} \in B} P_{\varphi_i}\psi}
+% \\
+% &=
+% \sum_{\lambda_i \in B} \braket{\psi|P_{\varphi_i}\psi}
+% \\
+% &=
+% \sum_{\lambda_i \in B} \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% \end{aligned}
+% \]
+% which recovers exactly the usual formula.
+% In particular,
+% \[
+% \Prob_A^\psi(\{\lambda_i\}) = \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% \]
+
+% Now we perform the same calculation for the expectation value as in the discrete case, but with the spectral integral instead of the spectral sum:
+% % \[
+% % \begin{aligned}
+% % \braket{A}_{\psi}
+% % &=
+% % \braket{\psi|A\psi}
+% % \\
+% % &=
+% % \Braket{\psi | \int_{\sigma_A} \lambda \,\dif E_A(\lambda)\, \psi}
+% % \\
+% % &=
+% % \int_{\sigma_A} \lambda \, \dif \braket{\psi|E_A(\lambda)\psi}
+% % \\
+% % &=
+% % \int_{\sigma_A} \lambda \, \dif \mu_\psi^A(\lambda)
+% % \end{aligned}
+% % \]
+% \[
+% \begin{aligned}
+% \braket{A}_{\psi}
+% &=
+% \braket{\psi|A\psi}
+% \overset{\text{\ref{def:symmetric-self-adjoint-unbounded}.\ref{item:densely-defined-self-adjoint}}}{=}
+% \braket{A\psi|\psi}
+% \\
+% &\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
+% \int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
+% % \\
+% % &\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+% % \int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
+% \\
+% &\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
+% \int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
+% \end{aligned}
+% \]
+% % where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
+% Thus the expectation value is again the probabilistic expectation of the measurement outcomes, only now with respect to the spectral probability measure instead of a finite list of probabilities.
+% This is the exact analogue of
+% \(
+% \sum_i \lambda_i p_i
+% \).
+% If the spectrum has both discrete and continuous parts, then $\mu_\psi^A$ automatically contains both.
+
+% % If the measure happens to be absolutely continuous with respect to Lebesgue measure, then one may write
+% % \[
+% % \mu_\psi^A(B) = \int_B \rho_\psi^A(\lambda)\,\dif\lambda
+% % \]
+% % for some density $\rho_\psi^A$.
+% % But pedagogically the fundamental object is the measure $\mu_\psi^A$, not necessarily a density.
+
+% After an ideal measurement, the state updates by projection.
+% If one only knows that the outcome lies in a Borel set $B$, then the post-measurement state is
+% \[
+% \psi
+% \longmapsto
+% \frac{E_A(B)\psi}{\|E_A(B)\psi\|}
+% \]
+% provided $E_A(B)\psi \neq 0$.
+% In the finite-dimensional non-degenerate case, where $B=\{\lambda_i\}$ and $E_A(B)=P_{\varphi_i}$, this reduces to
+% \[
+% \psi
+% \longmapsto
+% \frac{P_{\varphi_i}\psi}{\|P_{\varphi_i}\psi\|}
+% =
+% \varphi_i
+% \]
+
+
+
 
 
 
