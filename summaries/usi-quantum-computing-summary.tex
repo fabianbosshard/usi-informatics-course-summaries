@@ -3191,7 +3191,7 @@ Furthermore, we have the properties
 
 
 
-\subsection{Digression on Operators}
+\subsection{Digression on Operators}\label{sec:operators}
 
 \subsubsection{Bounded Operators}
 
@@ -3318,9 +3318,9 @@ with the following properties:
 \item $E(\omega_1 \cap \omega_2) = E(\omega_1) E(\omega_2)$ \label{item:Eomega1capomega2-is-Eomega1-times-Eomega2}
 \item If $\omega_1 \cap \omega_2 = \emptyset$, then $E(\omega_1 \cup \omega_2) = E(\omega_1) + E(\omega_2)$ \label{item:if-disjoint-then-Eomega1cupomega2-is-sum}
 \item For every $x,y \in \mathcal{H}$, the set function $E_{x,y}$ defined by
-\[
+\begin{equation}\label{eq:complex-measure-via-inner-product}
 E_{x,y}(\omega) = \braket{E(\omega)x | y}
-\]
+\end{equation}
 is a complex measure on $\mathfrak{M}$. \label{item:resolution-of-identity-complex-measure-via-inner-product}
 \qedhere
 \end{enumerate}
@@ -3344,7 +3344,7 @@ Some immediate consequences of the properties in \autoref{def:resolution-of-iden
   =
   \|E(\omega)x\|^2
   \]
-  for every $x \in \mathcal{H}$ so that each $E_{x,x}$ is a positive measure on $\mathfrak{M}$ with total variation $\|E_{x,x}\| = E_{x,x}(\Omega) = \|x\|^2$.
+  for every $x \in \mathcal{H}$ so that each $E_{x,x}$ is a positive measure on $\mathfrak{M}$ with total variation $\|E_{x,x}\| = E_{x,x}(\Omega) = \|x\|^2$.\footnote{In particular, if $\|x\| = 1$, then $E_{x,x}$ is a probability measure on $\mathfrak{M}$, which will be important in \autoref{sec:observables}.}
 \item 
   By \ref{item:Eomega1capomega2-is-Eomega1-times-Eomega2}, any two of the projections $E(\omega)$ commute with each other.
 \item 
@@ -3393,9 +3393,9 @@ A large part of the theory of normal operators depends on this fact.
 \begin{theorem}[Spectral theorem]\label{thm:spectral-theorem}
 If $T \in B(\mathcal{H})$ and $T$ is normal (\autoref{def:normal-hermitian-unitary-projection}), then there exists a unique resolution of the identity $E$ (\autoref{def:resolution-of-identity}) on the Borel subsets of $\sigma(T)$ (\autoref{def:spectrum}) such that
 \begin{equation}\label{eq:spectral-theorem}
-\boxed{
+% \boxed{
 T = \int_{\sigma(T)} \lambda \,\dif E(\lambda)
-}
+% }
 \end{equation}
 % where 
 % \[
@@ -3422,7 +3422,7 @@ by $f(T)$.
 % Using this notation, parts of \autoref{thm:integration-projection-valued-measure} and \autoref{thm:spectral-theorem} can be summarized as follows:
 
 
-\begin{theorem}
+\begin{theorem}\label{thm:normal-bounded-operator-spectral-properties}
 A normal $T \in B(\mathcal{H})$ is 
 \begin{enumerate}[label=(\alph*)]
 \item hermitian if and only if $\sigma(T)$ lies on the real axis
@@ -3471,7 +3471,7 @@ Equivalently, $T$ is closed if whenever $x_n \in D(T)$, $x_n \to x$ in $\mathcal
 Suppose $T$ is densely defined.
 An element $y \in \mathcal H$ is said to lie in the domain of the \emph{adjoint} $T^*$ if the map
 \(
-x \mapsto \braket{Tx \mid y}
+x \mapsto \braket{Tx | y}
 \),
 \(
 x \in D(T)
@@ -3479,38 +3479,40 @@ x \in D(T)
 is a bounded linear functional on $D(T)$ (with the norm inherited from $\mathcal H$).
 By Hahn-Banach and the Riesz representation theorem, there is then a unique vector $T^*y \in \mathcal H$ such that
 \[
-\braket{Tx \mid y} = \braket{x \mid T^*y}
+\braket{Tx | y} = \braket{x | T^*y}
 \]
 for every $x \in D(T)$.
 Thus
 \[
-D(T^*) \coloneq \left\{y \in \mathcal H : x \mapsto \braket{Tx \mid y}
+D(T^*) \coloneq \left\{y \in \mathcal H : x \mapsto \braket{Tx | y}
 \text{ is bounded on } D(T)\right\}
 \]
 and $T^* \colon D(T^*) \to \mathcal H$ is an operator in $\mathcal H$.
 % \end{definition}
 If $T \in B(\mathcal H)$, this agrees with the usual adjoint of a bounded operator.
 
-% \begin{definition}
+\begin{definition}\label{def:symmetric-self-adjoint-unbounded}
 A densely defined operator $T$ is called
 \begin{enumerate}[label=(\alph*)]
 \item 
 \emph{symmetric} if
 \(
-\braket{Tx \mid y} = \braket{x \mid Ty}
+\braket{Tx | y} = \braket{x | Ty}
 \)
 for every $x,y \in D(T)$, or,
 equivalently,
 \(
 T \subseteq T^*
 \)
-\item 
+\item \label{item:densely-defined-self-adjoint}
 \emph{self-adjoint} if
 \(
 T = T^*
 \)
+\qedhere
 \end{enumerate}
-% \end{definition}
+\end{definition}
+
 
 Unlike for bounded operators, symmetry and self-adjointness are not the same for unbounded operators.
 
@@ -3554,14 +3556,14 @@ belongs to $B(\mathcal H)$.
 \item
 $T^*T$ is self-adjoint and positive, i.e.,
 \(
-\braket{T^*Tx \mid x} = \|Tx\|^2 \ge 0
+\braket{T^*Tx | x} = \|Tx\|^2 \ge 0
 \)
 for all $x \in D(T^*T)$.
 \qedhere
 \end{enumerate}
 \end{theorem}
 
-\begin{definition}
+\begin{definition}\label{def:spectrum-unbounded-operator}
 The \emph{resolvent set} of an operator $T$ is the set of all $\lambda \in \mathbb C$ such that
 \(
 T-\lambda I
@@ -3583,14 +3585,14 @@ D_f \coloneq \{x \in \mathcal H : \int_\Omega |f|^2 \, \dif E_{x,x} < \infty \}
 Then $D_f$ is a dense subspace of $\mathcal H$.
 The operator $\Psi(f)$ is defined by the requirement
 \[
-\braket{\Psi(f)x \mid y}
+\braket{\Psi(f)x | y}
 =
 \int_\Omega f \, \dif E_{x,y}
 \]
 for every $x \in D_f$ and every $y \in \mathcal H$.
 \end{definition}
 
-\begin{theorem}[Functional calculus for measurable functions]
+\begin{theorem}%[Functional calculus for measurable functions]
 With the notation above, $\Psi(f)$ is a densely defined closed operator with domain $D_f$, and
 \[
 \|\Psi(f)x\|^2 = \int_\Omega |f|^2\, \dif E_{x,x}
@@ -3628,6 +3630,21 @@ If $N$ is normal, then
 
 
 
+
+\autoref{thm:normal-bounded-operator-spectral-properties} can be extended to unbounded normal operators as follows:
+
+\begin{theorem}
+A densely defined normal operator $T$ is 
+\begin{enumerate}[label=(\alph*)]
+\item self-adjoint if and only if $\sigma(T)$ lies on the real axis
+\item unitary if and only if $\sigma(T)$ lies on the unit circle \label{item:unitary-if-spectrum-on-unit-circle}
+\end{enumerate}
+Note that if \ref{item:unitary-if-spectrum-on-unit-circle} holds, then necessarily $D(T)=\mathcal H$, so $T$ is bounded.
+\end{theorem}
+
+
+
+
 \begin{theorem}[Spectral theorem]\label{thm:spectral-theorem-unbounded}
 Every normal operator $T$ in $\mathcal H$ has a unique spectral decomposition $E$\footnote{%
 In the unbounded case, a resolution of the identity means exactly the same thing as before (\autoref{def:resolution-of-identity}): a projection-valued measure
@@ -3644,17 +3661,17 @@ D_f=\{x\in\mathcal H:\int |f|^2\,\dif E_{x,x}<\infty\}
 \)
 (see \autoref{def:domain-of-Psi}).%
 }, which satisfies
-\[
+\begin{equation}\label{eq:inner-product-spectral-representation}
 % \boxed{
-\braket{Tx \mid y} = \int_{\sigma(T)} \lambda \,\dif E_{x,y}(\lambda)
+\braket{Tx | y} = \int_{\sigma(T)} \lambda \,\dif E_{x,y}(\lambda)
 % }
-\]
-for $x \in D(T) \overset{\text{\hyperref[def:domain-of-Psi]{def}}}{=} \{x\in\mathcal H:\int_{\sigma(T)} |\lambda|^2\,\dif E_{x,x}(\lambda)<\infty\}$ and $y \in \mathcal H$.
+\end{equation}
+for every $x \in D(T) \overset{\text{\hyperref[def:domain-of-Psi]{def}}}{=} \{x\in\mathcal H:\int_{\sigma(T)} |\lambda|^2\,\dif E_{x,x}(\lambda)<\infty\}$ and every $y \in \mathcal H$.
 Equivalently:
 \[
-\boxed{
+% \boxed{
 T=\int_{\sigma(T)} \lambda\, \dif E(\lambda)
-}
+% }
 \]
 Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sigma(T)$ and every $S \in B(\mathcal H)$ which commutes with $T$ in the sense that $ST \subseteq TS$.
 \end{theorem}
@@ -3666,11 +3683,17 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 
 
-\subsection{Postulates}
+
+
+
+
+
+
+\subsection{Postulates} \label{sec:postulates-of-quantum-mechanics}
 
 \subsubsection{The state}
 
-To isolated quantum system we associate a complex Hilbert space $\mathcal{H}$.
+To an isolated quantum system we associate a complex Hilbert space $\mathcal{H}$.
 A \emph{state} of the system is represented by a normalized vector
 \(
 \psi \in \mathcal{H}
@@ -3679,15 +3702,12 @@ with
 \(
 \|\psi\| = 1
 \).
-If $\mathcal{H}$ is realized as a space of wave functions, for example $\mathcal{H} = L^2(\R^3)$, then, as already introduced in \eqref{eq:inner-product},  the scalar product is
+If $\mathcal{H}$ is realized as a space of wave functions, for example $\mathcal{H} = L^2(\R^3)$, then, as already introduced in \eqref{eq:inner-product}, the scalar product is
 \[
 \braket{\psi_1 | \psi_2}
 \coloneq
-\int_{\R^3} \psi_1(\vect{x}, t)^* \, \psi_2(\vect{x}, t) \,\dif \vect{x} \tikzmark{innerproduct}
+\int_{\R^3} \psi_1(\vect{x}, t)^* \, \psi_2(\vect{x}, t) \,\dif \vect{x}
 \]
-% \begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
-% \node [anchor=west, align=left, text width=3.8cm] at ($(pic cs:innerproduct)+(0.5,1ex/2)$) {as already introduced in \eqref{eq:inner-product}};
-% \end{tikzpicture}%
 and the normalization condition becomes
 \(
 \|\psi\|^2
@@ -3710,182 +3730,256 @@ If, in addition,
 \|\alpha \psi_1 + \beta \psi_2\| = 1
 \),
 then this superposition again represents a physical state.
-
-Thus quantum states behave like waves:
-linear combinations of states are again states.
-This is the mathematical source of interference phenomena.  % [oai_citation:0‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+Thus quantum states behave like waves: linear combinations of states are again states.
 
 \subsubsection{The time evolution}
 
 As already introduced in \eqref{eq:schroedinger}, the time evolution of a quantum state is governed by the Schrödinger equation
 \[
-\iu \hbar  \frac{\partial}{\partial t}\psi(\vect{x}, t) = H  \psi(\vect{x}, t) \tikzmark{schroedinger}
+\boxed{
+\iu \hbar  \frac{\partial}{\partial t}\psi(\vect{x}, t) = H  \psi(\vect{x}, t)
+}
 \]
-% \begin{tikzpicture}[remember picture, overlay, font=\tiny, green]%
-% \node [anchor=west, align=left, text width=3.8cm] at ($(pic cs:schroedinger)+(0.5,1ex/2)$) {as already introduced in \eqref{eq:schroedinger}};
-% \end{tikzpicture}%
 where $H$ is the Hamiltonian operator \eqref{eq:hamiltonian}.
-It is linear: any linear combination of solutions constitutes again a solution.
+It is linear: any linear combination of solutions is again a solution.
 
-We assume the Hermitian Hamiltonian $H$ to be time-independent.
-Then, the solutions to \eqref{eq:schroedinger} can be written as
+We assume the Hamiltonian $H$ to be self-adjoint (see Definition \ref{def:hermitian}, \ref{def:normal-hermitian-unitary-projection} \ref{item:hermitian}, \ref{def:symmetric-self-adjoint-unbounded}).
+If $H$ is time-independent, then the solutions can be written as
 \[
 \psi(t) = \eu^{- \iu H t / \hbar} \psi(0)
 \]
-with $\psi(0)$ being the state at some initial time $t_0$.
-If $H$ is self-adjoint, then $\eu^{- \iu H t / \hbar}$ is unitary
-and therefore preserves the norm, i.e. if
-\(\braket{\psi(0) | \psi(0)} = 1\), then
+Thus the time evolution operator is
 \(
-\braket{\psi(t) | \psi(t)}
-=
-1
-\) for all $t \in \R$.
-Consequently, the states $\psi(t)$ are normalized if the inital state $\psi(0)$ is.
+U(t) = \eu^{- \iu H t / \hbar}
+\).
+As discussed before, $\eu^{\iu A}$ is unitary whenever $A$ is Hermitian, so $U(t)$ is unitary (see Definition \ref{def:unitary}, \ref{def:normal-hermitian-unitary-projection} \ref{item:unitary}).
+Hence time evolution preserves the inner product and in particular the norm:
+if \(\braket{\psi(0) | \psi(0)} = 1\), then
+\(
+\braket{\psi(t) | \psi(t)} = 1
+\)
+for all $t \in \R$.
 
 
 
-\subsubsection{Observables}
 
-A measurable physical quantity is represented by an observable, that is, by a Hermitian operator
+
+
+
+\subsubsection{Observables} \label{sec:observables}
+
+A measurable physical quantity is represented by an observable, that is, by a self-adjoint operator
 \(
 A = A^*
-\).
+\)
+(see Definition \ref{def:hermitian}, \ref{def:normal-hermitian-unitary-projection} \ref{item:hermitian}, \ref{def:symmetric-self-adjoint-unbounded}, \autoref{thm:spectral-theorem}, \autoref{thm:spectral-theorem-unbounded}).
 The expectation value of $A$ in a state $\psi$ is
-\(
-\braket{A}_{\psi}
-\coloneq
-\braket{\psi | A \psi}
-\).
-The possible outcomes of a measurement of $A$ are given by the spectrum of $A$.
-
-
-
-% \begin{theorem}[Spectral theorem, shorter version]\label{thm:spectral-theorem-short}
-% Let $\mathcal{H}$ be a complex Hilbert space and let
-% \[
-% A \colon \mathcal{D}(A) \subseteq \mathcal{H} \to \mathcal{H}
-% \]
-% be a densely defined self-adjoint operator.
-
-% Then there exists a unique projection-valued measure
-% \[
-% E_A \colon \mathcal{B}(\R) \to \operatorname{Proj}(\mathcal{H})
-% \]
-% such that
-% \[
-% A = \int_{\R} \lambda \,\dif E_A(\lambda)
-% \]
-
-% If $A$ has purely discrete spectrum, this reduces to
-% \[
-% A = \sum_i \lambda_i P_i
-% \]
-% where $\lambda_i \in \R$ are the eigenvalues and $P_i$ are the orthogonal projections onto the corresponding eigenspaces.
-
-% If, moreover, $\mathcal{H}$ is finite-dimensional, then there exists an orthonormal basis of eigenvectors $\{\varphi_i\}_i$ of $A$, and
-% \[
-% A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
-% \]
-% \end{theorem}
-
-In the finite-dimensional case, the spectral theorem says that a linear operator $A$ is self-adjoint if and only if there exists an orthonormal basis of eigenvectors $\{\varphi_i\}_i$ and real eigenvalues $\lambda_i \in \R$ such that
 \[
-A = \sum_i \lambda_i P_{\varphi_i}
+\braket{A}_{\psi}
+=
+\braket{\psi | A | \psi}
+\coloneq
+\braket{\psi | A\psi}
+\]
+provided $\psi \in D(A)$.
+The possible outcomes of a measurement of $A$ are given by the spectrum $\sigma(A)$ of $A$.
+
+The finite-dimensional case serves as the guiding example.
+If $A$ is self-adjoint, then by the spectral theorem it admits an orthonormal basis of eigenvectors $\{\varphi_i\}_{i=1}^n$ with real eigenvalues $\sigma(A) = \{\lambda_i\}_{i=1}^n$, so that
+\[
+A = \sum_{i=1}^n \lambda_i P_{\varphi_i}
 \]
 where
+\(
+P_{\varphi_i}\psi \coloneq \braket{\varphi_i|\psi} \varphi_i
+\).
+Substituting this decomposition into the expectation value gives
 \[
-P_{\varphi_i}\psi = (\varphi_i,\psi)\varphi_i
-\]
-is the orthogonal projector onto $\Span\{\varphi_i\}$.
-
-Equivalently,
-\[
-A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
-\]
-once Dirac notation is introduced.
-
-In the general infinite-dimensional case, the corresponding statement is the spectral theorem in its projection-valued form:
-to every self-adjoint operator $A$ there corresponds a projection-valued measure $E_A$ on $\R$ such that
-\[
-A = \int_{\R} \lambda \,\dif E_A(\lambda)
-\]
-in the sense of spectral integration.
-
-Thus, in general, the spectrum need not consist only of discrete eigenvalues.
-It may also contain continuous parts.
-
-If the system is in the normalized state $\psi$, then the probability that a measurement of $A$ yields a value in a Borel set $B \subseteq \R$ is
-\[
-\Prob_A^\psi(B) = (\psi, E_A(B)\psi)
-\]
-
-In the purely discrete case, this reduces to
-\[
-\Prob(\lambda_i)
-=
-\|P_{\varphi_i}\psi\|^2
-=
-(\psi, P_{\varphi_i}\psi)
-=
-|(\varphi_i,\psi)|^2
-\]
-
-Indeed,
-\[
-P_{\varphi_i}\psi = (\varphi_i,\psi)\varphi_i
-\]
-and hence
-\[
-\|P_{\varphi_i}\psi\|^2
-=
-((\varphi_i,\psi)\varphi_i, (\varphi_i,\psi)\varphi_i)
-=
-|(\varphi_i,\psi)|^2 (\varphi_i,\varphi_i)
-=
-|(\varphi_i,\psi)|^2
-\]
-
-The expectation value is then the weighted average of all possible outcomes:
-\[
+\begin{aligned}
 \braket{A}_{\psi}
-=
-\braket{\psi | A \psi}
-=
-\sum_i \lambda_i |(\varphi_i,\psi)|^2
+&=
+\braket{\psi|A\psi}
+\\
+&=
+\Braket{\psi | \sum_{i=1}^n \lambda_i P_{\varphi_i}\psi}
+\\
+&=
+\sum_{i=1}^n \lambda_i  \braket{\psi|P_{\varphi_i}\psi}
+\\
+&=
+\sum_{i=1}^n \lambda_i  \braket{\psi|\varphi_i}\braket{\varphi_i|\psi}
+\\
+&=
+\sum_{i=1}^n \lambda_i  \bigl|\braket{\varphi_i|\psi}\bigr|^2
+\end{aligned}
 \]
-in the discrete case.
+Thus the numbers
+\(
+p_i \coloneq \bigl|\braket{\varphi_i|\psi}\bigr|^2
+\)
+are precisely the probabilities of obtaining the outcomes $\lambda_i$.
+So in the discrete case the expectation value has the familiar 
+%probabilistic 
+form
+\(
+\braket{A}_{\psi} = \sum_{i = 1}^n \lambda_i p_i
+\).
 
-Indeed,
+This is the calculation one would like to preserve in general Hilbert spaces.
+The difficulty is that in infinite-dimensional Hilbert spaces a self-adjoint operator need not admit an orthonormal basis of eigenvectors: there may be continuous spectrum (see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator}).
+So the sum over eigenvalues must be replaced by the spectral decomposition (\autoref{thm:spectral-theorem-unbounded}).
+Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
+By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
 \[
-\braket{\psi | A \psi}
-=
-\left(
-\psi,
-\sum_i \lambda_i P_{\varphi_i}\psi
-\right)
-=
-\sum_i \lambda_i (\psi, P_{\varphi_i}\psi)
-=
-\sum_i \lambda_i |(\varphi_i,\psi)|^2
+E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H)
+\]
+on the Borel sets of $\sigma_A$ such that
+\(
+A = \int_{\sigma_A} \lambda \,\dif E_A(\lambda)
+\).
+Here each $E_A(B)$ is a self-adjoint projection, and by \autoref{def:resolution-of-identity} and the remarks following it,
+\[
+\braket{\psi|E_A(B)\psi} = \|E_A(B)\psi\|^2 \ge 0
+\]
+for every Borel set $B \subseteq \sigma_A$.
+Moreover,
+\(
+E_A(\sigma_A)=\id
+\) and
+\(
+E_A(\emptyset)=0
+\),
+so for normalized $\psi$ we have
+\(
+\braket{\psi|E_A(\sigma_A)\psi} = \braket{\psi|\psi} = 1
+\).
+Therefore, 
+for every normalized state $\psi$,
+the map
+\begin{equation}\label{eq:probability-measure-from-spectral-decomposition}
+\mu_\psi^A(B)
+\coloneq
+\braket{\psi|E_A(B)\psi}
+\overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
+\braket{E_A(B)\psi|\psi}
+\end{equation}
+for $B \in \mathcal B(\sigma_A)$, 
+defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
+This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
+This is the precise infinite-dimensional analogue of the Born rule.
+
+% So the generalization of the discrete formula
+% \(
+% p_i = \bigl|\braket{\varphi_i|\psi}\bigr|^2
+% \)
+% is not, in general, a pdf, but a probability measure
+% \[
+% \Prob_A^\psi(B)
+% =
+% \mu_\psi^A(B)
+% =
+% \braket{\psi|E_A(B)\psi}
+% \]
+% for Borel sets $B \in \mathcal B(\sigma_A)$.
+% This is the precise infinite-dimensional analogue of the Born rule.
+
+Indeed, in the purely discrete case one has
+\[
+E_A(B) = \sum_{\lambda_i \in B} P_{\varphi_i}
+\]
+and therefore
+\[
+\begin{aligned}
+\mu_\psi^A(B)
+&=
+\braket{\psi|E_A(B)\psi}
+\\
+&=
+\Braket{\psi | \sum_{\smash[b]{\lambda_i} \in B} P_{\varphi_i}\psi}
+\\
+&=
+\sum_{\lambda_i \in B} \braket{\psi|P_{\varphi_i}\psi}
+\\
+&=
+\sum_{\lambda_i \in B} \bigl|\braket{\varphi_i|\psi}\bigr|^2
+\end{aligned}
+\]
+which recovers exactly the usual formula.
+In particular,
+\[
+\Prob_A^\psi(\{\lambda_i\}) = \bigl|\braket{\varphi_i|\psi}\bigr|^2
 \]
 
-More generally, in the spectral-measure formulation,
+Now we perform the same calculation for the expectation value as in the discrete case, but with the spectral integral instead of the spectral sum:
+% \[
+% \begin{aligned}
+% \braket{A}_{\psi}
+% &=
+% \braket{\psi|A\psi}
+% \\
+% &=
+% \Braket{\psi | \int_{\sigma_A} \lambda \,\dif E_A(\lambda)\, \psi}
+% \\
+% &=
+% \int_{\sigma_A} \lambda \, \dif \braket{\psi|E_A(\lambda)\psi}
+% \\
+% &=
+% \int_{\sigma_A} \lambda \, \dif \mu_\psi^A(\lambda)
+% \end{aligned}
+% \]
 \[
+\begin{aligned}
 \braket{A}_{\psi}
-=
-(\psi, A\psi)
-=
-\int_{\R} \lambda \,\dif (\psi, E_A(\lambda)\psi)
+&=
+\braket{\psi|A\psi}
+\overset{\text{\ref{def:symmetric-self-adjoint-unbounded}.\ref{item:densely-defined-self-adjoint}}}{=}
+\braket{A\psi|\psi}
+\\
+&\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
+\int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
+\\
+&\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+\int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
+\\
+&\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
+\int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
+\end{aligned}
 \]
+where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
+Thus the expectation value is again the probabilistic expectation of the measurement outcomes, only now with respect to the spectral probability measure instead of a finite list of probabilities.
+This is the exact analogue of
+\(
+\sum_i \lambda_i p_i
+\).
+If the spectrum has both discrete and continuous parts, then $\mu_\psi^A$ automatically contains both.
 
-After an ideal measurement with outcome corresponding to a projector $P$, the post-measurement state is the normalized projected vector
+% If the measure happens to be absolutely continuous with respect to Lebesgue measure, then one may write
+% \[
+% \mu_\psi^A(B) = \int_B \rho_\psi^A(\lambda)\,\dif\lambda
+% \]
+% for some density $\rho_\psi^A$.
+% But pedagogically the fundamental object is the measure $\mu_\psi^A$, not necessarily a density.
+
+After an ideal measurement, the state updates by projection.
+If one only knows that the outcome lies in a Borel set $B$, then the post-measurement state is
 \[
 \psi
 \longmapsto
-\frac{P\psi}{\|P\psi\|}
+\frac{E_A(B)\psi}{\|E_A(B)\psi\|}
 \]
-provided $P\psi \neq 0$.  % [oai_citation:2‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:3‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
+provided $E_A(B)\psi \neq 0$.
+In the finite-dimensional non-degenerate case, where $B=\{\lambda_i\}$ and $E_A(B)=P_{\varphi_i}$, this reduces to
+\[
+\psi
+\longmapsto
+\frac{P_{\varphi_i}\psi}{\|P_{\varphi_i}\psi\|}
+=
+\varphi_i
+\]
+
+
+
+
 
 \subsubsection{Joint systems and composition}
 
@@ -3940,7 +4034,7 @@ For example,
 is an entangled state.
 
 Thus the state space of a composite quantum system is much richer than the Cartesian product of classical state spaces:
-it also contains superpositions of product states, and these are precisely what give rise to entanglement.  % [oai_citation:4‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+it also contains superpositions of product states, and these are precisely what give rise to entanglement (see also the discussion of tensor products and reduced states below).
 
 \subsubsection{Abstraction and simplification}
 
