@@ -3804,7 +3804,7 @@ Substituting this decomposition into the expectation value gives
 \Braket{\psi | \sum_{i=1}^n \lambda_i P_{\varphi_i}\psi}
 \\
 &=
-\sum_{i=1}^n \lambda_i  \braket{\psi|P_{\varphi_i}\psi}
+\sum_{i=1}^n \lambda_i  \braket{\psi| \braket{\varphi_i|\psi} \varphi_i }
 \\
 &=
 \sum_{i=1}^n \lambda_i  \braket{\psi|\varphi_i}\braket{\varphi_i|\psi}
@@ -3862,6 +3862,8 @@ the map
 \braket{\psi|E_A(B)\psi}
 \overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
 \braket{E_A(B)\psi|\psi}
+\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+E_{\psi,\psi}(B)
 \end{equation}
 for $B \in \mathcal B(\sigma_A)$, 
 defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
@@ -3937,15 +3939,15 @@ Now we perform the same calculation for the expectation value as in the discrete
 \\
 &\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
 \int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
-\\
-&\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
-\int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
+% \\
+% &\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
+% \int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
 \\
 &\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
 \int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
 \end{aligned}
 \]
-where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
+% where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
 Thus the expectation value is again the probabilistic expectation of the measurement outcomes, only now with respect to the spectral probability measure instead of a finite list of probabilities.
 This is the exact analogue of
 \(
