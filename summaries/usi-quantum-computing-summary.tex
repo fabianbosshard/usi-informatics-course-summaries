@@ -4613,4 +4613,101 @@ This is the formal reason why entanglement alone does not allow signalling.  % [
 
 
 
+\begin{center}
+\begin{tikzpicture}[scale=0.75, line cap=round, line join=round, font=\footnotesize]
+\def\R{6}
+\def\thetaState{53}
+\def\phiState{45}
+\def\rTheta{3}
+\def\rPhi{3}
+
+% spherical outline (screen-space circle)
+\draw[black!85, line width=0.7pt] (0,0) circle (\R);
+
+
+% 3D projection basis (all key points/arcs are specified in 3D coordinates)
+% \begin{scope}[x={(1cm,-0.00cm)}, y={(-0.0cm,-0.3cm)}, z={(0cm,1cm)}]
+\def\planeRot{28}
+
+\pgfmathsetmacro{\xx}{cos(\planeRot)}
+\pgfmathsetmacro{\xy}{-0.3*sin(\planeRot)}
+\pgfmathsetmacro{\yx}{-sin(\planeRot)}
+\pgfmathsetmacro{\yy}{-0.3*cos(\planeRot)}
+
+\begin{scope}[
+  x={(\xx cm,\xy cm)},
+  y={(\yx cm,\yy cm)},
+  z={(0cm, 1cm)}
+]
+\coordinate (O) at (0,0,0);
+\coordinate (Xp) at (\R,0,0);
+\coordinate (Xm) at (-\R,0,0);
+\coordinate (Yp) at (0,\R,0);
+\coordinate (Ym) at (0,-\R,0);
+\coordinate (Zp) at (0,0,\R);
+\coordinate (Zm) at (0,0,-\R);
+
+\pgfmathsetmacro{\sx}{\R*sin(\thetaState)*cos(\phiState)}
+\pgfmathsetmacro{\sy}{\R*sin(\thetaState)*sin(\phiState)}
+\pgfmathsetmacro{\sz}{\R*cos(\thetaState)}
+\pgfmathsetmacro{\projlength}{sqrt(\sx^2+\sy^2)}
+\pgfmathsetmacro{\sprojx}{\R*\sx/\projlength}
+\pgfmathsetmacro{\sprojy}{\R*\sy/\projlength}
+\coordinate (Psi) at (\sx,\sy,\sz);
+\coordinate (PsiProj) at (\sprojx,\sprojy,0);
+
+% equator (xy-plane): back half dashed, front half solid
+\draw[black!70, dashed] plot[variable=\t, domain=180-\planeRot:360-\planeRot, samples=90, smooth]
+({\R*cos(\t)},{\R*sin(\t)},0);
+\draw[black!85] plot[variable=\t, domain=0-\planeRot:180-\planeRot, samples=90, smooth]
+({\R*cos(\t)},{\R*sin(\t)},0);
+
+% axes and auxiliary directions
+\draw[black!70, dashed] (Ym) -- (O);
+\draw[black!70] (O) -- (Yp);
+\draw[blue!85, line width=0.8pt] (O) -- (Zp);
+\draw[blue!85, line width=0.8pt, dashed] (O) -- (Zm);
+\draw[black!75] (O) -- (Xp);
+\draw[black!70, dashed] (O) -- (Xm);
+
+% meridian in the plane spanned by z-axis and PsiProj
+\draw[red!85!black, line width=0.7pt] plot[variable=\a, domain=0:180, samples=140, smooth] ({\R*sin(\a)*cos(\phiState)},{\R*sin(\a)*sin(\phiState)},{\R*cos(\a)});
+
+
+% Bloch vector and its xy-plane projection
+\draw[red!85!black, line width=0.95pt, -{Latex[length=2.7mm]}] (O) -- (Psi);
+\draw[green!70!black, line width=0.9pt] (O) -- (PsiProj);
+
+% theta arc in the meridian plane
+\draw[blue!85, line width=0.75pt, ->] plot[variable=\a, domain=0:\thetaState, samples=80, smooth] ({\rTheta*sin(\a)*cos(\phiState)},{\rTheta*sin(\a)*sin(\phiState)},{\rTheta*cos(\a)});
+
+% phi arc in the equatorial plane (from +y axis to PsiProj direction)
+\draw[green!70!black, line width=0.75pt, ->] plot[variable=\a, domain=0:\phiState, samples=70, smooth] ({\rPhi*cos(\a)},{\rPhi*sin(\a)},0);
+
+\coordinate (ThetaLabelPos) at
+({1.18*\rTheta*sin(0.5*\thetaState)*cos(\phiState)},
+ {1.18*\rTheta*sin(0.5*\thetaState)*sin(\phiState)},
+ {1.18*\rTheta*cos(0.5*\thetaState)});
+\coordinate (PhiLabelPos) at
+({1.0*\rPhi*cos(0.5*\phiState)},
+ {1.0*\rPhi*sin(0.5*\phiState)},
+ 0);
+\end{scope}
+
+\foreach \P in {Yp,Ym,Xp,Xm}
+  \fill (\P) circle (1.8pt);
+
+\node[blue!85, above=3pt] at (Zp) {$\ket{0}$};
+\node[blue!85, below=3pt] at (Zm) {$\ket{1}$};
+
+\node[below left] at (Yp) {$\dfrac{\ket{0}+i\ket{1}}{\sqrt{2}}$};
+\node[above right] at (Ym) {$\dfrac{\ket{0}-i\ket{1}}{\sqrt{2}}$};
+\node[right] at (Xp) {$\dfrac{\ket{0}+\ket{1}}{\sqrt{2}}$};
+\node[left] at (Xm) {$\dfrac{\ket{0}-\ket{1}}{\sqrt{2}}$};
+
+\node[blue!85] at (ThetaLabelPos) {$\theta$};
+\node[green!70!black, below right] at (PhiLabelPos) {$\varphi$};
+\end{tikzpicture}
+\end{center}
+
 \end{document}
