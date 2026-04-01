@@ -3945,29 +3945,220 @@ provided $E_A(\omega)\psi \neq 0$.
 
 
 
-\begin{example}[Finite-dimensional case]
+% \begin{example}[Finite-dimensional case]
+% If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues
+% \(
+% \lambda_1,\dots,\lambda_r
+% \)
+% and pairwise orthogonal eigen\-spaces
+% \[
+% M_j \coloneq N({A}-\lambda_j \id)
+% \]
+% for 
+% \(
+% j=1,\dots,r
+% \), 
+% such that
+% \[
+% % \C^n = M_1 \oplus \cdots \oplus M_r
+% \C^n = \bigoplus_{j=1}^r M_j
+% \]
+% and
+% \begin{equation}\label{eq:discrete-spectrum-spectral-decomposition}
+% {A} = \sum_{j=1}^r \lambda_j P_{M_j} % why?
+% \end{equation}
+% where $P_{M_j}$ denotes the orthogonal projection onto the eigenspace $M_j$.
+% If we choose an orthonormal basis of eigenvectors (it exists, since $A$ is self-adjoint)
+% \[
+% \{\varphi_{j,k}: 1\le j\le r,\ 1\le k\le d_j\}
+% \]
+% with
+% \(
+% d_j = \dim M_j
+% \),
+% \(
+% M_j = \mathrm{span}\{\varphi_{j,1},\dots,\varphi_{j,d_j}\}
+% \),
+% we have
+% % \[
+% % \begin{aligned}
+% % {A} 
+% % &=
+% % \sum_{j=1}^r \lambda_j P_{M_j} \\
+% % &=
+% % \sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}}
+% % \end{aligned}
+% % \]
+% % \[
+% % \begin{aligned}
+% % P_{M_j}\psi 
+% % &=
+% % \sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi \\
+% % &=  
+% % \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k} \\
+% % &=
+% % \sum_{k=1}^{d_j} \varphi_{j,k} \braket{\varphi_{j,k}|\psi} \\
+% % &=
+% % \sum_{k=1}^{d_j} \ket{\varphi_{j,k}} \bra{\varphi_{j,k}} \psi
+% % \end{aligned}
+% % \]
+% \[
+% P_{M_j}\psi 
+% =
+% \sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi
+% =
+% \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k}
+% \]
+% % and therefore
+% % \[
+% % \begin{aligned}
+% % {A} 
+% % &=
+% % \sum_{j=1}^r \lambda_j P_{M_j} \\
+% % &=
+% % \sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}}
+% % \end{aligned}
+% % \]
+
+% Substituting this decomposition into the expectation value gives
+% \[
+% \begin{aligned}
+% \braket{{A}}_{\psi}
+% &=
+% \braket{\psi|{A}\psi}
+% \\
+% &=
+% \left\langle \psi \middle| \sum_{j=1}^r \lambda_j P_{M_j}\psi \right\rangle
+% \\
+% &=
+% \sum_{j=1}^r \lambda_j \, \braket{\psi|P_{M_j}\psi}
+% \\
+% &=
+% \sum_{j=1}^r \lambda_j \, \|P_{M_j}\psi\|^2
+% \end{aligned}
+% \]
+% Thus the numbers
+% \(
+% p_j \coloneq \|P_{M_j}\psi\|^2
+% \)
+% are precisely the probabilities of obtaining the outcomes $\lambda_j$.
+% So in the finite-dimensional case the expectation value has the familiar form
+% \(
+% \braket{{A}}_{\psi} = \sum_{j = 1}^r \lambda_j p_j
+% \).
+
+
+% The general formulas from the main text hence reduce to these familiar finite-dimensional discrete ones.
+% Indeed, given a Borel set $\omega \subseteq \sigma(A)$, we have
+% \begin{equation}\label{eq:EAomega-discrete-spectrum}
+% E_A(\omega) 
+% =
+% E_A\left(\bigcup_{\smash[b]{\lambda_j} \in \omega} \{\lambda_j\}\right)
+% \overset{\text{\ref{def:resolution-of-identity}.\ref{item:if-disjoint-then-Eomega1cupomega2-is-sum}}}{=} 
+% \sum_{\lambda_j \in \omega} E_A(\{\lambda_j\})
+% \overset{\text{\ref{prop:spectral-projection-eigenspace}}}{=}
+% \sum_{\lambda_j \in \omega} P_{M_j}
+% \end{equation}
+% Here the sum is finite because $\sigma({A})=\{\lambda_1,\dots,\lambda_r\}$ is finite and hence $\omega \subseteq \sigma(A)$ is so as well.
+% Therefore
+% \[
+% \begin{aligned}
+% \mu_\psi^{A}(\omega)
+% &\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
+% \braket{\psi|E_{A}(\omega)\psi}
+% \\
+% &\overset{\text{\eqref{eq:EAomega-discrete-spectrum}}}{=}
+% \left\langle \psi \middle| \sum_{\smash[b]{\lambda_j} \in \omega} P_{M_j}\psi \right\rangle
+% \\
+% % &\overset{\makebox[\widthof{$\scriptstyle\text{(1.13)}$}][c]{}}{=}
+% &=
+% \sum_{\lambda_j \in \omega} \braket{\psi|P_{M_j}\psi}
+% \\
+% &\overset{\text{\ref{thm:projection-properties}}}{=}
+% \sum_{\lambda_j \in \omega} \|P_{M_j}\psi\|^2
+% \end{aligned}
+% \]
+% which recovers exactly the usual formula.
+% In particular,
+% \(
+% \Prob_{A}^\psi(\{\lambda_j\}) = \|P_{M_j}\psi\|^2
+% \).
+
+% If all eigenvalues are nondegenerate, then each $M_j$ is one-dimensional, say
+% \[
+% M_j=\mathrm{span}\{\varphi_j\}
+% \]
+% and the corresponding projection becomes
+% \(
+% P_{M_j}=P_{\varphi_j}
+% \),
+% where
+% \(
+% P_{\varphi_j}\psi = \braket{\varphi_j|\psi}\,\varphi_j
+% \).
+% In that case, we have
+% \(
+% \Prob_{A}^{\smash[t]{\psi}}(\{\lambda_j\}) = |\braket{\varphi_j|\psi}|^2
+% \).
+% Moreover, if $\omega=\{\lambda_j\}$ and $\braket{\varphi_j|\psi}\neq 0$, then \eqref{eq:post-measurement-state} reduces to
+% \[
+% \psi
+% \longmapsto
+% \frac{P_{\varphi_j}\psi}{\|P_{\varphi_j}\psi\|}
+% =
+% \varphi_j \, \eu^{\iu \theta}
+% \]
+% for some phase $\theta \in [0,2\pi)$.
+% \end{example}
+
+
+
+
+
+\begin{example}[Finite-dimensional case]\label{ex:finite-dimensional-case}
 If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues
 \(
 \lambda_1,\dots,\lambda_r
 \)
-and pairwise orthogonal eigen\-spaces
+and pairwise orthogonal eigenspaces
 \[
 M_j \coloneq N({A}-\lambda_j \id)
 \]
-for 
+for
 \(
 j=1,\dots,r
-\), 
+\),
 such that
 \[
-\C^n = M_1 \oplus \cdots \oplus M_r
+\C^n = \bigoplus_{j=1}^r M_j
 \]
 and
 \[
-{A} = \sum_{j=1}^r \lambda_j P_{M_j}
+\sigma(A)=\{\lambda_1,\dots,\lambda_r\}
 \]
+
+Let $E_A$ be the spectral measure of $A$ from \autoref{thm:spectral-theorem-unbounded}. Since the spectrum is finite, the spectral integral
+% \(
+% A = \int_{\sigma(A)} \lambda \,\dif E_A(\lambda)
+% \)
+reduces to a finite sum over the atoms $\{\lambda_j\}$:
+\begin{equation}\label{eq:discrete-spectrum-spectral-integral}
+A
+=
+\int_{\sigma(A)} \lambda \,\dif E_A(\lambda)
+=
+\sum_{j=1}^r \lambda_j\, E_A(\{\lambda_j\})
+\end{equation}
+By \autoref{prop:spectral-projection-eigenspace},
+\(
+E_A(\{\lambda_j\}) = P_{M_j}
+\),
 where $P_{M_j}$ denotes the orthogonal projection onto the eigenspace $M_j$.
-If we choose an orthonormal basis of eigenvectors (it exists, since $A$ is self-adjoint)
+Hence
+\begin{equation}\label{eq:discrete-spectrum-spectral-decomposition}
+{A} = \sum_{j=1}^r \lambda_j P_{M_j}
+\end{equation}
+If we choose an orthonormal basis of eigenvectors in each eigenspace \(M_j\),
 \[
 \{\varphi_{j,k}: 1\le j\le r,\ 1\le k\le d_j\}
 \]
@@ -3978,16 +4169,17 @@ d_j = \dim M_j
 \(
 M_j = \mathrm{span}\{\varphi_{j,1},\dots,\varphi_{j,d_j}\}
 \),
-then
+ the orthogonal projection onto \(M_j\) is the sum of the one-dimensional projections onto these basis vectors. Hence
 \[
-P_{M_j}\psi = \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k}
+P_{M_j}\psi 
+= % why?
+\sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi
+= % why?
+\sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k}
 \]
-% and therefore
-% \[
-% {A} = \sum_{j=1}^r \lambda_j P_{M_j}
-% \]
 
-Substituting this decomposition into the expectation value gives
+
+Substituting \eqref{eq:discrete-spectrum-spectral-decomposition} into the expectation value gives
 \[
 \begin{aligned}
 \braket{{A}}_{\psi}
@@ -4015,7 +4207,7 @@ So in the finite-dimensional case the expectation value has the familiar form
 \).
 
 
-The general formulas from the main text hence reduce to these familiar finite-dimensional discrete ones.
+The general formulas from the main text hence reduce to these familiar finite-dimensional discrete ones. In particular, \eqref{eq:discrete-spectrum-spectral-integral} shows explicitly how the spectral integral collapses to a finite sum, and \autoref{prop:spectral-projection-eigenspace} identifies the spectral projections with the orthogonal projections onto the eigenspaces.
 Indeed, given a Borel set $\omega \subseteq \sigma(A)$, we have
 \begin{equation}\label{eq:EAomega-discrete-spectrum}
 E_A(\omega) 
@@ -4037,12 +4229,11 @@ Therefore
 &\overset{\text{\eqref{eq:EAomega-discrete-spectrum}}}{=}
 \left\langle \psi \middle| \sum_{\smash[b]{\lambda_j} \in \omega} P_{M_j}\psi \right\rangle
 \\
-% &\overset{\makebox[\widthof{$\scriptstyle\text{(1.13)}$}][c]{}}{=}
 &=
 \sum_{\lambda_j \in \omega} \braket{\psi|P_{M_j}\psi}
 \\
 &\overset{\text{\ref{thm:projection-properties}}}{=}
-\sum_{\lambda_j \in \omega} \|P_{M_j}\psi\|^2
+\sum_{\lambda_j \in \omega} \|P_{M_j}\psi\|^2 % please simplify further in terms of inner product etc, as discussed...
 \end{aligned}
 \]
 which recovers exactly the usual formula.
@@ -4077,8 +4268,6 @@ Moreover, if $\omega=\{\lambda_j\}$ and $\braket{\varphi_j|\psi}\neq 0$, then \e
 \]
 for some phase $\theta \in [0,2\pi)$.
 \end{example}
-
-
 
 
 
@@ -4313,128 +4502,125 @@ for some phase $\theta \in [0,2\pi)$.
 
 
 
+
 \subsubsection{Joint systems and composition}
 
-If two systems are described by Hilbert spaces $\mathcal{H}_A$ and $\mathcal{H}_B$, then the joint system is described by the tensor product space
+If two quantum systems are described by Hilbert spaces \(\mathcal H_A\) and \(\mathcal H_B\), then the composite system is described by the tensor product Hilbert space
+\(
+\mathcal H_A \otimes \mathcal H_B
+\).
+
+The tensor product is linear in each factor, so it is compatible with the superposition principle: superpositions in the subsystems induce corresponding superpositions in the composite system.
+
+If the two subsystems are in pure states \(\psi_A \in \mathcal H_A\) and \(\psi_B \in \mathcal H_B\), then the corresponding product state of the joint system is
 \[
-\mathcal{H}_A \otimes \mathcal{H}_B
+\psi_A \otimes \psi_B \in \mathcal H_A \otimes \mathcal H_B
 \]
 
-If the two subsystems are in pure states $\psi_A \in \mathcal{H}_A$ and $\psi_B \in \mathcal{H}_B$, then the corresponding product state is
-\[
-\psi_A \otimes \psi_B \in \mathcal{H}_A \otimes \mathcal{H}_B
-\]
+More generally, the composite Hilbert space also contains superpositions of product states. Not every state in \(\mathcal H_A \otimes \mathcal H_B\) can be written in the form \(\psi_A \otimes \psi_B\). States that cannot be written in this form are called \emph{entangled}.
 
-The tensor product is bilinear:
-\[
-(\psi_1 + \psi_2)\otimes \varphi
-=
-\psi_1 \otimes \varphi + \psi_2 \otimes \varphi
-\]
-\[
-\psi \otimes (\varphi_1 + \varphi_2)
-=
-\psi \otimes \varphi_1 + \psi \otimes \varphi_2
-\]
-\[
-a(\psi \otimes \varphi)
-=
-(a\psi)\otimes\varphi
-=
-\psi\otimes(a\varphi)
-\]
-
-This preserves the superposition principle when passing from subsystems to the composite system.
-
-However, not every vector in $\mathcal{H}_A \otimes \mathcal{H}_B$ is a product state.
-A pure state is called \emph{separable} if it can be written as
-\[
-\psi = \varphi_A \otimes \varphi_B
-\]
-for some $\varphi_A \in \mathcal{H}_A$ and $\varphi_B \in \mathcal{H}_B$.
-If this is not possible, the state is called \emph{entangled}.
-
-For example,
-\[
-\frac{1}{\sqrt{2}}
-\left(
-\ket{0}\otimes\ket{1}
--
-\ket{1}\otimes\ket{0}
-\right)
-\]
-is an entangled state.
-
-Thus the state space of a composite quantum system is much richer than the Cartesian product of classical state spaces:
-it also contains superpositions of product states, and these are precisely what give rise to entanglement (see also the discussion of tensor products and reduced states below).
 
 \subsubsection{Abstraction and simplification}
 
-For quantum information theory, we now restrict to the case where the Hilbert space is finite-dimensional.
+From now on, we restrict to the case where the Hilbert space is finite-dimensional.
 Then
 \[
 \mathcal{H} \cong \C^n
 \]
-for some $n \in \N$.
+for some $n \in \N$, i.e. $\mathcal{H}$ is isomorphic to the standard $n$-dimensional complex vector space.  
 
 This allows us to work with vectors and matrices instead of general Hilbert-space operators and spectral measures.
 
-With respect to a fixed orthonormal basis, a vector $\varphi \in \mathcal{H}$ is represented by a column vector
+With respect to a fixed orthonormal basis, a vector $\psi \in \mathcal{H} \cong \C^n$ is represented by a column vector
 \[
-\ket{\varphi}
+\ket{\psi}
 =
 \begin{bmatrix}
-\varphi_1 \\
-\varphi_2 \\
+\psi_1 \\
+% \psi_2 \\
 \vdots \\
-\varphi_n
+\psi_n
 \end{bmatrix}
 \]
 called a \emph{ket}.
-
 Its adjoint is the row vector
 \[
-\bra{\varphi}
+\bra{\psi}
 =
-\ket{\varphi}^*
+\ket{\psi}^*
 =
 \begin{bmatrix}
-\overline{\varphi_1} &
-\overline{\varphi_2} &
-\cdots &
-\overline{\varphi_n}
+\psi_1^*,
+% \psi_2^*  &
+\ldots, 
+\psi_n^* 
 \end{bmatrix}
 \]
 called a \emph{bra}.
-
 The scalar product becomes
 \[
-(\varphi,\psi)
+\braket{\psi_{A} | \psi_{B}}
 =
-\bra{\varphi}\ket{\psi}
+\bra{\psi_{A}}  \ket{\psi_{B}}
 =
-\sum_{i=1}^n \overline{\varphi_i}\psi_i
+\sum_{i=1}^n \psi_{A,i}^* \psi_{B,i}
+\in \C
 \]
+% which is the usual matrix multiplication of a row vector with a column vector.
 
-Projectors onto one-dimensional subspaces can be written as
-\[
-P_{\varphi} = \ket{\varphi}\bra{\varphi}
-\]
-because
-\[
-\ket{\varphi}\bra{\varphi}\ket{\psi}
-=
-\braket{\varphi|\psi}\ket{\varphi}
-\]
+% Projectors onto one-dimensional subspaces can be written as
+% \[
+% P_{\varphi} = \ket{\varphi}\bra{\varphi}
+% \]
+% because
+% \[
+% \ket{\varphi}\bra{\varphi}\ket{\psi}
+% =
+% \braket{\varphi|\psi}\ket{\varphi}
+% \]
 
-Thus, if
+% Thus, if
+% \[
+% A = \sum_i \lambda_i P_{\varphi_i}
+% \]
+% then
+% \[
+% A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+% \]
+
+The notation is also useful for expressing Hermitian observables.
+As seen in \autoref{ex:finite-dimensional-case}, if $A$ is self-adjoint, we have
 \[
-A = \sum_i \lambda_i P_{\varphi_i}
+% \begin{aligned}
+A
+=
+\sum_{j=1}^r \lambda_j P_{M_j} 
+=
+\sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}}
+% \end{aligned}
 \]
-then
+and therefore
 \[
-A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\begin{aligned}
+\ket{A \psi}
+% &=
+% \Ket{\sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}} \psi} \\
+&=
+\sum_{\smash[b]{j}=1}^r \lambda_j \sum_{k=1}^{d_j} \Ket{P_{\varphi_{j,k}} \psi} \\
+% &=
+% \sum_{\smash[b]{j}=1}^r \lambda_j \sum_{k=1}^{d_j} \Ket{\braket{\varphi_{j,k}|\psi} \varphi_{j,k}} \\
+&=
+\sum_{\smash[b]{j}=1}^r \lambda_j \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \ket{\varphi_{j,k}} \\
+&=
+\sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}} \ket{\psi}
+\end{aligned}
 \]
+whereby we obtained the common way to represent projectors as
+\(
+P_{\varphi_{\smash[b]{j,k}}} = \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}
+\)
+and thus the observable $A$ itself as $A = \sum_{j=1}^r \lambda_j \sum_{k=1}^{\smash{d_j}} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}$.
+
 
 More generally, if $\{\ket{k}\}_k$ is an orthonormal basis, then every operator $A$ can be expanded as
 \[
@@ -4700,10 +4886,10 @@ This is the formal reason why entanglement alone does not allow signalling.  % [
 \node[blue!85, above=3pt] at (Zp) {$\ket{0}$};
 \node[blue!85, below=3pt] at (Zm) {$\ket{1}$};
 
-\node[below left] at (Yp) {$\dfrac{\ket{0}+i\ket{1}}{\sqrt{2}}$};
-\node[above right] at (Ym) {$\dfrac{\ket{0}-i\ket{1}}{\sqrt{2}}$};
-\node[right] at (Xp) {$\dfrac{\ket{0}+\ket{1}}{\sqrt{2}}$};
-\node[left] at (Xm) {$\dfrac{\ket{0}-\ket{1}}{\sqrt{2}}$};
+\node[below left] at (Yp) {$\dfrac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$};
+\node[above right] at (Ym) {$\dfrac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$};
+\node[right] at (Xp) {$\dfrac{\ket{0} + \ket{1}}{\sqrt{2}}$};
+\node[left] at (Xm) {$\dfrac{\ket{0} - \ket{1}}{\sqrt{2}}$};
 
 \node[blue!85] at (ThetaLabelPos) {$\theta$};
 \node[green!70!black, below right] at (PhiLabelPos) {$\varphi$};
