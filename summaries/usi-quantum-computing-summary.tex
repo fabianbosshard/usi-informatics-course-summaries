@@ -4172,11 +4172,17 @@ M_j = \mathrm{span}\{\varphi_{j,1},\dots,\varphi_{j,d_j}\}
  the orthogonal projection onto \(M_j\) is the sum of the one-dimensional projections onto these basis vectors. Hence
 \[
 P_{M_j}\psi 
-= % why?
+= % because the orthogonal projection onto a finite-dimensional subspace is the sum of the rank-one projections onto an orthonormal basis of that subspace
 \sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi
-= % why?
+= % because for a normalized vector $\varphi$ one has $P_{\varphi}\psi = \braket{\varphi|\psi}\,\varphi$
 \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k}
 \]
+and, by orthonormality,
+\begin{equation}\label{eq:projection-onto-eigenspace-squared-norm}
+\|P_{M_j}\psi\|^2
+=
+\sum_{k=1}^{d_j} |\braket{\varphi_{j,k}|\psi}|^2
+\end{equation}
 
 
 Substituting \eqref{eq:discrete-spectrum-spectral-decomposition} into the expectation value gives
@@ -4234,39 +4240,36 @@ Therefore
 \\
 &\overset{\text{\ref{thm:projection-properties}}}{=}
 \sum_{\lambda_j \in \omega} \|P_{M_j}\psi\|^2 % please simplify further in terms of inner product etc, as discussed...
+\\
+&\overset{\text{\eqref{eq:projection-onto-eigenspace-squared-norm}}}{=}
+\sum_{\lambda_j \in \omega}\sum_{k=1}^{d_j} |\braket{\varphi_{j,k}|\psi}|^2
 \end{aligned}
 \]
 which recovers exactly the usual formula.
 In particular,
-\(
-\Prob_{A}^\psi(\{\lambda_j\}) = \|P_{M_j}\psi\|^2
-\).
-
-If all eigenvalues are nondegenerate, then each $M_j$ is one-dimensional, say
 \[
-M_j=\mathrm{span}\{\varphi_j\}
+\Prob_{A}^\psi(\{\lambda_j\})
+=
+\|P_{M_j}\psi\|^2
+=
+\sum_{k=1}^{d_j} |\braket{\varphi_{j,k}|\psi}|^2
 \]
-and the corresponding projection becomes
-\(
-P_{M_j}=P_{\varphi_j}
-\),
-where
-\(
-P_{\varphi_j}\psi = \braket{\varphi_j|\psi}\,\varphi_j
-\).
-In that case, we have
-\(
-\Prob_{A}^{\smash[t]{\psi}}(\{\lambda_j\}) = |\braket{\varphi_j|\psi}|^2
-\).
-Moreover, if $\omega=\{\lambda_j\}$ and $\braket{\varphi_j|\psi}\neq 0$, then \eqref{eq:post-measurement-state} reduces to
+
+If the measurement outcome is the eigenvalue $\lambda_j$, then the post-measurement state from \eqref{eq:post-measurement-state} becomes
 \[
 \psi
 \longmapsto
-\frac{P_{\varphi_j}\psi}{\|P_{\varphi_j}\psi\|}
-=
-\varphi_j \, \eu^{\iu \theta}
+\frac{P_{M_j}\psi}{\|P_{M_j}\psi\|}
 \]
-for some phase $\theta \in [0,2\pi)$.
+provided $P_{M_j}\psi \neq 0$.
+Thus the state collapses to the normalized component of $\psi$ in the eigenspace $M_j$.
+% If $P_{M_j}\psi$ happens to be a scalar multiple of a single normalized eigenvector $\varphi \in M_j$, then this reduces to
+% \[
+% \psi
+% \longmapsto
+% \varphi \, \eu^{\iu \theta}
+% \]
+% for some phase $\theta \in [0,2\pi)$.
 \end{example}
 
 
