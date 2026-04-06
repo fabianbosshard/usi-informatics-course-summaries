@@ -120,6 +120,7 @@
 \declaretheorem[style=assertionstyle, name=Claim,       sibling=theorem]{claim}
 \declaretheorem[style=assertionstyle, name=Fact,        sibling=theorem]{fact}
 \declaretheorem[style=assertionstyle, name=Law,        sibling=theorem]{law}
+\declaretheorem[style=assertionstyle, name=Postulate,        sibling=theorem]{postulate}
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\blacktriangleleft}, postheadspace=1em]{definitionstyle}
 \declaretheorem[style=definitionstyle, name=Definition, numberwithin=section]{definition}
 
@@ -313,6 +314,7 @@
 \renewcommand{\theHclaim}{\theHtheorem}
 \renewcommand{\theHfact}{\theHtheorem}
 \renewcommand{\theHlaw}{\theHtheorem}
+\renewcommand{\theHpostulate}{\theHtheorem}
 \renewcommand{\theHdefinition}{\thesection.\arabic{definition}}
 \renewcommand{\theHproblem}{\theHdefinition}
 \renewcommand{\theHexercise}{\thesection.\arabic{exercise}} % Solution is numbered=no → no counter, no \theHsolution needed
@@ -336,6 +338,7 @@
 \renewcommand{\claimautorefname}{Claim}
 \renewcommand{\factautorefname}{Fact}
 \renewcommand{\lawautorefname}{Law}
+\renewcommand{\postulateautorefname}{Postulate}
 \renewcommand{\exampleautorefname}{Example}
 \renewcommand{\remarkautorefname}{Remark}
 \renewcommand{\cautionautorefname}{Caution}
@@ -3383,7 +3386,7 @@ is a complex measure on $\mathfrak{M}$. \label{item:resolution-of-identity-compl
 When $\mathfrak{M}$ is the $\sigma$-algebra of all Borel sets on a compact or locally compact Hausdorff space, it is customary to add another requirement to \ref{item:resolution-of-identity-complex-measure-via-inner-product}:
 Each $E_{x,y}$ should be a \emph{regular} Borel measure (this is automatically satisfied on compact metric spaces).
 
-A resolution of the identity is also called a \emph{projection-valued measure} (PVM) or \emph{spectral measure}. 
+A resolution of the identity is also called a \hl{\emph{projection-valued measure} (PVM)} or \emph{spectral measure}. 
 % The terminology emphasizes that each value $E(\omega)$ is a projection. 
 In quantum mechanics, PVMs are the mathematical description of projective measurements (see \autoref{sec:observables}).
 They are generalized by \emph{positive operator-valued measures} (POVMs), in the same sense that a mixed state (\autoref{def:mixed-state}) or density matrix (\autoref{def:density-matrix}) generalizes the notion of a pure state (\autoref{def:pure-state-density-matrix}).
@@ -3630,7 +3633,7 @@ The \emph{resolvent set} of an operator $T$ is the set of all $\lambda \in \math
 T-\lambda I
 \)
 is one-to-one, maps $D(T)$ onto $\mathcal H$, and has bounded inverse in $B(\mathcal H)$.
-Its complement is the \emph{spectrum} $\sigma(T)$.
+Its complement is the \hl[6]{\emph{spectrum} $\sigma(T)$}.
 \end{definition}
 
 \begin{definition}\label{def:domain-of-Psi}
@@ -3812,6 +3815,8 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 
 \subsection{Postulates} \label{sec:postulates-of-quantum-mechanics}
+
+
 
 \subsubsection{The state}
 
@@ -4030,181 +4035,6 @@ provided $E_A(\omega)\psi \neq 0$.
 
 
 
-
-
-
-
-
-% \begin{example}[Finite-dimensional case]
-% If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues
-% \(
-% \lambda_1,\dots,\lambda_r
-% \)
-% and pairwise orthogonal eigen\-spaces
-% \[
-% M_j \coloneq N({A}-\lambda_j \id)
-% \]
-% for 
-% \(
-% j=1,\dots,r
-% \), 
-% such that
-% \[
-% % \C^n = M_1 \oplus \cdots \oplus M_r
-% \C^n = \bigoplus_{j=1}^r M_j
-% \]
-% and
-% \begin{equation}\label{eq:discrete-spectrum-spectral-decomposition}
-% {A} = \sum_{j=1}^r \lambda_j P_{M_j} % why?
-% \end{equation}
-% where $P_{M_j}$ denotes the orthogonal projection onto the eigenspace $M_j$.
-% If we choose an orthonormal basis of eigenvectors (it exists, since $A$ is self-adjoint)
-% \[
-% \{\varphi_{j,k}: 1\le j\le r,\ 1\le k\le d_j\}
-% \]
-% with
-% \(
-% d_j = \dim M_j
-% \),
-% \(
-% M_j = \mathrm{span}\{\varphi_{j,1},\dots,\varphi_{j,d_j}\}
-% \),
-% we have
-% % \[
-% % \begin{aligned}
-% % {A} 
-% % &=
-% % \sum_{j=1}^r \lambda_j P_{M_j} \\
-% % &=
-% % \sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}}
-% % \end{aligned}
-% % \]
-% % \[
-% % \begin{aligned}
-% % P_{M_j}\psi 
-% % &=
-% % \sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi \\
-% % &=  
-% % \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k} \\
-% % &=
-% % \sum_{k=1}^{d_j} \varphi_{j,k} \braket{\varphi_{j,k}|\psi} \\
-% % &=
-% % \sum_{k=1}^{d_j} \ket{\varphi_{j,k}} \bra{\varphi_{j,k}} \psi
-% % \end{aligned}
-% % \]
-% \[
-% P_{M_j}\psi 
-% =
-% \sum_{k=1}^{d_j} P_{\varphi_{j,k}}\psi
-% =
-% \sum_{k=1}^{d_j} \braket{\varphi_{j,k}|\psi} \varphi_{j,k}
-% \]
-% % and therefore
-% % \[
-% % \begin{aligned}
-% % {A} 
-% % &=
-% % \sum_{j=1}^r \lambda_j P_{M_j} \\
-% % &=
-% % \sum_{j=1}^r \lambda_j \sum_{k=1}^{d_j} P_{\varphi_{j,k}}
-% % \end{aligned}
-% % \]
-
-% Substituting this decomposition into the expectation value gives
-% \[
-% \begin{aligned}
-% \braket{{A}}_{\psi}
-% &=
-% \braket{\psi|{A}\psi}
-% \\
-% &=
-% \left\langle \psi \middle| \sum_{j=1}^r \lambda_j P_{M_j}\psi \right\rangle
-% \\
-% &=
-% \sum_{j=1}^r \lambda_j \, \braket{\psi|P_{M_j}\psi}
-% \\
-% &=
-% \sum_{j=1}^r \lambda_j \, \|P_{M_j}\psi\|^2
-% \end{aligned}
-% \]
-% Thus the numbers
-% \(
-% p_j \coloneq \|P_{M_j}\psi\|^2
-% \)
-% are precisely the probabilities of obtaining the outcomes $\lambda_j$.
-% So in the finite-dimensional case the expectation value has the familiar form
-% \(
-% \braket{{A}}_{\psi} = \sum_{j = 1}^r \lambda_j p_j
-% \).
-
-
-% The general formulas from the main text hence reduce to these familiar finite-dimensional discrete ones.
-% Indeed, given a Borel set $\omega \subseteq \sigma(A)$, we have
-% \begin{equation}\label{eq:EAomega-discrete-spectrum}
-% E_A(\omega) 
-% =
-% E_A\left(\bigcup_{\smash[b]{\lambda_j} \in \omega} \{\lambda_j\}\right)
-% \overset{\text{\ref{def:resolution-of-identity}.\ref{item:if-disjoint-then-Eomega1cupomega2-is-sum}}}{=} 
-% \sum_{\lambda_j \in \omega} E_A(\{\lambda_j\})
-% \overset{\text{\ref{prop:spectral-projection-eigenspace}}}{=}
-% \sum_{\lambda_j \in \omega} P_{M_j}
-% \end{equation}
-% Here the sum is finite because $\sigma({A})=\{\lambda_1,\dots,\lambda_r\}$ is finite and hence $\omega \subseteq \sigma(A)$ is so as well.
-% Therefore
-% \[
-% \begin{aligned}
-% \mu_\psi^{A}(\omega)
-% &\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
-% \braket{\psi|E_{A}(\omega)\psi}
-% \\
-% &\overset{\text{\eqref{eq:EAomega-discrete-spectrum}}}{=}
-% \left\langle \psi \middle| \sum_{\smash[b]{\lambda_j} \in \omega} P_{M_j}\psi \right\rangle
-% \\
-% % &\overset{\makebox[\widthof{$\scriptstyle\text{(1.13)}$}][c]{}}{=}
-% &=
-% \sum_{\lambda_j \in \omega} \braket{\psi|P_{M_j}\psi}
-% \\
-% &\overset{\text{\ref{thm:projection-properties}}}{=}
-% \sum_{\lambda_j \in \omega} \|P_{M_j}\psi\|^2
-% \end{aligned}
-% \]
-% which recovers exactly the usual formula.
-% In particular,
-% \(
-% \Prob_{A}^\psi(\{\lambda_j\}) = \|P_{M_j}\psi\|^2
-% \).
-
-% If all eigenvalues are nondegenerate, then each $M_j$ is one-dimensional, say
-% \[
-% M_j=\mathrm{span}\{\varphi_j\}
-% \]
-% and the corresponding projection becomes
-% \(
-% P_{M_j}=P_{\varphi_j}
-% \),
-% where
-% \(
-% P_{\varphi_j}\psi = \braket{\varphi_j|\psi}\,\varphi_j
-% \).
-% In that case, we have
-% \(
-% \Prob_{A}^{\smash[t]{\psi}}(\{\lambda_j\}) = |\braket{\varphi_j|\psi}|^2
-% \).
-% Moreover, if $\omega=\{\lambda_j\}$ and $\braket{\varphi_j|\psi}\neq 0$, then \eqref{eq:post-measurement-state} reduces to
-% \[
-% \psi
-% \longmapsto
-% \frac{P_{\varphi_j}\psi}{\|P_{\varphi_j}\psi\|}
-% =
-% \varphi_j \, \eu^{\iu \theta}
-% \]
-% for some phase $\theta \in [0,2\pi)$.
-% \end{example}
-
-
-
-
-
 \begin{example}[Finite-dimensional case]\label{ex:finite-dimensional-case}
 If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues
 \(
@@ -4365,228 +4195,6 @@ Thus the state collapses to the normalized component of $\psi$ in the eigenspace
 
 
 
-
-
-
-
-
-
-
-
-
-
-% \subsubsection{Observables} \label{sec:observables}
-
-% A measurable physical quantity is represented by an observable, that is, by a self-adjoint operator
-% \(
-% A = A^*
-% \)
-% (see Definition \ref{def:hermitian}, \ref{def:normal-hermitian-unitary-projection} \ref{item:hermitian}, \ref{def:symmetric-self-adjoint-unbounded}, \autoref{thm:spectral-theorem}, \autoref{thm:spectral-theorem-unbounded}).
-% The expectation value of $A$ in a state $\psi$ is
-% \[
-% \braket{A}_{\psi}
-% =
-% \braket{\psi | A | \psi}
-% \coloneq
-% \braket{\psi | A\psi}
-% \]
-% provided $\psi \in D(A)$.
-% The possible outcomes of a measurement of $A$ are given by the spectrum $\sigma(A)$ of $A$.
-
-% The finite-dimensional case serves as the guiding example.
-% If $A$ is self-adjoint, then by the spectral theorem it admits an orthonormal basis of eigenvectors $\{\varphi_i\}_{i=1}^n$ with real eigenvalues $\sigma(A) = \{\lambda_i\}_{i=1}^n$, so that
-% \[
-% A = \sum_{i=1}^n \lambda_i P_{\varphi_i}
-% \]
-% where
-% \(
-% P_{\varphi_i}\psi \coloneq \braket{\varphi_i|\psi} \varphi_i
-% \).
-% Substituting this decomposition into the expectation value gives
-% \[
-% \begin{aligned}
-% \braket{A}_{\psi}
-% &=
-% \braket{\psi|A\psi}
-% \\
-% &=
-% \Braket{\psi | \sum_{i=1}^n \lambda_i P_{\varphi_i}\psi}
-% \\
-% &=
-% \sum_{i=1}^n \lambda_i  \braket{\psi| \braket{\varphi_i|\psi} \varphi_i }
-% \\
-% &=
-% \sum_{i=1}^n \lambda_i  \braket{\psi|\varphi_i}\braket{\varphi_i|\psi}
-% \\
-% &=
-% \sum_{i=1}^n \lambda_i  \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% \end{aligned}
-% \]
-% Thus the numbers
-% \(
-% p_i \coloneq \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% \)
-% are precisely the probabilities of obtaining the outcomes $\lambda_i$.
-% So in the discrete case the expectation value has the familiar 
-% %probabilistic 
-% form
-% \(
-% \braket{A}_{\psi} = \sum_{i = 1}^n \lambda_i p_i
-% \).
-
-% This is the calculation one would like to preserve in general Hilbert spaces.
-% The difficulty is that in infinite-dimensional Hilbert spaces a self-adjoint operator need not admit an orthonormal basis of eigenvectors: there may be continuous spectrum (see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator}).
-% So the sum over eigenvalues must be replaced by the spectral decomposition (\autoref{thm:spectral-theorem-unbounded}).
-% Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
-% By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
-% \[
-% E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H)
-% \]
-% on the Borel sets of $\sigma_A$ such that
-% \(
-% A = \int_{\sigma_A} \lambda \,\dif E_A(\lambda)
-% \).
-% Here each $E_A(B)$ is a self-adjoint projection, and by \autoref{def:resolution-of-identity} and the remarks following it,
-% \[
-% \braket{\psi|E_A(B)\psi} = \|E_A(B)\psi\|^2 \ge 0
-% \]
-% for every Borel set $B \subseteq \sigma_A$.
-% Moreover,
-% \(
-% E_A(\sigma_A)=\id
-% \) and
-% \(
-% E_A(\emptyset)=0
-% \),
-% so for normalized $\psi$ we have
-% \(
-% \braket{\psi|E_A(\sigma_A)\psi} = \braket{\psi|\psi} = 1
-% \).
-% Therefore, 
-% for every normalized state $\psi$,
-% the map
-% \begin{equation}\label{eq:probability-measure-from-spectral-decomposition}
-% \mu_\psi^A(B)
-% \coloneq
-% \braket{\psi|E_A(B)\psi}
-% \overset{\text{\ref{def:resolution-of-identity}.\ref{item:each-Eomega-self-adjoint-projection}}}{=}
-% \braket{E_A(B)\psi|\psi}
-% \overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
-% E_{\psi,\psi}(B)
-% \end{equation}
-% for $B \in \mathcal B(\sigma_A)$, 
-% defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
-% This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
-% This is the precise infinite-dimensional analogue of the Born rule.
-
-% % So the generalization of the discrete formula
-% % \(
-% % p_i = \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% % \)
-% % is not, in general, a pdf, but a probability measure
-% % \[
-% % \Prob_A^\psi(B)
-% % =
-% % \mu_\psi^A(B)
-% % =
-% % \braket{\psi|E_A(B)\psi}
-% % \]
-% % for Borel sets $B \in \mathcal B(\sigma_A)$.
-% % This is the precise infinite-dimensional analogue of the Born rule.
-
-% Indeed, in the purely discrete case one has
-% \[
-% E_A(B) = \sum_{\lambda_i \in B} P_{\varphi_i}
-% \]
-% and therefore
-% \[
-% \begin{aligned}
-% \mu_\psi^A(B)
-% &=
-% \braket{\psi|E_A(B)\psi}
-% \\
-% &=
-% \Braket{\psi | \sum_{\smash[b]{\lambda_i} \in B} P_{\varphi_i}\psi}
-% \\
-% &=
-% \sum_{\lambda_i \in B} \braket{\psi|P_{\varphi_i}\psi}
-% \\
-% &=
-% \sum_{\lambda_i \in B} \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% \end{aligned}
-% \]
-% which recovers exactly the usual formula.
-% In particular,
-% \[
-% \Prob_A^\psi(\{\lambda_i\}) = \bigl|\braket{\varphi_i|\psi}\bigr|^2
-% \]
-
-% Now we perform the same calculation for the expectation value as in the discrete case, but with the spectral integral instead of the spectral sum:
-% % \[
-% % \begin{aligned}
-% % \braket{A}_{\psi}
-% % &=
-% % \braket{\psi|A\psi}
-% % \\
-% % &=
-% % \Braket{\psi | \int_{\sigma_A} \lambda \,\dif E_A(\lambda)\, \psi}
-% % \\
-% % &=
-% % \int_{\sigma_A} \lambda \, \dif \braket{\psi|E_A(\lambda)\psi}
-% % \\
-% % &=
-% % \int_{\sigma_A} \lambda \, \dif \mu_\psi^A(\lambda)
-% % \end{aligned}
-% % \]
-% \[
-% \begin{aligned}
-% \braket{A}_{\psi}
-% &=
-% \braket{\psi|A\psi}
-% \overset{\text{\ref{def:symmetric-self-adjoint-unbounded}.\ref{item:densely-defined-self-adjoint}}}{=}
-% \braket{A\psi|\psi}
-% \\
-% &\overset{\text{\eqref{eq:inner-product-spectral-representation}}}{=}
-% \int_{\sigma_A} \lambda \,\dif E_{\psi,\psi}(\lambda)
-% % \\
-% % &\overset{\text{\eqref{eq:complex-measure-via-inner-product}}}{=}
-% % \int_{\sigma_A} \lambda \,\dif \braket{E_A(\lambda)\psi | \psi}
-% \\
-% &\overset{\text{\eqref{eq:probability-measure-from-spectral-decomposition}}}{=}
-% \int_{\sigma_A} \lambda \,\dif \mu_\psi^A(\lambda)
-% \end{aligned}
-% \]
-% % where we used notational shorthand `$\dif \braket{\psi|E_A(\lambda)\psi} = \dif \braket{E_A(\,\cdot\,)\psi | \psi}(\lambda)$' in the penultimate step.
-% Thus the expectation value is again the probabilistic expectation of the measurement outcomes, only now with respect to the spectral probability measure instead of a finite list of probabilities.
-% This is the exact analogue of
-% \(
-% \sum_i \lambda_i p_i
-% \).
-% If the spectrum has both discrete and continuous parts, then $\mu_\psi^A$ automatically contains both.
-
-% % If the measure happens to be absolutely continuous with respect to Lebesgue measure, then one may write
-% % \[
-% % \mu_\psi^A(B) = \int_B \rho_\psi^A(\lambda)\,\dif\lambda
-% % \]
-% % for some density $\rho_\psi^A$.
-% % But pedagogically the fundamental object is the measure $\mu_\psi^A$, not necessarily a density.
-
-% After an ideal measurement, the state updates by projection.
-% If one only knows that the outcome lies in a Borel set $B$, then the post-measurement state is
-% \[
-% \psi
-% \longmapsto
-% \frac{E_A(B)\psi}{\|E_A(B)\psi\|}
-% \]
-% provided $E_A(B)\psi \neq 0$.
-% In the finite-dimensional non-degenerate case, where $B=\{\lambda_i\}$ and $E_A(B)=P_{\varphi_i}$, this reduces to
-% \[
-% \psi
-% \longmapsto
-% \frac{P_{\varphi_i}\psi}{\|P_{\varphi_i}\psi\|}
-% =
-% \varphi_i
-% \]
 
 
 
@@ -4777,36 +4385,7 @@ where $\{\ket{i}\}_{i=1}^n$ is any orthonormal basis.
 % One restricts to the class of \emph{trace-class operators}.
 The trace can be generalized to infinite-dimensional spaces, at least for certain, so called \emph{trace-class}, operators:
 
-% \begin{definition}[Trace Class]
-% Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
-% A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
-% \[
-% \sum_{i=1}^{\infty} \bra{i} |A| \ket{i} < \infty
-% \]
-% where $|A| \coloneq \sqrt{A^*A}$ denotes the positive-semidefinite Hermitian square root.
-% In that case, the trace of $A$ is defined by
-% \[
-% \Trace(A)
-% \coloneq
-% \sum_{i=1}^{\infty} \braket{i|A|i}
-% \]
-% and this series converges absolutely and is independent of the choice of orthonormal basis.
-% \end{definition}
-% \begin{definition}[Trace Class]
-% Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
-% Define
-% \[
-% \Trace(A)
-% \coloneq
-% \sum_{i=1}^{\infty} \braket{i|A|i}
-% \]
-% A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
-% \[
-% \sum_{i=1}^{\infty} \bra{i} |A| \ket{i} < \infty
-% \]
-% where $|A| \coloneq \sqrt{A^*A}$ denotes the positive-semidefinite Hermitian square root.
-% In that case, the series converges absolutely and is independent of the choice of orthonormal basis.
-% \end{definition}
+
 \begin{definition}[Trace Class]
 Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
 A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
@@ -5579,110 +5158,29 @@ A\,\Trace_B(\rho)
 % \end{equation}
 \end{itemize}
 \end{theorem}
-\begin{proof}
 
-\end{proof}
 
-% \begin{proof}
-% Choose orthonormal bases $\{\ket{i}\}_i$ of $\mathcal H_A$ and $\{\ket{\mu}\}_\mu$ of $\mathcal H_B$.
-% Then every operator
-% \(
-% \rho \in \operatorname{End}(\mathcal H_A\otimes\mathcal H_B)
-% \)
-% can be expanded as
-% \[
-% \rho
-% =
-% \sum_{i,j,\mu,\nu}
-% \rho_{i\mu,j\nu}\,
-% \ket{i}\bra{j}\otimes\ket{\mu}\bra{\nu},
-% \qquad
-% \rho_{i\mu,j\nu}
-% =
-% \braket{i,\mu|\rho|j,\nu}.
-% \]
-% Hence
-% \[
-% (A\otimes \id_B)\rho
-% =
-% \sum_{i,j,\mu,\nu}
-% \rho_{i\mu,j\nu}\,
-% A\ket{i}\bra{j}\otimes\ket{\mu}\bra{\nu}.
-% \]
-% Using the defining property of the partial trace,
-% \[
-% \Trace_B(S\otimes T)=\Trace(T)\,S,
-% \]
-% and linearity, we obtain
-% \[
-% \Trace_B\bigl((A\otimes \id_B)\rho\bigr)
-% =
-% \sum_{i,j,\mu,\nu}
-% \rho_{i\mu,j\nu}\,
-% \Trace(\ket{\mu}\bra{\nu})\,
-% A\ket{i}\bra{j}.
-% \]
-% Since
-% \(
-% \Trace(\ket{\mu}\bra{\nu})=\delta_{\mu\nu},
-% \)
-% this becomes
-% \[
-% \Trace_B\bigl((A\otimes \id_B)\rho\bigr)
-% =
-% \sum_{i,j,\mu}
-% \rho_{i\mu,j\mu}\,
-% A\ket{i}\bra{j}
-% =
-% A
-% \sum_{i,j,\mu}
-% \rho_{i\mu,j\mu}\,
-% \ket{i}\bra{j}.
-% \]
-% But
-% \[
-% \Trace_B(\rho)
-% =
-% \sum_{i,j,\mu}
-% \rho_{i\mu,j\mu}\,
-% \ket{i}\bra{j},
-% \]
-% so \eqref{eq:partial-trace-pull-through-left} follows.
 
-% Now take the trace on $\mathcal H_A$ on both sides of \eqref{eq:partial-trace-pull-through-left}. Since
-% \[
-% \Trace(X)=\Trace_A(\Trace_B(X))
-% \qquad
-% \text{for all }X\in \operatorname{End}(\mathcal H_A\otimes\mathcal H_B),
-% \]
-% we get
-% \[
-% \Trace\bigl((A\otimes \id_B)\rho\bigr)
-% =
-% \Trace_A\!\left(\Trace_B\bigl((A\otimes \id_B)\rho\bigr)\right)
-% =
-% \Trace_A\bigl(A\,\Trace_B(\rho)\bigr),
-% \]
-% which proves \eqref{eq:local-observable-partial-trace}.
 
-% The proof of \eqref{eq:partial-trace-pull-through-right} is analogous:
-% \[
-% \Trace_B\bigl(\rho(A\otimes \id_B)\bigr)
-% =
-% \Trace_B(\rho)\,A.
-% \qedhere
-% \]
-% \end{proof}
-% \begin{corollary}
-% If $P_\varphi$ is the rank-one projector corresponding to an eigenvector $\varphi$ of an observable on $\mathcal H_A$, then for every bipartite state $\rho$,
-% \[
-% \Prob(\lambda_\varphi)
-% =
-% \Trace\bigl((P_\varphi\otimes \id_B)\rho\bigr)
-% =
-% \Trace_A\bigl(P_\varphi\,\Trace_B(\rho)\bigr).
-% \]
-% \end{corollary}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
