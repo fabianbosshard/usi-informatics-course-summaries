@@ -43,12 +43,12 @@
 \let\SOULhl\hl % save soul's \hl under a private name
 \renewcommand{\hl}[1]{\SOULhl{#1}} % keep plain \hl working if you want
 
-\definecolor{HLgreen}{HTML}{77DD77}
-\definecolor{HLyellow}{HTML}{FFFF66}
-\definecolor{HLorange}{HTML}{FFB347}
-\definecolor{HLred}{HTML}{FF6961}
-\definecolor{HLpink}{HTML}{FFB6C1}
-\definecolor{HLturquoise}{HTML}{40E0D0}
+\definecolor{HLgreen}{HTML}{\eat #77DD77}
+\definecolor{HLyellow}{HTML}{\eat #FFFF66}
+\definecolor{HLorange}{HTML}{\eat #FFB347}
+\definecolor{HLred}{HTML}{\eat #FF6961}
+\definecolor{HLpink}{HTML}{\eat #FFB6C1}
+\definecolor{HLturquoise}{HTML}{\eat #40E0D0}
 
 \RenewDocumentCommand{\hl}{O{1} m}{% % master highlight macro: \hl[level]{text}, default = green
   \begingroup
@@ -89,12 +89,13 @@
 \usepackage{pifont}
 
 \usepackage{tikz}
+\usepackage{tikz-cd}
 \usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings, shapes.multipart, angles, quotes}
 \usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
-% \usetikzlibrary{external}
-% \tikzexternalize[prefix=tikz/]
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz-cache/]
 \usepackage{pgfplots}
 
 % define colors
@@ -164,8 +165,8 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\Span}{span}
-\DeclareMathOperator{\Kern}{kern}
-\DeclareMathOperator{\Trace}{trace}
+\DeclareMathOperator{\Kern}{ker}
+\DeclareMathOperator{\Trace}{tr}
 \DeclareMathOperator{\Rank}{rank}
 % \newcommand{\im}{\operatorname{Im}}
 % \newcommand{\re}{\operatorname{Re}}
@@ -386,7 +387,7 @@
 \]
 
 
-\subsection{Stern/Gerlach Experiment}
+\subsection{Stern/Gerlach Experiment}\label{sec:stern-gerlach-experiment}
 
 Measure \emph{magnetic dipole moment} of silver atoms by sending a stream of them through an \emph{inhomogeneous} magnetic field.  Each atom is deflected from the path proportionally to its dipole in the direction of the field gradient.
 
@@ -726,6 +727,7 @@ The angles are a bit different though, because classical polarization intensitie
 \frac{I}{I_0} = \cos^{2}(\varphi)
 \]
 where $\varphi$ is the angle between the intial polarization direction and the polarizer axis:
+% \tikzset{external/export next=false}
 \[
 % Image Source: https://tikz.net/malus-law/
 \begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
@@ -1141,6 +1143,8 @@ There is no classical gate that yields the NOT-gate in this way.
 
 
 
+
+
 \subsection{The Aspect/Gisin/Zeilinger Experiments}\label{sec:aspect-gisin-zeilinger-experiments}
 
 A pair of Qbits (e.g. polarized photons) can exhibit correlations that cannot be explained as merely two independent systems plus shared classical randomness.  
@@ -1430,6 +1434,13 @@ Experiments have repeatedly confirmed the predictions of quantum theory.
 In some experiments the measurements are spacelike separated, meaning that in each observer's reference frame their own measurement occurs first.
 
 
+\begin{remark}[No Signalling]
+Whatever the observable that Alice (or Bob, respectively) measures on her (his) part of the singlet: 
+The probability for both results is $1/2$. 
+In particular, Alice's measurement result does not depend on measurements on Bob's side and vice versa. 
+Thus, Alice and Bob cannot transmit messages this way, possibly faster than light. 
+This saves us from problems with relativity.
+\end{remark}
 
 To study how strong the correlations can be, Popescu and Rohrlich proposed an idealized device called a \emph{PR box}:
 \[\begin{tikzpicture}[scale=1.2, font=\footnotesize]
@@ -2186,6 +2197,17 @@ As it turns out, it is (at least in principle) possible to carry out any logical
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 \clearpage
 \section{Quantum Physics}
 
@@ -2919,6 +2941,7 @@ What possible equation of motion would lead to a solution of the form \eqref{eq:
 People were looking for a linear equation, because they observed interference effects (e.g. in double-slit experiments).
 Interference effects are characteristic for linear behaviors.
 
+\tikzexternaldisable
 For simplicity, we assume that $C$ is constant and analyze the time evolution:
 % time evolution:
 \[
@@ -2946,6 +2969,7 @@ which directly corresponds to the Schrödinger equation for a free particle:
 \iu \hbar \cdot \frac{\partial}{\partial t}\psi(\vect{x}, t) = -\frac{\hbar^2}{2 m} \cdot \Delta \psi(\vect{x}, t)
 }
 \end{equation}
+\tikzexternalenable
 
 The left hand side of the (non-relativistic) Schrödinger equation always looks like in \eqref{eq:schroedinger-free-particle}.
 The right hand side changes if we have a particle that is not free, e.g. in a potential $V(\vect{x})$.
@@ -3004,6 +3028,25 @@ The adjoint $A^*$ of a linear operator $A$ is defined as
 \]
 where $\braket{\cdot|\cdot}$ denotes the inner product defined in \eqref{eq:inner-product}.
 \end{definition}
+
+
+\begin{fact}[Properties of Adjoint Operators]
+\nopagebreak
+\leavevmode
+\nopagebreak
+\begin{itemize}\nopagebreak
+  \item $\ket{\psi'} = \hat{A} \ket{\psi} \; \longleftrightarrow \; \bra{\psi'} = \bra{\psi} \hat{A}^*$
+  \item $(\hat{A}^*)^* = \hat{A}$
+  \item $(a \hat{A})^* = a^* \hat{A}^*$ for $a \in \C$
+  \item $(\hat{A} + \hat{B})^* = \hat{A}^* + \hat{B}^*$
+  \item $(\hat{A} \hat{B})^* = \hat{B}^* \hat{A}^*$
+  \qedhere
+\end{itemize}
+\end{fact}
+
+
+
+
 \begin{definition}%[Hemitian]
 \label{def:hermitian}
 a linear operator $A$ is \hl[2]{self-adjoint} or Hermitian iff $A^* = A$
@@ -3022,7 +3065,6 @@ a linear operator $U$ is \hl[2]{unitary} iff $U U^* = \id$, or, equivalently, $U
 
 
 
-\pagebreak[3]
 
 
 \subsection{Observables}
@@ -3189,7 +3231,7 @@ Furthermore, we have the properties
 
 
 
-
+% \pagebreak
 
 \subsection{Digression on Operators}\label{sec:operators}
 
@@ -3337,8 +3379,15 @@ is a complex measure on $\mathfrak{M}$. \label{item:resolution-of-identity-compl
 \qedhere
 \end{enumerate}
 \end{definition}
+
 When $\mathfrak{M}$ is the $\sigma$-algebra of all Borel sets on a compact or locally compact Hausdorff space, it is customary to add another requirement to \ref{item:resolution-of-identity-complex-measure-via-inner-product}:
 Each $E_{x,y}$ should be a \emph{regular} Borel measure (this is automatically satisfied on compact metric spaces).
+
+A resolution of the identity is also called a \emph{projection-valued measure} (PVM) or \emph{spectral measure}. 
+% The terminology emphasizes that each value $E(\omega)$ is a projection. 
+In quantum mechanics, PVMs are the mathematical description of projective measurements (see \autoref{sec:observables}).
+They are generalized by \emph{positive operator-valued measures} (POVMs), in the same sense that a mixed state (\autoref{def:mixed-state}) or density matrix (\autoref{def:density-matrix}) generalizes the notion of a pure state (\autoref{def:pure-state-density-matrix}).
+
 
 
 Some immediate consequences of the properties in \autoref{def:resolution-of-identity}:
@@ -3373,7 +3422,7 @@ is countably additive $\mathcal{H}$-valued measure on $\mathfrak{M}$.
 \end{proposition}
 
 
-Next we tackle the integration of functions with respect to the projection-valued measures defined in \autoref{def:resolution-of-identity}.
+As in the case of ordinary measures, it is possible to integrate functions with respect to a PVM (\autoref{def:resolution-of-identity}), the result being a linear operator on $\mathcal{H}$.
 
 \begin{theorem}\label{thm:integration-projection-valued-measure}
 If $E$ is a resolution of the identity, then there exists an isometric *-isomorphism 
@@ -3645,6 +3694,8 @@ If $N$ is normal, then
 
 \autoref{thm:normal-bounded-operator-spectral-properties} can be extended to unbounded normal operators as follows:
 
+
+% Theorem about spectrum of normal operators (unbounded)
 \begin{theorem}
 A densely defined normal operator $T$ is 
 \begin{enumerate}[label=(\alph*)]
@@ -3653,6 +3704,44 @@ A densely defined normal operator $T$ is
 \end{enumerate}
 Note that if \ref{item:unitary-if-spectrum-on-unit-circle} holds, then necessarily $D(T)=\mathcal H$, so $T$ is bounded.
 \end{theorem}
+
+% Definition and theorem about involutions (unbounded)
+\begin{definition}\label{def:involution-unbounded}
+An operator $T$ in $\mathcal H$ is called an \emph{involution} if
+$D(T^2)=D(T)$
+and
+\[T^2x=x\]
+for every $x\in D(T)$.
+\end{definition}
+
+\begin{theorem}\label{thm:unitary-selfadjoint-involution}
+Let $T$ be an operator in $\mathcal H$. Then any two of the following properties imply the third:
+\begin{enumerate}[label=(\alph*)]
+  \item $T^* = T^{-1}$ ($T$ is unitary) \hfill \ding{43} \autoref{def:normal-hermitian-unitary-projection} \ref{item:unitary}
+  \item $T^* = T$ ($T$ is self-adjoint) \hfill \ding{43} \autoref{def:symmetric-self-adjoint-unbounded} \ref{item:densely-defined-self-adjoint}
+  \item $T^2 = I$ ($T$ is an involution) \hfill \ding{43} \autoref{def:involution-unbounded}
+\end{enumerate}
+In particular, if one of these three implications involves unitarity, then necessarily $D(T)=\mathcal H$, so $T$ is bounded.
+\end{theorem}
+
+\begin{proof}
+If $T$ is unitary and self-adjoint, then $T^{-1}=T^*=T$, hence $T^2=I$, so $T$ is an involution.
+If $T$ is unitary and an involution, then $T^*=T^{-1}=T$, so $T$ is self-adjoint.
+Finally, assume that $T$ is self-adjoint and an involution.
+Then $T$ is closed, and for every $x\in D(T)$,
+\[
+\|Tx\|^2 = \braket{Tx|Tx} = \braket{x|T^2x} = \|x\|^2
+\]
+so $T$ is an isometry on $D(T)$.
+Moreover,
+\[
+\|x\|_T^2 = \|x\|^2+\|Tx\|^2 = 2\|x\|^2
+\]
+for every $x \in D(T)$.
+Hence $D(T)$ is complete in the graph norm and therefore also in the Hilbert norm.
+Since a self-adjoint operator is densely defined, $D(T)$ is a dense complete subspace of $\mathcal H$, hence $D(T)=\mathcal H$.
+Thus $T$ is everywhere defined, isometric, and surjective because $T^2=I$, so $T$ is unitary.
+\end{proof}
 
 
 \begin{notation}
@@ -3679,7 +3768,7 @@ This notation is justified by \autoref{prop:orthogonal-projection-closed-subspac
 
 \begin{theorem}[Spectral theorem]\label{thm:spectral-theorem-unbounded}
 Every normal operator $T$ in $\mathcal H$ has a unique spectral decomposition\footnote{%
-In the unbounded case, a resolution of the identity means exactly the same thing as before (\autoref{def:resolution-of-identity}): a projection-valued measure
+In the unbounded case, a resolution of the identity means exactly the same thing as before (\autoref{def:resolution-of-identity}): a projection-valued measure (PVM)
 \(
 E:\mathfrak M\to B(\mathcal H)
 \).
@@ -3700,11 +3789,11 @@ D_f=\{x\in\mathcal H:\int |f|^2\,\dif E_{x,x}<\infty\}
 \end{equation}
 for every $x \in D(T) \overset{\text{\ref{def:domain-of-Psi}}}{=} \{x\in\mathcal H:\int_{\sigma(T)} |\lambda|^2\,\dif E_{x,x}(\lambda)<\infty\}$ and every $y \in \mathcal H$.
 Equivalently:
-\[
+\begin{equation}\label{eq:spectral-theorem-unbounded-operator}
 % \boxed{
 T=\int_{\sigma(T)} \lambda\, \dif E(\lambda)
 % }
-\]
+\end{equation}
 Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sigma(T)$ and every $S \in B(\mathcal H)$ which commutes with $T$ in the sense that $ST \subseteq TS$.
 \end{theorem}
 
@@ -3718,6 +3807,7 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 
 
+% \clearpage
 
 
 
@@ -3764,7 +3854,7 @@ If, in addition,
 then this superposition again represents a physical state.
 Thus quantum states behave like waves: linear combinations of states are again states.
 
-\subsubsection{The time evolution}
+\subsubsection{The time evolution}\label{sec:time-evolution}
 
 As already introduced in \eqref{eq:schroedinger}, the time evolution of a quantum state is governed by the Schrödinger equation
 \[
@@ -3806,13 +3896,13 @@ A = A^*
 \)
 (see Definitions \ref{def:hermitian}, \ref{def:normal-hermitian-unitary-projection} \ref{item:hermitian}, \ref{def:symmetric-self-adjoint-unbounded}, Theorems \ref{thm:spectral-theorem}, \ref{thm:spectral-theorem-unbounded}).
 The expectation value of $A$ in a state $\psi$ is
-\[
+\begin{equation}\label{eq:expectation-value-observable}
 \braket{A}_{\psi}
 =
 \braket{\psi | A | \psi}
 \coloneq
 \braket{\psi | A\psi}
-\]
+\end{equation}
 provided $\psi \in D(A)$.
 The possible outcomes of a measurement of $A$ are given by the spectrum (see \autoref{def:spectrum-unbounded-operator}) $\sigma(A) = \sigma_p(A) \cup \sigma_c(A)$ (for self-adjoint (wether bounded or unbounded) operators, the residual spectrum $\sigma_r(A)$ is always empty) of $A$.
 
@@ -3822,7 +3912,7 @@ The possible outcomes of a measurement of $A$ are given by the spectrum (see \au
 In a general Hilbert space $\mathcal{H}$, every self-adjoint operator $A$ admits a spectral decomposition
 (see \autoref{sec:operators}, \autoref{def:spectrum-unbounded-operator} and \autoref{thm:spectral-theorem-unbounded}).
 Denote the spectrum of $A$ by $\sigma_A \coloneq \sigma(A)$.
-By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure
+By \autoref{thm:spectral-theorem-unbounded}, for every self-adjoint operator there exists a unique projection-valued measure (PVM)
 \[
 E_A \colon \mathcal B(\sigma_A) \to B(\mathcal H) % why bounded? because each E_A(omega) is a projection, hence a bounded operator
 \]
@@ -4523,6 +4613,7 @@ If the two subsystems are in pure states \(\psi_A \in \mathcal H_A\) and \(\psi_
 More generally, the composite Hilbert space also contains superpositions of product states. Not every state in \(\mathcal H_A \otimes \mathcal H_B\) can be written in the form \(\psi_A \otimes \psi_B\). States that cannot be written in this form are called \emph{entangled}.
 
 
+
 \subsubsection{Abstraction and simplification}
 
 From now on, we restrict to the case where the Hilbert space is finite-dimensional.
@@ -4532,9 +4623,14 @@ Then
 \]
 for some $n \in \N$, i.e. $\mathcal{H}$ is isomorphic to the standard $n$-dimensional complex vector space.  
 
-This allows us to work with vectors and matrices instead of general Hilbert-space operators and spectral measures.
+This allows us to represent states by coordinates with respect to some fixed 
+orthonormal % is this too strong?
+basis
+and hence to
+work with vectors and matrices instead of general Hilbert-space operators. % and spectral measures.
 
-With respect to a fixed orthonormal basis, a vector $\psi \in \mathcal{H} \cong \C^n$ is represented by a column vector
+
+For $\psi \in \mathcal{H} \cong \C^n$, the corresponding column vector
 \[
 \ket{\psi}
 =
@@ -4545,8 +4641,8 @@ With respect to a fixed orthonormal basis, a vector $\psi \in \mathcal{H} \cong 
 \psi_n
 \end{bmatrix}
 \]
-called a \emph{ket}.
-Its adjoint is the row vector
+is called a \emph{ket}.
+Its adjoint (complex conjugated transpose) is the row vector
 \[
 \bra{\psi}
 =
@@ -4560,7 +4656,7 @@ Its adjoint is the row vector
 \end{bmatrix}
 \]
 called a \emph{bra}.
-The scalar product becomes
+The inner product becomes
 \[
 \braket{\psi_{A} | \psi_{B}}
 =
@@ -4569,6 +4665,9 @@ The scalar product becomes
 \sum_{i=1}^n \psi_{A,i}^* \psi_{B,i}
 \in \C
 \]
+called a \emph{bra-ket}.
+
+
 % which is the usual matrix multiplication of a row vector with a column vector.
 
 % Projectors onto one-dimensional subspaces can be written as
@@ -4590,6 +4689,9 @@ The scalar product becomes
 % \[
 % A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
 % \]
+
+
+
 
 The notation is also useful for expressing Hermitian observables.
 As seen in \autoref{ex:finite-dimensional-case}, if $A$ is self-adjoint, we have
@@ -4619,199 +4721,1059 @@ and therefore
 \end{aligned}
 \]
 whereby we obtained the common way to represent projectors as
-\(
-P_{\varphi_{\smash[b]{j,k}}} = \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}
-\)
+\[
+% P_{\varphi_{\smash[b]{j,k}}} = \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}
+P_{\varphi} = \ket{\varphi}\bra{\varphi}
+\]
 and thus the observable $A$ itself as $A = \sum_{j=1}^r \lambda_j \sum_{k=1}^{\smash{d_j}} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}$.
 
+Fix an orthonormal basis $\{\ket{\varphi_i}\}_{i=1}^n$ of $\mathcal{H}$.
+In the following, we abbreviate the basis vectors with their indices, i.e. $\ket{\varphi_{i}} \eqcolon \ket{i}$.
 
-More generally, if $\{\ket{k}\}_k$ is an orthonormal basis, then every operator $A$ can be expanded as
+A common trick when working with an orthonormal basis in braket notation is to insert the identity operator
 \[
-A = \sum_{k,l} \braket{k|A|l} \ket{k}\bra{l}
+% \matr{I} 
+\id
+= 
+\sum_{i=1}^n \ket{i}\bra{i}
 \]
-
-A useful identity is the resolution of the identity
+and then rearrange the terms.
+Note that this is a discrete instance of the resolution of the identity from \autoref{def:resolution-of-identity}. 
+For example, we can write a linear operator $A$ 
+% on $\mathcal{H}$ 
+as
+% if $\{\ket{k}\}_k$ is an 
+% orthonormal % too strong?
+% basis,
 \[
-\id = \sum_i \ket{i}\bra{i}
+A 
+= 
+\left(\sum_{k=1}^n \ket{k}\bra{k}\right) A \left(\sum_{l=1}^n \ket{l}\bra{l}\right)
+% =
+% \sum_{k=1}^n \sum_{l=1}^n  \left(\ket{k}\bra{k}\right) A \left(\ket{l}\bra{l}\right)
+=
+\sum_{k=1}^n \sum_{l=1}^n  \ket{k} \braket{k|A|l} \bra{l}
+=
+\sum_{k=1}^n \sum_{l=1}^n  \underbrace{\braket{k|A|l}}_{[\matr{A}]_{kl}} \ket{k}\bra{l}
 \]
-which can be inserted into calculations at convenient places.  % [oai_citation:5‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:6‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
+hence, every linear operator $A$ can be represented as a matrix $\matr{A}$.
+The entry in the $k^\text{th}$ row and $l^\text{th}$ column is $[\matr{A}]_{kl} = \braket{k|A|l}$.
 
-\subsubsection{The trace}
+The way in which it is written here is rather an expansion in a basis of the vector space of linear operators $\operatorname{End}(\mathcal{H})$, and $\braket{k|A|l}$ is the coefficient before the basis vector $\ket{k}\bra{l}$, i.e., a matrix with a one in the $k^\text{th}$ row and the $l^\text{th}$ column.
 
+\subsubsection{The trace} \label{sec:trace}
+
+\begin{definition}
 For an operator $A \in \operatorname{End}(\mathcal{H})$ on a finite-dimensional Hilbert space, the trace is defined by
+\begin{equation}\label{eq:trace-definition}
+\Trace(A)
+\coloneq
+\sum_{i = 1}^n \braket{i|A|i}
+\end{equation}
+where $\{\ket{i}\}_{i=1}^n$ is any orthonormal basis.
+\end{definition}
+
+% In infinite-dimensional Hilbert spaces, the same formula does \emph{not} define the trace for arbitrary operators. 
+% One restricts to the class of \emph{trace-class operators}.
+The trace can be generalized to infinite-dimensional spaces, at least for certain, so called \emph{trace-class}, operators:
+
+% \begin{definition}[Trace Class]
+% Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
+% A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
+% \[
+% \sum_{i=1}^{\infty} \bra{i} |A| \ket{i} < \infty
+% \]
+% where $|A| \coloneq \sqrt{A^*A}$ denotes the positive-semidefinite Hermitian square root.
+% In that case, the trace of $A$ is defined by
+% \[
+% \Trace(A)
+% \coloneq
+% \sum_{i=1}^{\infty} \braket{i|A|i}
+% \]
+% and this series converges absolutely and is independent of the choice of orthonormal basis.
+% \end{definition}
+% \begin{definition}[Trace Class]
+% Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
+% Define
+% \[
+% \Trace(A)
+% \coloneq
+% \sum_{i=1}^{\infty} \braket{i|A|i}
+% \]
+% A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
+% \[
+% \sum_{i=1}^{\infty} \bra{i} |A| \ket{i} < \infty
+% \]
+% where $|A| \coloneq \sqrt{A^*A}$ denotes the positive-semidefinite Hermitian square root.
+% In that case, the series converges absolutely and is independent of the choice of orthonormal basis.
+% \end{definition}
+\begin{definition}[Trace Class]
+Let $\mathcal H$ be a separable Hilbert space with orthonormal basis $\{\ket{i}\}_{i=1}^{\infty}$.
+A bounded operator $A \in B(\mathcal H)$ is called \emph{trace class} if
+\[
+\sum_{i=1}^{\infty} \bra{i} |A| \ket{i} < \infty
+\]
+where $|A| \coloneq \sqrt{A^*A}$ denotes the positive-semidefinite Hermitian square root, i.e., the unique positive operator $B$ such that $B^2 = A^*A$.
+In that case, the trace of $A$ is defined by
 \[
 \Trace(A)
 \coloneq
-\sum_k \braket{k|A|k}
+\sum_{i=1}^{\infty} \braket{i|A|i}
 \]
-where $\{\ket{k}\}_k$ is any orthonormal basis.
+and this series converges absolutely and is independent of the choice of orthonormal basis.
+\end{definition}
+
+In particular, finite-rank operators are trace class. Hence rank-one operators such as
+\[
+\ket{\psi_1}\bra{\psi_2}
+\]
+are trace class, which is why the density-matrix formalism still works in infinite-dimensional Hilbert spaces for pure states and, more generally, for trace-class density operators.
+
+
+
+\begin{interlude}[Change of Basis]
+Fix an “old” orthonormal basis $B=(\vect{e}_1,\dots,\vect{e}_n)$ and a “new” orthonormal basis $\widetilde B=(\tilde{\vect{e}}_1,\dots,\tilde{\vect{e}}_n)$ of $\mathcal H$.
+Let $\vect{x}$ be the coordinate column of a vector $v \allowbreak \in \allowbreak \mathcal{H}$ with respect to $B$, and let $\tilde{\vect{x}}$ be the coordinate column of the same vector with respect to $\widetilde B$.
+If $\matr{U}$ denotes the change-of-basis matrix from $B$ to $\widetilde B$, then
+\[
+\tilde{\vect{x}} = \matr{U} \vect{x}
+\]
+where the columns of $\matr{U}$ are the old basis vectors written in the new basis.
+Equivalently, the columns of $\matr{U}^{-1}$ are the new basis vectors written in the old basis.
+If a linear operator $\hat{A} \allowbreak \colon \allowbreak \mathcal{H} \allowbreak \to \allowbreak \mathcal{H}$ has matrix $\matr{A} \in \mathbb{C}^{n\times n}$ in the old basis and matrix $\tilde{\matr{A}} \in \mathbb{C}^{n\times n}$ in the new basis, then
+\[
+% \boxed{
+\tilde{\matr{A}} = \matr{U} \matr{A} \matr{U}^{-1}
+% }
+\]
+where $\matr{U}$ is the change-of-basis matrix from the old basis $B$ to the new basis $\widetilde B$.
+% \qquad \qquad \qquad
+\tikzexternaldisable
+\[
+\begin{tikzcd}[column sep=4em, row sep=2.5em, font=\footnotesize]
+\mathbb{C}^n
+  \arrow[r, "\matr{A}"] %\in\mathbb{C}^{n\times n}"]
+  \arrow[dd, swap, "\matr{U}", shift right=2.0em]
+&
+\mathbb{C}^n
+  \arrow[dd, "\matr{U}", shift left=2.0em]
+\\
+\mathcal{H}
+  \arrow[u, "{[\cdot]_B}"] % coordinate isomorphism
+  \arrow[r, "\hat{A}\ \text{linear}"]
+  \arrow[d, swap, "{[\cdot]_{\widetilde B}}"] % coordinate isomorphism
+&
+\mathcal{H}
+  \arrow[u, swap, "{[\cdot]_B}"] % coordinate isomorphism
+  \arrow[d, "{[\cdot]_{\widetilde B}}"] % coordinate isomorphism
+\\
+\mathbb{C}^n
+  \arrow[r, "\tilde{\matr{A}}"] %\in\mathbb{C}^{n\times n}"]
+&
+\mathbb{C}^n
+\end{tikzcd}
+\]
+\tikzexternalenable
+So matrices of the same operator in different bases are related by conjugation.
+In the orthonormal case, $\matr{U}$ is unitary, hence
+\(
+\matr{U}^{-1}=\matr{U}^*
+\).
+\end{interlude}
+
 
 The trace is basis-independent.
 A key identity is
-\[
-\Trace(AB) = \Trace(BA)
-\]
-
+\(
+\Trace(A B) = \Trace(B A)
+\).
 Hence for a unitary change of basis $U$,
 \[
-\Trace(UAU^*)
+\Trace(U A U^*)
 =
-\Trace(U^*UA)
+\Trace(U^* U A)
 =
 \Trace(A)
 \]
 
-For a pure state $\ket{\psi}$ and an observable $A$, the expectation value can be written as
+
+This can also be seen using the trick mentioned above:
 \[
+\begin{aligned}
+\Trace(A)
+&=
+\sum_{i=1}^n \braket{i|A|i}
+=
+\sum_{i=1}^n \bra{i} \id A \id  \ket{i} \\
+&=
+\sum_{i=1}^n \bra{i} \left(\sum_{\tilde{u} = 1}^n \ket{\tilde{u}}\bra{\tilde{u}}\right) A \left(\sum_{\tilde{v} = 1}^n \ket{\tilde{v}}\bra{\tilde{v}}\right) \ket{i} \\
+&=
+\sum_{i=1}^n \sum_{\tilde{u} = 1}^n \sum_{\tilde{v} = 1}^n \braket{i|\tilde{u}} \braket{\tilde{u}|A|\tilde{v}} \braket{\tilde{v}|i} \\
+&=
+\sum_{\tilde{u} = 1}^n \sum_{\tilde{v} = 1}^n \sum_{i=1}^n  \braket{\tilde{v}|i} \braket{i|\tilde{u}} \braket{\tilde{u}|A|\tilde{v}}  \\
+&=
+\sum_{\tilde{u} = 1}^n \sum_{\tilde{v} = 1}^n   \bra{\tilde{v}} \underbrace{\left(\sum_{i=1}^n \ket{i} \bra{i} \right)}_{\id} \ket{\tilde{u}} \braket{\tilde{u}|A|\tilde{v}}  \\
+&=
+\sum_{\tilde{u} = 1}^n \sum_{\tilde{v} = 1}^n   \underbrace{\braket{\tilde{v} | \tilde{u}}}_{\delta_{\tilde{v}, \tilde{u}}} \braket{\tilde{u}|A|\tilde{v}}  \\
+&=
+\sum_{\tilde{u} = 1}^n \braket{\tilde{u}|A|\tilde{u}} 
+\end{aligned}
+\]
+
+
+For a pure state $\ket{\psi}$ and an observable $A$, the \hl{expectation value} can be written as
+\[
+\begin{aligned}
 \langle A \rangle_{\psi}
-=
-\braket{\psi|A|\psi}
-=
+&\overset{\text{\eqref{eq:expectation-value-observable}}}{=}
+\braket{\psi|A|\psi} \\
+&=
+\bra{\psi} A \left(\sum_{i=1}^n \ket{i}\bra{i}\right) \ket{\psi} \\
+&=
+\sum_{i=1}^n \braket{\psi | A | i} \braket{i | \psi} \\
+&= 
+\sum_{i=1}^n \braket{i | \left(\ket{\psi} \bra{\psi} A \right) | i} \\
+&\overset{\text{\eqref{eq:trace-definition}}}{=}
 \Trace\bigl(\ket{\psi}\bra{\psi}A\bigr)
+\end{aligned}
 \]
 which is the form that extends naturally to mixed states.  % [oai_citation:7‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)  % [oai_citation:8‡Note 17 Feb 2027.pdf](sediment://file_00000000ec74724390e9a998a2de5991)
 
+
+
 \subsubsection{Density matrices}
 
-So far, states were pure states.
-More generally, one may only know a probability distribution over pure states.
-This describes a \emph{statistical mixture}, not a superposition.
+So far, we have described quantum states by normalized vectors
+\(
+\psi \in \mathcal H
+\),
+i.e. by \emph{pure states}.
+In practice, however, one often does not know the actual pure state exactly, but only a probability distribution over possible pure states.
+Such a \emph{statistical mixture} is \textbf{not} the same thing as a superposition.
+% It is represented by a \emph{density matrix}.
+While the vector representation is sufficient for pure states, as soon as we want to describe statistical mixtures, it is more convenient to use an equivalent representation in terms of density matrices.
 
-Such a state is represented by a density operator $\rho$.
+\begin{definition}[Density Matrix]\label{def:density-matrix}
+A \hl[2]{density matrix} on a finite-dimensional Hilbert space \(\mathcal H\) is an operator
+\(
+\rho \in \operatorname{End}(\mathcal H)
+\)
+such that
+\begin{enumerate}[label=(\alph*)]
+\item 
+\(\rho \ge 0\), i.e. \(\braket{\psi|\rho|\psi} \ge 0\) for every \(\psi \in \mathcal H\)
+\item 
+\(\Trace(\rho)=1\)
+\qedhere
+\end{enumerate}
+\end{definition}
 
-In finite dimension, a density matrix is a positive trace-one operator:
+Since \(\rho\) is positive, it is in particular self-adjoint, and by the spectral theorem (\autoref{thm:spectral-theorem-unbounded}; in the finite-dimensional case compare also \autoref{ex:finite-dimensional-case}) it admits a decomposition
 \[
-\rho = \rho^*
-\qquad
-\rho \geq 0
-\qquad
-\Trace(\rho) = 1
+\rho
+=
+\sum_{j=1}^r \lambda_j P_{M_j}
+=
+\sum_{j=1}^r \lambda_j \sum_{k=1}^{\smash[t]{d}_j} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}
 \]
-
-Equivalently, by the spectral theorem,
+where \(\lambda_1,\dots,\lambda_r\ge 0\) are the distinct eigenvalues of \(\rho\),
+\(M_j\) is the eigenspace corresponding to \(\lambda_j\),
+\begin{equation}\label{eq:projector-eigenspace}
+P_{M_j} = \sum_{k=1}^{\smash[t]{d}_j} P_{\varphi_{j,k}} = \sum_{k=1}^{\smash[t]{d}_j} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}}
+\end{equation}
+is the orthogonal projection onto \(M_j\),
+and
+\(
+\{\varphi_{j,1},\dots,\varphi_{j,d_j}\}
+\)
+is an orthonormal basis of \(M_j\), with
+\(
+d_j = \dim M_j
+\).
+Since
 \[
-\rho = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
+\Trace(\rho)
+=
+\sum_{j=1}^r \lambda_j  \Trace(P_{M_j})
+=
+\sum_{j=1}^r d_j \lambda_j
+=
+1
+\]
+the numbers \(d_j\lambda_j\) add up to one. 
+Equivalently, if one lists eigenvalues with multiplicity, then
+\[
+\rho 
+= 
+\sum_{i=1}^n \lambda_i \ket{\varphi_i}\bra{\varphi_i}
 \]
 with
+\(
+\lambda_i \ge 0
+\)
+and
+\(
+\sum_{i=1}^n \lambda_i = 1
+\)
+for some orthonormal basis of eigenvectors \(\{\varphi_i\}_{i=1}^n\) (compare also \autoref{ex:finite-dimensional-case}).
+Thus the eigenvalues, counted with multiplicity, can be interpreted as probabilities of the system to be in the state of the corresponding eigenvector.
+
+\begin{definition}[Mixed state]\label{def:mixed-state}
+If the system is in the pure state \(\ket{\varphi_i}\) with probability \(p_i\), then the corresponding density matrix is exactly
 \[
-\lambda_i \geq 0
-\qquad
-\sum_i \lambda_i = 1
+\rho
+=
+\sum_i p_i  \ket{\varphi_i}\bra{\varphi_i}
 \]
+where \(p_i \ge 0\) and \(\sum_i p_i = 1\).
+This is called a \emph{mixed state} or \emph{statistical mixture}.
+\end{definition}
 
-Thus the eigenvalues of $\rho$ may be interpreted as probabilities.
+\begin{caution}
+A normalized superposition
+\(
+\alpha \ket{\psi_1} + \beta \ket{\psi_2}
+\)
+with \(|\alpha|^2 + |\beta|^2 = 1\) 
+is again a pure state.
+By contrast,
+\(
+p \ket{\psi_1}\bra{\psi_1} + (1-p)\ket{\psi_2}\bra{\psi_2}
+\)
+is generally a mixed state.
+So convex combinations of projectors are fundamentally different from linear combinations of vectors.
+\end{caution}
 
-Pure states are exactly those density matrices of the form
+The \hl{time evolution} of density matrices is induced by the unitary time evolution
+\(
+U(t)=\eu^{-\iu H t/\hbar}
+\) 
+of pure states (\autoref{sec:time-evolution}):
+\begin{equation}\label{eq:density-matrix-time-evolution}
+\rho(t)
+=
+U(t)\,\rho(0)\,U(t)^*
+\end{equation}
+
+For an observable \(A\), the \hl{probability} of obtaining a measurement outcome in a Borel set \(\omega \subseteq \sigma(A)\) is
+\begin{equation}\label{eq:born-rule}
+{\color{red}\boxed{\color{black}
+\Prob_A^{\rho}(\omega)
+=
+\Trace\bigl(E_A(\omega)\rho\bigr)
+}}
+\end{equation}
+where \(E_A\) is the spectral measure of \(A\) from \autoref{thm:spectral-theorem-unbounded}.
+In the finite-dimensional case, if
+\[
+A = \sum_{j=1}^r \lambda_j P_{M_j}
+\]
+with distinct eigenvalues \(\lambda_j\) and eigenspaces \(M_j\), then
+\begin{equation}\label{eq:born-rule-density-matrix}
+\Prob_A^{\rho}(\{\lambda_j\})
+=
+\Trace\bigl(P_{M_j}\rho\bigr)
+\overset{\text{\eqref{eq:projector-eigenspace}}}{=}
+\Trace\left(\sum_{k=1}^{\smash[t]{d}_j} \ket{\varphi_{j,k}}\bra{\varphi_{j,k}} \rho\right)
+\end{equation}
+So in the degenerate case one must use the projection onto the whole eigenspace, not merely a (rank-one) projector onto a single eigenvector.
+
+
+
+\begin{definition}[Pure State as a Density Matrix]\label{def:pure-state-density-matrix}
+A density matrix \(\rho\) is called \emph{pure} if
 \[
 \rho = \ket{\psi}\bra{\psi}
 \]
-for some normalized $\psi$.
+for some normalized \(\psi \in \mathcal H\).
+\end{definition}
 
-The time evolution of density matrices is
-\[
-\rho(t) = U(t)\rho(0)U(t)^*
-\]
+Equivalently, \(\rho\) is pure if and only if one eigenvalue equals \(1\) and all others are \(0\), or, equivalently, if and only if \(\rho\) has rank \(1\).
+Thus pure states are precisely the rank-one orthogonal projections (compare also \autoref{eq:post-measurement-state} and \autoref{ex:finite-dimensional-case}).
 
-If
+For the density matrix of a pure state \(\rho = \ket{\psi}\bra{\psi}\), 
+\eqref{eq:born-rule} becomes
+% \[
+% \begin{aligned}
+% \Prob_A^{\rho}(\omega)
+% &\overset{\text{\eqref{eq:born-rule}}}{=}
+% \Trace\bigl(E_A(\omega)\ket{\psi}\bra{\psi}\bigr)
+% \overset{\text{\eqref{eq:trace-definition}}}{=}
+% \sum_{i=1}^n \bra{i} E_A(\omega) \ket{\psi}\bra{\psi} \ket{i} \\
+% &=
+% \sum_{i=1}^n \bra{\psi} \ket{i} \bra{i} E_A(\omega) \ket{\psi}
+% =
+% \bra{\psi} \left(\sum_{i=1}^n \ket{i}\bra{i}\right) E_A(\omega) \ket{\psi}
+% =
+% \bra{\psi} E_A(\omega) \ket{\psi}
+% \end{aligned}
+% \]
 \[
-A = \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
-\]
-is an observable, then the probability of obtaining the outcome $\lambda_i$ is
-\[
-\Prob(\lambda_i)
+% \begin{aligned}
+\Prob_A^{\rho}(\omega)
+% \overset{\text{\eqref{eq:born-rule}}}{=}
+% \Trace\bigl(E_A(\omega)\ket{\psi}\bra{\psi}\bigr)
+\overset{\text{\eqref{eq:trace-definition}}}{=}
+\sum_{i=1}^n \bra{i} E_A(\omega) \ket{\psi}\bra{\psi} \ket{i} 
 =
-\Trace\bigl(\ket{\varphi_i}\bra{\varphi_i}\rho\bigr)
+% \sum_{i=1}^n \bra{\psi} \ket{i} \bra{i} E_A(\omega) \ket{\psi}
+% =
+\bra{\psi} \left(\sum_{i=1}^n \ket{i}\bra{i}\right) E_A(\omega) \ket{\psi}
+=
+\bra{\psi} E_A(\omega) \ket{\psi}
+% \end{aligned}
 \]
+which is consistent with \eqref{eq:probability-measure-from-spectral-decomposition}.
 
-The expectation value of $A$ in the state $\rho$ is
+For a pure state \(\ket{\psi}\) and an observable \(A\), the \hl{expectation value} can be written as
 \[
-\langle A \rangle_{\rho}
+\braket{A}_{\psi}
+% =
+% \braket{\psi|A|\psi}
+=
+\Trace\bigl(\ket{\psi}\bra{\psi}A\bigr)
+\]
+as seen in \autoref{sec:trace}.
+This motivates the general formula (compare also \autoref{eq:expectation-value-observable})
+\begin{equation}\label{eq:expectation-density-matrix}
+{\color{red}\boxed{\color{black}
+\braket{A}_{\rho}
 =
 \Trace(\rho A)
-\]
+}}
+\end{equation}
+for arbitrary density matrices \(\rho\).
 
-Indeed,
+\begin{definition}[Separability and Entanglement]\label{def:separability-entanglement}
+Let \(\mathcal H_A\) and \(\mathcal H_B\) be Hilbert spaces.
+A pure state
+\(
+\psi \in \mathcal H_A \otimes \mathcal H_B
+\)
+is called \emph{separable} if it can be written as
 \[
-\Trace(\rho A)
-=
-\Trace\left(
-\rho \sum_i \lambda_i \ket{\varphi_i}\bra{\varphi_i}
-\right)
-=
-\sum_i \lambda_i \Trace\bigl(\ket{\varphi_i}\bra{\varphi_i}\rho\bigr)
+\psi = \varphi_A \otimes \varphi_B
 \]
-so it is again the weighted sum over the possible measurement outcomes.  % [oai_citation:9‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
-
-\subsubsection{Parts of entangled systems and partial trace}
-
-If a bipartite system has density matrix
-\[
-\rho_{AB} \in \operatorname{End}(\mathcal{H}_A \otimes \mathcal{H}_B)
-\]
-then the state of subsystem $A$ alone is described by the reduced density matrix
-\[
-\rho_A = \Trace_B(\rho_{AB})
-\]
-where the partial trace is defined by linear extension of
-\[
-\Trace_B(S \otimes T) = \Trace(T)S
-\]
-
-Similarly,
-\[
-\rho_B = \Trace_A(\rho_{AB})
-\]
-
-For the singlet state
-\[
-\ket{\psi^-}
-=
-\frac{1}{\sqrt{2}}
-\left(
-\ket{0}_A \otimes \ket{1}_B
--
-\ket{1}_A \otimes \ket{0}_B
-\right)
-\]
-we have
-\[
-\rho_{AB} = \ket{\psi^-}\bra{\psi^-}
-\]
+for some
+\(
+\varphi_A \in \mathcal H_A
+\)
 and
+\(
+\varphi_B \in \mathcal H_B
+\).
+Otherwise it is called \emph{entangled} (compare \autoref{sec:aspect-gisin-zeilinger-experiments}).
+\end{definition}
+
+\begin{example}\label{ex:singlet-state-entangled}
+The singlet state $\ket{\Psi^-}$ from \autoref{sec:aspect-gisin-zeilinger-experiments}
+% \[
+% \ket{\Psi^-}
+% =
+% \frac{1}{\sqrt{2}}
+% \bigl(
+% \ket{0}_A \otimes \ket{1}_B
+% -
+% \ket{1}_A \otimes \ket{0}_B
+% \bigr)
+% \]
+is entangled.
+It is a superposition (nor\-malized linear combination) of two pure states and hence a pure state itself.
+\end{example}
+
+
+
+\begin{digression}[Tensor products]\label{dig:tensor-products}
+The tensor product combines two vector spaces \(V\) and \(W\) into a larger space
 \[
-\rho_A = \Trace_B(\rho_{AB}) = \frac{\id_A}{2}
+V\otimes W
+\]
+whose elements are finite linear combinations of simple tensors
+\[
+\ket{v}\otimes\ket{w}
+\]
+with
+\(
+\ket{v}\in V,\ \ket{w}\in W
+\).
+If \(\dim V=m\) and \(\dim W=n\), then
+\[
+\dim(V\otimes W)=mn
+\]
+Moreover, if \(\{\ket{i}\}_i\) is a basis of \(V\) and \(\{\ket{j}\}_j\) is a basis of \(W\), then
+\[
+\{\ket{i}\otimes\ket{j}\}_{i,j}
+\]
+is a basis of \(V\otimes W\). In Dirac notation one often abbreviates
+\[
+\ket{v}\otimes\ket{w}
+=
+\ket{v}\ket{w}
+=
+\ket{v,w}
+=
+\ket{vw}
+\]
+
+The tensor product is bilinear, i.e.
+\[
+z(\ket{v}\otimes\ket{w})
+=
+(z\ket{v})\otimes\ket{w}
+=
+\ket{v}\otimes(z\ket{w})
+\]
+\[
+(\ket{v_1}+\ket{v_2})\otimes\ket{w}
+=
+\ket{v_1}\otimes\ket{w}
++
+\ket{v_2}\otimes\ket{w}
+\]
+\[
+\ket{v}\otimes(\ket{w_1}+\ket{w_2})
+=
+\ket{v}\otimes\ket{w_1}
++
+\ket{v}\otimes\ket{w_2}
+\]
+
+If \(A\colon V\to V'\) and \(B\colon W\to W'\) are linear maps, their tensor product
+\[
+A\otimes B \colon V\otimes W \to V'\otimes W'
+\]
+is defined by
+\[
+(A\otimes B)(\ket{v}\otimes\ket{w})
+=
+A\ket{v}\otimes B\ket{w}
+\]
+and extended linearly to all of \(V\otimes W\).
+% In particular, for rank-one operators,
+% \[
+% (\ket{a}\bra{c})\otimes(\ket{b}\bra{d})
+% =
+% (\ket{a}\otimes\ket{b})(\bra{c}\otimes\bra{d}),
+% \]
+% so
+% \[
+% \ket{ij}\bra{kl}
+% =
+% \ket{i}\bra{k}\otimes\ket{j}\bra{l}.
+% \]
+
+If \(V\) and \(W\) are Hilbert spaces, then \(V\otimes W\) becomes a Hilbert space with inner product determined by
+\[
+{\color{red}\boxed{\color{black}
+\braket{v_1\otimes w_1\,|\,v_2\otimes w_2}
+=
+\braket{v_1|v_2}\,\braket{w_1|w_2}
+}}
+\]
+and extended sesquilinearly.
+% Hence orthonormal bases tensor to orthonormal bases. % is that even a sentence?
+Hence, if $\{\ket{i}\}_i$ and $\{\ket{j}\}_j$ are orthonormal bases of $V$ and $W$, then $\{\ket{i}\otimes\ket{j}\}_{i,j}$ is an orthonormal basis of $V\otimes W$.
+
+For the trace of the tensor product of two operators \(A \in \operatorname{End}(V)\) and \(B \in \operatorname{End}(W)\) one has
+\[
+\begin{aligned}
+\Trace(A\otimes B)
+&=
+\sum_{i,j} \braket{i \otimes j | A\otimes B | i \otimes j} \\
+&=
+\sum_{i,j} \braket{i|A|i}\,\braket{j|B|j} \\
+&=
+\left(\sum_i \braket{i|A|i}\right) \left(\sum_j \braket{j|B|j}\right) \\
+&=
+\Trace(A)\,\Trace(B)
+\end{aligned}
+\]
+
+In matrix form, the tensor product is represented by the Kronecker product. For matrices
+\(
+\matr{A}=(a_{ij})
+\),
+\(
+\matr{B}
+\),
+one has
+\[
+\matr{A} \otimes \matr{B}
+=
+\begin{bmatrix}
+a_{11}\matr{B} & \cdots & a_{1n}\matr{B}\\
+\vdots  & \ddots & \vdots \\
+a_{m1}\matr{B} & \cdots & a_{mn}\matr{B}
+\end{bmatrix}
+\]
+
+Useful identities include
+\(
+(\matr{A} \otimes \matr{B})^*  = \matr{A}^* \otimes \matr{B}^* 
+\).
+% \(
+% (\matr{A}\otimes \matr{B})^\top = \matr{A}^\top\otimes \matr{B}^\top
+% \),
+% \(
+% (\matr{A}\otimes \matr{B})^\dagger = \matr{A}^\dagger\otimes \matr{B}^\dagger
+% \).
+In particular, if \(\matr{A}\) and \(\matr{B}\) are unitary, Hermitian, positive, or projectors, then \(\matr{A}\otimes \matr{B}\) has the same property.
+% Finally, for repeated tensor products one writes
+% \[
+% \ket{\psi}^{\otimes k}
+% =
+% \underbrace{\ket{\psi}\otimes\cdots\otimes\ket{\psi}}_{k\text{ times}},
+% \qquad
+% A^{\otimes k}
+% =
+% \underbrace{A\otimes\cdots\otimes A}_{k\text{ times}}.
+% \]
+\end{digression}
+
+However, parts of an entangled state are mixed states.
+To understand what Alice's part of the entangled system from \autoref{ex:singlet-state-entangled} looks like, we introduce the %\emph{partial trace}.
+\begin{definition}[Partial Trace]
+To describe the state of only one subsystem, we use the linear map % which is the density-matrix analogue of the discussion of local measurements in bipartite systems. % what discussion?
+\[
+\Trace_B \colon \operatorname{End}(\mathcal H_A \otimes \mathcal H_B) \to \operatorname{End}(\mathcal H_A)
+\]
+defined on simple tensors by
+\[
+\Trace_B(S_A \otimes S_B) \coloneq \Trace(S_B)\,S_A
+\]
+and extended linearly.
+Analogously one defines \(\Trace_A\).
+\end{definition}
+
+\begin{example}
+The density matrix of the singlet state is
+\[
+\begin{aligned}
+\rho
+=
+\ket{\Psi^-}\bra{\Psi^-}
+&=
+\frac{1}{\sqrt{2}}(\ket{01}-\ket{10}) \frac{1}{\sqrt{2}}(\bra{01}-\bra{10})
+\\
+&=
+\frac12\bigl(
+\ket{01}\bra{01}
+-
+\ket{01}\bra{10}
+-
+\ket{10}\bra{01}
++
+\ket{10}\bra{10}
+\bigr)
+\end{aligned}
+\]
+Using
+% \[
+% \Trace_B\bigl(\ket{i}\bra{k}\otimes \ket{j}\bra{l}\bigr)
+% =
+% \Trace(\ket{j}\bra{l})\,\ket{i}\bra{k}
+% = % why?
+% \braket{l|j}\,\ket{i}\bra{k}
+% =
+% \delta_{lj}\,\ket{i}\bra{k},
+% \]
+\[
+\Trace(\ket{i}\bra{j})
+\overset{\text{\eqref{eq:trace-definition}}}{=}
+\sum_k \bra{k}\ket{i}\bra{j}\ket{k}
+% =
+% \sum_k \braket{k|i}\braket{j|k}
+=
+\bra{j}\left(\sum_k \ket{k}\bra{k}\right)\ket{i}
+=
+\braket{j|i}
+=
+\delta_{ji}
+\]
+we get
+\[
+\begin{aligned}
+\Trace_B \bigl(\ket{\Psi^-}\bra{\Psi^-}\bigr)
+&=
+\frac12\Bigl(
+\Trace_B(\ket{01}\bra{01})
+-
+\Trace_B(\ket{01}\bra{10})
+-
+\Trace_B(\ket{10}\bra{01})
++
+\Trace_B(\ket{10}\bra{10})
+\Bigr)
+\\
+&= % this is not justified???
+\frac12\Bigl(
+\Trace_B(\ket{0}\bra{0}\otimes \ket{1}\bra{1})
+-
+\Trace_B(\ket{0}\bra{1}\otimes \ket{1}\bra{0})
+% \\
+% &\qquad\qquad
+% -
+% \Trace_B(\ket{1}\bra{0}\otimes \ket{0}\bra{1})
+% +
+% \Trace_B(\ket{1}\bra{1}\otimes \ket{0}\bra{0})
+% \Bigr)
+-
+\mathrlap{
+\Trace_B(\ket{1}\bra{0}\otimes \ket{0}\bra{1})
++
+\Trace_B(\ket{1}\bra{1}\otimes \ket{0}\bra{0})
+\Bigr)
+}
+\\
+&=
+\frac12\Bigl(
+\Trace(\ket{1}\bra{1})\,\ket{0}\bra{0}
+-
+\Trace(\ket{1}\bra{0})\,\ket{0}\bra{1}
+% \\
+% &\qquad\qquad
+-
+\mathrlap{
+\Trace(\ket{0}\bra{1})\,\ket{1}\bra{0}
++
+\Trace(\ket{0}\bra{0})\,\ket{1}\bra{1}
+\Bigr)
+}
+\\
+% &=
+% \frac12\bigl(
+% \ket{0}\bra{0}
+% -
+% 0
+% -
+% 0
+% +
+% \ket{1}\bra{1}
+% \bigr)
+% \\
+&=
+\frac12\bigl(\ket{0}\bra{0}+\ket{1}\bra{1}\bigr)
+=
+\frac{\id_A}{2}
+\end{aligned}
+\]
+and similarly
+\(
+\Trace_A \bigl(\ket{\Psi^-}\bra{\Psi^-}\bigr)
+=
+\frac12\bigl(\ket{0}\bra{0}+\ket{1}\bra{1}\bigr)
+=
+\frac{\id_B}{2}
+\).
+So each subsystem is in the \emph{maximally mixed state}.
+
+Importantly, the partial trace contains all information about local measurements.
+If Alice performs a measurement corresponding to an observable $A$ on her subsystem and \(E_A\) denotes its spectral measure from \autoref{thm:spectral-theorem-unbounded}, then the event that Alice's measurement outcome lies in a Borel set \(\omega \subseteq \sigma(A)\) is represented on the joint system by the projection
+\(
+E_A(\omega)\otimes \id_B
+\)
+since the measurement acts on Alice's subsystem and 
+trivially (meaning as the identity, i.e. Bob's subsystem is left unchanged) 
+on Bob's.
+Therefore, by the Born rule \eqref{eq:born-rule},
+\[
+\Prob_A^{\rho}(\omega)
+=
+\Trace\bigl((E_A(\omega)\otimes \id_B)\rho\bigr)
+\]
+which can be split into a partial trace over Bob's subsystem and a subsequent trace over Alice's subsystem,
+\[
+\Prob_A^{\rho}(\omega)
+=
+\Trace\bigl(E_A(\omega)\Trace_B(\rho)\bigr)
+\]
+where we used \autoref{thm:partial-trace-local-observables}.
+% To relate this to the 
+% reduced % why reduced?
+% density matrix, write in general
+% \[
+% \rho
+% =
+% \sum_{i,k,j,l} c_{ikjl}\, \ket{i}\bra{k}\otimes \ket{j}\bra{l}
+% \]
+% with respect to orthonormal bases \(\{\ket{i}\}_i\) of \(\mathcal H_A\) and \(\{\ket{j}\}_j\) of \(\mathcal H_B\).
+% Then, using linearity, it suffices to compute on a basis element:
+% \[
+% \begin{aligned}
+% \Trace\bigl((X\otimes \id_B)(\ket{i}\bra{k}\otimes \ket{j}\bra{l})\bigr)
+% &=
+% \Trace\bigl(X\ket{i}\bra{k}\otimes \ket{j}\bra{l}\bigr) \\
+% &=
+% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\Trace\bigl(\ket{j}\bra{l}\bigr) \\
+% &=
+% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\delta_{jl}
+% \end{aligned}
+% \]
+% On the other hand,
+% \[
+% \begin{aligned}
+% \Trace\Bigl(X\,\Trace_B\bigl(\ket{i}\bra{k}\otimes \ket{j}\bra{l}\bigr)\Bigr)
+% &=
+% \Trace\Bigl(X\,\Trace(\ket{j}\bra{l})\,\ket{i}\bra{k}\Bigr) \\
+% &=
+% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\delta_{jl}
+% \end{aligned}
+% \]
+% Thus
+% \[
+% \Trace\bigl((X\otimes \id_B)\rho\bigr)
+% =
+% \Trace\bigl(X\,\Trace_B(\rho)\bigr)
+% \]
+% for every \(X\in\operatorname{End}(\mathcal H_A)\).
+% Applying this with
+% \(
+% X = E_A(\omega)
+% \)
+% gives
+% \[
+% \Prob_A^{\rho}(\omega)
+% =
+% \Trace\bigl(E_A(\omega)\Trace_B(\rho)\bigr)
+% \]
+Hence Bob's subsystem influences Alice's local statistics only through the reduced density matrix \(\Trace_B(\rho)\).
+In particular, local operations on Bob's side alone cannot be used to transmit information to Alice, saving us from problems with relativity.
+\end{example}
+
+
+\begin{theorem}[Partial trace and local observables]\label{thm:partial-trace-local-observables}
+Let $\mathcal H_A$ and $\mathcal H_B$ be finite-dimensional Hilbert spaces.
+Let
+\(
+\rho \in \operatorname{End}(\mathcal H_A \otimes \mathcal H_B)
+\) and
+\(
+A \in \operatorname{End}(\mathcal H_A)
+\).
+Then
+\begin{itemize}
+\item
+% \begin{equation}\label{eq:partial-trace-pull-through-left}
+\(
+\Trace_B\bigl((A\otimes \id_B)\rho\bigr)
+=
+A\,\Trace_B(\rho)
+\)
+% \end{equation}
+\item
+% \begin{equation}\label{eq:local-observable-partial-trace}
+\(
+\Trace\bigl((A\otimes \id_B)\rho\bigr)
+=
+\Trace_A\bigl(A\,\Trace_B(\rho)\bigr)
+\)
+% \end{equation}
+\item
+% \begin{equation}\label{eq:partial-trace-pull-through-right}
+\(
+\Trace_B\bigl(\rho(A\otimes \id_B)\bigr)
+=
+\Trace_B(\rho)\,A 
+\)
+\qedhere
+% \end{equation}
+\end{itemize}
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+
+% \begin{proof}
+% Choose orthonormal bases $\{\ket{i}\}_i$ of $\mathcal H_A$ and $\{\ket{\mu}\}_\mu$ of $\mathcal H_B$.
+% Then every operator
+% \(
+% \rho \in \operatorname{End}(\mathcal H_A\otimes\mathcal H_B)
+% \)
+% can be expanded as
+% \[
+% \rho
+% =
+% \sum_{i,j,\mu,\nu}
+% \rho_{i\mu,j\nu}\,
+% \ket{i}\bra{j}\otimes\ket{\mu}\bra{\nu},
+% \qquad
+% \rho_{i\mu,j\nu}
+% =
+% \braket{i,\mu|\rho|j,\nu}.
+% \]
+% Hence
+% \[
+% (A\otimes \id_B)\rho
+% =
+% \sum_{i,j,\mu,\nu}
+% \rho_{i\mu,j\nu}\,
+% A\ket{i}\bra{j}\otimes\ket{\mu}\bra{\nu}.
+% \]
+% Using the defining property of the partial trace,
+% \[
+% \Trace_B(S\otimes T)=\Trace(T)\,S,
+% \]
+% and linearity, we obtain
+% \[
+% \Trace_B\bigl((A\otimes \id_B)\rho\bigr)
+% =
+% \sum_{i,j,\mu,\nu}
+% \rho_{i\mu,j\nu}\,
+% \Trace(\ket{\mu}\bra{\nu})\,
+% A\ket{i}\bra{j}.
+% \]
+% Since
+% \(
+% \Trace(\ket{\mu}\bra{\nu})=\delta_{\mu\nu},
+% \)
+% this becomes
+% \[
+% \Trace_B\bigl((A\otimes \id_B)\rho\bigr)
+% =
+% \sum_{i,j,\mu}
+% \rho_{i\mu,j\mu}\,
+% A\ket{i}\bra{j}
+% =
+% A
+% \sum_{i,j,\mu}
+% \rho_{i\mu,j\mu}\,
+% \ket{i}\bra{j}.
+% \]
+% But
+% \[
+% \Trace_B(\rho)
+% =
+% \sum_{i,j,\mu}
+% \rho_{i\mu,j\mu}\,
+% \ket{i}\bra{j},
+% \]
+% so \eqref{eq:partial-trace-pull-through-left} follows.
+
+% Now take the trace on $\mathcal H_A$ on both sides of \eqref{eq:partial-trace-pull-through-left}. Since
+% \[
+% \Trace(X)=\Trace_A(\Trace_B(X))
+% \qquad
+% \text{for all }X\in \operatorname{End}(\mathcal H_A\otimes\mathcal H_B),
+% \]
+% we get
+% \[
+% \Trace\bigl((A\otimes \id_B)\rho\bigr)
+% =
+% \Trace_A\!\left(\Trace_B\bigl((A\otimes \id_B)\rho\bigr)\right)
+% =
+% \Trace_A\bigl(A\,\Trace_B(\rho)\bigr),
+% \]
+% which proves \eqref{eq:local-observable-partial-trace}.
+
+% The proof of \eqref{eq:partial-trace-pull-through-right} is analogous:
+% \[
+% \Trace_B\bigl(\rho(A\otimes \id_B)\bigr)
+% =
+% \Trace_B(\rho)\,A.
+% \qedhere
+% \]
+% \end{proof}
+% \begin{corollary}
+% If $P_\varphi$ is the rank-one projector corresponding to an eigenvector $\varphi$ of an observable on $\mathcal H_A$, then for every bipartite state $\rho$,
+% \[
+% \Prob(\lambda_\varphi)
+% =
+% \Trace\bigl((P_\varphi\otimes \id_B)\rho\bigr)
+% =
+% \Trace_A\bigl(P_\varphi\,\Trace_B(\rho)\bigr).
+% \]
+% \end{corollary}
+
+
+
+% \clearpage
+
+\subsection{Qbits}
+
+
+
+
+We now apply the previous formalism specifically to finite-dimensional systems of dimension \(2\), the basic carriers of quantum information. The corresponding material in the source begins the Qbit chapter after the discussion of density matrices and continues through single Qbits, two Qbits, the CNOT gate, and no-cloning. 
+
+
+\subsubsection{One Qbit: $\mathcal{H} = \C^2$}
+
+
+A \hl[2]{Qbit} is a quantum system whose state space is
+\[
+\mathcal H = \C^2
+\]
+We choose the standard orthonormal basis
+\[
+\ket{0}
+=
+\begin{bmatrix}
+1\\0
+\end{bmatrix}
 \qquad
-\rho_B = \Trace_A(\rho_{AB}) = \frac{\id_B}{2}
+\ket{1}
+=
+\begin{bmatrix}
+0\\1
+\end{bmatrix}
 \]
+called the \emph{computational basis}.
 
-Thus each subsystem is maximally mixed although the total state is pure.
-
-Moreover, local measurement statistics are determined entirely by the reduced density matrix.
-If Alice measures a projector $P_{\varphi_i}$ on her subsystem, then
+A general pure state of one Qbit is
 \[
-\Prob(\lambda_i)
+\ket{\psi}
 =
-\Trace\bigl((P_{\varphi_i} \otimes \id_B)\rho_{AB}\bigr)
-=
-\Trace\bigl(P_{\varphi_i}\rho_A\bigr)
+\alpha \ket{0} + \beta \ket{1}
+\qquad
+\text{with }
+\alpha,\beta \in \C,
+\quad
+|\alpha|^2+|\beta|^2=1
 \]
 
-Hence operations performed only on Bob's subsystem do not alter Alice's local outcome probabilities.
-This is the formal reason why entanglement alone does not allow signalling.  % [oai_citation:10‡book_Invitation-to-Quantum-Informatics pages 52 - 59.pdf](sediment://file_00000000b410720abc2d96070c66ef5d)
+At first sight this seems to involve four real parameters minus one normalization condition, hence three real degrees of freedom.
+But one more degree of freedom is physically irrelevant:
+global phase factors cannot be observed.
+Indeed, if \(|c|=1\), then
+\[
+(c\ket{\psi})(c\ket{\psi})^*
+=
+c\ket{\psi}\bra{\psi}\overline{c}
+=
+\ket{\psi}\bra{\psi}
+\]
+Thus the vectors \(\ket{\psi}\) and \(c\ket{\psi}\) represent the same physical pure state.
 
+So a pure one-Qbit state is really determined by only two real parameters.
+A convenient parametrization is
+\begin{equation}\label{eq:bloch-sphere-parametrization}
+\ket{\psi}
+=
+\cos\frac{\Theta}{2}\ket{0}
++
+\eu^{\iu\varphi}\sin\frac{\Theta}{2}\ket{1}
+\end{equation}
+with
+\(
+\Theta \in [0,\pi]
+\)
+and
+\(
+\varphi \in [0,2\pi)
+\).
+This leads to the Bloch sphere representation of pure one-Qbit states; compare also the earlier discussion of spin-$\tfrac{1}{2}$ systems in \autoref{sec:stern-gerlach-experiment}.
 
-
-
+% \tikzset{external/export next=false}
 \begin{center}
 \begin{tikzpicture}[scale=0.75, line cap=round, line join=round, font=\footnotesize]
 \def\R{6}
-\def\thetaState{53}
-\def\phiState{45}
+\def\thetaState{33}
+\def\phiState{33}
 \def\rTheta{3}
 \def\rPhi{3}
 
 % spherical outline (screen-space circle)
-\draw[black!85, line width=0.7pt] (0,0) circle (\R);
+\draw[black!85, line width=0.9] (0,0) circle (\R);
 
 
 % 3D projection basis (all key points/arcs are specified in 3D coordinates)
@@ -4854,24 +5816,24 @@ This is the formal reason why entanglement alone does not allow signalling.  % [
 % axes and auxiliary directions
 \draw[black!70, dashed] (Ym) -- (O);
 \draw[black!70] (O) -- (Yp);
-\draw[blue!85, line width=0.8pt] (O) -- (Zp);
-\draw[blue!85, line width=0.8pt, dashed] (O) -- (Zm);
+\draw[black!85, ] (O) -- (Zp);
+\draw[black!85, , dashed] (O) -- (Zm);
 \draw[black!75] (O) -- (Xp);
 \draw[black!70, dashed] (O) -- (Xm);
 
 % meridian in the plane spanned by z-axis and PsiProj
-\draw[red!85!black, line width=0.7pt] plot[variable=\a, domain=0:180, samples=140, smooth] ({\R*sin(\a)*cos(\phiState)},{\R*sin(\a)*sin(\phiState)},{\R*cos(\a)});
+\draw[black!85!black, ] plot[variable=\a, domain=0:180, samples=140, smooth] ({\R*sin(\a)*cos(\phiState)},{\R*sin(\a)*sin(\phiState)},{\R*cos(\a)});
 
 
 % Bloch vector and its xy-plane projection
-\draw[red!85!black, line width=0.95pt, -{Latex[length=2.7mm]}] (O) -- (Psi);
-\draw[green!70!black, line width=0.9pt] (O) -- (PsiProj);
+\draw[red!85!black, line width=1.2, -{Latex[length=2.7mm]}] (O) -- (Psi) node [pos=0.95, above right] {$\ket{\psi}$};
+\draw[black!85!black, ] (O) -- (PsiProj);
 
 % theta arc in the meridian plane
-\draw[blue!85, line width=0.75pt, ->] plot[variable=\a, domain=0:\thetaState, samples=80, smooth] ({\rTheta*sin(\a)*cos(\phiState)},{\rTheta*sin(\a)*sin(\phiState)},{\rTheta*cos(\a)});
+\draw[black!85, ->] plot[variable=\a, domain=0:\thetaState, samples=80, smooth] ({\rTheta*sin(\a)*cos(\phiState)},{\rTheta*sin(\a)*sin(\phiState)},{\rTheta*cos(\a)});
 
 % phi arc in the equatorial plane (from +y axis to PsiProj direction)
-\draw[green!70!black, line width=0.75pt, ->] plot[variable=\a, domain=0:\phiState, samples=70, smooth] ({\rPhi*cos(\a)},{\rPhi*sin(\a)},0);
+\draw[black!70!black,  ->] plot[variable=\a, domain=0:\phiState, samples=70, smooth] ({\rPhi*cos(\a)},{\rPhi*sin(\a)},0);
 
 \coordinate (ThetaLabelPos) at
 ({1.18*\rTheta*sin(0.5*\thetaState)*cos(\phiState)},
@@ -4886,17 +5848,390 @@ This is the formal reason why entanglement alone does not allow signalling.  % [
 \foreach \P in {Yp,Ym,Xp,Xm}
   \fill (\P) circle (1.8pt);
 
-\node[blue!85, above=3pt] at (Zp) {$\ket{0}$};
-\node[blue!85, below=3pt] at (Zm) {$\ket{1}$};
+\node[black!85, above=3pt] at (Zp) {$\ket{0}$};
+\node[black!85, below=3pt] at (Zm) {$\ket{1}$};
 
 \node[below left] at (Yp) {$\dfrac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$};
 \node[above right] at (Ym) {$\dfrac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$};
-\node[right] at (Xp) {$\dfrac{\ket{0} + \ket{1}}{\sqrt{2}}$};
-\node[left] at (Xm) {$\dfrac{\ket{0} - \ket{1}}{\sqrt{2}}$};
+\node[below right] at (Xp) {$\dfrac{\ket{0} + \ket{1}}{\sqrt{2}}$};
+\node[above left] at (Xm) {$\dfrac{\ket{0} - \ket{1}}{\sqrt{2}}$};
 
-\node[blue!85] at (ThetaLabelPos) {$\theta$};
-\node[green!70!black, below right] at (PhiLabelPos) {$\varphi$};
+\node[black!85] at (ThetaLabelPos) {$\theta$};
+\node[black!70!black, below right] at (PhiLabelPos) {$\varphi$};
 \end{tikzpicture}
 \end{center}
+
+Operations on one Qbit are unitary \(2\times2\)-matrices.
+A central example is the Hadamard gate
+\[
+\matr{H}
+=
+\frac{1}{\sqrt{2}}
+\begin{bmatrix}
+1 & 1\\
+1 & -1
+\end{bmatrix}
+\]
+It maps
+\[
+\matr{H}\ket{0}
+=
+\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})
+\qquad
+\matr{H}\ket{1}
+=
+\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})
+\]
+and satisfies
+\[
+\matr{H}^2=\id
+\]
+Hence \(\matr{H}\) is not only unitary but also self-adjoint.
+
+Since arbitrary measurements in any orthonormal basis can be reduced to a unitary basis change followed by a standard-basis measurement, exactly as discussed abstractly in \autoref{sec:observables}, it is enough to understand measurements in the basis \(\{\ket{0},\ket{1}\}\).
+For instance, a measurement in the diagonal basis is a Hadamard transform followed by a standard measurement.
+
+
+
+
+
+\subsubsection{Two Qbits: $\mathcal{H} = \C^2 \otimes \C^2 \cong \C^4$}
+
+For two Qbits the state space is
+\[
+\C^2 \otimes \C^2 \cong \C^4
+\]
+with computational basis
+\[
+\{\ket{00},\ket{01},\ket{10},\ket{11}\}
+\]
+
+A product state has the form
+\[
+\ket{\psi_1}\otimes\ket{\psi_2}
+\]
+but not every state of two Qbits is of this form.
+For example,
+\[
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
+\]
+cannot be written as a product state and is therefore entangled; compare the Bell-state discussion in \autoref{sec:aspect-gisin-zeilinger-experiments}.
+
+More generally,
+\[
+\C^2 \otimes \C^2
+=
+\Span\{\ket{00},\ket{01},\ket{10},\ket{11}\}
+\]
+and for \(n\) Qbits,
+\[
+\underbrace{\C^2 \otimes \cdots \otimes \C^2}_{n\text{ factors}}
+\cong
+\C^{2^n}
+\]
+with computational basis indexed by classical \(n\)-bit strings.
+
+On the level of coordinates, the tensor product is given by the Kronecker product:
+\[
+\begin{bmatrix}
+a\\b
+\end{bmatrix}
+\otimes
+\begin{bmatrix}
+c\\d
+\end{bmatrix}
+=
+\begin{bmatrix}
+ac\\ad\\bc\\bd
+\end{bmatrix}
+\]
+
+The Bell states are the following maximally entangled two-Qbit states:
+\[
+\ket{\Phi^+}
+=
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}),
+\qquad
+\ket{\Phi^-}
+=
+\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}),
+\]
+\[
+\ket{\Psi^+}
+=
+\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}),
+\qquad
+\ket{\Psi^-}
+=
+\frac{1}{\sqrt{2}}(\ket{01}-\ket{10})
+\]
+
+The inner product behaves multiplicatively on tensor products:
+\begin{equation}\label{eq:tensor-product-inner-product}
+\braket{\psi_0 \varphi_0 | \psi_1 \varphi_1}
+=
+\braket{\psi_0|\psi_1}\,\braket{\varphi_0|\varphi_1}
+\end{equation}
+In particular, two tensor products are orthogonal if and only if in at least one factor the corresponding states are orthogonal.
+
+If \(U\) and \(V\) are unitary on the individual Qbits, then
+\[
+(U\otimes V)(\ket{\psi}\otimes\ket{\varphi})
+=
+U\ket{\psi}\otimes V\ket{\varphi}
+\]
+extends linearly to a unitary on the joint system.
+Such operations are called \emph{product operations}.
+
+For example,
+\[
+\matr{H}^{\otimes 2}
+=
+\matr{H}\otimes \matr{H}
+=
+\frac12
+\begin{bmatrix}
+1 & 1 & 1 & 1\\
+1 & -1 & 1 & -1\\
+1 & 1 & -1 & -1\\
+1 & -1 & -1 & 1
+\end{bmatrix}
+\]
+
+Measurements can also be performed on only one part of a bipartite system, in accordance with the general formalism from \autoref{sec:observables}.
+If
+\[
+\ket{\Psi}
+=
+\alpha\ket{00}+\beta\ket{01}+\gamma\ket{10}+\delta\ket{11}
+\]
+and one measures only the first Qbit in the standard basis, then the probabilities are
+\[
+p_0 = |\alpha|^2+|\beta|^2,
+\qquad
+p_1 = |\gamma|^2+|\delta|^2
+\]
+Moreover,
+\[
+\ket{\Psi}
+=
+\sqrt{p_0}\,\ket{0}\otimes\ket{\psi_0}
++
+\sqrt{p_1}\,\ket{1}\otimes\ket{\psi_1}
+\]
+with
+\[
+\ket{\psi_0}
+=
+\frac{\alpha\ket{0}+\beta\ket{1}}{\sqrt{p_0}},
+\qquad
+\ket{\psi_1}
+=
+\frac{\gamma\ket{0}+\delta\ket{1}}{\sqrt{p_1}}
+\]
+provided \(p_0,p_1 \neq 0\).
+Thus, conditioned on the outcome \(0\) or \(1\), the second Qbit is left in the corresponding pure state \(\ket{\psi_0}\) or \(\ket{\psi_1}\).
+
+If we ignore the measurement outcome on the first Qbit, then the second Qbit is described by the mixture
+\[
+p_0 \ket{\psi_0}\bra{\psi_0}
++
+p_1 \ket{\psi_1}\bra{\psi_1}
+\]
+This is exactly the reduced state obtained by the partial trace.
+So once again we see: parts of entangled pure states are, in general, mixed.
+
+
+
+
+
+
+
+\subsubsection{The CNOT gate}
+
+The most important two-Qbit gate is the \hl[2]{controlled NOT} gate, abbreviated \(\mathrm{CNOT}\).
+Its action on the computational basis is
+\[
+\ket{x}\ket{b}
+\longmapsto
+\ket{x}\ket{b\oplus x}
+\qquad
+(x,b \in \{0,1\})
+\]
+That is, the first Qbit is the \emph{control} and the second is the \emph{target}:
+the second bit is flipped exactly if the first bit equals \(1\).
+
+In the basis
+\(
+\{\ket{00},\ket{01},\ket{10},\ket{11}\}
+\),
+its matrix is
+\[
+\matr{CNOT}
+=
+\begin{bmatrix}
+1&0&0&0\\
+0&1&0&0\\
+0&0&0&1\\
+0&0&1&0
+\end{bmatrix}
+\]
+
+Since the gate is linear, its action on arbitrary superpositions is determined automatically.
+
+A first surprise occurs if one works in the diagonal basis.
+For example, on a suitable product of diagonal states, the CNOT again yields a product state, but the roles of control and target are exchanged.
+Equivalently,
+\[
+(\matr{H}\otimes \matr{H}) \,\matr{CNOT}\, (\matr{H}\otimes \matr{H})
+\]
+is a CNOT with swapped control and target.
+
+A more important fact is that the CNOT can generate entanglement.
+Indeed,
+\[
+\ket{0}\ket{0}
+\xmapsto{\matr{H}\otimes \id}
+\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\ket{0}
+\xmapsto{\matr{CNOT}}
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
+=
+\ket{\Phi^+}
+\]
+Thus a Hadamard on the control followed by a CNOT maps computational basis states to Bell states from \autoref{sec:aspect-gisin-zeilinger-experiments}.
+So this combination implements the basis change between the computational basis and the Bell basis.
+
+Consequently, a Bell-basis measurement can be implemented by reversing this basis change and then measuring in the computational basis.
+
+The CNOT is also classically universal once combined with suitable one-Qbit gates:
+together they allow the construction of the Toffoli gate and therefore arbitrary classical reversible computation.
+
+To understand the gate better, suppose the control is classical and the target is arbitrary:
+\[
+\ket{x}\otimes(\alpha\ket{0}+\beta\ket{1})
+\]
+If \(x=0\), nothing happens.
+If \(x=1\), the target is acted on by the NOT gate
+\[
+\matr{N}
+=
+\begin{bmatrix}
+0&1\\
+1&0
+\end{bmatrix}
+\]
+so that
+\[
+\alpha\ket{0}+\beta\ket{1}
+\longmapsto
+\alpha\ket{1}+\beta\ket{0}
+\]
+Hence the CNOT applies \(\matr{N}\) conditionally on the value of the control wire.
+
+
+
+
+
+
+
+\subsubsection{Cloning, pseudo-cloning, and pseudo-measurements}
+
+For classical bits, copying is easy.
+Indeed, if the target bit starts in \(0\), then the CNOT copies the control:
+\[
+\ket{0}\ket{0}\mapsto\ket{0}\ket{0},
+\qquad
+\ket{1}\ket{0}\mapsto\ket{1}\ket{1}
+\]
+
+It is therefore natural to ask whether the same gate can clone arbitrary quantum states.
+Suppose there were a unitary operation \(U\) such that
+\[
+U(\ket{\varphi}\ket{0})=\ket{\varphi}\ket{\varphi}
+\qquad\text{and}\qquad
+U(\ket{\psi}\ket{0})=\ket{\psi}\ket{\psi}
+\]
+for two arbitrary states \(\ket{\varphi}\) and \(\ket{\psi}\).
+Since \(U\) is unitary, it preserves inner products, and therefore
+\[
+\braket{\psi|\varphi}\braket{0|0}
+=
+\braket{\psi|\varphi}\braket{\psi|\varphi}
+\]
+hence
+\[
+\braket{\psi|\varphi}
+=
+\bigl(\braket{\psi|\varphi}\bigr)^2
+\]
+So necessarily
+\[
+\braket{\psi|\varphi}\in\{0,1\}
+\]
+Thus only identical or orthogonal states can be cloned.
+
+\begin{theorem}[No-cloning theorem]
+There is no unitary operation that clones all pure quantum states.
+\end{theorem}
+
+So what does the CNOT do instead when the target starts in \(\ket{0}\) and the control is in the state
+\[
+\ket{\varphi}
+=
+\alpha\ket{0}+\beta\ket{1}\,?
+\]
+We get
+\[
+(\alpha\ket{0}+\beta\ket{1})\ket{0}
+\xmapsto{\matr{CNOT}}
+\alpha\ket{00}+\beta\ket{11}
+\]
+This is generally an entangled state, not two copies of \(\ket{\varphi}\).
+
+If the second Qbit is now measured in the computational basis, then the outcome is
+\[
+0 \quad\text{with probability } |\alpha|^2,
+\qquad
+1 \quad\text{with probability } |\beta|^2
+\]
+exactly as if the original state had been measured.
+Moreover, conditioned on the outcome, the first Qbit is left in the corresponding basis state.
+If we ignore the outcome on the second wire, then the first Qbit is described by the mixture
+\[
+|\alpha|^2 \ket{0}\bra{0}
++
+|\beta|^2 \ket{1}\bra{1}
+\]
+So, with respect to computational-basis statistics, the CNOT behaves as if the information had been copied.
+For this reason this process is sometimes called \emph{pseudo-cloning}.
+
+In fact, since the joint state is
+\[
+\alpha\ket{00}+\beta\ket{11}
+\]
+measurements of both wires in the computational basis always give the same outcome.
+Still, no actual cloning has happened, because the reduced states are mixed and the full state is entangled.
+
+If the second wire is not measured at all, then the first wire still undergoes exactly the same transition from a superposition to the corresponding mixture, which matches the density-matrix and partial-trace discussion above.
+Thus the CNOT can also be viewed as a \emph{pseudo-measurement}:
+it produces the same local effect as a measurement in the computational basis, but without yielding an explicit outcome.
+
+This is not a genuine measurement, because the overall process is still unitary and reversible.
+Indeed, the CNOT is an involution:
+\[
+\matr{CNOT}^2=\id
+\]
+
+This suggests a broader picture of measurement.
+Instead of thinking of a measurement as an irreversible collapse, one may model it as a unitary interaction between the system and a large ancillary system:
+the measuring device, the laboratory, the environment, and so on.
+Then the system becomes entangled with this larger system.
+Locally, the superposition turns into a mixture, even though globally the evolution remains unitary.
+
+This phenomenon is called \emph{decoherence}.
+It explains why interaction with uncontrolled external degrees of freedom is so harmful in quantum computation:
+if even a single external two-level system becomes entangled with the computer and then escapes, the coherent superposition inside the computer is effectively turned into a mixture, and the computation is spoiled.
+
+
 
 \end{document}

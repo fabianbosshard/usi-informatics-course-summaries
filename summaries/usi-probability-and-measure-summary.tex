@@ -432,7 +432,7 @@ $p_{X\mid Y}(x\mid y)
 
 \subsection{Measurable Spaces}
 
-Let $\Omega$ be a \hl{non-empty} set.
+Let $\Omega$ be a \hl[2]{non-empty} set.
 We call $\Omega$ the sample space, which specifies the possible outcomes of a random trial.
 
 Based on the \emph{elementary outcomes} $\omega \in \Omega$, one can also consider more complex \emph{events} $A \subseteq \Omega$, which are based on the usual set operations.
@@ -479,10 +479,54 @@ A set $\mathcal{F}\subseteq 2^\Omega$ is called an \emph{algebra} on $\Omega$ if
 The sets $A \in \mathcal{F}$ are called \emph{events}.
 \end{definition}
 
+
+\tikzexternaldisable
+\[
+\begin{tikzpicture}[
+    >=Latex,
+    node distance=1cm and 1.4cm,
+    every node/.style={font=\footnotesize},
+    box/.style={
+        draw,
+        fill=green!10,
+        minimum width=2cm,
+        minimum height=0.5cm,
+        align=center
+    }
+]
+
+\node[box] (sigmaalg) at (0,4.5) {\hyperref[def:sigma-algebra]{$\sigma$-algebra}};
+
+\node[box] (alg)      at (-3,3) {\hyperref[def:algebra]{algebra}};
+\node[box] (sigmaring) at (3,3) {$\sigma$-ring};
+% \node[box] (lambda)   at (4,2) {$\lambda$-system};
+
+\node[box] (ring)     at (0,1.5) {ring};
+\node[box] (semiring) at (0,0) {\hyperref[def:semiring]{semiring}};
+
+\draw[->] (alg) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaalg);
+\draw[->] (sigmaring) -- node[above, sloped] {$\Omega\in\mathcal A$} (sigmaalg);
+% \draw[->] (lambda) -- node[above, sloped] {$\cap$-stable} (sigmaalg);
+
+\draw[->] (ring) -- node[above, sloped] {$\Omega\in\mathcal A$} (alg);
+\draw[->] (ring) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaring);
+
+\draw[->] (semiring) -- node[right] {$\cup$-stable} (ring);
+
+\end{tikzpicture}
+\]
+\tikzexternalenable
+
+
 The smallest algebra is $\{\varnothing,\Omega\}$.
 Since for any algebra $\mathcal{F}\subseteq 2^\Omega$, $2^\Omega$ is the largest algebra.
 Note that any algebra is also closed under intersection, since
 $A \cap B = (A^\complement \cup B^\complement)^\complement$ (De Morgan).
+
+
+
+
+
 
 \begin{example}[Different information $\Rightarrow$ different algebras]\label{ex-info-algebras}
 Alice generates two random bits. The sample space therefore is
@@ -2091,43 +2135,6 @@ Largest: \(2^\Omega\)
 
 
 
-
-\tikzexternaldisable
-\[
-\begin{tikzpicture}[
-    >=Latex,
-    node distance=1cm and 1.4cm,
-    every node/.style={font=\footnotesize},
-    box/.style={
-        draw,
-        fill=green!10,
-        minimum width=2cm,
-        minimum height=0.5cm,
-        align=center
-    }
-]
-
-\node[box] (sigmaalg) at (0,4.5) {\hyperref[def:sigma-algebra]{$\sigma$-algebra}};
-
-\node[box] (alg)      at (-3,3) {\hyperref[def:algebra]{algebra}};
-\node[box] (sigmaring) at (3,3) {$\sigma$-ring};
-% \node[box] (lambda)   at (4,2) {$\lambda$-system};
-
-\node[box] (ring)     at (0,1.5) {ring};
-\node[box] (semiring) at (0,0) {\hyperref[def:semiring]{semiring}};
-
-\draw[->] (alg) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaalg);
-\draw[->] (sigmaring) -- node[above, sloped] {$\Omega\in\mathcal A$} (sigmaalg);
-% \draw[->] (lambda) -- node[above, sloped] {$\cap$-stable} (sigmaalg);
-
-\draw[->] (ring) -- node[above, sloped] {$\Omega\in\mathcal A$} (alg);
-\draw[->] (ring) -- node[above, sloped] {$\sigma$-$\cup$-stable} (sigmaring);
-
-\draw[->] (semiring) -- node[right] {$\cup$-stable} (ring);
-
-\end{tikzpicture}
-\]
-\tikzexternalenable
 
 
 
