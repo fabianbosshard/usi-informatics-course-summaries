@@ -65,6 +65,11 @@
 
 \usepackage[left=38mm, right=38mm, top=20mm, bottom=30mm]{geometry}
 
+
+\usepackage{nicematrix}
+% \usepackage{booktabs}
+% \usepackage{array}
+
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{mathtools}
 \usepackage{mathdots} % without this package, only \vdots and \ddots are taken from the text font (not the math font), which looks bad if the text font is different from the math font
@@ -94,6 +99,22 @@
 \usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
+\usepackage{quantikz} % problems with tikz-cd, so we need a style for the latter:
+\tikzset{
+  mycdstyle/.style={
+  cells={ % size settings only for the matrix cells, not for every node
+      nodes={
+        inner sep=0pt,
+        outer sep=0pt,
+        minimum width=1.7em,
+        minimum height=1.2em
+      }
+    },
+    % row sep=1.8em, 
+    % column sep=2.4em,
+    execute at begin cell=\setwiretype{n}
+    }
+  }
 \usetikzlibrary{external}
 \tikzexternalize[prefix=tikz-cache/]
 \usepackage{pgfplots}
@@ -105,6 +126,8 @@
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
 \definecolor{interludecolor}{HTML}{\eat #7f7f7f}
+\definecolor{overvieworange}{HTML}{\eat #f17e00}
+\definecolor{overviewgreen}{HTML}{\eat #01a765}
 
 \renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
 
@@ -140,6 +163,8 @@
 \declaretheorem[style=remarkstyle, name=Remark,   numberwithin=section]{remark}
 \declaretheoremstyle[headfont=\bfseries\color{funblue}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{funblue}\blacktriangleleft}, postheadspace=1em]{examplestyle}
 \declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
+\declaretheoremstyle[headfont=\bfseries\color{overvieworange}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{overvieworange}\blacktriangleleft}, postheadspace=1em]{overviewstyle}
+\declaretheorem[style=overviewstyle, name=Overview, sibling=remark]{overview}
 
 \declaretheorem[style=remarkstyle,name=Convention, sibling=remark]{convention}
 \declaretheorem[style=remarkstyle,name=Convention, numbered=no]{convention*} % unnumbered convention
@@ -1056,7 +1081,7 @@ In both cases, the photon is detected in either of the detectors with equal prob
 
 
 
-\subsection{Quantum Bit}
+\subsection{Quantum Bit}\label{sec:quantum-bit}
 
 To transfer a bit $b \in \{0, 1\}$ into the quantum world, we associate $0$ and $1$ with two orthogonal vectors, usually with the standard basis vectors,
 \[
@@ -3802,15 +3827,20 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 
 
-
-
-
-
-
-
-
-
 % \clearpage
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4036,7 +4066,8 @@ provided $E_A(\omega)\psi \neq 0$.
 
 
 \begin{example}[Finite-dimensional case]\label{ex:finite-dimensional-case}
-If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues
+If ${A} \colon \C^n \to \C^n$ is self-adjoint, then by the (finite-dimensional) spectral theorem there exist distinct real eigenvalues.
+Since this is explicitly the finite-dimensional case, all sums in this example are finite.
 \(
 \lambda_1,\dots,\lambda_r
 \)
@@ -4231,6 +4262,7 @@ Then
 \]
 for some $n \in \N$, i.e. $\mathcal{H}$ is isomorphic to the standard $n$-dimensional complex vector space.  
 
+From this point on, all basis expansions are therefore finite sums.
 This allows us to represent states by coordinates with respect to some fixed 
 orthonormal % is this too strong?
 basis
@@ -4429,7 +4461,7 @@ where $\matr{U}$ is the change-of-basis matrix from the old basis $B$ to the new
 % \qquad \qquad \qquad
 \tikzexternaldisable
 \[
-\begin{tikzcd}[column sep=4em, row sep=2.5em, font=\footnotesize]
+\begin{tikzcd}[column sep=4em, row sep=2.5em, font=\footnotesize, mycdstyle]
 \mathbb{C}^n
   \arrow[r, "\matr{A}"] %\in\mathbb{C}^{n\times n}"]
   \arrow[dd, swap, "\matr{U}", shift right=2.0em]
@@ -4462,7 +4494,8 @@ In the orthonormal case, $\matr{U}$ is unitary, hence
 
 
 The trace is basis-independent.
-A key identity is
+% A key identity is
+To see this, recall that
 \(
 \Trace(A B) = \Trace(B A)
 \).
@@ -4520,7 +4553,7 @@ which is the form that extends naturally to mixed states.  % [oai_citation:7‡b
 
 
 
-\subsubsection{Density matrices}
+\subsubsection{Density matrices}\label{sec:density-matrices}
 
 So far, we have described quantum states by normalized vectors
 \(
@@ -4669,6 +4702,27 @@ for some normalized \(\psi \in \mathcal H\).
 
 Equivalently, \(\rho\) is pure if and only if one eigenvalue equals \(1\) and all others are \(0\), or, equivalently, if and only if \(\rho\) has rank \(1\).
 Thus pure states are precisely the rank-one orthogonal projections (compare also \autoref{eq:post-measurement-state} and \autoref{ex:finite-dimensional-case}).
+
+
+\begin{overview}[pure vs. mixed states]
+A density operator $\rho$ is
+\begin{itemize}
+\item pure iff $\rho^2 = \rho$  (i.e. $\rho$ is a rank-$1$ projection)
+\item mixed iff $\rho^2 \neq \rho$
+\end{itemize}
+Equivalently,
+\begin{itemize}
+\item pure iff $\Trace(\rho^2) = 1$
+\item mixed iff $\Trace(\rho^2) < 1$
+\end{itemize}
+In terms of the eigenvalues of $\rho$:
+\begin{itemize}
+\item pure iff $\rho$ has exactly one eigenvalue equal to $1$ and all others equal to $0$
+\item mixed iff $\rho$ has more than one nonzero eigenvalue \qedhere
+\end{itemize}
+\end{overview}
+
+
 
 For the density matrix of a pure state \(\rho = \ket{\psi}\bra{\psi}\), 
 \eqref{eq:born-rule} becomes
@@ -4911,7 +4965,7 @@ In particular, if \(\matr{A}\) and \(\matr{B}\) are unitary, Hermitian, positive
 
 However, parts of an entangled state are mixed states.
 To understand what Alice's part of the entangled system from \autoref{ex:singlet-state-entangled} looks like, we introduce the %\emph{partial trace}.
-\begin{definition}[Partial Trace]
+\begin{definition}[Partial Trace]\label{def:partial-trace}
 To describe the state of only one subsystem, we use the linear map % which is the density-matrix analogue of the discussion of local measurements in bipartite systems. % what discussion?
 \[
 \Trace_B \colon \operatorname{End}(\mathcal H_A \otimes \mathcal H_B) \to \operatorname{End}(\mathcal H_A)
@@ -4924,7 +4978,7 @@ and extended linearly.
 Analogously one defines \(\Trace_A\).
 \end{definition}
 
-\begin{example}
+\begin{example}\label{ex:trace-out-one-subsystem}
 The density matrix of the singlet state is
 \[
 \begin{aligned}
@@ -5067,54 +5121,6 @@ which can be split into a partial trace over Bob's subsystem and a subsequent tr
 \Trace\bigl(E_A(\omega)\Trace_B(\rho)\bigr)
 \]
 where we used \autoref{thm:partial-trace-local-observables}.
-% To relate this to the 
-% reduced % why reduced?
-% density matrix, write in general
-% \[
-% \rho
-% =
-% \sum_{i,k,j,l} c_{ikjl}\, \ket{i}\bra{k}\otimes \ket{j}\bra{l}
-% \]
-% with respect to orthonormal bases \(\{\ket{i}\}_i\) of \(\mathcal H_A\) and \(\{\ket{j}\}_j\) of \(\mathcal H_B\).
-% Then, using linearity, it suffices to compute on a basis element:
-% \[
-% \begin{aligned}
-% \Trace\bigl((X\otimes \id_B)(\ket{i}\bra{k}\otimes \ket{j}\bra{l})\bigr)
-% &=
-% \Trace\bigl(X\ket{i}\bra{k}\otimes \ket{j}\bra{l}\bigr) \\
-% &=
-% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\Trace\bigl(\ket{j}\bra{l}\bigr) \\
-% &=
-% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\delta_{jl}
-% \end{aligned}
-% \]
-% On the other hand,
-% \[
-% \begin{aligned}
-% \Trace\Bigl(X\,\Trace_B\bigl(\ket{i}\bra{k}\otimes \ket{j}\bra{l}\bigr)\Bigr)
-% &=
-% \Trace\Bigl(X\,\Trace(\ket{j}\bra{l})\,\ket{i}\bra{k}\Bigr) \\
-% &=
-% \Trace\bigl(X\ket{i}\bra{k}\bigr)\,\delta_{jl}
-% \end{aligned}
-% \]
-% Thus
-% \[
-% \Trace\bigl((X\otimes \id_B)\rho\bigr)
-% =
-% \Trace\bigl(X\,\Trace_B(\rho)\bigr)
-% \]
-% for every \(X\in\operatorname{End}(\mathcal H_A)\).
-% Applying this with
-% \(
-% X = E_A(\omega)
-% \)
-% gives
-% \[
-% \Prob_A^{\rho}(\omega)
-% =
-% \Trace\bigl(E_A(\omega)\Trace_B(\rho)\bigr)
-% \]
 Hence Bob's subsystem influences Alice's local statistics only through the reduced density matrix \(\Trace_B(\rho)\).
 In particular, local operations on Bob's side alone cannot be used to transmit information to Alice, saving us from problems with relativity.
 \end{example}
@@ -5191,13 +5197,16 @@ A\,\Trace_B(\rho)
 
 
 
-We now apply the previous formalism specifically to finite-dimensional systems of dimension \(2\), the basic carriers of quantum information. The corresponding material in the source begins the Qbit chapter after the discussion of density matrices and continues through single Qbits, two Qbits, the CNOT gate, and no-cloning. 
-
+We now consider finite-dimensional quantum systems.
+Since quantum theory is linear, restricting to such spaces does not alter the underlying physics. 
+The basic unit is the quantum bit, or qubit, corresponding to a $2$-dimensional Hilbert space. 
+Unlike classical bits, however, understanding a single qubit is not enough to understand systems of several qubits, 
+because qualitatively new phenomena arise there, most importantly entanglement, which lies at the heart of the power of quantum information processing.
 
 \subsubsection{One Qbit: $\mathcal{H} = \C^2$}
 
 
-A \hl[2]{Qbit} is a quantum system whose state space is
+A quantum bit, or qubit, or {Qbit} is a quantum system whose state space is
 \[
 \mathcal H = \C^2
 \]
@@ -5215,51 +5224,73 @@ We choose the standard orthonormal basis
 0\\1
 \end{bmatrix}
 \]
-called the \emph{computational basis}.
+called the \hl{\emph{computational basis}}.
 
 A general pure state of one Qbit is
 \[
 \ket{\psi}
 =
 \alpha \ket{0} + \beta \ket{1}
-\qquad
-\text{with }
-\alpha,\beta \in \C,
-\quad
-|\alpha|^2+|\beta|^2=1
 \]
+with 
+\(
+\alpha,\beta \in \C
+\),
+\(
+|\alpha|^2+|\beta|^2=1
+\).
 
 At first sight this seems to involve four real parameters minus one normalization condition, hence three real degrees of freedom.
 But one more degree of freedom is physically irrelevant:
-global phase factors cannot be observed.
-Indeed, if \(|c|=1\), then
+If $c \in \C$, \(|c|=1\), then
 \[
-(c\ket{\psi})(c\ket{\psi})^*
-=
-c\ket{\psi}\bra{\psi}\overline{c}
-=
-\ket{\psi}\bra{\psi}
+  (c\ket{\psi})(c\ket{\psi})^*
+  =
+  c\ket{\psi}\bra{\psi}\overline{c}
+  =
+  \ket{\psi}\bra{\psi}
 \]
-Thus the vectors \(\ket{\psi}\) and \(c\ket{\psi}\) represent the same physical pure state.
+Thus \(\ket{\psi}\) and \(c\ket{\psi}\) represent the same physical pure state.
+Global phase factors cannot be observed.
+
+Mathematically, two vectors are said to be equivalent if and only of they diﬀer simply by a global phase factor. 
+Quantum states then correspond to equivalence relations with respect to that relation, sometimes called ``unit rays''. 
+
+
 
 So a pure one-Qbit state is really determined by only two real parameters.
 A convenient parametrization is
-\begin{equation}\label{eq:bloch-sphere-parametrization}
+\[
+\begin{aligned}
 \ket{\psi}
-=
+&=
+\alpha \ket{0} + \beta \ket{1} \\
+&=
+\eu^{\iu \varphi_\alpha}|\alpha| \ket{0} + \eu^{\iu \varphi_\beta}|\beta| \ket{1} \\
+&=
+\eu^{\iu \varphi_\alpha}\left(|\alpha| \ket{0} + \eu^{\iu (\varphi_\beta-\varphi_\alpha)}|\beta| \ket{1}\right) \\
+&\sim
+|\alpha| \ket{0} + \eu^{\iu (\varphi_\beta-\varphi_\alpha)}|\beta| \ket{1} \\
+&= 
 \cos\frac{\Theta}{2}\ket{0}
 +
 \eu^{\iu\varphi}\sin\frac{\Theta}{2}\ket{1}
-\end{equation}
+\end{aligned}
+\]
 with
 \(
 \Theta \in [0,\pi]
 \)
 and
+\emph{relative phase}
 \(
 \varphi \in [0,2\pi)
 \).
-This leads to the Bloch sphere representation of pure one-Qbit states; compare also the earlier discussion of spin-$\tfrac{1}{2}$ systems in \autoref{sec:stern-gerlach-experiment}.
+% This leads to the Bloch sphere representation of pure one-Qbit states.
+% compare also the discussion of spin-$\tfrac{1}{2}$ systems in \autoref{sec:stern-gerlach-experiment}.
+A representation of states which takes into account the irrelevance of global phases is the Bloch sphere. 
+In this representation of the unit rays, or projectors, ``orthogonal'' becomes ``antipodal''.
+
 
 % \tikzset{external/export next=false}
 \begin{center}
@@ -5349,77 +5380,198 @@ This leads to the Bloch sphere representation of pure one-Qbit states; compare a
 \node[black!85, above=3pt] at (Zp) {$\ket{0}$};
 \node[black!85, below=3pt] at (Zm) {$\ket{1}$};
 
-\node[below left] at (Yp) {$\dfrac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$};
-\node[above right] at (Ym) {$\dfrac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$};
-\node[below right] at (Xp) {$\dfrac{\ket{0} + \ket{1}}{\sqrt{2}}$};
-\node[above left] at (Xm) {$\dfrac{\ket{0} - \ket{1}}{\sqrt{2}}$};
+% \node[below left] at (Yp) {$\ket{\iu} = \frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$};
+% \node[above right] at (Ym) {$\ket{-\iu} = \frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$};
+% \node[below right] at (Xp) {$\ket{+} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$};
+% \node[above left] at (Xm) {$\ket{-} = \frac{\ket{0} - \ket{1}}{\sqrt{2}}$};
+\node[below left] at (Yp) {$\ket{\iu}$};
+\node[above right] at (Ym) {$\ket{-\iu}$};
+\node[below right, xshift=-0.5em] at (Xp) {$\ket{+}$};
+\node[above left, xshift=0.5em] at (Xm) {$\ket{-}$};
 
-\node[black!85] at (ThetaLabelPos) {$\theta$};
+\node[black!85] at (ThetaLabelPos) {$\Theta$};
 \node[black!70!black, below right] at (PhiLabelPos) {$\varphi$};
 \end{tikzpicture}
 \end{center}
 
+Orientation on the Bloch sphere:
+\begin{itemize}
+  \item Computational Basis: $\ket{0}$, $\ket{1}$ 
+  \item Diagonal States: $\ket{+} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$, $\ket{-} = \frac{\ket{0} - \ket{1}}{\sqrt{2}}$
+  \item Circular States: $\ket{\iu} = \frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$, $\ket{-\iu} = \frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$
+\end{itemize}
+
+
+
 Operations on one Qbit are unitary \(2\times2\)-matrices.
+\begin{example}
 A central example is the Hadamard gate
-\[
+\(
 \matr{H}
 =
+\smash[b]{
 \frac{1}{\sqrt{2}}
-\begin{bmatrix}
+}
+\left[
+\begin{smallmatrix}
 1 & 1\\
 1 & -1
-\end{bmatrix}
-\]
+\end{smallmatrix}
+\right]
+\), 
+introduced in \autoref{sec:quantum-bit}.
+It
+satisfies
+\(
+\matr{H}^2=\matr{I}
+\),
+and, hence, is not only unitary but also an involution (and, therefore, by \autoref{thm:unitary-selfadjoint-involution}, also self-adjoint).
 It maps
-\[
-\matr{H}\ket{0}
-=
-\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})
-\qquad
-\matr{H}\ket{1}
-=
-\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})
-\]
-and satisfies
-\[
-\matr{H}^2=\id
-\]
-Hence \(\matr{H}\) is not only unitary but also self-adjoint.
+\(
+% \matr{H}
+\ket{0}
+% =
+\mapsto
+% \frac{1}{\sqrt{2}}(\ket{0}+\ket{1})
+\ket{+}
+\), 
+\(
+% \matr{H}
+\ket{1}
+% =
+\mapsto
+% \frac{1}{\sqrt{2}}(\ket{0}-\ket{1})
+\ket{-}
+\), so its action on the Bloch sphere includes a rotation of $\pi/2$ around the axis connecting the circular polarizations $\ket{\iu}, \ket{-\iu}$.
+Hovever, it also maps $\ket{\iu} \mapsto \ket{-\iu}$ and $\ket{-\iu} \mapsto \ket{\iu}$, i.e. it exchanges the two circular basis states.
+So the first rotation must be combined with a second rotation of $\pi$ around the axis connecting the diagonal states $\ket{+}, \ket{-}$.
+\end{example}
 
-Since arbitrary measurements in any orthonormal basis can be reduced to a unitary basis change followed by a standard-basis measurement, exactly as discussed abstractly in \autoref{sec:observables}, it is enough to understand measurements in the basis \(\{\ket{0},\ket{1}\}\).
+Since arbitrary measurements in any orthonormal basis can be reduced to a unitary basis change followed by a standard-basis measurement, as discussed in \autoref{sec:observables}, it is enough to understand measurements in the basis \(\{\ket{0},\ket{1}\}\).
 For instance, a measurement in the diagonal basis is a Hadamard transform followed by a standard measurement.
 
 
 
 
 
-\subsubsection{Two Qbits: $\mathcal{H} = \C^2 \otimes \C^2 \cong \C^4$}
+\subsubsection{Two Qbits: $\mathcal{H} = \C^4$}
 
-For two Qbits the state space is
-\[
-\C^2 \otimes \C^2 \cong \C^4
-\]
-with computational basis
-\[
-\{\ket{00},\ket{01},\ket{10},\ket{11}\}
-\]
+% For two Qbits the state space is
+% \[
+% \mathcal{H} = \C^2 \otimes \C^2 \cong \C^4
+% \]
+% with computational basis
+% \(
+% \{\ket{00},\ket{01},\ket{10},\ket{11}\}
+% \).
 
+\begin{definition}[Product State]
 A product state has the form
-\[
+\(
 \ket{\psi_1}\otimes\ket{\psi_2}
-\]
-but not every state of two Qbits is of this form.
-For example,
-\[
-\frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
-\]
-cannot be written as a product state and is therefore entangled; compare the Bell-state discussion in \autoref{sec:aspect-gisin-zeilinger-experiments}.
+\).
+\end{definition}
+% \begin{example}
+% \(\sqrt{2/3}\ket{00}+\sqrt{1/3}\ket{01}\) is a product state.
+% \end{example}
 
-More generally,
+\begin{example}
+\(
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{01})
+\) 
+and
+\(
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{10})
+\)
+are product states.
+\end{example}
+
+Not every state of two Qbits is of this form.
+\begin{example}
+The Bell states, which are the following maximally entangled two-Qbit states,
 \[
-\C^2 \otimes \C^2
+\begin{aligned}
+\ket{\Phi^+}
+&=
+\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}) \\
+\ket{\Phi^-}
+&=
+\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}) \\
+\ket{\Psi^+}
+&=
+\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}) \\
+\ket{\Psi^-}
+&=
+\frac{1}{\sqrt{2}}(\ket{01}-\ket{10})
+\end{aligned}
+\]
+cannot be written as a product state,
+%  and are therefore entangled,
+see \autoref{sec:aspect-gisin-zeilinger-experiments}.
+\end{example}
+\begin{remark}
+% For product states \(\psi_{1,A} \otimes \psi_{1,B}\) and \(\psi_{2,A} \otimes \psi_{2,B}\), the sum
+% \[
+% \psi_{1,A}\otimes \psi_{1,B} + \psi_{2,A}\otimes \psi_{2,B}
+% \]
+% is a product state if and only if either \(\psi_{1,A}\) and \(\psi_{2,A}\) are linearly dependent or \(\psi_{1,B}\) and \(\psi_{2,B}\) are linearly dependent.
+% In particular, a 
+A general two-Qbit pure state
+\[
+\ket{\psi}
+=
+\alpha\ket{00}+\beta\ket{01}+\gamma\ket{10}+\delta\ket{11}
+\]
+% is a product state if and only if
+% \[
+% \alpha\delta-\beta\gamma=0.
+% \]
+% Indeed, \(\ket{\psi}\) 
+is a product state if and only if there exist \(a,b,c,d\in\C\) such that
+\[
+\ket{\psi}
+=
+(a\ket0+b\ket1)\otimes(c\ket0+d\ket1)
+\]
+and expanding this gives
+% \[
+% \alpha=ac \qquad \beta=ad \qquad \gamma=bc \qquad \delta=bd 
+% \]
+\(
+\alpha=ac\),  \(\beta=ad\),  \(\gamma=bc\),  \(\delta=bd 
+\). 
+Thus the coefficient matrix
+\[
+\matr{A} \coloneq
+\begin{bmatrix}
+\alpha & \beta\\
+\gamma & \delta
+\end{bmatrix}
+=
+\begin{bmatrix}
+a\\ b
+\end{bmatrix}
+\begin{bmatrix}
+c & d
+\end{bmatrix}
+\]
+must have rank \(1\). 
+Conversely, every rank-\(1\) matrix admits such a factorization, hence determines a product state. 
+% Since \(\matr{A}\neq \matr{0}\) for a nonzero state vector, and since for a nonzero \(2\times 2\) matrix rank \(1\) is equivalent to vanishing determinant, this is equivalent to
+% \(
+% \det(\matr{A})=\alpha\delta-\beta\gamma=0
+% \).
+\end{remark}
+
+The state space of a Qbit pair is the tensor product of the individual spaces, which is the span of the set of product states
+\[
+\Span{\{\ket{\psi_1 \psi_2}\}}
 =
 \Span\{\ket{00},\ket{01},\ket{10},\ket{11}\}
+=
+\C^2 \otimes \C^2
+\cong
+\C^4
 \]
 and for \(n\) Qbits,
 \[
@@ -5427,7 +5579,8 @@ and for \(n\) Qbits,
 \cong
 \C^{2^n}
 \]
-with computational basis indexed by classical \(n\)-bit strings.
+% with computational basis indexed by classical \(n\)-bit strings.
+where a bsis is given by the classical \(n\)-bit strings, $\{\ket{\vect{x}} : \vect{x} \in \{0,1\}^n\}$.
 
 On the level of coordinates, the tensor product is given by the Kronecker product:
 \[
@@ -5444,57 +5597,215 @@ ac\\ad\\bc\\bd
 \end{bmatrix}
 \]
 
-The Bell states are the following maximally entangled two-Qbit states:
-\[
-\ket{\Phi^+}
-=
-\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}),
-\qquad
-\ket{\Phi^-}
-=
-\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}),
-\]
-\[
-\ket{\Psi^+}
-=
-\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}),
-\qquad
-\ket{\Psi^-}
-=
-\frac{1}{\sqrt{2}}(\ket{01}-\ket{10})
-\]
 
-The inner product behaves multiplicatively on tensor products:
-\begin{equation}\label{eq:tensor-product-inner-product}
-\braket{\psi_0 \varphi_0 | \psi_1 \varphi_1}
+
+\medskip
+{\textbf{Inner Product}}
+
+The inner product on the tensor-product space is characterized by the requirement that tensor products of orthonormal basis vectors again form an orthonormal basis,
+i.e., if
+\(
+\{\ket{\varphi_{A,i}}\}_i
+\) and \(
+\{\ket{\varphi_{B,i}}\}_i
+\)
+are orthonormal bases of $\mathcal H_A$ and $\mathcal H_B$, then
+\(
+\{\ket{\varphi_{A,i_A}}\otimes\ket{\varphi_{B,i_B}}\}_{i_A,i_B}
+\)
+should be  an orthonormal basis of $\mathcal H_A\otimes\mathcal H_B$.
+Equivalently, 
+\[
+\braket{\varphi_{A,i_{A,1}} \otimes \varphi_{B,i_{B,1}} | \varphi_{A,i_{A,2}} \otimes \varphi_{B,i_{B,2}}}
+\overset{!}{=}
+\delta_{i_{A,1},i_{A,2}}\delta_{i_{B,1},i_{B,2}}
+\]
+for all basis vectors.
+Since every vector in $\mathcal H_A\otimes\mathcal H_B$ is a linear combination of such product basis vectors, this uniquely determines the inner product on the whole tensor-product space.
+
+\pagebreak[2]
+The inner product therefore behaves multiplicatively on tensor products:
+\[
+\braket{\psi_{A,1} \otimes \psi_{B,1} | \psi_{A,2} \otimes \psi_{B,2}}
 =
-\braket{\psi_0|\psi_1}\,\braket{\varphi_0|\varphi_1}
-\end{equation}
+\braket{\psi_{A,1} | \psi_{A,2}}
+\braket{\psi_{B,1} | \psi_{B,2}}
+\]
+as mentioned in \autoref{dig:tensor-products}.
+\pagebreak[2]
+
 In particular, two tensor products are orthogonal if and only if in at least one factor the corresponding states are orthogonal.
 
-If \(U\) and \(V\) are unitary on the individual Qbits, then
-\[
-(U\otimes V)(\ket{\psi}\otimes\ket{\varphi})
-=
-U\ket{\psi}\otimes V\ket{\varphi}
-\]
-extends linearly to a unitary on the joint system.
-Such operations are called \emph{product operations}.
 
-For example,
+% For two Qbits, the computational basis
+% \(
+% \{\ket{0},\ket{1}\}
+% \)
+% of $\C^2$ induces the orthonormal basis
+% \(
+% \{\ket{00},\ket{01},\ket{10},\ket{11}\}
+% \)
+% of $\C^2\otimes\C^2$.
+
+
+This is consistent with the coordinate level, i.e. let
 \[
-\matr{H}^{\otimes 2}
-=
-\matr{H}\otimes \matr{H}
-=
-\frac12
-\begin{bmatrix}
-1 & 1 & 1 & 1\\
-1 & -1 & 1 & -1\\
-1 & 1 & -1 & -1\\
-1 & -1 & -1 & 1
-\end{bmatrix}
+\ket{\psi_{A,1}} = \begin{bmatrix} a_1\\b_1\end{bmatrix}
+\qquad
+\ket{\psi_{B,1}} = \begin{bmatrix} c_1\\d_1\end{bmatrix}
+\qquad
+\ket{\psi_{A,2}} = \begin{bmatrix} a_2\\b_2\end{bmatrix}
+\qquad
+\ket{\psi_{B,2}} = \begin{bmatrix} c_2\\d_2\end{bmatrix}
 \]
+Then
+\[
+\begin{aligned}
+\braket{\psi_{A,1} \otimes \psi_{B,1} | \psi_{A,2} \otimes \psi_{B,2}}
+&=
+% \left(\bra{\psi_{A,1}} \otimes \bra{\psi_{B,1}}\right) \left(\ket{\psi_{A,2}} \otimes \ket{\psi_{B,2}}\right)
+\left(\ket{\psi_{A,1}} \otimes \ket{\psi_{B,1}}\right)^* \left(\ket{\psi_{A,2}} \otimes \ket{\psi_{B,2}}\right)
+\\
+&=
+\begin{bmatrix}
+a_1^* c_1^* & a_1^* d_1^* & b_1^* c_1^* & b_1^* d_1^*
+\end{bmatrix}
+\begin{bmatrix}
+a_2 c_2\\
+a_2 d_2\\
+b_2 c_2\\
+b_2 d_2
+\end{bmatrix}
+\\
+&=
+a_1^* a_2 c_1^* c_2 + a_1^* a_2 d_1^* d_2 + b_1^* b_2 c_1^* c_2 + b_1^* b_2 d_1^* d_2
+\\
+&=
+(a_1^* a_2 + b_1^* b_2)(c_1^* c_2 + d_1^* d_2)
+\\
+&=
+\braket{\psi_{A,1} | \psi_{A,2}}
+\braket{\psi_{B,1} | \psi_{B,2}}
+\end{aligned}
+\]
+
+\medskip
+{\textbf{Operations}}
+
+An example of an operation that can be carried out on a pair of Qbits is a product operation. 
+Let us define it on the set of product states, which is a generating system of the full space.
+The operation 
+\[
+(U \otimes V)(\ket{\psi_A} \otimes \ket{\psi_B}) \coloneq U\ket{\psi_A} \otimes V\ket{\psi_B}
+\]
+is thus uniquely defined by linearity,
+as already mentioned in \autoref{dig:tensor-products}.
+
+
+
+This map is unitary as long as both $U$ and $V$ are: It is easy to see that orthogonal tensor products are mapped to orthogonal tensor product along our understanding of orthogonality above.
+
+\begin{example}
+The matrix Hadamard on two Qbits can again be computed through the Kronecker product:
+\NiceMatrixOptions { 
+  custom-line = {
+    command= H, 
+    tikz= { 
+      densely dotted, shorten >= 2pt, shorten <= 2pt, 
+    },
+    width= 0em
+  }, 
+  custom-line = {
+    letter= I, 
+    tikz= { 
+      densely dotted, shorten >= 2pt, shorten <= 2pt 
+    },
+    width= 0.0mm
+  }, 
+}
+\[
+\matr{H} \otimes \matr{H}
+=
+\frac{1}{2}
+\begin{bNiceArray}{rIr}[cell-space-limits = 0.3em]
+1 \cdot
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix} & 1 \cdot
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix} \\
+\H
+1 \cdot
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix} & -1 \cdot
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix}
+\end{bNiceArray}
+=
+\begin{bNiceArray}{rrIrr}[cell-space-limits = 0.15em]
+1 & 1 & 1 & 1 \\
+1 & -1 & 1 & -1 \\
+\H
+1 & 1 & -1 & -1 \\
+1 & -1 & -1 & 1
+\end{bNiceArray}
+\]
+
+
+
+This representation is not very intuitive or transparent. 
+A better understanding can be obtained from the following formula: 
+For $b \in\{0,1\}$,
+\[
+\matr{H}\ket{b}=\frac{\ket{0}+(-1)^b\ket{1}}{\sqrt{2}} 
+\]
+
+
+
+Accordingly, for two Qbits,
+\[
+\begin{aligned}
+\matr{H}^{\otimes 2}\ket{b_1 b_2} & =\matr{H}\ket{b_1} \otimes \matr{H}\ket{b_2} \\
+& =\frac{1}{2}\left(\left(\ket{0}+(-1)^{b_1}\ket{1}\right) \otimes\left(\ket{0}+(-1)^{b_2}\ket{1}\right)\right) \\
+& =\frac{1}{2}\left(\ket{00}+(-1)^{b_2}\ket{01}+(-1)^{b_1}\ket{10}+(-1)^{b_1 \oplus b_2}\ket{11}\right)
+\end{aligned}
+\]
+where $\oplus$ denotes addition modulo $2$ (i.e., XOR).
+\end{example}
+
+For $n$ Qbits 
+\[
+\ket{\vect{b}} = \bigotimes_{j=1}^n \ket{b_j}
+\]
+we have
+\[
+\matr{H}^{\otimes n}\ket{\vect{b}}=\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n}(-1)^{\vect{b} \cdot \vect{x}}\ket{\vect{x}}
+\]
+where
+\[
+\vect{b} \cdot \vect{x} \coloneq \bigoplus_{j=1}^n b_j \wedge x_j
+\]
+denotes the XOR of the bitswise AND of $\vect{b}$ and $\vect{x}$.
+\pagebreak[2]
+
+In particular,
+\[
+\matr{H}^{\otimes n}\ket{\vect{0}}
+=
+\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n} \ket{\vect{x}}
+\]
+will be the initial state for most quantum algorithms, and as a equal superposition of all classical inputs, the basis for ``Quantum parallelism''.
+
+
+\medskip
+{\textbf{Measurements}}
 
 Measurements can also be performed on only one part of a bipartite system, in accordance with the general formalism from \autoref{sec:observables}.
 If
@@ -5504,40 +5815,56 @@ If
 \alpha\ket{00}+\beta\ket{01}+\gamma\ket{10}+\delta\ket{11}
 \]
 and one measures only the first Qbit in the standard basis, then the probabilities are
-\[
-p_0 = |\alpha|^2+|\beta|^2,
-\qquad
+\(
+p_0 = |\alpha|^2+|\beta|^2
+\), 
+\(
 p_1 = |\gamma|^2+|\delta|^2
-\]
-Moreover,
+\).
+Rewrite the state as
 \[
+\begin{aligned}
 \ket{\Psi}
-=
+&=
+\ket{0}\otimes(\alpha\ket{0}+\beta\ket{1})
++
+\ket{1}\otimes(\gamma\ket{0}+\delta\ket{1})
+\\
+&=
+\sqrt{p_0}\ket{0}\otimes\frac{\alpha\ket{0}+\beta\ket{1}}{\sqrt{p_0}}
++
+\sqrt{p_1}\ket{1}\otimes\frac{\gamma\ket{0}+\delta\ket{1}}{\sqrt{p_1}}
+\\
+&=
 \sqrt{p_0}\,\ket{0}\otimes\ket{\psi_0}
 +
 \sqrt{p_1}\,\ket{1}\otimes\ket{\psi_1}
+\end{aligned}
 \]
-with
-\[
-\ket{\psi_0}
-=
-\frac{\alpha\ket{0}+\beta\ket{1}}{\sqrt{p_0}},
-\qquad
-\ket{\psi_1}
-=
-\frac{\gamma\ket{0}+\delta\ket{1}}{\sqrt{p_1}}
-\]
+% with
+% \[
+% \ket{\psi_0}
+% =
+% \frac{\alpha\ket{0}+\beta\ket{1}}{\sqrt{p_0}},
+% \qquad
+% \ket{\psi_1}
+% =
+% \frac{\gamma\ket{0}+\delta\ket{1}}{\sqrt{p_1}}
+% \]
 provided \(p_0,p_1 \neq 0\).
 Thus, conditioned on the outcome \(0\) or \(1\), the second Qbit is left in the corresponding pure state \(\ket{\psi_0}\) or \(\ket{\psi_1}\).
 
-If we ignore the measurement outcome on the first Qbit, then the second Qbit is described by the mixture
+If we ignore the measurement outcome on the first Qbit, or we don't perform any measurement at all on the first Qbit, then the second Qbit is described by the mixture
 \[
+p_0 P_{\ket{\psi_0}} + p_1 P_{\ket{\psi_1}}
+=
 p_0 \ket{\psi_0}\bra{\psi_0}
 +
 p_1 \ket{\psi_1}\bra{\psi_1}
 \]
-This is exactly the reduced state obtained by the partial trace.
-So once again we see: parts of entangled pure states are, in general, mixed.
+% since the state of the second Qbit does not depend on what happens to the first Qbit, even if we do not perform any measurement on the first Qbit, the second Qbit is still described by this mixture.
+which is exactly the reduced state obtained by the partial trace, i.e. when the first Qbit is ``traced out'' (\autoref{sec:density-matrices}, \autoref{def:partial-trace} and \autoref{ex:trace-out-one-subsystem}).
+Once again we see: parts of entangled pure states are mixed.
 
 
 
@@ -5558,6 +5885,13 @@ Its action on the computational basis is
 \]
 That is, the first Qbit is the \emph{control} and the second is the \emph{target}:
 the second bit is flipped exactly if the first bit equals \(1\).
+\[
+\begin{quantikz}
+\lstick{$\ket{x}$} & \ctrl{1} & \rstick{$\ket{x}$} \\
+\lstick{$\ket{b}$} & \targ{}  & \rstick{$\ket{b \oplus x}$}
+\end{quantikz}
+\]
+
 
 In the basis
 \(
