@@ -3889,6 +3889,201 @@ If, in addition,
 then this superposition again represents a physical state.
 Thus quantum states behave like waves: linear combinations of states are again states.
 
+\begin{digression}[Position Basis]
+Physicists often describe position by a family of kets
+\(
+\ket{\vect{x}}
+\),
+\(
+\vect{x}\in\R^3
+\),
+and write
+\begin{equation}\label{eq:position-basis-expansion}
+\ket{\psi}
+=
+\int_{\R^3} \psi(\vect{x}) \ket{\vect{x}} \,\dif \vect{x}
+\end{equation}
+This should be compared with the finite-dimensional expansion
+\[
+\ket{\psi} = \sum_i c_i \ket{e_i}
+\]
+Thus the wave function \(\psi(\vect{x})\) plays the role of a \emph{continuous coefficient} of the state in the position representation.
+
+\medskip
+
+Formally, the coefficient of \(\ket{\vect{x}}\) is obtained by projection:
+\(
+\psi(\vect{x})
+=
+\braket{\vect{x}|\psi}
+\).
+Thus \(\psi(\vect{x})\) is the probability amplitude for the position outcome \(\vect{x}\).
+Hence the Born rule in the position representation becomes
+\[
+\Prob(\text{particle in }\omega)
+=
+\int_\omega |\psi(\vect{x})|^2\,\dif \vect{x}
+\]
+for every Borel set \(\omega\subseteq\R^3\).
+% So it is not the coefficient \(\psi(\vect{x})\) itself that is directly measurable, but its modulus square.
+
+\medskip
+
+The formal vectors \(\ket{\vect{x}}\) satisfy the relations
+% \begin{equation}\label{eq:position-orthogonality}
+\(
+\braket{\vect{x}_1|\vect{x}_2}
+=
+\delta(\vect{x}_1-\vect{x}_2)
+% \coloneq
+% \delta(x_1-x_2)\delta(y_1-y_2)\delta(z_1-z_2)
+\)
+% \end{equation}
+and
+% \begin{equation}\label{eq:position-completeness}
+\(
+\id
+=
+\int_{\R^3} \ket{\vect{x}}\bra{\vect{x}} \,\dif \vect{x}
+\).
+% \end{equation}
+The former is the continuous analogue of
+\(
+\braket{e_i|e_j}=\delta_{ij}
+\),
+while the latter is the continuous analogue of
+\(
+\id =\sum_i \ket{e_i}\bra{e_i}
+\).
+
+Applying that continuous resolution of the identity
+to a state \(\ket{\psi}\) yields
+\[
+\ket{\psi}
+=
+\left(\int_{\R^3}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x}\right)\ket{\psi}
+=
+\int_{\R^3}\ket{\vect{x}}\braket{\vect{x}|\psi}\,\dif\vect{x}
+\]
+which is exactly \eqref{eq:position-basis-expansion}.
+
+\medskip
+
+Moreover, for two states
+\(
+\psi_1,\psi_2 \in L^2(\R^3)
+\),
+one may write formally
+\[
+\bra{\psi_1}
+=
+\int_{\R^3}\psi_1(\vect{x})^* \bra{\vect{x}}\,\dif\vect{x}
+\qquad
+\ket{\psi_2}
+=
+\int_{\R^3}\psi_2(\vect{y}) \ket{\vect{y}}\,\dif\vect{y}
+\]
+and therefore
+\[
+\begin{aligned}
+\braket{\psi_1|\psi_2}
+&=
+\left(\int_{\R^3}\psi_1(\vect{x})^* \bra{\vect{x}}\,\dif\vect{x}\right)
+\left(\int_{\R^3}\psi_2(\vect{y}) \ket{\vect{y}}\,\dif\vect{y}\right)
+\\
+&=
+\int_{\R^3}\int_{\R^3}
+\psi_1(\vect{x})^* \psi_2(\vect{y}) \braket{\vect{x}|\vect{y}}
+\,\dif\vect{x}\,\dif\vect{y}
+\\
+&=
+\int_{\R^3}\int_{\R^3}
+\psi_1(\vect{x})^* \psi_2(\vect{y}) \delta(\vect{x}-\vect{y})
+\,\dif\vect{x}\,\dif\vect{y}
+\\
+&=
+\int_{\R^3}\psi_1(\vect{x})^*\psi_2(\vect{x})\,\dif\vect{x}
+\end{aligned}
+\]
+which recovers \eqref{eq:inner-product}, the usual inner product on \(L^2(\R^3)\).
+
+% \medskip
+
+A warning on terminology:
+% Physicists often call 
+\(\{\ket{\vect{x}}:\vect{x}\in\R^3\}\) is often called a \emph{continuous orthonormal basis}.
+This characterization is standard and useful, but not completely accurate.
+%  it is not literally rigorous in the Hilbert-space sense.
+% Indeed, 
+The objects \(\ket{\vect{x}}\) are not even honest vectors of \(L^2(\R^3)\), since
+\(
+\braket{\vect{x}|\vect{x}}
+=
+\delta(\vect{0})
+\)
+is not a finite number.
+Rather, they are \emph{generalized eigenvectors} of the position operator, or, more precisely, distribution-like objects in the sense of a \emph{rigged Hilbert space}
+% Thus the rigorous content behind the physicists' shorthand is that position is described by a generalized eigenbasis with delta-normalization and the resolution of the identity \eqref{eq:position-completeness}.
+% To make this mathematically more precise, one often inserts a \emph{rigged Hilbert space}
+\[
+\Phi \subset \mathcal H \subset \Phi'
+\]
+where \(\mathcal H = L^2(\R^3)\), \(\Phi\) is a space of sufficiently nice test functions (for example Schwartz functions), and \(\Phi'\) is its dual space of continuous linear functionals (distributions).
+The generalized position eigenstates are then not elements of \(\mathcal H\), but distribution-like objects in \(\Phi'\).
+In this sense, the notation \(\ket{\vect{x}}\) is a formal Dirac ket corresponding to the evaluation functional at \(\vect{x}\), and the relation
+\(
+\braket{\vect{x}|\psi} = \psi(\vect{x})
+\)
+should be understood in this generalized sense.
+
+\medskip
+
+This also provides the bridge to the spectral-theoretic description of observables developed in \autoref{sec:operators} and \autoref{sec:observables}.
+For a general self-adjoint observable \(A\), the rigorous object is not usually a basis of ordinary eigenvectors, but its spectral measure \(E_A\), i.e. a PVM on the spectrum \(\sigma(A)\).
+In the discrete case, this reduces to the familiar decomposition into orthogonal projections onto eigenspaces.
+For observables with continuous spectrum (e.g. position operator), one formally writes
+\[
+A = \int_{\sigma(A)} \lambda \, \dif E_A(\lambda)
+=
+\int_{\R^3} \vect{x} \ket{\vect{x}}\bra{\vect{x}} \,\dif\vect{x}
+\]
+and the generalized eigenvectors are the Dirac-style objects that diagonalize this spectral decomposition.
+Thus the family \(\ket{\vect{x}}\) should be understood as the formal eigenkets associated with the continuous spectrum of the position operator, while the corresponding Born probabilities are given rigorously by the spectral measure:
+\[
+\Prob_{\vect{X}}^{\psi}(\omega)
+=
+\braket{\psi|E_{\vect{X}}(\omega)\psi}
+=
+\int_\omega |\psi(\vect{x})|^2\,\dif\vect{x}
+\]
+for Borel sets \(\omega \subseteq \R^3\).
+So the ``continuous basis'' language is the Dirac-notation shadow of the more precise spectral-theoretic statement.
+
+For the position observable, the abstract spectral measure from \autoref{sec:operators} becomes very concrete. Its spectrum is \(\R^3\), and the corresponding PVM \(E_{\vect{X}}\) acts by multiplication with characteristic functions:
+\[
+(E_{\vect{X}}(\omega)\psi)(\vect{x})
+=
+\mathbf 1_{\omega}(\vect{x})\,\psi(\vect{x})
+\]
+for Borel sets \(\omega\subseteq\R^3\).
+Thus \(E_{\vect{X}}(\omega)\) projects a wave function onto the part supported in \(\omega\), and the Born rule becomes
+\[
+\Prob_{\vect{X}}^{\psi}(\omega)
+=
+\braket{\psi|E_{\vect{X}}(\omega)\psi}
+=
+\int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}.
+\]
+In Dirac notation one writes this PVM heuristically as
+\[
+E_{\vect{X}}(\omega)
+=
+\int_{\omega}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x},
+\]
+so the familiar ``position basis'' is the Dirac-notation version of the spectral decomposition of the position observable.
+\end{digression}
+
+
 \subsubsection{The time evolution}\label{sec:time-evolution}
 
 As already introduced in \eqref{eq:schroedinger}, the time evolution of a quantum state is governed by the Schrödinger equation
@@ -4252,6 +4447,8 @@ If the two subsystems are in pure states \(\psi_A \in \mathcal H_A\) and \(\psi_
 More generally, the composite Hilbert space also contains superpositions of product states. Not every state in \(\mathcal H_A \otimes \mathcal H_B\) can be written in the form \(\psi_A \otimes \psi_B\). States that cannot be written in this form are called \emph{entangled}.
 
 
+\pagebreak[2]
+
 
 \subsubsection{Abstraction and simplification}
 
@@ -4492,6 +4689,7 @@ In the orthonormal case, $\matr{U}$ is unitary, hence
 \).
 \end{interlude}
 
+\pagebreak[3]
 
 The trace is basis-independent.
 % A key identity is
@@ -5475,16 +5673,16 @@ A product state has the form
 % \(\sqrt{2/3}\ket{00}+\sqrt{1/3}\ket{01}\) is a product state.
 % \end{example}
 
-\begin{example}
-\(
-\frac{1}{\sqrt{2}}(\ket{00}+\ket{01})
-\) 
-and
-\(
-\frac{1}{\sqrt{2}}(\ket{00}+\ket{10})
-\)
-are product states.
-\end{example}
+% \begin{example}
+% \(
+% \frac{1}{\sqrt{2}}(\ket{00}+\ket{01})
+% \) 
+% and
+% \(
+% \frac{1}{\sqrt{2}}(\ket{00}+\ket{10})
+% \)
+% are product states.
+% \end{example}
 
 Not every state of two Qbits is of this form.
 \begin{example}
@@ -5623,7 +5821,7 @@ Equivalently,
 for all basis vectors.
 Since every vector in $\mathcal H_A\otimes\mathcal H_B$ is a linear combination of such product basis vectors, this uniquely determines the inner product on the whole tensor-product space.
 
-\pagebreak[2]
+
 The inner product therefore behaves multiplicatively on tensor products:
 \[
 \braket{\psi_{A,1} \otimes \psi_{B,1} | \psi_{A,2} \otimes \psi_{B,2}}
@@ -5632,7 +5830,7 @@ The inner product therefore behaves multiplicatively on tensor products:
 \braket{\psi_{B,1} | \psi_{B,2}}
 \]
 as mentioned in \autoref{dig:tensor-products}.
-\pagebreak[2]
+
 
 In particular, two tensor products are orthogonal if and only if in at least one factor the corresponding states are orthogonal.
 
@@ -5729,24 +5927,24 @@ The matrix Hadamard on two Qbits can again be computed through the Kronecker pro
 \frac{1}{2}
 \begin{bNiceArray}{rIr}[cell-space-limits = 0.3em]
 1 \cdot
-\begin{bmatrix}
+\left[\begin{array}{@{}rr@{}} % @{} removes the left/right edge \arraycolsep, so the outer entries sit closer to [ and ] without affecting right alignment.
 1 & 1 \\
 1 & -1
-\end{bmatrix} & 1 \cdot
-\begin{bmatrix}
+\end{array}\right] & 1 \cdot
+\left[\begin{array}{@{}rr@{}}
 1 & 1 \\
 1 & -1
-\end{bmatrix} \\
+\end{array}\right] \\
 \H
 1 \cdot
-\begin{bmatrix}
+\left[\begin{array}{@{}rr@{}}
 1 & 1 \\
 1 & -1
-\end{bmatrix} & -1 \cdot
-\begin{bmatrix}
+\end{array}\right] & -1 \cdot
+\left[\begin{array}{@{}rr@{}}
 1 & 1 \\
 1 & -1
-\end{bmatrix}
+\end{array}\right]
 \end{bNiceArray}
 =
 \begin{bNiceArray}{rrIrr}[cell-space-limits = 0.15em]
@@ -5870,7 +6068,7 @@ Once again we see: parts of entangled pure states are mixed.
 
 
 
-
+\clearpage
 
 \subsubsection{The CNOT gate}
 
