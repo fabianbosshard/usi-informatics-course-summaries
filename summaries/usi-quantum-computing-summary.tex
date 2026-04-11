@@ -3889,6 +3889,11 @@ If, in addition,
 then this superposition again represents a physical state.
 Thus quantum states behave like waves: linear combinations of states are again states.
 
+
+
+
+
+
 \begin{digression}[Position Basis]
 Physicists often describe position by a family of kets
 \(
@@ -3912,11 +3917,11 @@ Thus the wave function \(\psi(\vect{x})\) plays the role of a \emph{continuous c
 \medskip
 
 Formally, the coefficient of \(\ket{\vect{x}}\) is obtained by projection:
-\(
+\[
 \psi(\vect{x})
 =
 \braket{\vect{x}|\psi}
-\).
+\]
 Thus \(\psi(\vect{x})\) is the probability amplitude for the position outcome \(\vect{x}\).
 Hence the Born rule in the position representation becomes
 \[
@@ -4024,33 +4029,65 @@ should be understood in this generalized sense.
 
 \medskip
 
-This is how the position-basis language connects to the spectral theory from \autoref{sec:operators} and \autoref{sec:observables}.
-For a general self-adjoint observable \(A\), the fundamental object is its spectral measure \(E_A\), i.e. a PVM on \(\sigma(A)\).
-For the position observable, this becomes
+To see how the position-basis connects to the spectral theory from \autoref{sec:operators} and \autoref{sec:observables}, 
+recall that by \autoref{thm:spectral-theorem-unbounded} every self-adjoint observable \(A\) has a spectral measure \(E_A\),
+a PVM on \(\sigma(A)\).
+For the position observable, the corresponding PVM \(E_{\vect{X}}\) on the Borel subsets of \(\R^3\) acts by
 \[
 (E_{\vect{X}}(\omega)\psi)(\vect{x})
 =
 \chi_{\omega}(\vect{x})\,\psi(\vect{x})
 \]
-for each Borel set \(\omega\subseteq\R^3\), where 
+for each Borel set \(\omega\subseteq\R^3\),
+where 
 % \(\chi_{\omega}\)
 %  is the characteristic function of \(\omega\), i.e. 
  \(\chi_{\omega}(\vect{x})=1\) if \(\vect{x}\in\omega\) and \(\chi_{\omega}(\vect{x})=0\) otherwise.
-So \(E_{\vect{X}}(\omega)\) simply projects a wave function onto the part supported in \(\omega\), and the Born rule becomes
+So \(E_{\vect{X}}(\omega)\) simply projects a wave function onto the part supported in \(\omega\).
+Hence the Born rule becomes
 \[
+\begin{aligned}
 \Prob_{\vect{X}}^{\psi}(\omega)
-=
+&=
 \braket{\psi | E_{\vect{X}}(\omega) | \psi}
 =
+\braket{\psi | E_{\vect{X}}(\omega)\psi}
+\\
+&=
+\int_{\R^3} \psi(\vect{x})^*\,(E_{\vect{X}}(\omega)\psi)(\vect{x})\,\dif\vect{x}
+\\
+&=
+\int_{\R^3} \psi(\vect{x})^*\,\chi_{\omega}(\vect{x})\,\psi(\vect{x})\,\dif\vect{x}
+\\
+&=
 \int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}
+\end{aligned}
 \]
-In Dirac notation, one may write this as
+In Dirac notation, one writes the corresponding spectral projection as
 \[
 E_{\vect{X}}(\omega)
 =
 \int_{\omega}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x}
 \]
+Then one obtaines the same result as
+\[
+\begin{aligned}
+\Prob_{\vect{X}}^{\psi}(\omega)
+&=
+\braket{\psi|E_{\vect{X}}(\omega)|\psi}
+\\
+&=
+\Braket{\psi|\int_{\omega}\lvert\vect{x}\rangle \langle\vect{x}\rvert\,\dif\vect{x}|\psi}
+\\
+&=
+\int_{\omega}\braket{\psi|\vect{x}}\braket{\vect{x}|\psi}\,\dif\vect{x}
+\\
+&=
+\int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}
+\end{aligned}
+\]
 so the ``position basis'' is the Dirac-notation form of the spectral decomposition of the position observable.
+% In Dirac notation, one may write this as
 % We can use the position-basis language to connect to the spectral theory from \autoref{sec:operators} and \autoref{sec:observables}.
 % For the position observable, one writes for each Borel set \(\omega\subseteq\R^3\)
 % \[
@@ -4718,8 +4755,9 @@ Hence for a unitary change of basis $U$,
 
 
 This can also be seen using the trick mentioned above:
-\[
-\begin{aligned}
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
 \Trace(A)
 &=
 \sum_{i=1}^n \braket{i|A|i}
@@ -4737,8 +4775,8 @@ This can also be seen using the trick mentioned above:
 \sum_{\tilde{u} = 1}^n \sum_{\tilde{v} = 1}^n   \underbrace{\braket{\tilde{v} | \tilde{u}}}_{\delta_{\tilde{v}, \tilde{u}}} \braket{\tilde{u}|A|\tilde{v}}  \\
 &=
 \sum_{\tilde{u} = 1}^n \braket{\tilde{u}|A|\tilde{u}} 
-\end{aligned}
-\]
+\end{align*}
+\endgroup
 
 
 For a pure state $\ket{\psi}$ and an observable $A$, the \hl{expectation value} can be written as
@@ -5467,7 +5505,7 @@ Quantum states then correspond to equivalence relations with respect to that rel
 
 
 So a pure one-Qbit state is really determined by only two real parameters.
-A convenient parametrization is
+A convenient para\-metrization is
 \[
 \begin{aligned}
 \ket{\psi}
