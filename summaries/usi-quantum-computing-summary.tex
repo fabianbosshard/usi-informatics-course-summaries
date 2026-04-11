@@ -3901,9 +3901,9 @@ and write
 \begin{equation}\label{eq:position-basis-expansion}
 \ket{\psi}
 =
-\int_{\R^3} \psi(\vect{x}) \ket{\vect{x}} \,\dif \vect{x}
+\int_{\R^3} \dif \vect{x} \, \psi(\vect{x}) \ket{\vect{x}} 
 \end{equation}
-This should be compared with the finite-dimensional expansion
+This is analogous to the  expansion of \(\ket{\psi}\) in a finite-dimensional orthonormal basis \(\{\ket{e_i}\}\):
 \[
 \ket{\psi} = \sum_i c_i \ket{e_i}
 \]
@@ -3930,23 +3930,17 @@ for every Borel set \(\omega\subseteq\R^3\).
 \medskip
 
 The formal vectors \(\ket{\vect{x}}\) satisfy the relations
-% \begin{equation}\label{eq:position-orthogonality}
 \(
 \braket{\vect{x}_1|\vect{x}_2}
 =
 \delta(\vect{x}_1-\vect{x}_2)
-% \coloneq
-% \delta(x_1-x_2)\delta(y_1-y_2)\delta(z_1-z_2)
 \)
-% \end{equation}
 and
-% \begin{equation}\label{eq:position-completeness}
 \(
 \id
 =
 \int_{\R^3} \ket{\vect{x}}\bra{\vect{x}} \,\dif \vect{x}
 \).
-% \end{equation}
 The former is the continuous analogue of
 \(
 \braket{e_i|e_j}=\delta_{ij}
@@ -4007,14 +4001,8 @@ and therefore
 \]
 which recovers \eqref{eq:inner-product}, the usual inner product on \(L^2(\R^3)\).
 
-% \medskip
-
-A warning on terminology:
-% Physicists often call 
-\(\{\ket{\vect{x}}:\vect{x}\in\R^3\}\) is often called a \emph{continuous orthonormal basis}.
-This characterization is standard and useful, but not completely accurate.
-%  it is not literally rigorous in the Hilbert-space sense.
-% Indeed, 
+The family \(\{\ket{\vect{x}}:\vect{x}\in\R^3\}\) is often called a \emph{continuous orthonormal basis}.
+This characterization is standard and useful, but not entirely accurate.
 The objects \(\ket{\vect{x}}\) are not even honest vectors of \(L^2(\R^3)\), since
 \(
 \braket{\vect{x}|\vect{x}}
@@ -4022,9 +4010,7 @@ The objects \(\ket{\vect{x}}\) are not even honest vectors of \(L^2(\R^3)\), sin
 \delta(\vect{0})
 \)
 is not a finite number.
-Rather, they are \emph{generalized eigenvectors} of the position operator, or, more precisely, distribution-like objects in the sense of a \emph{rigged Hilbert space}
-% Thus the rigorous content behind the physicists' shorthand is that position is described by a generalized eigenbasis with delta-normalization and the resolution of the identity \eqref{eq:position-completeness}.
-% To make this mathematically more precise, one often inserts a \emph{rigged Hilbert space}
+Rather, they are \emph{generalized eigenvectors} of the position operator, more precisely distribution-like objects in the sense of a \emph{rigged Hilbert space}
 \[
 \Phi \subset \mathcal H \subset \Phi'
 \]
@@ -4038,49 +4024,73 @@ should be understood in this generalized sense.
 
 \medskip
 
-This also provides the bridge to the spectral-theoretic description of observables developed in \autoref{sec:operators} and \autoref{sec:observables}.
-For a general self-adjoint observable \(A\), the rigorous object is not usually a basis of ordinary eigenvectors, but its spectral measure \(E_A\), i.e. a PVM on the spectrum \(\sigma(A)\).
-In the discrete case, this reduces to the familiar decomposition into orthogonal projections onto eigenspaces.
-For observables with continuous spectrum (e.g. position operator), one formally writes
-\[
-A = \int_{\sigma(A)} \lambda \, \dif E_A(\lambda)
-=
-\int_{\R^3} \vect{x} \ket{\vect{x}}\bra{\vect{x}} \,\dif\vect{x}
-\]
-and the generalized eigenvectors are the Dirac-style objects that diagonalize this spectral decomposition.
-Thus the family \(\ket{\vect{x}}\) should be understood as the formal eigenkets associated with the continuous spectrum of the position operator, while the corresponding Born probabilities are given rigorously by the spectral measure:
-\[
-\Prob_{\vect{X}}^{\psi}(\omega)
-=
-\braket{\psi|E_{\vect{X}}(\omega)\psi}
-=
-\int_\omega |\psi(\vect{x})|^2\,\dif\vect{x}
-\]
-for Borel sets \(\omega \subseteq \R^3\).
-So the ``continuous basis'' language is the Dirac-notation shadow of the more precise spectral-theoretic statement.
-
-For the position observable, the abstract spectral measure from \autoref{sec:operators} becomes very concrete. Its spectrum is \(\R^3\), and the corresponding PVM \(E_{\vect{X}}\) acts by multiplication with characteristic functions:
+This is how the position-basis language connects to the spectral theory from \autoref{sec:operators} and \autoref{sec:observables}.
+For a general self-adjoint observable \(A\), the fundamental object is its spectral measure \(E_A\), i.e. a PVM on \(\sigma(A)\).
+For the position observable, this becomes
 \[
 (E_{\vect{X}}(\omega)\psi)(\vect{x})
 =
-\mathbf 1_{\omega}(\vect{x})\,\psi(\vect{x})
+\chi_{\omega}(\vect{x})\,\psi(\vect{x})
 \]
-for Borel sets \(\omega\subseteq\R^3\).
-Thus \(E_{\vect{X}}(\omega)\) projects a wave function onto the part supported in \(\omega\), and the Born rule becomes
+for each Borel set \(\omega\subseteq\R^3\), where 
+% \(\chi_{\omega}\)
+%  is the characteristic function of \(\omega\), i.e. 
+ \(\chi_{\omega}(\vect{x})=1\) if \(\vect{x}\in\omega\) and \(\chi_{\omega}(\vect{x})=0\) otherwise.
+So \(E_{\vect{X}}(\omega)\) simply projects a wave function onto the part supported in \(\omega\), and the Born rule becomes
 \[
 \Prob_{\vect{X}}^{\psi}(\omega)
 =
-\braket{\psi|E_{\vect{X}}(\omega)\psi}
+\braket{\psi | E_{\vect{X}}(\omega) | \psi}
 =
-\int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}.
+\int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}
 \]
-In Dirac notation one writes this PVM heuristically as
+In Dirac notation, one may write this as
 \[
 E_{\vect{X}}(\omega)
 =
-\int_{\omega}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x},
+\int_{\omega}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x}
 \]
-so the familiar ``position basis'' is the Dirac-notation version of the spectral decomposition of the position observable.
+so the ``position basis'' is the Dirac-notation form of the spectral decomposition of the position observable.
+% We can use the position-basis language to connect to the spectral theory from \autoref{sec:operators} and \autoref{sec:observables}.
+% For the position observable, one writes for each Borel set \(\omega\subseteq\R^3\)
+% \[
+% E_{\vect{X}}(\omega)
+% =
+% \int_{\omega}\ket{\vect{x}}\bra{\vect{x}}\,\dif\vect{x}.
+% \]
+% Applying this to a state \(\psi\) and taking the position representation gives
+% \[
+% \begin{aligned}
+% (E_{\vect{X}}(\omega)\psi)(\vect{x})
+% &=
+% \braket{\vect{x}|E_{\vect{X}}(\omega)|\psi}
+% \\
+% &=
+% \int_{\omega}\braket{\vect{x}|\vect{y}}\braket{\vect{y}|\psi}\,\dif\vect{y}
+% \\
+% &=
+% \int_{\omega}\delta^{(3)}(\vect{x}-\vect{y})\,\psi(\vect{y})\,\dif\vect{y}
+% \\
+% &=
+% \mathbf 1_{\omega}(\vect{x})\,\psi(\vect{x}).
+% \end{aligned}
+% \]
+% So \(E_{\vect{X}}(\omega)\) projects the wave function onto the part supported in \(\omega\).
+% Consequently,
+% \[
+% \begin{aligned}
+% \Prob_{\vect{X}}^{\psi}(\omega)
+% &=
+% \braket{\psi|E_{\vect{X}}(\omega)|\psi}
+% \\
+% &=
+% \int_{\omega}\braket{\psi|\vect{x}}\braket{\vect{x}|\psi}\,\dif\vect{x}
+% \\
+% &=
+% \int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}.
+% \end{aligned}
+% \]
+% Thus the position PVM, the usual Born rule for \(|\psi(\vect{x})|^2\), and the Dirac ``position basis'' are all just different descriptions of the same object.
 \end{digression}
 
 
