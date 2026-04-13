@@ -15,10 +15,54 @@
 % ===================== graphics / color =====================
 \usepackage{graphicx}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{caption,subcaption}
+\usepackage[font=small,skip=0.5em, format=plain]{caption}
+\usepackage[skip=0.3em]{subcaption}
 \usepackage[left=38mm,right=38mm,top=20mm,bottom=30mm]{geometry}
 \usepackage{hhline}
 
+% ===================== float management =====================
+\usepackage{float}
+\usepackage{placeins} 
+
+% \makeatletter
+%   % single-column floats
+%   \def\fps@figure {htb} 
+%   \def\fps@table  {htb}
+
+%   % double-column floats
+%   \def\fps@figure*{htb} 
+%   \def\fps@table* {htb}
+% \makeatother
+
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\preto\subsubsection{\FloatBarrier} 
+
+\setcounter{topnumber}{8}
+\setcounter{bottomnumber}{8}
+\setcounter{totalnumber}{20}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
+\renewcommand{\floatpagefraction}{1.0}
+\renewcommand{\dblfloatpagefraction}{1.0}
+
+% On a float‐only page, kill the default “centered” glue
+\makeatletter
+  \setlength{\@fptop}{0pt} % no extra space above
+  \setlength{\@fpsep}{\floatsep} % between floats: same as \floatsep
+  \setlength{\@fpbot}{0pt plus 1fil} % infinite stretch below, so floats are pushed up
+\makeatother
+
+% \newlength\tindent
+% \setlength{\tindent}{\parindent}
+% \setlength{\parindent}{0pt}
+% \renewcommand{\indent}{\hspace*{\tindent}}
+
+\newlength{\savedparindent}
+\setlength{\savedparindent}{\parindent} % remember the class's default
+\setlength{\parindent}{0pt}             % turn off automatic indenting
+\renewcommand{\indent}{\hspace*{\savedparindent}} % manual indent on demand
 
 % ===================== math =====================
 \usepackage{amsmath,amssymb,amsthm,mathtools,mathdots,accents}
@@ -42,6 +86,11 @@
 \usepackage{marvosym}
 
 % ===================== TikZ / plots =====================
+\usepackage{booktabs}
+\usepackage{rotating}
+% Keep rotated floats centered on their float pages.
+\setlength{\rotFPtop}{0pt plus 1fil}
+\setlength{\rotFPbot}{0pt plus 1fil}
 \usepackage{tikz}
 \usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings,shapes.geometric}
 \usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
@@ -262,7 +311,7 @@
 \newcommand{\Var}{\operatorname{Var}}
 \newcommand{\Cov}{\operatorname{Cov}}
 \newcommand{\Exp}{\operatorname{E}}
-\newcommand{\Prob}{\operatorname{P}}
+\newcommand{\Prob}{\operatorname{\mathbb{P}}}
 \newcommand{\numof}{\ensuremath{\#\,}}
 \newcommand{\blackheight}{\operatorname{bh}}
 
@@ -369,6 +418,10 @@ Fabian Bosshard
 \tableofcontents
 
 \pagebreak
+
+
+% set back section counter to 0, since the first section is not part of the actual course content
+\setcounter{section}{-1}
 
 \section{Basic Stuff}
 
@@ -1991,6 +2044,9 @@ A \setminus B = \bigcup_{k=1}^n C_k
 \end{enumerate}
 \end{definition}
 
+
+% \begin{table}[h]
+% \caption{Overview over set systems}
 Overview over set systems:
 \begingroup
 \tiny
@@ -2132,6 +2188,8 @@ Largest: \(2^\Omega\)
 \hline
 \end{tabular}
 \endgroup
+\label{tab:set-systems}
+% \end{table}
 
 
 
@@ -2332,7 +2390,7 @@ Hence \(\mu\) is finitely subadditive.
 
 \pagebreak[2]
 
-\begin{theorem}[Carathéodory Extension]\label{thm:caratheodory-extension}
+\begin{theorem}[\textcolor{red}{Carathéodory Extension}]\label{thm:caratheodory-extension}
 Let $\mathcal{S} \subseteq 2^\Omega$ be a semiring and 
 \[
 \mu : \mathcal{S} \to [0,\infty]
@@ -2497,7 +2555,7 @@ Hence
 since 
 % \(\sum_{i=1}^{\infty} 2^{-i-1} = \frac{1}{2}\) and
 \(\mu(\cdot) \geq 0\).
-Letting \(\varepsilon \downarrow 0\) yields \eqref{eq:mu-sigma-subadditivity-rectangles}. Thus \(\mu\) is \(\sigma\)-subadditive.
+Letting \(\varepsilon \searrow  0\) yields \eqref{eq:mu-sigma-subadditivity-rectangles}. Thus \(\mu\) is \(\sigma\)-subadditive.
 
 It remains to check \(\sigma\)-finiteness. 
 But
@@ -2552,79 +2610,557 @@ A function $f : \R \to \R$ is called
 |x-x_0| < \delta \implies f(x) > f(x_0) - \varepsilon
 \]
 \end{itemize}
-\begin{figure}[ht]
-  \newcommand{\leftrightcontcolor}{black}
-  \centering
-  \captionsetup[subfigure]{labelformat=empty}
-  \subfloat[upper semicontinuous, but \\not lower semicontinuous at $x_0$]{%
-    \begin{tikzpicture}
-      \begin{axis}[
-        axis x line=bottom,
-        axis y line=left,
-        axis line style={
-    ->,
-      >=Computer Modern Rightarrow
-    },
-        xlabel={$x$},ylabel={$f(x)$},
-        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
-        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
-        width=5.5cm,height=4cm,
-        xmin=-1,xmax=1,ymin=0,ymax=1.4,
-        xtick={0},xticklabels={$x_0$},
-        ytick=\empty
-      ]
-        % data shifted up by 0.2
-        \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
-        \addplot[thick,\leftrightcontcolor,domain=0:1]{0.4};
-        % markers
-        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
-          coordinates {(0,0.4)};
-        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
-          coordinates {(0,1.0)};
-        % jump
-        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
-      \end{axis}
-    \end{tikzpicture}
-  }%
-  \hspace{5em}
-  \subfloat[lower semicontinuous, but \\not upper semicontinuous at $x_0$]{%
-    \begin{tikzpicture}
-      \begin{axis}[
-        axis x line=bottom,
-        axis y line=left,
-        axis line style={
-    ->,
-      >=Computer Modern Rightarrow
-    },
-        xlabel={$x$},ylabel={$f(x)$},
-        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
-        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
-        width=5.5cm,height=4cm,
-        xmin=-1,xmax=1,ymin=0,ymax=1.4,
-        xtick={0},xticklabels={$x_0$},
-        ytick=\empty
-      ]
-        % data shifted up by 0.2
-        \addplot[thick,\leftrightcontcolor,domain=-1:0]{1.0};
-        \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
-        % markers
-        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
-          coordinates {(0,0.4)};
-        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
-          coordinates {(0,1.0)};
-        % jump
-        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
-      \end{axis}
-    \end{tikzpicture}
-  }%
-\end{figure}
+% \begin{figure}[ht]
+%   \newcommand{\leftrightcontcolor}{black}
+%   \centering
+%   \captionsetup[subfigure]{labelformat=empty}
+%   \subfloat[upper semicontinuous, but \\not lower semicontinuous at $x_0$]{%
+%     \begin{tikzpicture}
+%       \begin{axis}[
+%         axis x line=bottom,
+%         axis y line=left,
+%         axis line style={
+%     ->,
+%       >=Computer Modern Rightarrow
+%     },
+%         xlabel={$x$},ylabel={$f(x)$},
+%         xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+%         ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+%         width=5.5cm,height=4cm,
+%         xmin=-1,xmax=1,ymin=0,ymax=1.4,
+%         xtick={0},xticklabels={$x_0$},
+%         ytick=\empty
+%       ]
+%         % data shifted up by 0.2
+%         \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
+%         \addplot[thick,\leftrightcontcolor,domain=0:1]{0.4};
+%         % markers
+%         \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+%           coordinates {(0,0.4)};
+%         \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+%           coordinates {(0,1.0)};
+%         % jump
+%         \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
+%       \end{axis}
+%     \end{tikzpicture}
+%   }%
+%   \hspace{5em}
+%   \subfloat[lower semicontinuous, but \\not upper semicontinuous at $x_0$]{%
+%     \begin{tikzpicture}
+%       \begin{axis}[
+%         axis x line=bottom,
+%         axis y line=left,
+%         axis line style={
+%     ->,
+%       >=Computer Modern Rightarrow
+%     },
+%         xlabel={$x$},ylabel={$f(x)$},
+%         xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+%         ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+%         width=5.5cm,height=4cm,
+%         xmin=-1,xmax=1,ymin=0,ymax=1.4,
+%         xtick={0},xticklabels={$x_0$},
+%         ytick=\empty
+%       ]
+%         % data shifted up by 0.2
+%         \addplot[thick,\leftrightcontcolor,domain=-1:0]{1.0};
+%         \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
+%         % markers
+%         \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+%           coordinates {(0,0.4)};
+%         \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+%           coordinates {(0,1.0)};
+%         % jump
+%         \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
+%       \end{axis}
+%     \end{tikzpicture}
+%   }%
+% \end{figure}
 A real-valued function $f$ is upper (respectively, lower) semicontinuous at a point $x_0$ if, roughly speaking, the function values for arguments near $x_0$ are not much higher (respectively, lower) than $f\left(x_0\right)$. 
 Equivalently, a function on a domain $X$ is lower semi-continuous if its epigraph $\{(x, t) \in X \times \mathbb{R}: t \geq f(x)\}$ is closed in $X \times \R$, and upper semi-continuous if $-f$ is lower semi-continuous.
 \end{definition}
 
 
+\begin{example}[Lebesgue-Stieltjes measure]\label{ex:lebesgue-stieltjes-measure}
+Let $\Omega = \R$ and $\mathcal{S} = \{(a, b] : a,b \in \R, a \leq b\}$.
+$\mathcal{S}$ is a semiring (see \autoref{ex:half-open-rectangles}) with $\sigma(\mathcal{S}) = \mathcal{B}(\R)$ .
+
+Consider a monotonically increasing and right-continuous function $F : \R \to \R$.
+Then the set function
+\[
+\begin{aligned}
+\tilde{\mu}_F : \mathcal{S} &\longrightarrow [0,\infty) \\
+(a,b] &\longmapsto \tilde{\mu}_F((a,b]) = F(b) - F(a)
+\end{aligned}
+\]
+is 
+additive, 
+$\sigma$-subadditive,
+$\sigma$-finite 
+and satisfies $\tilde{\mu}_F(\varnothing) = 0$.
+% Moreover,
+% \(
+% \R = \bigcup_{n=1}^\infty (-n,n]
+% \)
+% with $(-n,n]\in\mathcal{S}$ and
+% \[
+% \tilde{\mu}_F((-n,n]) = F(n)-F(-n)<\infty
+% \]
+% for all $n\in\N$.
+% Hence $\tilde{\mu}_F$ is $\sigma$-finite on $\mathcal{S}$.
+
+By \autoref{thm:caratheodory-extension}, we can uniquely extend $\tilde{\mu}_F$ to a $\sigma$-finite measure $\mu_F$ on $\mathcal{B}(\R)$, called the \emph{Lebesgue-Stieltjes measure} with \emph{distribution function} $F$.
+\end{example}
+
+\begin{definition}
+A right continuous monotonically increasing function $F : \R \to [0, 1]$ with
+\[
+F(-\infty) \coloneq \lim_{x \to -\infty} F(x) = 0
+\qquad\text{and}\qquad
+F(\infty) \coloneq \lim_{x \to \infty} F(x) = 1
+\]
+is called a \emph{cumulative distribution function}, \emph{probability distribution function} or simply \emph{distribution function}.
+If $\Prob$ is a probability measure on $(\R, \mathcal{B}(\R))$, then
+\[
+\begin{aligned}
+F_{\Prob} : \R &\longrightarrow [0,1] \\
+x &\longmapsto F_{\Prob}(x) = \Prob((-\infty,x])
+\end{aligned}
+\]
+is called the \emph{distribution function} of $\Prob$.
+\end{definition}
+
+
+
+
+Clearly, $F_{\Prob}$ is right continuous and $F_{\Prob}(-\infty)=0$, since $\Prob$ is upper semicontinuous and finite. 
+Since $\Prob$ is lower semicontinuous, we have $F_{\Prob}(\infty)=\Prob(\R)=1$. 
+Therefore, $F_{\Prob}$ is indeed a distribution function if $\Prob$ is a probability measure. 
+More generally, every finite measure on $(\R, \mathcal{B}(\R))$ is a Lebesgue-Stieltjes measure for some function $F$.
+
+\begin{theorem}
+The map $\Prob \longmapsto F_{\Prob}$ is a bijection from the set of probability measures on $(\R, \allowbreak \mathcal{B}(\R))$ to the set of probability distribution functions.
+\end{theorem}
+
+
+
+
+
+
+
+
+
+\subsection{Null sets}
+
+If $(\Omega,\mathcal{F},\Prob)$ is a probability space, we might expect that every subset of an event $E$ with $\Prob(E)=0$ also has probability zero.
+In general, however, subsets of such events need not be measurable.
+
+\begin{definition}
+Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
+\begin{enumerate}[label=(\roman*)]
+  \item A set $N \in \mathcal{F}$ with $\mu(N)=0$ is called a $\mu$-null set.
+  By $\mathcal{N}_\mu$ we denote the family of all subsets of $\mu$-null sets.
+  \item Let $P(\omega)$ be a property of $\omega \in \Omega$.
+  We say that $P$ holds $\mu$-almost everywhere (a.e.) if there exists a null set $N$ such that $P(\omega)$ holds for every $\omega \in \Omega \setminus N$.
+  \item If $\mu=\Prob$ is a probability measure, we say that $P$ holds $\Prob$-almost surely (a.s.).
+  \item The measure space $(\Omega,\mathcal{F},\mu)$ is called complete if $\mathcal{F}$ contains all subsets of $\mu$-null sets.
+  \qedhere
+\end{enumerate}
+\end{definition}
+
+We have the following fact, which states that every $\sigma$-finite measure space admits a completion.
+
+\begin{fact}
+Let $(\Omega,\mathcal{F},\mu)$ be a $\sigma$-finite measure space.
+Then there exist a unique smallest $\sigma$-algebra $\mathcal{F}^* \supset \mathcal{F}$ and an extension $\mu^*$ of $\mu$ to $\mathcal{F}^*$ such that $(\Omega,\mathcal{F}^*,\mu^*)$ is complete.
+The measure space $(\Omega,\mathcal{F}^*,\mu^*)$ is called the completion of $(\Omega,\mathcal{F},\mu)$.
+Moreover,
+\[
+\mathcal{F}^* = \sigma\left(\mathcal{F} \cup \mathcal{N}_\mu\right)
+\quad\text{and}\quad
+\mu^*(A \cup N) = \mu(A)
+\]
+for any $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$.
+\end{fact}
+
+\begin{example}
+Let $\lambda^d$ be the Lebesgue-Borel measure on $(\R^d,\mathcal{B}(\R^d))$.
+Then $\lambda^d$ can be uniquely extended to a measure $\lambda^*$ on
+\[
+\mathcal{B}^*(\R^d) = \sigma(\mathcal{B}(\R^d) \cup \mathcal{N})
+\]
+where $\mathcal{N}$ is the family of all subsets of Lebesgue-Borel null sets.
+The $\sigma$-algebra $\mathcal{B}^*(\R^d)$ is called the $\sigma$-algebra of Lebesgue measurable sets.
+In what follows, we call $\lambda^d$ the Lebesgue-Borel measure and $\lambda^*$ the Lebesgue measure.
+\end{example}
+
+
+
 
 \clearpage
+
+
+\section{Random variables}
+
+
+\subsection{Measurable functions}
+
+
+\begin{definition}\label{def:measurable-function}
+Let $(\Omega,\mathcal{F})$ and $(\Omega',\mathcal{F}')$ be measurable spaces (see \autoref{def:sigma-algebra}).
+A function $f : \Omega \to \Omega'$ is called \hl{$(\mathcal{F},\mathcal{F}')$-measurable} or simply \emph{measurable} if
+\[
+f^{-1}(B) 
+\coloneq
+\{\omega \in \Omega : f(\omega) \in B\}
+\in 
+\mathcal{F}
+\]
+for every $B \in \mathcal{F}'$,
+i.e. the \hl[2]{preimage} of every measurable set is measurable.
+\end{definition}
+\begin{definition}\label{def:random-variable}
+If $(\Omega, \mathcal{F}, \Prob)$ is a probability space and $X : \Omega \to \R$ is $(\mathcal{F}, \mathcal{B}(\R))$-measurable, we call $X$ a \emph{random variable} (see diagram).
+If $\vect{X} : \Omega \to \R^d$ is $(\mathcal{F}, \mathcal{B}(\R^d))$-measurable, we call $\vect{X}$ a \emph{random vector}.
+\end{definition}
+
+
+\[
+  \def\geomscale{0.7}
+    \begin{tikzpicture}[font=\footnotesize]
+        % Global geometric scale: affects coordinates, node sizes, and shifts,
+        % but not line width or font size.
+        \pgfmathsetlengthmacro{\u}{\geomscale cm}
+
+        % Geometry lengths
+        \pgfmathsetlengthmacro{\SigmaW}{5*\u}
+        \pgfmathsetlengthmacro{\SigmaH}{6*\u}
+        \pgfmathsetlengthmacro{\OmegaW}{2*\u}
+        \pgfmathsetlengthmacro{\OmegaH}{2*\u}
+        \pgfmathsetlengthmacro{\AW}{1.5*\u}
+        \pgfmathsetlengthmacro{\AH}{1.5*\u}
+        \pgfmathsetlengthmacro{\EmptyW}{0.5*\u}
+        \pgfmathsetlengthmacro{\EmptyH}{0.5*\u}
+
+        % Shifts
+        \pgfmathsetlengthmacro{\OmegaShiftY}{1.5*\u}
+        \pgfmathsetlengthmacro{\wOneShiftX}{-0.2*\u}
+        \pgfmathsetlengthmacro{\wOneShiftY}{0.5*\u}
+        \pgfmathsetlengthmacro{\wTwoShiftX}{0.6*\u}
+        \pgfmathsetlengthmacro{\wTwoShiftY}{0*\u}
+        \pgfmathsetlengthmacro{\wThreeShiftX}{-0.2*\u}
+        \pgfmathsetlengthmacro{\wThreeShiftY}{-0.5*\u}
+        \pgfmathsetlengthmacro{\AShiftX}{1.3*\u}
+        \pgfmathsetlengthmacro{\AShiftY}{-0.6*\u}
+        \pgfmathsetlengthmacro{\EmptyShiftX}{-0.5*\u}
+        \pgfmathsetlengthmacro{\EmptyShiftY}{-2*\u}
+        \pgfmathsetlengthmacro{\EShiftX}{-1*\u}
+        \pgfmathsetlengthmacro{\EShiftY}{0.5*\u}
+        \pgfmathsetlengthmacro{\BShiftX}{0.2*\u}
+        \pgfmathsetlengthmacro{\BShiftY}{-1.2*\u}
+        % Absolute coordinates
+        \pgfmathsetmacro{\EpsX}{6*\geomscale}
+        \pgfmathsetmacro{\EpsY}{3.5*\geomscale}
+        \pgfmathsetmacro{\StartRX}{8*\geomscale}
+        \pgfmathsetmacro{\StartRY}{-3*\geomscale}
+        \pgfmathsetmacro{\EndRX}{12*\geomscale}
+        \pgfmathsetmacro{\EndRY}{2*\geomscale}
+
+        % Define the sample space
+        \def\rotationangle{40}
+        \begin{scope}[rotate=\rotationangle]
+        \node[draw, semithick, ellipse, minimum width=\SigmaW, minimum height=\SigmaH, rotate=\rotationangle] (sigmafield) at (0, 0){};
+        \node[below left=0mm of sigmafield] {$\mathcal{F}$};
+        
+        % Define the universal set Omega
+        \node[draw, semithick, ellipse, minimum width=\OmegaW, minimum height=\OmegaH] (omega) at ([xshift=0cm, yshift=\OmegaShiftY]sigmafield.center) {};
+        \node[below left=0mm of omega] {$\Omega$};
+        
+        % Define points in the sample space
+        \node[fill=black, circle, inner sep=1.0pt, outer sep=0pt] (w1) at ([xshift=\wOneShiftX, yshift=\wOneShiftY]omega.center) {};
+        \node[fill=black, circle, inner sep=1.0pt, outer sep=0pt] (w2) at ([xshift=\wTwoShiftX, yshift=\wTwoShiftY]omega.center) {};
+        \node[fill=black, circle, inner sep=1.0pt, outer sep=0pt] (w3) at ([xshift=\wThreeShiftX, yshift=\wThreeShiftY]omega.center) {};
+        \node[below right =-3pt of w1] {\small $\omega_1$};
+        \node[left = -1.8pt of w2] {\small $\omega_2$};
+        \node[left=-1.8pt of w3] {\small $\omega_3$};
+        
+        % Define subsets
+        \node[draw, semithick, ellipse, minimum width=\AW, minimum height=\AH] (A) at ([xshift=\AShiftX, yshift=\AShiftY]sigmafield.center) {};
+        \node[below left=-1mm of A] {$X^{-1}(B)$};
+        
+        % Single event in A
+        \node[fill=black, circle, inner sep=1.0pt, outer sep=0pt] (w4) at (A.center) {};
+        \node[below left=-3pt of w4] {\small $\omega_1$};
+        
+        % Empty set
+        \node[draw, semithick, ellipse, minimum width=\EmptyW, minimum height=\EmptyH] (emptyset) at ([xshift=\EmptyShiftX, yshift=\EmptyShiftY]sigmafield.center) {};
+        \node[below left = -1.8pt of emptyset] {$\emptyset$};
+        \end{scope}
+
+        % Borel sets
+        \node[draw, semithick, ellipse, minimum width=\SigmaW, minimum height=\SigmaW] (epsilon) at (\EpsX, \EpsY){};
+        \node[right=0mm of epsilon] {$\mathcal{B}(\mathbb{R})$};
+
+        \node[draw, semithick, ellipse, minimum width=\OmegaW, minimum height=\OmegaH] (E) at ([xshift=\EShiftX, yshift=\EShiftY]epsilon.center) {};
+        \node[above right=-1mm of E] { $\mathbb{R}$};
+        
+        \node[draw, semithick, ellipse, minimum width=\AW, minimum height=\AH] (B) at ([xshift=\BShiftX, yshift=\BShiftY]epsilon.center) {};
+        \node[above right=0mm of B] { $B$};
+        
+        % Draw the real number line and create named anchors
+        \coordinate (start_R) at (\StartRX, \StartRY);
+        \coordinate (end_R) at (\EndRX, \EndRY);
+        \draw[semithick, ->] (start_R) -- (end_R) node[right=0.1cm] {$\mathbb{R}$};
+        \path (start_R) -- (end_R)
+            node[coordinate, pos=0.1] (p0) {}
+            node[coordinate, pos=0.3] (p_A) {}
+            node[coordinate, pos=0.8] (p1) {};
+    
+        \node at ($(p0)!0.4cm!-90:(end_R)$) {$0$};
+        \node at ($(p_A)!0.8cm!-90:(end_R)$) {$\Prob(X^{-1}(B))$};
+        \node at ($(p1)!0.4cm!-90:(end_R)$) {$1$};
+    
+        % Add tick marks for 0 and 1
+        \draw[semithick] ($(p0)!0.2cm!90:(end_R)$) -- ($(p0)!0.2cm!-90:(end_R)$);
+        \draw[semithick] ($(p1)!0.2cm!90:(end_R)$) -- ($(p1)!0.2cm!-90:(end_R)$);
+
+        % Define probability measure mapping arrows 
+        \pgfmathanglebetweenpoints{\pgfpointanchor{start_R}{center}}{\pgfpointanchor{end_R}{center}}
+        \let\lineangle\pgfmathresult
+        \pgfmathsetmacro{\perpangle}{\lineangle + 90}
+        \path[->, semithick] (A)     edge[out=55, in=190] node[above left] { ${X}$} (B);
+        \path[-> , semithick] (B)    edge[out=230, in=15] node[below right] { ${X^{-1}}$} (A);
+        \path[->, semithick] (A)     edge[out=-60, in=\perpangle] node[above] { ${\Prob}$} (p_A);
+        \path[->, semithick, red] (B)     edge[out=-40, in=\perpangle] node[above right] {$\Prob_{X} = \Prob \circ X^{-1}$} (p_A);
+
+    \end{tikzpicture}
+\]
+
+
+The concept of random variables ensures that we can assign probabilities to sets of the form
+\[
+\{\omega \in \Omega : X(\omega) \in B\} = X^{-1}(B)
+\]
+where $B \in \mathcal{B}(\R)$ is a Borel set.
+The probability of the above set is given by $\Prob(\{\omega \in \Omega : X(\omega) \in B\})$.
+As shorthand notation, we write $\Prob(X(\omega) \in B)$ or $\Prob(X \in B)$.
+
+\begin{example}
+If $\mathcal{F}$ is the trivial $\sigma$-algebra $\{\varnothing, \Omega\}$, then a function
+$X : \Omega \to \Omega'$ is measurable if and only if
+\(
+X^{-1}(B)\in\{\varnothing,\Omega\}
+\)
+for every $B\in\mathcal{F}'$.
+
+In particular, if $\Omega'=\mathbb{R}$ and $\mathcal{F}'=\mathcal{B}(\mathbb{R})$, then the only measurable functions $X:\Omega\to\mathbb{R}$ are the constant functions:
+% \begin{proof}
+if $X$ were not constant, there would be $\omega_1,\omega_2\in\Omega$ with $X(\omega_1)\neq X(\omega_2)$, and then the Borel set $\{X(\omega_1)\}$ would have preimage neither $\varnothing$ nor $\Omega$, contradicting measurability.
+% \end{proof}
+
+If $\mathcal{F}$ is the power set $2^\Omega$, then every function $X : \Omega \to \Omega'$ is measurable.
+\end{example}
+
+\begin{theorem}
+Let $(\Omega,\mathcal{F})$ be a measurable space (\autoref{def:sigma-algebra}) and $A \subseteq \Omega$.
+The indicator function
+\[
+\chi_A(\omega)
+=
+\begin{cases}
+1 & \text{if } \omega \in A \\
+0 & \text{otherwise}
+\end{cases}
+\]
+is $(\mathcal{F}, \mathcal{B}(\R))$-measurable if and only if $A \in \mathcal{F}$.
+\end{theorem}
+\begin{proof}
+Consider $B \in \mathcal{B}(\R)$. 
+We have
+\[
+\chi_A^{-1}(B)
+=
+\begin{cases}
+\varnothing & \text{if } 0,1 \notin B \\
+A & \text{if } 0 \notin B, 1 \in B \\
+A^{\complement} & \text{if } 0 \in B, 1 \notin B \\
+\Omega & \text{if } 0,1 \in B
+\end{cases}
+\]
+If $A \in \mathcal{F}$, then the four possible preimages are all in $\mathcal{F}$, so $\chi_A$ is measurable.
+If $A \notin \mathcal{F}$, then the preimage of $B = \{1\}$ is $A$, which is not in $\mathcal{F}$, so $\chi_A$ is not measurable.
+\end{proof}
+
+\begin{example}
+Consider the indicator function $\chi_{\Q} : \R \to \R$ of the rational numbers $\Q \subset \R$.
+Since $\Q$ is countable, we have $\Q \in \mathcal{B}(\R)$.
+Hence $\chi_{\Q}^{-1}(\{1\}) = \Q$ and $\chi_{\Q}^{-1}(\{0\}) = \R \setminus \Q$ are Borel sets, so $\chi_{\Q}$ is measurable.
+\end{example}
+
+
+
+
+\begin{fact}[Properties of preimage]\label{fact:preimage-properties} % assignment 5, problem 3 
+Let 
+% $(\Omega,\mathcal{F})$, $(\Omega',\mathcal{F}')$, $(\Omega'',\mathcal{F}'')$ be measurable spaces (\autoref{def:sigma-algebra}) and 
+$f : \Omega \to \Omega'$ and $g : \Omega' \to \Omega''$ be functions.
+Define $h \coloneq g \circ f$.
+Then
+\begin{enumerate}[label=(\roman*)]
+\item  % assignment 5, problem 3 a)
+\label{item:preimage-properties-complement}
+$f^{-1}(A^{\complement}) = (f^{-1}(A))^{\complement}$ for any $A \subseteq \Omega'$
+\item  % assignment 5, problem 3 b)
+\label{item:preimage-properties-union-intersection}
+Let $(A_i)_{i \in I}$ be a family of subsets of $\Omega'$. Then
+\[
+f^{-1}\left(\bigcup_{i \in I} A_i\right) = \bigcup_{i \in I} f^{-1}(A_i)
+\qquad
+\text{and}
+\qquad
+f^{-1}\left(\bigcap_{i \in I} A_i\right) = \bigcap_{i \in I} f^{-1}(A_i)
+\]
+\item % assignment 5, problem 3 c)
+\label{item:preimage-properties-composition}
+$h^{-1}(B) = f^{-1}(g^{-1}(B))$ for any $B \subseteq \Omega''$
+\qedhere
+\end{enumerate}
+\end{fact}
+
+\begin{proof}
+% \leavevmode
+\begin{enumerate}[label=(\roman*)]
+\item 
+$
+x \in f^{-1}(A^{\complement})
+\Leftrightarrow
+f(x) \in A^{\complement}
+\Leftrightarrow
+f(x) \notin A
+\Leftrightarrow
+x \notin f^{-1}(A)
+\Leftrightarrow
+x \in (f^{-1}(A))^{\complement}
+$
+\item
+\begingroup
+{\fontsize{7}{10}\selectfont
+$
+x \in f^{-1}\left(\bigcup\limits_{i \in I} A_i\right)
+\Leftrightarrow
+f(x) \in \bigcup\limits_{i \in I} A_i
+\Leftrightarrow
+\exists i \in I : f(x) \in A_i
+\Leftrightarrow
+\exists i \in I : x \in f^{-1}(A_i)
+\Leftrightarrow
+x \in \bigcup\limits_{i \in I} f^{-1}(A_i)
+$
+}
+\endgroup
+\\
+and\\
+\begingroup
+{\fontsize{7}{10}\selectfont
+$
+x \in f^{-1}\left(\bigcap\limits_{i \in I} A_i\right)
+\Leftrightarrow
+f(x) \in \bigcap\limits_{i \in I} A_i
+\Leftrightarrow
+\forall i \in I : f(x) \in A_i
+\Leftrightarrow
+\forall i \in I : x \in f^{-1}(A_i)
+\Leftrightarrow
+x \in \bigcap\limits_{i \in I} f^{-1}(A_i)
+$
+}
+\endgroup
+\item
+$
+x \in h^{-1}(B)
+\Leftrightarrow
+h(x) \in B
+\Leftrightarrow
+g(f(x)) \in B
+\Leftrightarrow
+f(x) \in g^{-1}(B)
+\Leftrightarrow
+x \in f^{-1}(g^{-1}(B))
+$
+\qedhere
+\end{enumerate}
+\end{proof}
+
+
+
+
+
+\subsection{Construction of measurable functions}
+
+
+
+\begin{theorem}  % assignment 5, problem 3 d)
+Let 
+$(\Omega,\mathcal{F})$, $(\Omega',\mathcal{F}')$, $(\Omega'',\mathcal{F}'')$ be measurable spaces (\autoref{def:sigma-algebra}). 
+Assume 
+$f : \Omega \to \Omega'$ is $(\mathcal{F},\mathcal{F}')$-measurable
+and 
+$g : \Omega' \to \Omega''$ is $(\mathcal{F}',\mathcal{F}'')$-measurable.
+Define $h \coloneq g \circ f$.
+Then $h : \Omega \to \Omega''$ is $(\mathcal{F},\mathcal{F}'')$-measurable.
+\end{theorem}
+\begin{proof}
+Let $B \in \mathcal{F}''$.
+Since $g$ is $(\mathcal{F}',\mathcal{F}'')$-measurable, we have $g^{-1}(B) \in \mathcal{F}'$.
+Since $f$ is $(\mathcal{F},\mathcal{F}')$-measurable, we have $f^{-1}(g^{-1}(B)) \in \mathcal{F}$.
+Hence, by \autoref{fact:preimage-properties}.\ref{item:preimage-properties-composition}, $h^{-1}(B) \in \mathcal{F}$.
+% Since $B \in \mathcal{F}''$ was arbitrary, $h$ is $(\mathcal{F},\mathcal{F}'')$-measurable.
+\end{proof}
+
+
+\autoref{thm:function-measurable-iff-generator} provides an effective way to check measurability of a function (\autoref{def:measurable-function}).
+\begin{theorem}\label{thm:function-measurable-iff-generator}
+Let $(\Omega,\mathcal{F})$, $(\Omega',\mathcal{F}')$ be measurable spaces (\autoref{def:sigma-algebra}) and $f : \Omega \to \Omega'$ be a function.
+Let $\mathcal{A}$ be a generator of $\mathcal{F}'$, i.e. $\sigma(\mathcal{A}) = \mathcal{F}'$ (\autoref{thm:generated-sigma-algebra}).
+Then $f$ is $(\mathcal{F},\mathcal{F}')$-mea\-sur\-a\-ble if and only if $f^{-1}(A) \in \mathcal{F}$ for every $A \in \mathcal{A}$.
+\end{theorem}
+
+\begin{proof}
+`$\Rightarrow$':
+If $f$ is $(\mathcal{F},\mathcal{F}')$-measurable, then $f^{-1}(A) \in \mathcal{F}$ for every $A \in \mathcal{A} \subset \mathcal{F}'$.
+
+`$\Leftarrow$':
+%
+% what we need to do:
+% show that for every set in $\mathcal{F}'$, the preimage is in $\mathcal{F}$.
+%
+% we assume that for every set in the generator $\mathcal{A}$ (of $\mathcal{F}'$), the preimage is in $\mathcal{F}$.
+% but how can we deduce that this stays true when we generate $\mathcal{F}'$ with $\mathcal{A}$, i.e. when we consider $\sigma(\mathcal{A}) = \mathcal{F}'$?
+%
+% well it kinda makes sense; 
+% if it is true for all the sets in $\mathcal{A}$, then 
+Assume $f^{-1}(A) \in \mathcal{F}$ for all $A \in \mathcal{A}$.
+Consider
+\[
+\mathcal{C} 
+\coloneq
+\{B \subseteq \Omega' : f^{-1}(B) \in \mathcal{F}\}
+\]
+i.e. the collection of subsets of $\Omega'$ whose pre\-images are measurable.
+By construction, $\mathcal{A} \subseteq \mathcal{C}$.
+It is therefore enough to show that $\mathcal{C}$ is a $\sigma$-algebra (\autoref{def:sigma-algebra}), since by \autoref{thm:generated-sigma-algebra}, then we have $\mathcal{F}' = \sigma(\mathcal{A}) \subseteq \mathcal{C}$.
+
+$\Omega' \in \mathcal{C}$, since $f^{-1}(\Omega') = \Omega \in \mathcal{F}$.
+Consider $A \in \mathcal{C}$.
+By definition, $f^{-1}(A) \in \mathcal{F}$.
+Since $\mathcal{F}$ is a $\sigma$-algebra, we have $(f^{-1}(A))^{\complement} \in \mathcal{F}$.
+Thus, by \autoref{fact:preimage-properties}.\ref{item:preimage-properties-complement}, we have $f^{-1}(A^{\complement}) \in \mathcal{F}$.
+Hence $A^{\complement} \in \mathcal{C}$.
+Similarly, it follows by \autoref{fact:preimage-properties}.\ref{item:preimage-properties-union-intersection} that $\mathcal{C}$ is closed under countable intersections and unions.
+Thus, $\mathcal{C}$ is a $\sigma$-algebra.
+As mentioned, this implies that $\sigma(\mathcal{A}) = \mathcal{F}' \subseteq \mathcal{C}$,
+hence $f$ is $(\mathcal{F}, \mathcal{F}')$-measurable.
+\end{proof}
 
 
 
@@ -2640,8 +3176,8 @@ Equivalently, a function on a domain $X$ is lower semi-continuous if its epigrap
 %   E = m \cdot c^2
 % \]
 
-% \begin{exercise}[Borel $\sigma$-algebra on $\mathbb{R}$]
-%   Let $\mathcal{A}_1 = \{(-\infty,a] : a \in \mathbb{R}\}$ and $\mathcal{A}_2 = \{(-\infty,a) : a \in \mathbb{R}\}$.
+% \begin{exercise}[Borel $\sigma$-algebra on $\R$]
+%   Let $\mathcal{A}_1 = \{(-\infty,a] : a \in \R\}$ and $\mathcal{A}_2 = \{(-\infty,a) : a \in \R\}$.
 %   Show that $\sigma(\mathcal{A}_1) = \sigma(\mathcal{A}_2)$.
 % \end{exercise}
 
@@ -2650,7 +3186,7 @@ Equivalently, a function on a domain $X$ is lower semi-continuous if its epigrap
 
 %   \emph{Step 1: Show $\mathcal{A}_2 \subset \sigma(\mathcal{A}_1)$.}
 
-%   Fix $a \in \mathbb{R}$. Note that
+%   Fix $a \in \R$. Note that
 %   \[
 %     (-\infty,a) = \bigcup_{n=1}^{\infty} \Bigl(-\infty,a - \tfrac{1}{n}\Bigr].
 %   \]
@@ -2660,7 +3196,7 @@ Equivalently, a function on a domain $X$ is lower semi-continuous if its epigrap
 
 %   \emph{Step 2: Show $\mathcal{A}_1 \subset \sigma(\mathcal{A}_2)$.}
 
-%   Fix $a \in \mathbb{R}$. Note that
+%   Fix $a \in \R$. Note that
 %   \[
 %     (-\infty,a] = \bigcap_{n=1}^{\infty} \Bigl(-\infty,a + \tfrac{1}{n}\Bigr).
 %   \]
