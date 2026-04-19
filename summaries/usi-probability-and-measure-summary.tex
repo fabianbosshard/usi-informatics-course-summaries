@@ -487,6 +487,30 @@ $p_{X\mid Y}(x\mid y)
 
 
 
+\subsection*{Set Operations}
+
+If $P_1$ and $P_2$ are properties of elements of $\Omega$, then we have
+\begin{itemize}
+\item
+\refstepcounter{equation}\label{eq:set-ops-and}
+\(
+\{\omega \in \Omega : P_1(\omega) \land P_2(\omega)\} = \{\omega \in \Omega : P_1(\omega)\} \cap \{\omega \in \Omega : P_2(\omega)\}
+\)\hfill\textup{(\theequation)}
+\item
+\refstepcounter{equation}\label{eq:set-ops-or}
+\(
+\{\omega \in \Omega : P_1(\omega) \lor P_2(\omega)\} = \{\omega \in \Omega : P_1(\omega)\} \cup \{\omega \in \Omega : P_2(\omega)\}
+\)\hfill\textup{(\theequation)}
+\item 
+\refstepcounter{equation}\label{eq:set-ops-not}
+\(
+\{\omega \in \Omega : \neg P_1(\omega)\} = \{\omega \in \Omega : P_1(\omega)\}^\complement
+\)\hfill\textup{(\theequation)}
+\end{itemize}
+
+
+
+
 \pagebreak
 
 \section{Probability Spaces}
@@ -511,20 +535,20 @@ for the \emph{complement} of $A$ in $\Omega$.
 The complement of $\Omega$ is the empty set $\varnothing$.
 Given two sets $A,B\subset \Omega$, we further define their \emph{union} by  
 \[
-A \cup B := \{\omega \in \Omega : \omega \in A \text{ or } \omega \in B\},
+A \cup B := \{\omega \in \Omega : \omega \in A \text{ or } \omega \in B\}
 \]
 their \emph{intersection} by
 \[
-A \cap B := \{\omega \in \Omega : \omega \in A \text{ and } \omega \in B\},
+A \cap B := \{\omega \in \Omega : \omega \in A \text{ and } \omega \in B\}
 \]
 and their \emph{difference} by
 \[
-A \setminus B := A \cap B^\complement.
+A \setminus B := A \cap B^\complement
 \]
 
 The collection of all possible subsets of $\Omega$ is called the \emph{power set} of $\Omega$ and is defined as
 \[
-2^\Omega := \{ A : A \subseteq \Omega \}.
+2^\Omega := \{ A : A \subseteq \Omega \}
 \]
 
 We are often interested in certain subsets of the sample space.
@@ -592,12 +616,12 @@ $A \cap B = (A^\complement \cup B^\complement)^\complement$ (De Morgan).
 \begin{example}[Different information $\Rightarrow$ different algebras]\label{ex-info-algebras}
 Alice generates two random bits. The sample space therefore is
 \[
-\Omega = \{00,01,10,11\}.
+\Omega = \{00,01,10,11\}
 \]
 
 Alice observes the exact outcome, hence her observable events are all subsets of $\Omega$:
 \[
-\mathcal{F}_A = 2^\Omega.
+\mathcal{F}_A = 2^\Omega
 \]
 
 Bob is only told the \emph{number of ones} in the two bits. This induces the partition
@@ -611,16 +635,16 @@ Therefore Bob can only observe events that are unions of blocks of $\Pi_B$, i.e.
 =
 \{
 \varnothing,\{00\},\{01,10\},\{11\},\{00,11\},\{00,01,10\},\{01,10,11\},\Omega
-\}.
+\}
 \]
 
 Cindy is only told whether the bits are \emph{equal or different}. This induces the coarser partition
 \[
-\Pi_C = \bigl\{\{00,11\},\{01,10\}\bigr\},
+\Pi_C = \bigl\{\{00,11\},\{01,10\}\bigr\}
 \]
 hence her observable events form the algebra:
 \[
-\mathcal{F}_C = \{\varnothing,\{00,11\},\{01,10\},\Omega\}.
+\mathcal{F}_C = \{\varnothing,\{00,11\},\{01,10\},\Omega\}
 \]
 
 We have
@@ -664,8 +688,8 @@ This shows that $A \times B$ is countable.
 \begin{definition}[$\sigma$-algebra]\label{def:sigma-algebra}
 A set $\mathcal{F}\subseteq 2^\Omega$ is called a \emph{$\sigma$-algebra} on $\Omega$ if
 \begin{enumerate}[label=(\roman*)]
-  \item $\mathcal{F}$ is an algebra (\autoref{def:algebra}) on $\Omega$,\label{item:sigma-algebra-is-algebra}
-  \item for any $A_1,A_2,\dots\in\mathcal{F}$ we have $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$.\label{item:sigma-algebra-closed-under-countable-union}
+  \item $\mathcal{F}$ is an algebra (\autoref{def:algebra}) on $\Omega$ \label{item:sigma-algebra-is-algebra}
+  \item for any $A_1,A_2,\dots\in\mathcal{F}$ we have $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$ \label{item:sigma-algebra-closed-under-countable-union}
 \end{enumerate}
 The sets in $\mathcal{F}$ are called \hl{measurable} and the tuple $(\Omega,\mathcal{F})$ is called a \emph{measurable space}.
 \end{definition}
@@ -678,7 +702,7 @@ We denote the union of $A_i$ over $i\in\mathcal{I}$ by
 \]
 and the intersection of $A_i$ over $i \in \mathcal{I}$ by
 \[
-  \bigcap_{i\in\mathcal{I}} A_i := \{\omega \in \Omega : \omega \in A_i \text{ for all } i \in \mathcal{I}\}.
+  \bigcap_{i\in\mathcal{I}} A_i := \{\omega \in \Omega : \omega \in A_i \text{ for all } i \in \mathcal{I}\}
 \]
 If $\mathcal{I}$ is countable, e.g.\ $\mathcal{I} = \mathbb{N}$, we often write $\bigcup_{i=1}^{\infty}A_i$ and $\bigcap_{i=1}^{\infty} A_i$ to represent the union and intersection of $A_i$ over $i\in \mathcal{I}$, respectively.
 \end{remark}
@@ -686,7 +710,7 @@ If $\mathcal{I}$ is countable, e.g.\ $\mathcal{I} = \mathbb{N}$, we often write 
 \begin{example}[Co-finite algebra]\label{ex:cofinite-algebra}
 Let $\Omega = \mathbb{N}$ and denote by $\mathcal{F}$ the collection of subsets of $\mathbb{N}$ that are finite or co-finite, i.e.,
 \[
-  \mathcal{F} = \{A \subseteq \mathbb{N} : |A| < \infty \ \text{or}\ |A^\complement| < \infty\}.
+  \mathcal{F} = \{A \subseteq \mathbb{N} : |A| < \infty \ \text{or}\ |A^\complement| < \infty\}
 \]
 Then $\mathcal{F}$ is an algebra, but not a $\sigma$-algebra,
 e.g.\ the sequence $\{2\},\{4\},\{6\},\dots$ is contained in $\mathcal{F}$, but $\bigcup_{i=1}^{\infty} \{2i\} \notin \mathcal{F}$.
@@ -696,7 +720,7 @@ Recall that for sequences of real numbers, the limit inferior and limit superior
 \[
   \liminf_{i\to\infty} x_i := \lim_{n\to\infty} \inf_{i\ge n} x_i
 \quad\text{and}\quad
-  \limsup_{i\to\infty} x_i := \lim_{n\to\infty} \sup_{i\ge n} x_i.
+  \limsup_{i\to\infty} x_i := \lim_{n\to\infty} \sup_{i\ge n} x_i
 \]
 
 \begin{definition}\label{def:liminf-limsup-sets}
@@ -705,7 +729,7 @@ The \emph{limit inferior} and \emph{limit superior} of this sequence are defined
 \[
   \liminf_{i\to\infty} A_i := \bigcup_{i=1}^{\infty} \bigcap_{k=i}^{\infty} A_k
 \quad\text{and}\quad
-  \limsup_{i\to\infty} A_i := \bigcap_{i=1}^{\infty} \bigcup_{k=i}^{\infty} A_k,
+  \limsup_{i\to\infty} A_i := \bigcap_{i=1}^{\infty} \bigcup_{k=i}^{\infty} A_k
 \]
 respectively.
 \end{definition}
@@ -802,7 +826,7 @@ Thus equality holds.
 \begin{example}
 Let $(\Omega_1,\mathcal{F}_1)$ and $(\Omega_2,\mathcal{F}_2)$ denote two measurable spaces (see \Cref{def:sigma-algebra}). The \emph{product $\sigma$-algebra} is defined as
 \[
-  \mathcal{F}_1 \otimes \mathcal{F}_2 := \sigma\bigl(\{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}\bigr).
+  \mathcal{F}_1 \otimes \mathcal{F}_2 := \sigma\bigl(\{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}\bigr)
 \]
 
 
@@ -947,7 +971,7 @@ Then,
 \end{equation}
 \end{corollary}
 
-\begin{theorem}
+\begin{theorem}[$\triangle$-inequality]\label{thm:triangle-inequality}
 Let $(\Omega,\mathcal{F},\mu)$ be a measure space and let $A,B \in \mathcal{F}$.
 Then,
 \[
@@ -963,11 +987,77 @@ There holds $A \cup B = A \cup (B \setminus A)$, which yields
 =
 \mu(A \cup (B \setminus A))
 =
-\mu(A) + \mu\underbrace{(B \setminus A)}_{\subset B}
+\mu(A) + \mu(\underbrace{B \setminus A}_{\subset B})
 \le
 \mu(A) + \mu(B)
 \]
 by \Cref{thm:subset-measure}.
+\end{proof}
+
+\begin{theorem}[\textcolor{red}{countable subadditivity}]\label{thm:countable-subadditivity}
+Let $(\Omega,\mathcal{F},\mu)$ be a measure space and let $A_1,A_2,\dots \in \mathcal{F}$.
+Then
+\begin{equation}\label{eq:countable-subadditivity}
+% \begin{verticalhack}
+\mu\Bigl(\bigcup_{i=1}^{\infty} A_i\Bigr) \leq \sum_{i=1}^{\infty} \mu(A_i)
+% \end{verticalhack}
+\qedhere
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Define
+\[
+% B_1 \coloneq A_1
+% \qquad
+B_i \coloneq A_i \setminus \bigcup_{j=1}^{i-1} A_j
+% \quad \text{for } i \geq 2
+\]
+where we set $\bigcup_{j=1}^{0} A_j := \varnothing$ for $i=1$.
+% \[
+% \begin{tikzpicture}[x=5mm,y=5mm]
+% \definecolor{fillcol}{HTML}{\eat #c6f7dc}
+% \coordinate (center) at (4.0,4.0);
+% \def\R{2.8}
+% \coordinate (holeoff) at (-1.0,0.8);
+% \coordinate (holec) at ($(center)+(holeoff)$);
+% \def\holer{1.0}
+% \coordinate (cTwo) at ($(center)+0.35*(holeoff)$);
+% \coordinate (cThree) at ($(center)+0.65*(holeoff)$);
+% \draw[line width=0.8pt] (center) circle (\R);
+% \draw[line width=0.8pt] (cTwo) circle (2.2);
+% \draw[line width=0.8pt] (cThree) circle (1.6);
+% \filldraw[fill=fillcol,draw=black,line width=0.8pt] (holec) circle (\holer);
+% \node[font=\fontsize{7pt}{7.5pt}\selectfont] at (5.5,2.3) {$A_1$};
+% \node[font=\fontsize{7pt}{7.5pt}\selectfont] at (4.7,3.0) {$A_2$};
+% \node[font=\fontsize{7pt}{7.5pt}\selectfont] at (4.1,3.75) {$\ddots$};
+% \node[font=\fontsize{7pt}{7.5pt}\selectfont] at (holec) {$\bigcap\limits_{i=1}^{\infty} A_i$};
+% % \coordinate (Rc) at (12.5,4.0);
+% % \filldraw[fill=unionFill,draw=black,line width=0.8pt] (Rc) circle (\R);
+% % \filldraw[fill=white,draw=black,line width=0.8pt] ($(Rc)+(holeoff)$) circle (\holer);
+% % \node[font=\fontsize{7pt}{7.5pt}\selectfont] at (13.4,3.2) {$\bigcup\limits_{i=1}^{\infty} B_i$};
+% \end{tikzpicture}
+% \]
+Then $B_i \in \mathcal{F}$, % because difference is combination of intersection and complement
+the sets $B_i$ are pairwise disjoint, 
+$B_i \subseteq A_i$ for every $i$, 
+and
+\[
+\bigcup_{i=1}^{\infty} B_i = \bigcup_{i=1}^{\infty} A_i
+\]
+Hence by $\sigma$-additivity \eqref{eq:sigma-additivity} and monotonicity from \autoref{thm:subset-measure},
+\[
+\begin{verticalhack}
+  \mu\Bigl(\bigcup_{i=1}^{\infty} A_i\Bigr)
+  =
+  \mu\Bigl(\bigcup_{i=1}^{\infty} B_i\Bigr)
+  =
+  \sum_{i=1}^{\infty} \mu(B_i)
+  \leq
+  \sum_{i=1}^{\infty} \mu(A_i)
+\end{verticalhack}
+\qedhere
+\]
 \end{proof}
 
 \begin{theorem}\label{thm:continuity-from-below}
@@ -2691,7 +2781,7 @@ Equivalently, a function on a domain $X$ is lower semi-continuous if its epigrap
 
 \begin{example}[Lebesgue-Stieltjes measure]\label{ex:lebesgue-stieltjes-measure}
 Let $\Omega = \R$ and $\mathcal{S} = \{(a, b] : a,b \in \R, a \leq b\}$.
-$\mathcal{S}$ is a semiring (see \autoref{ex:half-open-rectangles}) with $\sigma(\mathcal{S}) = \mathcal{B}(\R)$ .
+$\mathcal{S}$ is a semiring (see \autoref{ex:half-open-rectangles}) with $\sigma(\mathcal{S}) = \mathcal{B}(\R)$.
 
 Consider a monotonically increasing and right-continuous function $F : \R \to \R$.
 Then the set function
@@ -2751,7 +2841,136 @@ The map $\Prob \longmapsto F_{\Prob}$ is a bijection from the set of probability
 \end{theorem}
 
 
+\begin{exercise}[Lebesgue-Stieltjes measure for step functions]\label{exer:lebesgue-stieltjes-step-function} % assignment 5, exercise 1
+Let $x_1 < \dots < x_n$ be real numbers and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_k = 1$.
+Define 
+\[
+F(x) \coloneq \sum_{k=1}^n p_k \chi_{[x_k,\infty)}(x)
+\]
+for $x \in \R$.
+Let $\mu_F$ be the Lebesgue-Stieltjes measure (\autoref{ex:lebesgue-stieltjes-measure}) associated with $F$.
+\begin{enumerate}[label=(\alph*)]
+\item Show that $F$
+\begin{enumerate}[label=(\roman*)]
+\item is monotonically increasing
+\item is right continuous
+\item satisfies $\lim_{x \to -\infty} F(x) = 0$ and $\lim_{x \to \infty} F(x) = 1$
+\end{enumerate}
+\item Compute $\mu_F((a, b])$ explicitly in terms of the points $x_k$ and the weights $p_k$.
+\item Show that $\mu_F(\{x_k\}) = p_k$ for $k = 1, \ldots, n$.
+\item Show that if $A \in \mathcal{B}(\R)$, then 
+\[
+\mu_F(A) = \sum_{k=1}^n p_k \chi_A(x_k)
+\]
+\item Conclude that every finitely supported probability measure on $\R$, that is, every probability measure of the form
+\[
+\mu = \sum_{k=1}^n p_k \delta_{x_k}
+\]
+for some $x_1 < \dots < x_n$ and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_k = 1$, is a Lebesgue-Stieltjes measure (\autoref{ex:lebesgue-stieltjes-measure}).
+\qedhere
+\end{enumerate}
+\end{exercise}
 
+
+% \begin{solution}
+% \leavevmode
+% \begin{enumerate}[label=(\alph*)]
+% \item
+% \begin{enumerate}[label=(\roman*)]
+% \item If $x \le y$, then for every $k$,
+% \(
+% \chi_{[x_k,\infty)}(x)\le \chi_{[x_k,\infty)}(y)
+% \).
+% Since $p_k\ge 0$, it follows that
+% \[
+% F(x)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x)
+% \le
+% \sum_{k=1}^n p_k\chi_{[x_k,\infty)}(y)=F(y)
+% \]
+
+% \item Fix $x\in\R$ and let $y_m\downarrow x$. 
+% Then for each $k$,
+% \(
+% \chi_{[x_k,\infty)}(y_m)\to \chi_{[x_k,\infty)}(x)
+% \),
+% since $\chi_{[x_k,\infty)}$ is right continuous. 
+% As the sum is finite,
+% \[
+% F(y_m)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(y_m)\to \sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x)=F(x).
+% \]
+% Thus $F$ is right continuous.
+
+% \item If $x<x_1$, then $\chi_{[x_k,\infty)}(x)=0$ for all $k$, hence $F(x)=0$. So
+% \[
+% \lim_{x\to-\infty}F(x)=0.
+% \]
+% If $x\ge x_n$, then $\chi_{[x_k,\infty)}(x)=1$ for all $k$, hence
+% \[
+% F(x)=\sum_{k=1}^n p_k=1,
+% \]
+% so
+% \[
+% \lim_{x\to\infty}F(x)=1.
+% \]
+% \end{enumerate}
+
+% \item By definition of the Lebesgue--Stieltjes measure,
+% \[
+% \mu_F((a,b])=F(b)-F(a)
+% =\sum_{k=1}^n p_k\bigl(\chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)\bigr).
+% \]
+% Now
+% \[
+% \chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)=1
+% \iff a<x_k\le b,
+% \]
+% hence
+% \[
+% \mu_F((a,b])=\sum_{a<x_k\le b} p_k.
+% \]
+
+% \item Fix $k$. Choose $\varepsilon>0$ such that
+% \[
+% (x_k-\varepsilon,x_k]\cap\{x_1,\dots,x_n\}=\{x_k\}.
+% \]
+% Then by (b),
+% \[
+% \mu_F((x_k-\varepsilon,x_k])=\sum_{x_k-\varepsilon<x_i\le x_k}p_i=p_k.
+% \]
+% Also,
+% \[
+% \mu_F((x_k-\varepsilon,x_k))=0,
+% \]
+% since this interval contains no support point. Therefore
+% \[
+% p_k=\mu_F((x_k-\varepsilon,x_k])=\mu_F(\{x_k\}),
+% \]
+% so $\mu_F(\{x_k\})=p_k$.
+
+% \item Let $A\in\mathcal B(\R)$. Since $\mu_F$ is concentrated on $\{x_1,\dots,x_n\}$,
+% \[
+% \mu_F(A)=\mu_F\bigl(A\cap\{x_1,\dots,x_n\}\bigr)
+% =\sum_{x_k\in A}\mu_F(\{x_k\})
+% =\sum_{x_k\in A}p_k
+% =\sum_{k=1}^n p_k\chi_A(x_k).
+% \]
+
+% \item If
+% \[
+% \mu=\sum_{k=1}^n p_k\delta_{x_k},
+% \]
+% define
+% \[
+% F(x)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x).
+% \]
+% By (a), $F$ is increasing, right continuous, and has limits $0$ and $1$ at $\pm\infty$, so it defines a Lebesgue--Stieltjes measure $\mu_F$. By (d),
+% \[
+% \mu_F(A)=\sum_{k=1}^n p_k\chi_A(x_k)=\mu(A)
+% \qquad\text{for all }A\in\mathcal B(\R).
+% \]
+% Hence $\mu=\mu_F$.
+% \end{enumerate}
+% \end{solution}
 
 
 
@@ -2763,18 +2982,157 @@ The map $\Prob \longmapsto F_{\Prob}$ is a bijection from the set of probability
 If $(\Omega,\mathcal{F},\Prob)$ is a probability space, we might expect that every subset of an event $E$ with $\Prob(E)=0$ also has probability zero.
 In general, however, subsets of such events need not be measurable.
 
-\begin{definition}
+\begin{definition}\label{def:null-sets}
 Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
 \begin{enumerate}[label=(\roman*)]
-  \item A set $N \in \mathcal{F}$ with $\mu(N)=0$ is called a $\mu$-null set.
-  By $\mathcal{N}_\mu$ we denote the family of all subsets of $\mu$-null sets.
-  \item Let $P(\omega)$ be a property of $\omega \in \Omega$.
+  \item 
+  A set $B \in \mathcal{F}$ with $\mu(B)=0$ is called a $\mu$-null set.
+  By 
+  \[
+  \mathcal{N}_\mu \coloneq \{N \subseteq B : B \in \mathcal{F}, \mu(B) = 0\}
+  \]
+  we denote the family of all subsets of $\mu$-null sets.
+  \item 
+  Let $P(\omega)$ be a property of $\omega \in \Omega$.
   We say that $P$ holds $\mu$-almost everywhere (a.e.) if there exists a null set $N$ such that $P(\omega)$ holds for every $\omega \in \Omega \setminus N$.
-  \item If $\mu=\Prob$ is a probability measure, we say that $P$ holds $\Prob$-almost surely (a.s.).
-  \item The measure space $(\Omega,\mathcal{F},\mu)$ is called complete if $\mathcal{F}$ contains all subsets of $\mu$-null sets.
+  \item 
+  If $\mu=\Prob$ is a probability measure, we say that $P$ holds $\Prob$-almost surely (a.s.).
+  \item 
+  The measure space $(\Omega,\mathcal{F},\mu)$ is called complete if $\mathcal{F}$ contains all subsets of $\mu$-null sets.
   \qedhere
 \end{enumerate}
 \end{definition}
+
+
+
+
+\begin{theorem}
+% [Concrete description of the completion]
+\label{thm:concrete-description-completion}
+Let $(\Omega,\mathcal{F},\mu)$ be a $\sigma$-finite measure space and define
+\(
+\mathcal{G} \coloneq \{A \cup N : A \in \mathcal{F},\ N \in \mathcal{N}_\mu\}
+\).
+Then
+\(
+\mathcal{G} = \sigma(\mathcal{F} \cup \mathcal{N}_\mu)
+\).
+In particular, $\mathcal{G}$ is a $\sigma$-algebra.
+\end{theorem}
+
+\begin{proof} % assignment 5, exercise 2
+First note that if $N \in \mathcal{N}_\mu$, then by \autoref{def:null-sets} there exists a measurable $\mu$-null set $B \in \mathcal{F}$ such that $N \subseteq B$.
+
+We show that $\mathcal{G}$ is a $\sigma$-algebra:
+\begin{enumerate}[label=(\roman*)]
+\item
+Since $\emptyset \in \mathcal{N}_\mu$ and $\Omega \in \mathcal{F}$, we have $\Omega = \Omega \cup \emptyset \in \mathcal{G}$.
+\cmark
+\item
+Now let $G = A \cup N \in \mathcal{G}$ with $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$. Choose $B \in \mathcal{F}$ with $\mu(B)=0$ and $N \subseteq B$. Then
+\[
+G^\complement = 
+\underbrace{(A \cup B)^\complement}_{\in \mathcal{F}}
+\cup 
+\underbrace{\bigl(B \setminus (A \cup N)\bigr)\tikzmark{Gcomplement}}_{\substack{\subseteq B \\ \in \mathcal{N}_\mu}}%\tikzmark{Gcomplement}
+\]
+% Here $(A \cup B)^\complement \in \mathcal{F}$, while $B \setminus (A \cup N) \subseteq B$, hence $B \setminus (A \cup N) \in \mathcal{N}_\mu$. 
+\[
+\begin{tikzpicture}[
+  scale=0.25, line cap=round,line join=round,font=\footnotesize
+  ]
+
+% circles
+\def\r{3.2}
+\def\cax{5}
+\def\cay{4}
+\def\cbx{9}
+\def\cby{4}
+\coordinate (CA) at (\cax,\cay);
+\coordinate (CB) at (\cbx,\cby);
+
+% horizontal segment in B
+\def\yy{3.15}
+\path coordinate (L) at ({\cbx - sqrt(max(0,\r*\r - (\yy-\cby)^2))},\yy);
+\path coordinate (R) at ({\cbx + sqrt(max(0,\r*\r - (\yy-\cby)^2))},\yy);
+
+% shaded set: (A \cup B)^complement \cup (B \setminus (A \cup N))
+\begin{scope}
+\clip (0.0,0.0) rectangle (14.0,8.0);
+\fill[gray!15] (0.0,0.0) rectangle (14.0,8.0);
+\fill[white] (CA) circle (\r);
+\fill[white] (CB) circle (\r);
+\end{scope}
+\begin{scope}
+% Fill B \ (A \cup N): inside B, outside A, above the N-boundary y=yy.
+\clip (CB) circle (\r);
+\begin{scope}[even odd rule]
+\clip (0.0,0.0) rectangle (14.0,8.0) (CA) circle (\r);
+\clip (0,\yy) rectangle (14.0,8.0);
+\fill[gray!15] (0.0,0.0) rectangle (14.0,8.0);
+\end{scope}
+\end{scope}
+
+% outlines
+\draw[semithick] (0.0,0.0) rectangle (14.0,8.0);
+\draw[thin] (CA) circle (\r);
+\draw[thin] (CB) circle (\r);
+\draw[thin] (L) -- (R);
+
+% labels
+\node at (0.85,7.15) {$\Omega$};
+\node at ($(CA)+(120:{0.75*\r})$) {$A$};
+\node at ($(CB)+(60:{0.75*\r})$) {$B$};
+\pgfmathsetmacro{\Nx}{\cbx + 0.0*\r}
+\pgfmathsetmacro{\Ny}{((\cby-\r) + 0.5*(\yy - (\cby-\r)))}
+\node at (\Nx,\Ny) {$N$};
+
+\end{tikzpicture}
+\]
+Therefore $G^\complement \in \mathcal{G}$.
+\cmark
+\item
+Consider $(G_i)_{i \in \mathbb{N}}$ with $G_i = A_i \cup N_i \in \mathcal{G}$ for $i \in \mathbb{N}$ with $A_i \in \mathcal{F}$ and $N_i \in \mathcal{N}_\mu$. 
+Choose measurable $\mu$-null sets $B_i \in \mathcal{F}$ such that $N_i \subseteq B_i$. 
+Then
+\[
+\bigcup_{i=1}^{\infty} G_i 
+= 
+\bigcup_{i=1}^{\infty} \left(A_i \cup N_i\right)
+=
+\left(\bigcup_{i=1}^{\infty} A_i\right) \cup \left(\bigcup_{i=1}^{\infty} N_i\right)
+\]
+By \autoref{def:sigma-algebra}, $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$. 
+Since $N_i \subseteq B_i$ for all $i$, we have
+\[
+\bigcup_{i=1}^{\infty} N_i \subseteq \bigcup_{i=1}^{\infty} B_i
+\]
+and by countable subadditivity from \autoref{thm:countable-subadditivity},
+\[
+\mu\left(\bigcup_{i=1}^{\infty} B_i\right) \leq \sum_{i=1}^{\infty} \mu(B_i) = 0
+\]
+implying $\bigcup_{i=1}^{\infty} N_i \in \mathcal{N}_\mu$.
+Thus $\bigcup_{i=1}^{\infty} G_i \in \mathcal{G}$. 
+\cmark
+\end{enumerate}
+Hence $\mathcal{G}$ is a $\sigma$-algebra.
+
+Since $A = A \cup \emptyset \in \mathcal{G}$ for every $A \in \mathcal{F}$ and $N = \emptyset \cup N \in \mathcal{G}$ for every $N \in \mathcal{N}_\mu$, we have
+\[
+\mathcal{F} \cup \mathcal{N}_\mu \subseteq \mathcal{G}
+\]
+As $\mathcal{G}$ is a $\sigma$-algebra, \autoref{thm:generated-sigma-algebra} yields
+\[
+\sigma(\mathcal{F} \cup \mathcal{N}_\mu) \subseteq \mathcal{G}
+\]
+Conversely, if $G \in \mathcal{G}$, then $G = A \cup N$ with $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$. Since both $A$ and $N$ belong to $\mathcal{F} \cup \mathcal{N}_\mu$, they belong to $\sigma(\mathcal{F} \cup \mathcal{N}_\mu)$ by \autoref{thm:generated-sigma-algebra}. As this is a $\sigma$-algebra, it is closed under unions, hence $G \in \sigma(\mathcal{F} \cup \mathcal{N}_\mu)$. Therefore
+\[
+\mathcal{G} \subseteq \sigma(\mathcal{F} \cup \mathcal{N}_\mu)
+\]
+Combining both inclusions gives the claim.
+\end{proof}
+
+
 
 We have the following fact, which states that every $\sigma$-finite measure space admits a completion.
 
@@ -2790,6 +3148,9 @@ Moreover,
 \]
 for any $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$.
 \end{fact}
+
+
+
 
 \begin{example}
 Let $\lambda^d$ be the Lebesgue-Borel measure on $(\R^d,\mathcal{B}(\R^d))$.
@@ -3160,6 +3521,7 @@ It is therefore enough to show that $\mathcal{C}$ is a $\sigma$-algebra (\autore
 \begin{itemize}
 \item 
 $\Omega' \in \mathcal{C}$, since $f^{-1}(\Omega') = \Omega \in \mathcal{F}$.
+\cmark
 \item
 Consider $B \in \mathcal{C}$.
 By definition, $f^{-1}(B) \in \mathcal{F}$.
@@ -3172,6 +3534,7 @@ Since $\mathcal{F}$ is a $\sigma$-algebra, we have $(f^{-1}(B))^{\complement} \i
 % Hence $B^{\complement} \in \mathcal{C}$.
 Therefore, by \autoref{fact:preimage-properties}.\ref{item:preimage-properties-complement}, $f^{-1}(B^{\complement}) \in \mathcal{F}$.
 Hence $B^{\complement} \in \mathcal{C}$.
+\cmark
 \item
 Now let $(B_i)_{i=1}^{\infty} \subseteq \mathcal{C}$.
 Then $f^{-1}(B_i) \in \mathcal{F}$ for every $i \in \mathbb{N}$.
@@ -3186,6 +3549,7 @@ Since $\mathcal{F}$ is a $\sigma$-algebra, we have $\bigcup_{i=1}^{\infty} f^{-1
 % Hence $\bigcup_{i=1}^{\infty} B_i \in \mathcal{C}$.
 Therefore, by \autoref{fact:preimage-properties}.\ref{item:preimage-properties-union-intersection}, $f^{-1}(\bigcup_{i=1}^{\infty} B_i) \in \mathcal{F}$.
 Hence $\bigcup_{i=1}^{\infty} B_i \in \mathcal{C}$.
+\cmark
 \end{itemize}
 Thus, $\mathcal{C}$ is a $\sigma$-algebra.
 As mentioned, this implies that 
@@ -3285,7 +3649,7 @@ are measurable.
 \begin{proof}
 By \autoref{thm:function-measurable-iff-generator}, it suffices to check the preimages of the generator
 \(
-\mathcal{A} = \{(-\infty,r] : r \in \mathbb{R}\}
+\mathcal{A} = \{[-\infty,r] : r \in \mathbb{R}\}
 \)
 of $\mathcal{B}(\overline{\mathbb{R}})$.
 Consider the function
@@ -3295,24 +3659,51 @@ g(\omega) \coloneq \sup_{i \in \mathbb{N}} f_i(\omega)
 Let $r \in \mathbb{R}$. 
 From the definition of the supremum, we obtain
 \[
-g^{-1}((-\infty,r])
+g^{-1}([-\infty,r])
 =
 \{\omega \in \Omega : \sup_{i \in \mathbb{N}} f_i(\omega) \le r\}
 =
 \bigcap_{i=1}^{\infty}
 \{\omega \in \Omega : f_i(\omega) \le r\}
 =
-\bigcap_{i=1}^{\infty} f_i^{-1}((-\infty,r])
+\bigcap_{i=1}^{\infty} f_i^{-1}([-\infty,r])
 \]
-Since each $f_i$ is measurable and $( -\infty,r] \in \mathcal{B}(\overline{\mathbb{R}})$, it follows that
+Since each $f_i$ is measurable and $[-\infty,r] \in \mathcal{B}(\overline{\mathbb{R}})$, it follows that
 \(
-f_i^{-1}(( -\infty,r]) \in \mathcal{F}
+f_i^{-1}([-\infty,r]) \in \mathcal{F}
 \)
 for every $i \in \mathbb{N}$. 
 Since the right-hand side is a countable intersection of measurable sets, the left-hand side is also measurable. 
-Hence $g^{-1}(( -\infty,r]) \in \mathcal{F}$ for every $r \in \mathbb{R}$. 
+Hence $g^{-1}([-\infty,r]) \in \mathcal{F}$ for every $r \in \mathbb{R}$. 
 Therefore, by \autoref{thm:function-measurable-iff-generator}, the supremum $\sup_{i \in \mathbb{N}} f_i$ is measurable.
-From this, using \autoref{thm:measurable-functions-basic-operations} we infer that $\inf_{i \in \mathbb{N}} f_i(\omega)$ is measurable, since
+
+
+Similarly, for the infimum, we check the preimages of the generator $\mathcal{A} = \{[r, \infty] : r \in \mathbb{R}\}$ of $\mathcal{B}(\overline{\mathbb{R}})$.
+Now consider the function
+\(
+g(\omega) \coloneq \inf_{i \in \mathbb{N}} f_i(\omega)
+\).
+Let $r \in \mathbb{R}$.
+From the definition of the infimum, we obtain
+\[
+g^{-1}([r, \infty])
+=
+\{\omega \in \Omega : \inf_{i \in \mathbb{N}} f_i(\omega) \ge r\}
+=
+\bigcap_{i=1}^{\infty}\{\omega \in \Omega : f_i(\omega) \ge r\}
+=
+\bigcap_{i=1}^{\infty} f_i^{-1}([r, \infty])
+\]
+Since each $f_i$ is measurable and $[r, \infty] \in \mathcal{B}(\overline{\mathbb{R}})$, it follows that
+\(
+f_i^{-1}([r, \infty]) \in \mathcal{F}
+\)
+for every $i \in \mathbb{N}$.
+Since the right-hand side is a countable intersection of measurable sets, the left-hand side is also measurable.
+Hence $g^{-1}([r, \infty]) \in \mathcal{F}$ for every $r \in \mathbb{R}$.
+Therefore, by \autoref{thm:function-measurable-iff-generator}, the infimum $\inf_{i \in \mathbb{N}} f_i$ is measurable.
+
+Alternatively, using \autoref{thm:measurable-functions-basic-operations} we could also direcly infer that $\inf_{i \in \mathbb{N}} f_i(\omega)$ is measurable, since
 \(
 \inf_{i \in \mathbb{N}} f_i(\omega)
 =
@@ -3538,6 +3929,79 @@ they % $\liminf_{i \to \infty} f_i$ and $\limsup_{i \to \infty} f_i$
 are measurable.
 If the pointwise limit of $f_i$ exists, then the limit inferior and limit superior coincide, and hence the limit is measurable as well.
 \end{proof}
+
+
+% \[
+% \{\omega:f(\omega)\le a\}
+% =\bigcap_{n=1}^\infty \{\omega:f(\omega)<a+\tfrac1n\}.
+% \]
+
+
+
+
+
+\begin{theorem} % assignment 6, exercise 2
+Let $(\Omega, \mathcal{F})$ be a measurable space and let $f: \Omega \rightarrow \overline{\mathbb{R}}$ be measurable. 
+For $n \in \mathbb{N}$, define the truncation
+\[
+% f_n(\omega):=\max \{-n, \min \{f(\omega), n\}\}
+f_n(\omega) 
+\coloneq 
+\begin{cases}
+  -n & \text{if } f(\omega) < -n \\
+  f(\omega) & \text{if } -n \leq f(\omega) \leq n \\
+  n & \text{if } f(\omega) > n
+\end{cases}
+\]
+\begin{enumerate}[label=(\alph*)]
+\item
+Show that $f_n: \Omega \rightarrow \mathbb{R}$ is measurable for every $n \in \mathbb{N}$.
+\item
+Show that
+\(
+\left|f_n(\omega)\right| \leq n 
+\)
+for all
+\(
+\omega \in \Omega
+\).
+\item
+Show that if $f(\omega) \in \mathbb{R}$, then
+\(
+f_n(\omega) \rightarrow f(\omega)
+\) 
+as
+\(
+ n \rightarrow \infty 
+\).
+\item
+Describe the behavior of $f_n(\omega)$ when $f(\omega)=\infty$ and when $f(\omega)=-\infty$.
+\qedhere
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[label=(\alph*)]
+\item
+Let $a,b \in \mathbb{R}$ with $a < b$.
+We have
+\[
+f_n^{-1}([a,b])
+=
+\begin{cases}
+\varnothing & \text{if }  n < a \text{ or } b < -n  \\
+\Omega & \text{if } a \leq -n \text{ and }  n \leq b\\
+f^{-1}([-\infty, b]) & \text{if } a \leq -n \text{ and } b < n \\
+f^{-1}([a, b]) & \text{if } -n < a \text{ and } b < n \\
+f^{-1}([a, +\infty]) & \text{if } -n < a \text{ and }  n \leq b \\
+\end{cases}
+\]
+\end{enumerate}
+\end{proof}
+
+
+
+
+
 
 
 \section{Independence}
