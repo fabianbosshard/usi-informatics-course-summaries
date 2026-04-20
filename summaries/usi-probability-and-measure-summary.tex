@@ -509,6 +509,15 @@ If $P_1$ and $P_2$ are properties of elements of $\Omega$, then we have
 \end{itemize}
 
 
+\subsection*{Rational Numbers}
+For any $a,b \in \R$ with $a < b$
+\[
+\bigcup_{\substack{a < q_1 < q_2 < b \\ q_1,q_2 \in \Q}} (q_1,q_2) = (a,b) 
+\]
+
+We have $\overline{\Q} = \R$.
+
+
 
 
 \pagebreak
@@ -1454,8 +1463,13 @@ Let
 \]
 Then
 \begin{enumerate}[label=(\alph*)]
-\item $\mathcal{R}$ is countable
-\item every open rectangle in $\R^d$ can be written as a countable union of elements of $\mathcal{R}$ \label{item:open-rectangles-countable-union-rational-open-rectangles}
+\item 
+$\mathcal{R}$ is countable
+\item 
+% every open rectangle in $\R^d$ 
+% of the form $(\vect{a},\vect{b})$
+every open rectangle $(\vect{a},\vect{b}) \subset \R^d$ 
+can be written as a countable union of elements of $\mathcal{R}$ \label{item:open-rectangles-countable-union-rational-open-rectangles}
 \item
 \(
 \mathcal{B}(\R^d)=\sigma(\mathcal{R})
@@ -1477,7 +1491,7 @@ Since \(\Q\) is countable, \(\Q^d\) is countable, and therefore
 \(
 \Q^d \times \Q^d
 \)
-is countable as well.
+is countable as well (see \autoref{thm:cartesian-product-countable}).
 Hence every subset of it, in particular \(\mathcal{R}\), is countable.
 
 \item
@@ -1563,13 +1577,13 @@ and define
 \(
 (\vect{a},\vect{b}) := (\vect{x} - \rho \vect{1},\, \vect{x} + \rho \vect{1})
 \).
-Then for every \(\vect{z} \in (\vect{a},\vect{b})\),
+Then \(\forall \vect{z} \in (\vect{a},\vect{b})\)\tikzmark{RectangleInsideBall}, we have
 \[
 \|\vect{z} - \vect{x}\|_2 
 =
-\sqrt{\textstyle\sum_{i=1}^d (z_i - x_i)^2}
+\sqrt{\sum\limits_{i=1}^d (z_i - x_i)^2}
 < 
-\sqrt{\textstyle\sum_{i=1}^d \rho^2}
+\sqrt{\textstyle\sum\limits_{i=1}^d \rho^2}
 =
 \sqrt{d}\,\rho 
 < 
@@ -1579,7 +1593,75 @@ so \(\vect{z} \in B_r(\vect{x})\).
 Hence
 \(
 (\vect{a},\vect{b}) \subseteq B_r(\vect{x}) \subseteq U
-\).
+\).%
+\tikzexternaldisable%
+\begin{tikzpicture}[remember picture,overlay]
+\coordinate (RectangleInsideBallCoord) at (pic cs:RectangleInsideBall);
+% parameters
+\def\Radius{3.8}         % radius r of the ball
+\pgfmathsetmacro{\rhoMax}{\Radius/sqrt(2)}         % half side length corresponding to r/sqrt(d)
+\def\rhoHalfSide{2.2}      % smaller rho < r/sqrt(d)
+
+\def\scaleFactor{0.3}       % scale factor for the figure
+
+\begin{scope}[
+  shift={([xshift=-0.0em]current page text area.east|-RectangleInsideBallCoord)}
+]
+\begin{scope}[
+  xshift=-\scaleFactor*\Radius cm,
+  yshift=0cm,
+  scale=\scaleFactor,
+  line cap=round,
+  line join=round,
+  font=\scriptsize,
+  every node/.style={font=\scriptsize}
+]
+
+% center point
+\coordinate (x) at (0,0);
+
+% helper points
+\coordinate (Rp) at ($(x)+(210:\Radius)$);
+\coordinate (Ap) at ($(x)+(0:\rhoMax)$);
+
+% big ball B_r(x)
+\fill[black!90, fill opacity=0.1, even odd rule] 
+  (x) circle (\Radius)
+  (-\rhoHalfSide,-\rhoHalfSide) rectangle (\rhoHalfSide,\rhoHalfSide);
+\draw[black, dashed] (x) circle (\Radius);
+\node[black, anchor=north west, outer sep=0.2pt, inner sep=0pt] at ($(x)+(285:\Radius)$) {$B_r(\vect{x})$};
+
+% radius r
+\draw[black] (x) -- node[pos=0.55, below right, outer sep=0.5pt, inner sep=0pt] {$r$} (Rp);
+
+% orange reference rectangle: side half-length r/sqrt(d)
+\draw[orange!90!black, densely dotted] (-\rhoMax,-\rhoMax) rectangle (\rhoMax,\rhoMax);
+
+
+% smaller rho-rectangle
+\fill[teal!90, fill opacity=0.10] (-\rhoHalfSide,-\rhoHalfSide) rectangle (\rhoHalfSide,\rhoHalfSide);
+\draw[teal!90!black] (-\rhoHalfSide,-\rhoHalfSide) rectangle (\rhoHalfSide,\rhoHalfSide);
+
+
+% orange segment from x to right side of orange square
+\draw[orange!90!black] (x) -- node[pos=0.5, above, outer sep=1pt, inner sep=0pt] {$\frac{r}{\sqrt d}$} (Ap);
+
+
+% rho segment
+\draw[teal!90!black] (x) -- node[pos=0.5, above, outer sep=1pt, inner sep=0pt] {$\rho$} (-\rhoHalfSide,0);
+
+% labels for rectangle
+\node[teal!90!black, anchor=north, outer sep=1pt, inner sep=0pt] at (0,-\rhoHalfSide) {$(\vect{a},\vect{b})$}; %{$(\vect{x}-\rho\vect{1},\,\vect{x}+\rho\vect{1})$};
+
+% center point x
+\fill (x) circle (2.2pt);
+\node[anchor=north, outer sep=2pt, inner sep=0pt] at (x) {$\vect{x}$};
+
+\end{scope}
+\end{scope}
+\end{tikzpicture}
+\tikzexternalenable
+
 
 By part \ref{item:open-rectangles-countable-union-rational-open-rectangles}, \((\vect{a},\vect{b})\) can be written as a countable union of elements of \(\mathcal{R}\).
 Thus for every \(\vect{x} \in U\), there exists \(Q \in \mathcal{R}\) with
@@ -1587,13 +1669,13 @@ Thus for every \(\vect{x} \in U\), there exists \(Q \in \mathcal{R}\) with
 \vect{x} \in Q \subseteq U
 \).
 
-Hence
+All these rectangles cover \(U\),\rlap{ i.e.,}
 \[
 U = \bigcup_{\substack{Q \in \mathcal{R}\\ Q \subseteq U}} Q
 \]
 and this union is countable since \(\mathcal{R}\) is countable.
-Therefore \(U \in \sigma(\mathcal{R})\).
-Thus \(\mathcal{T} \subseteq \sigma(\mathcal{R})\) and by \autoref{lem:sigma-monotone},
+Therefore \(U \allowbreak \in \allowbreak \sigma(\mathcal{R})\).
+Hence \(\mathcal{T} \allowbreak \subseteq \allowbreak \sigma(\mathcal{R})\) and by \autoref{lem:sigma-monotone},
 \(
 \mathcal{B}(\R^d) 
 = 
@@ -1608,7 +1690,7 @@ Thus
 \(
 \mathcal{R} \subseteq \mathcal{B}(\R^d)
 \).
-By \autoref{lem:sigma-monotone} of \(\sigma(\cdot)\),
+By \autoref{lem:sigma-monotone}, % of \(\sigma(\cdot)\),
 \(
 \sigma(\mathcal{R}) \subseteq \mathcal{B}(\R^d)
 \).
@@ -1616,6 +1698,7 @@ By \autoref{lem:sigma-monotone} of \(\sigma(\cdot)\),
 \end{itemize}
 \end{enumerate}
 \end{proof}
+\pagebreak[3]
 
 
 
@@ -1625,7 +1708,8 @@ By \autoref{lem:sigma-monotone} of \(\sigma(\cdot)\),
 % \subsubsection{Open sets as countable unions of balls} % Assignment 3, Problem 2
 
 \begin{proposition}[Open sets as countable unions of balls]\label{prop:open-sets-balls} % Assignment 3, Problem 2
-Let $G \subseteq \R^d$ be an open set in the canonical topology. Then:
+Let $G \subseteq \R^d$ be an open set in the canonical topology (see \autoref{ex:canonical-topology}). 
+Then:
 \begin{enumerate}[label=(\alph*)]
 \item \label{item:every-point-in-open-set-is-interior-point}
 for every $\vect{x} \in G$ there exists $r>0$ such that the open ball
@@ -1652,11 +1736,103 @@ with $\vect{x}_n \in \Q^d$ and $r_n \in \Q^+$.
 \begin{proof} % Assignment 3, Problem 2
 \leavevmode
 \begin{enumerate}[label=(\alph*)]
+% \item 
+% Let $\vect{x}\in G$. Since $G$ is open in the canonical topology, there exists $r>0$ such that
+% \(
+% B_r(\vect{x})\subseteq G
+% \).
 \item 
-Let $\vect{x}\in G$. Since $G$ is open in the canonical topology, there exists $r>0$ such that
+% $G \subseteq \R^d$ being an open set in canonical topology means $G \in \mathcal{T}$ where
+% \[
+% \mathcal{T}
+% =
+% \left\{
+% \left(\bigcup_{A \in \mathcal{A}} A\right)
+% :
+% \mathcal{A} \subseteq \mathcal{G}
+% \right\}
+% \]
+% where
+% \(
+% \mathcal{G}
+% =
+% \left\{
+% B_R(\vect{z})
+% :
+% \vect{z} \in \R^d,\ R > 0
+% \right\}
+% \subseteq 2^{\R^d}
+% \).
+Since $G \in \mathcal{T}$%
+% (see \autoref{ex:canonical-topology})%
+, $\exists\, \mathcal{A} \subseteq \mathcal{G}$ such that
 \(
-B_r(\vect{x})\subseteq G
+G = \bigcup_{A \in \mathcal{A}} A
 \).
+So if $\vect{x} \in G$, then $\vect{x} \in A$ for some $A \in \mathcal{A}$, i.e. $\vect{x} \in B_R(\vect{z})$ for some $\vect{z} \in \R^d$, $R > 0$.
+\[
+\begin{tikzpicture}[scale=0.7, 
+% every node/.style={font=\fontsize{4}{4.8}\selectfont}
+every node/.style={font=\scriptsize}
+  ]
+% radii
+\def\R{1.2}
+\def\spurp{0.4}
+
+% points
+\coordinate (z) at (0,0);
+\coordinate (x) at (-0.6,0.3);
+
+% helper points on circles
+\coordinate (qp) at ($(x)+(135:\spurp)$);        % point on blue circle
+\coordinate (Rp) at ($(z)+(58:\R)$);            % point on big circle
+\coordinate (g) at ($(z)!\R cm!(x)$);           % ray z -> x meets \partial B_r(z)
+
+% fill of outer and inner ball
+\fill[black!90, fill opacity=0.1, even odd rule] (z) circle (\R) (x) circle (\spurp);
+\fill[blue!90, fill opacity=0.1] (x) circle (\spurp);
+
+% outer ball
+\draw[dashed] (z) circle (\R);
+\coordinate (blackSE) at ($(z)+(-35:\R)$);
+\node[anchor=north west, black, outer sep=1pt, inner sep=0pt] at (blackSE) {$B_R(\vect{z})$};
+
+% blue ball B_s(x)
+\draw[blue, dashed] (x) circle (\spurp);
+\coordinate (blueSW) at ($(x)+(-90:\spurp)$);
+\node[anchor=north, blue, outer sep=1pt, inner sep=0pt] at (blueSW) {$B_r(\vect{x})$};
+
+% black radius R
+\draw (z) -- node[pos=0.5, right] {$R$} (Rp);
+
+% blue radius r
+\draw[blue] (x) -- node[pos=0.45, below left, outer sep=0pt, inner sep=0.1pt] {$r$} (qp);
+
+% points
+\fill[blue] (x) circle (1.0pt);
+\node[blue, anchor=north west, inner sep=0pt, outer sep=1pt] at (x) {$\vect{x}$};
+
+\fill (z) circle (1.6pt);
+\node[anchor=north west, inner sep=0pt, outer sep=2pt] at (z) {$\vect{z}$};
+\end{tikzpicture}
+\]
+If we choose
+\(
+r = R - \|\vect{x} - \vect{z}\|_2 > 0
+\),
+then $B_r(\vect{x}) \subseteq B_R(\vect{z}) \subseteq G$, since for any $\vect{y} \in B_r(\vect{x})$,
+\[
+\|\vect{y} - \vect{z}\|_2
+\le
+\|\vect{y} - \vect{x}\|_2 + \|\vect{x} - \vect{z}\|_2
+=
+\|\vect{y} - \vect{x}\|_2 + R - r
+<
+r + R - r
+=
+R
+\]
+by the $\triangle$-inequality.
 
 \item 
 \begin{itemize}
@@ -1702,9 +1878,9 @@ hence $\vect{y}\in B_r(\vect{x})$. Therefore
 B_s(\vect{q})\subseteq B_r(\vect{x})\subseteq G
 \):
 \[
-\begin{tikzpicture}[scale=0.7, 
+\begin{tikzpicture}[scale=0.6, 
 % every node/.style={font=\fontsize{4}{4.8}\selectfont}
-every node/.style={font=\footnotesize}
+every node/.style={font=\scriptsize}
   ]
 % radii
 \def\R{3.8}
@@ -1766,15 +1942,18 @@ Thus every $\vect{x}\in G$ lies in some ball $B_s(\vect{q})$ with $\vect{q}\in\Q
 G=
 \bigcup_{\substack{\vect{q}\in\Q^d,\ s\in\Q^+\\ B_s(\vect{q})\subseteq G}}
 B_s(\vect{q})
-\]
-and since $\Q^d\times\Q^+$ is countable (\autoref{thm:cartesian-product-countable}), this union is countable. Therefore
-\[
+\]%
+\nopagebreak[3]%
+and since $\Q^d\times\Q^+$ is countable (\autoref{thm:cartesian-product-countable}), the union is over a countable set.
+Hence we can enumerate it as
+\(
 G=\bigcup_{n=1}^{\infty} B_{r_n}(\vect{x}_n)
-\]
+\)
 with $\vect{x}_n\in\Q^d$ and $r_n\in\Q^+$.
 \qedhere
 \end{enumerate}
 \end{proof}
+\pagebreak[3]
 
 
 
@@ -2307,7 +2486,7 @@ form a semiring:
 \item $\varnothing = (\vect{a}, \vect{a}] \in \mathcal{C}$. \cmark
 
 \item Let $A = (\vect{a},\vect{b}], B = (\vect{c},\vect{d}] \in \mathcal{C}$.
-Then
+Then\tikzmark{intersection-rectangles}
 \[
 A \cap B
 =
@@ -2315,7 +2494,79 @@ A \cap B
 \varnothing & \text{if $a_i \geq d_i$ or $c_i \geq b_i$ for some $i = 1,\dots,d$} \\
 (\max(\vect{a},\vect{c}), \min(\vect{b},\vect{d})] & \text{otherwise}
 \end{cases}
-\]
+\]%
+\tikzexternaldisable%
+\begin{tikzpicture}[remember picture,overlay]%
+\coordinate (IntersectionRectanglesCoord) at (pic cs:intersection-rectangles);
+
+% figure parameters
+\def\scaleFactor{0.25}
+
+% A = (a,b],  B = (c,d]
+\def\xA{0.0}
+\def\yA{0.0}
+\def\wA{4.0}
+\def\hA{3.0}
+
+\def\xB{3.0}
+\def\yB{1.2}
+\def\wB{3.6}
+\def\hB{3.4}
+
+\begin{scope}[
+  shift={([xshift=-0.0em,yshift=-0.0em]current page text area.east|-IntersectionRectanglesCoord)}
+]
+\begin{scope}[
+  xshift=-2.5cm,
+  yshift=0.25cm,
+  scale=\scaleFactor,
+  line cap=round,
+  line join=round,
+  font=\scriptsize,
+  every node/.style={font=\scriptsize}
+]
+
+
+% \fill[green!80, fill opacity=0.1, even odd rule] 
+%   (\xA,\yA) rectangle (\xA+\wA,\yA+\hA)
+%   (\xB,\yB) rectangle (\xB+\wB,\yB+\hB);
+\fill[green!80, fill opacity=0.1]
+  (\xB,\yB) rectangle (\xA+\wA,\yA+\hA);
+
+% rectangle A = (a,b]
+% open sides: left, bottom dashed
+% closed sides: top, right solid
+\draw[densely dotted, ] (\xA,\yA) -- (\xA,\yA+\hA);
+\draw[densely dotted, ] (\xA,\yA) -- (\xA+\wA,\yA);
+\draw[] (\xA,\yA+\hA) -- (\xA+\wA,\yA+\hA);
+\draw[] (\xA+\wA,\yA) -- (\xA+\wA,\yA+\hA);
+
+% rectangle B = (c,d]
+\draw[densely dotted, ] (\xB,\yB) -- (\xB,\yB+\hB);
+\draw[densely dotted, ] (\xB,\yB) -- (\xB+\wB,\yB);
+\draw[] (\xB,\yB+\hB) -- (\xB+\wB,\yB+\hB);
+\draw[] (\xB+\wB,\yB) -- (\xB+\wB,\yB+\hB);
+
+% labels
+\node at (\xA+1.55,\yA+1.15) {$A$};
+\node at (\xB+2.00,\yB+1.75) {$B$};
+
+\node[anchor=east, inner sep=0pt, outer sep=1pt]  at (\xA,\yA+0.50*\hA) {$a_1$};
+\node[anchor=north, inner sep=0pt, outer sep=1pt] at (\xA+0.50*\wA,\yA) {$a_2$};
+
+\node[anchor=south, inner sep=0pt, outer sep=1pt] at (\xA+0.20*\wA,\yA+\hA) {$b_2$};
+\node[anchor=west, inner sep=0pt, outer sep=1pt]  at (\xA+\wA,\yA+0.1*\hA) {$b_1$};
+
+\node[anchor=east, inner sep=0pt, outer sep=1pt] at (\xB,\yB+0.8*\hB) {$c_1$};
+\node[anchor=north, inner sep=0pt, outer sep=1pt]      at (\xB+0.80*\wB,\yB) {$c_2$};
+
+\node[anchor=south, inner sep=0pt, outer sep=1pt] at (\xB+0.50*\wB,\yB+\hB) {$d_2$};
+\node[anchor=west, inner sep=0pt, outer sep=1pt]  at (\xB+\wB,\yB+0.50*\hB) {$d_1$};
+
+\end{scope}
+\end{scope}
+\end{tikzpicture}%
+\tikzexternalenable%
 where $\max$ and $\min$ are taken componentwise.
 In both cases, $A \cap B \in \mathcal{C}$. \cmark
 
@@ -2338,12 +2589,106 @@ Note that rectangles corresponding to different vectors are disjoint.
 Furthermore, the rectangle corresponding to $\vect{s} = [M,\dots,M]$ is exactly $B$, i.e. $C([M,\dots,M]) = B$
 and
 the union of all rectangles corresponding to all possible $3^d$ vectors $\vect{s} \in \{L,M,R\}^d$ is exactly $A$, i.e. $\bigcup_{\vect{s} \in \{L,M,R\}^d} C(\vect{s}) = A$.
-Therefore, we can write $A \setminus B$ as
+Therefore, we can write $A \setminus B$ as\tikzmark{setminus-rectangles}
 \[
 A \setminus B
 =
 \bigcup_{\substack{\vect{s} \in \{L,M,R\}^d\\ \vect{s} \neq [M,\dots,M]}} C(\vect{s})
-\]
+\]%
+\tikzexternaldisable%
+\begin{tikzpicture}[remember picture,overlay]%
+\coordinate (SetminusRectanglesCoord) at (pic cs:setminus-rectangles);
+
+% figure parameters
+\def\scaleFactor{0.25}
+
+% outer rectangle A = (a,b]
+\def\xA{0.0}
+\def\yA{0.0}
+\def\wA{8.6}
+\def\hA{4.9}
+
+% inner rectangle B = (alpha,beta]
+\def\xB{2.25}
+\def\yB{1.15}
+\def\wB{2.25}
+\def\hB{2.60}
+
+\pgfmathsetmacro{\xR}{\xB+\wB}
+\pgfmathsetmacro{\yT}{\yB+\hB}
+
+\begin{scope}[
+  shift={([xshift=2cm,yshift=-4.4em]current page text area.east|-SetminusRectanglesCoord)}
+]
+\begin{scope}[
+  xshift=-4.7cm,
+  yshift=0cm,
+  scale=\scaleFactor,
+  line cap=round,
+  line join=round,
+  font=\scriptsize,
+  every node/.style={font=\scriptsize}
+]
+
+% A = (a,b]
+\draw[densely dotted, ] (\xA,\yA) -- (\xA,\yA+\hA);
+\draw[densely dotted, ] (\xA,\yA) -- (\xA+\wA,\yA);
+\draw[] (\xA,\yA+\hA) -- (\xA+\wA,\yA+\hA);
+\draw[] (\xA+\wA,\yA) -- (\xA+\wA,\yA+\hA);
+
+% partition lines through B (orange)
+\draw[orange!90!black, ]
+  (\xB,\yA) -- (\xB,\yB)
+  (\xB,\yT) -- (\xB,\yA+\hA);
+
+\draw[orange!90!black, ]
+  (\xR,\yA) -- (\xR,\yB)
+  (\xR,\yT) -- (\xR,\yA+\hA);
+
+\draw[orange!90!black, ]
+  (\xA,\yB) -- (\xB,\yB)
+  (\xR,\yB) -- (\xA+\wA,\yB);
+
+\draw[orange!90!black, ]
+  (\xA,\yT) -- (\xB,\yT)
+  (\xR,\yT) -- (\xA+\wA,\yT);
+
+% B = (alpha,beta]
+\fill[purple!70, opacity=0.45] (\xB,\yB) rectangle (\xR,\yT);
+\draw[densely dotted, ] (\xB,\yB) -- (\xB,\yT);
+\draw[densely dotted, ] (\xB,\yB) -- (\xR,\yB);
+\draw[] (\xB,\yT) -- (\xR,\yT);
+\draw[] (\xR,\yB) -- (\xR,\yT);
+
+% labels
+\node[font=\footnotesize, fill=white, inner sep=0pt, outer sep=0.0pt] at (\xA+6.9,\yA+3.7) {$A$};
+\node[font=\footnotesize] at (\xB+0.5*\wB,\yB+0.5*\hB) {$B$};
+
+\node[font=\tiny,anchor=east, inner sep=0pt, outer sep=0.5pt]  at (\xA,\yA+0.5*\hA) {$a_1$};
+\node[font=\tiny,anchor=north, inner sep=0pt, outer sep=0.5pt] at (\xA+0.5*\wA,\yA) {$a_2$};
+
+\node[font=\tiny,anchor=west, inner sep=0pt, outer sep=0.5pt]  at (\xA+\wA,\yA+0.5*\hA) {$b_1$};
+\node[font=\tiny,anchor=south, inner sep=0pt, outer sep=0.5pt] at (\xA+0.5*\wA,\yA+\hA) {$b_2$};
+
+\node[font=\tiny,anchor=east, inner sep=0pt, outer sep=0.5pt]  at (\xB,\yB+0.5*\hB) {$\alpha_1$};
+\node[font=\tiny,anchor=north, inner sep=0pt, outer sep=0.5pt] at (\xB+0.5*\wB,\yB) {$\alpha_2$};
+
+\node[font=\tiny,anchor=west, inner sep=0pt, outer sep=0.5pt]  at (\xR,\yB+0.5*\hB) {$\beta_1$};
+\node[font=\tiny,anchor=south, inner sep=0pt, outer sep=0.5pt] at (\xB+0.5*\wB,\yT) {$\beta_2$};
+
+% dimension annotations
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (\xA,-0.9) -- node[fill=white, font=\tiny, inner sep=0pt, outer sep=0pt] {$L$} (\xB,-0.9);
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (\xB,-0.9) -- node[fill=white, font=\tiny, inner sep=0pt, outer sep=0pt] {$M$} (\xR,-0.9);
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (\xR,-0.9) -- node[fill=white, font=\tiny, inner sep=0pt, outer sep=0pt] {$R$} (\xA+\wA,-0.9);
+
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (-1.75,\yA) -- node[fill=white, font=\tiny, inner sep=0.1pt, outer sep=0pt] {$L$} (-1.75,\yB);
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (-1.75,\yB) -- node[fill=white, font=\tiny, inner sep=0.1pt, outer sep=0pt] {$M$} (-1.75,\yT);
+\draw[very thin, {Classical TikZ Rightarrow[length=1.0pt, width=2pt]}-{Classical TikZ Rightarrow[length=1.0pt, width=2pt]}] (-1.75,\yT) -- node[fill=white, font=\tiny, inner sep=0.1pt, outer sep=0pt] {$R$} (-1.75,\yA+\hA);
+
+\end{scope}
+\end{scope}
+\end{tikzpicture}%
+\tikzexternalenable%
 where $\vect{s} = [s_1,\dots,s_d]$ and $s_i \in \{L,M,R\}$ for $i = 1,\dots,d$.
 The union is over (at most) $3^d - 1$ sets, hence finite. \cmark
 \qedhere
@@ -3030,6 +3375,7 @@ Since $\emptyset \in \mathcal{N}_\mu$ and $\Omega \in \mathcal{F}$, we have $\Om
 \cmark
 \item
 Now let $G = A \cup N \in \mathcal{G}$ with $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$. Choose $B \in \mathcal{F}$ with $\mu(B)=0$ and $N \subseteq B$. Then
+\tikzexternaldisable
 \[
 G^\complement = 
 \underbrace{(A \cup B)^\complement}_{\in \mathcal{F}}
@@ -3037,10 +3383,20 @@ G^\complement =
 \underbrace{\bigl(B \setminus (A \cup N)\bigr)\tikzmark{Gcomplement}}_{\substack{\subseteq B \\ \in \mathcal{N}_\mu}}%\tikzmark{Gcomplement}
 \]
 % Here $(A \cup B)^\complement \in \mathcal{F}$, while $B \setminus (A \cup N) \subseteq B$, hence $B \setminus (A \cup N) \in \mathcal{N}_\mu$. 
-\[
-\begin{tikzpicture}[
-  scale=0.25, line cap=round,line join=round,font=\footnotesize
-  ]
+\definecolor{complementcolor}{HTML}{\eat #fedb90}%
+\begin{tikzpicture}[remember picture,overlay]
+\coordinate (GcompCoord) at (pic cs:Gcomplement);
+\begin{scope}[
+  shift={([xshift=-0.0em]current page text area.east|-GcompCoord)}
+]
+\begin{scope}[
+  xshift=-3.2cm,
+  yshift=-1.25cm,
+  scale=0.2,
+  line cap=round,
+  line join=round,
+  font=\footnotesize
+]
 
 % circles
 \def\r{3.2}
@@ -3059,7 +3415,7 @@ G^\complement =
 % shaded set: (A \cup B)^complement \cup (B \setminus (A \cup N))
 \begin{scope}
 \clip (0.0,0.0) rectangle (14.0,8.0);
-\fill[gray!15] (0.0,0.0) rectangle (14.0,8.0);
+\fill[complementcolor] (0.0,0.0) rectangle (14.0,8.0);
 \fill[white] (CA) circle (\r);
 \fill[white] (CB) circle (\r);
 \end{scope}
@@ -3069,7 +3425,7 @@ G^\complement =
 \begin{scope}[even odd rule]
 \clip (0.0,0.0) rectangle (14.0,8.0) (CA) circle (\r);
 \clip (0,\yy) rectangle (14.0,8.0);
-\fill[gray!15] (0.0,0.0) rectangle (14.0,8.0);
+\fill[complementcolor] (0.0,0.0) rectangle (14.0,8.0);
 \end{scope}
 \end{scope}
 
@@ -3087,8 +3443,10 @@ G^\complement =
 \pgfmathsetmacro{\Ny}{((\cby-\r) + 0.5*(\yy - (\cby-\r)))}
 \node at (\Nx,\Ny) {$N$};
 
+\end{scope}
+\end{scope}
 \end{tikzpicture}
-\]
+\tikzexternalenable
 Therefore $G^\complement \in \mathcal{G}$.
 \cmark
 \item
@@ -3637,13 +3995,13 @@ Let $(\Omega,\mathcal{F})$ be a measurable space
 and let
 $f_i : \Omega \to \overline{\R}$, $i \in \mathbb{N}$, be a sequence of $(\mathcal{F}, \mathcal{B}(\overline{\R}))$-measurable functions.
 Then, 
-\(
+\[
 \inf_{i \in \mathbb{N}} f_i
-\) 
-and
-\(
+\quad
+\text{and}
+\quad
 \sup_{i \in \mathbb{N}} f_i
-\)
+\]
 are measurable.
 \end{theorem}
 \begin{proof}
@@ -3907,13 +4265,13 @@ Therefore, we may characterize them as follows:
 \begin{theorem}
 Let $f_i : \Omega \to \overline{\R}$, $i \in \mathbb{N}$, be a sequence of measurable functions.
 Then, the functions 
-\(
+\[
 \liminf_{i \to \infty} f_i
-\) 
-and
-\(
+\quad
+\text{and}
+\quad
 \limsup_{i \to \infty} f_i
-\)
+\]
 are measurable. 
 Furthermore, if $\lim_{i \to \infty} f_i(\omega)$ exists for all $\omega \in \Omega$, 
 then 
@@ -4002,10 +4360,11 @@ f^{-1}([a, +\infty]) & \text{if } -n < a \text{ and }  n \leq b \\
 
 
 
+% \clearpage
 
+% \section{Independence}
 
-\section{Independence}
-
+% \emph{Independence} is a key concept in probability theory and sets it apart from real analysis.
 
 
 
