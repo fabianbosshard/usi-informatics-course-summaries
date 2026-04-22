@@ -487,7 +487,23 @@ $p_{X\mid Y}(x\mid y)
 
 
 
+
+
+\subsection*{Rational Numbers}
+For any $a,b \in \R$ with $a < b$
+\[
+\bigcup_{\substack{a < q_1 < q_2 < b \\ q_1,q_2 \in \Q}} (q_1,q_2) = (a,b) 
+\]
+
+We have $\overline{\Q} = \R$.
+
+
+
+
+
 \subsection*{Set Operations}
+
+
 
 If $P_1$ and $P_2$ are properties of elements of $\Omega$, then we have
 \begin{itemize}
@@ -509,13 +525,164 @@ If $P_1$ and $P_2$ are properties of elements of $\Omega$, then we have
 \end{itemize}
 
 
-\subsection*{Rational Numbers}
-For any $a,b \in \R$ with $a < b$
+\subsubsection*{Cartesian Product}
+\begin{definition}\label{def:cartesian-product}
+The \emph{Cartesian product} of two sets $A$ and $B$ is the set
 \[
-\bigcup_{\substack{a < q_1 < q_2 < b \\ q_1,q_2 \in \Q}} (q_1,q_2) = (a,b) 
+A \times B = \{(a,b) : a \in A \land b \in B\}
 \]
+i.e., the set of all ordered pairs $(a,b)$ with $a \in A$ and $b \in B$.
+\end{definition} 
 
-We have $\overline{\Q} = \R$.
+
+% \begin{proposition}\label{prop:intersection-of-product}
+We have
+\begin{equation}\label{eq:intersection-of-product}
+(A_1\times A_2)\cap(B_1\times B_2)
+=
+(A_1\cap B_1)\times(A_2\cap B_2)
+\qedhere
+\end{equation}
+% \end{proposition}
+since
+% \begin{proof}
+\[
+% \begin{verticalhack}
+\begin{aligned}
+(x,y)\in (A_1\times A_2)\cap(B_1\times B_2)
+&\iff (x,y)\in A_1\times A_2 \land (x,y)\in B_1\times B_2\\
+&\iff (x\in A_1 \land y\in A_2)\land(x\in B_1 \land y\in B_2)\\
+&\iff (x\in A_1 \land x\in B_1)\land(y\in A_2 \land y\in B_2)\\
+&\iff x\in A_1\cap B_1 \land y\in A_2\cap B_2\\
+&\iff \smash[b]{(x,y) \in (A_1\cap B_1)\times(A_2\cap B_2)}
+\end{aligned}
+% \end{verticalhack}
+% \qedhere
+\]
+% \end{proof}
+
+% \[
+% \begin{tikzpicture}[x=0.435cm,y=0.435cm,line cap=round,line join=round]
+
+% % colors
+% \colorlet{axiscol}{blue!45!white}
+% \colorlet{gridcol}{white!45!black}
+% \colorlet{Acol}{red!75!black}
+% \colorlet{Bcol}{green!80!black}
+% \colorlet{ABfill}{blue!12!white}
+% \colorlet{ACfill}{red!35!white}
+% \colorlet{BDfill}{green!35!white}
+% \colorlet{midfill}{yellow!55!white}
+
+% % axes
+% \draw[->,thin,axiscol] (0,0) -- (8.35,0) node[right=1pt,axiscol] {\scriptsize $x$};
+% \draw[->,thin,axiscol] (0,0) -- (0,5.35) node[above=1pt,axiscol] {\scriptsize $y$};
+
+% % guide lines
+% \foreach \y in {1,2,3,4}
+%   \draw[dashed,thin,gridcol,dash pattern=on 3pt off 3pt] (-1.45,\y) -- (7,\y); % endpoints need to be adjusted
+% \foreach \x in {2,3,5,7}
+%   \draw[dashed,thin,gridcol,dash pattern=on 3pt off 3pt] (\x,-1.72) -- (\x,4);
+
+% % ticks and labels
+% \foreach \x in {1,2,3,4,5,6,7,8}{
+%   \draw[axiscol,thin] (\x,0) -- (\x,-0.2);
+%   \node[below,axiscol,font=\scriptsize] at (\x,-0.2) {\x};
+% }
+% \foreach \y in {1,2,3,4,5}{
+%   \draw[axiscol,thin] (-0.2,\y) -- (0,\y);
+%   \node[left,axiscol,font=\scriptsize] at (-0.2,\y) {\y};
+% }
+
+% % main product regions (fills first)
+% \fill[ABfill] (2,1) rectangle (7,4);
+% \fill[ACfill] (2,1) rectangle (5,3);
+% \fill[BDfill] (3,2) rectangle (7,4);
+% \fill[midfill,opacity=.55] (3,2) rectangle (5,3);
+
+% % outlines drawn after fills so borders stay visible
+% \draw[blue,thin] (2,1) rectangle (7,4);
+% \draw[red,thin] (2,1) rectangle (5,3);
+% \draw[green!90!black,thin] (3,2) rectangle (7,4);
+
+% % redraw the obscured red corner explicitly for pixel-accurate stacking
+% \draw[red,thin] (5,2) -- (5,3) -- (3,3);
+
+% % labels inside
+% \node[Acol,font=\scriptsize] at (3.05,1.34) {$A\times C$};
+% \node[Bcol,font=\scriptsize] at (6.23,3.62) {$B\times D$};
+
+% % left side interval picture 
+% \draw[red,thick]   (-2.25,1) -- (-2.25,3); % not really at the correct offset
+% \draw[blue,thick]  (-1.95,1) -- (-1.95,4);
+% \draw[green!90!black,thick] (-1.65,2) -- (-1.65,4);
+
+% \node[left=1pt,Acol,font=\scriptsize] at (-2.25,2) {$C$};
+% \node[left=1pt,Bcol,font=\scriptsize] at (-1.65,3.65) {$D$};
+
+% % bottom interval picture
+% \draw[red,thick]   (2,-1.12) -- (5,-1.12);
+% \draw[blue,thick]  (2,-0.86) -- (7,-0.86);
+% \draw[green!90!black,thick] (3,-0.60) -- (7,-0.60);
+
+% \node[below,Acol,font=\scriptsize] at (2.24,-1.03) {$A$};
+% \node[below,Bcol,font=\scriptsize] at (6.42,-1.06) {$B$};
+
+
+% \end{tikzpicture}
+% \]
+
+But
+\begin{equation}\label{eq:union-of-product}
+(A_1\times A_2)\cup(B_1\times B_2)
+\color{red}\neq\color{black}
+(A_1 \cup B_1)\times(A_2 \cup B_2)
+\qedhere
+\end{equation}
+
+
+
+
+\subsubsection*{De Morgan's Laws}
+\begin{minipage}[t]{0.44\textwidth}
+We have
+\begin{equation}\label{eq:countable-demorgan-intersection}
+\left(\bigcap_{i=1}^\infty A_i\right)^\complement
+=
+\bigcup_{i=1}^\infty A_i^\complement
+\end{equation}
+since
+\[
+\begin{aligned}
+x\in \left(\bigcap_{i=1}^\infty A_i\right)^\complement
+&\iff x\notin \bigcap_{i=1}^\infty A_i\\
+&\iff \neg\bigl(\forall i\in\N : x \in A_i\bigr)\\
+&\iff \exists i\in\N : x \notin A_i\\
+&\iff \exists i\in\N : x \in A_i^\complement\\
+&\iff x\in \bigcup_{i=1}^\infty A_i^\complement
+\end{aligned}
+\]
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.44\textwidth}
+We have
+\begin{equation}\label{eq:countable-demorgan-union}
+\left(\bigcup_{i=1}^\infty A_i\right)^\complement
+=
+\bigcap_{i=1}^\infty A_i^\complement
+\end{equation}
+since
+\[
+\begin{aligned}
+x\in \left(\bigcup_{i=1}^\infty A_i\right)^\complement
+&\iff x\notin \bigcup_{i=1}^\infty A_i\\
+&\iff \neg\bigl(\exists i\in\N : x\in A_i\bigr)\\
+&\iff \forall i\in\N : x \notin A_i\\
+&\iff \forall i\in\N : x \in A_i^\complement\\
+&\iff x\in \bigcap_{i=1}^\infty A_i^\complement
+\end{aligned}
+\]
+\end{minipage}
 
 
 
@@ -665,6 +832,7 @@ expressing that more information corresponds to a finer partition and thus a lar
 
 Often, we encounter situations with infinitely many events and we want to assign probabilities to the case that all of them occur simultaneously.
 This is possible, as long as the number of events involved is at most countably infinite.
+
 
 
 \begin{definition}\label{def:countable-set}
@@ -832,8 +1000,9 @@ On the other hand, $\sigma(\mathcal{A})$ is itself a $\sigma$-algebra containing
 Thus equality holds.
 \end{proof}
 
-\begin{example}
-Let $(\Omega_1,\mathcal{F}_1)$ and $(\Omega_2,\mathcal{F}_2)$ denote two measurable spaces (see \Cref{def:sigma-algebra}). The \emph{product $\sigma$-algebra} is defined as
+\begin{example}\label{ex:product-sigma-algebra}
+Let $(\Omega_1,\mathcal{F}_1)$ and $(\Omega_2,\mathcal{F}_2)$ denote two measurable spaces (see \Cref{def:sigma-algebra}). 
+The \emph{product $\sigma$-algebra} is defined as
 \[
   \mathcal{F}_1 \otimes \mathcal{F}_2 := \sigma\bigl(\{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}\bigr)
 \]
@@ -1143,7 +1312,7 @@ In addition, we have
   A_1 \setminus \Bigl(\bigcup_{i=1}^{\infty} B_i\Bigr)
   &=
   A_1 \cap \Bigl(\bigcup_{i=1}^{\infty} B_i\Bigr)^\complement
-  =
+  \overset{\text{\eqref{eq:countable-demorgan-union}}}{=}
   A_1 \cap \Bigl(\bigcap_{i=1}^{\infty} B_i^\complement\Bigr)
   =
   \bigcap_{i=1}^{\infty} (A_1 \cap B_i^\complement) \notag\\
@@ -2698,21 +2867,24 @@ The union is over (at most) $3^d - 1$ sets, hence finite. \cmark
 
 
 Similarly to measures (see \autoref{def:measure}), we define the following properties of set functions on semirings
-\begin{definition}
+\begin{definition} \label{def:set-function-properties}
 Let $\mathcal{S} \subseteq 2^\Omega$ be a semiring and $\mu : \mathcal{S} \to [0,\infty]$ be a set function.
 We say that $\mu$ is
 \begin{enumerate}[label=(\roman*)]
-\item \hl[2]{\emph{additive}} if for any $A_1, \ldots, A_n \in \mathcal{S}$ with $A_i \cap A_j = \varnothing$ for $i \neq j$ and $\bigcup_{i=1}^n A_i \in \mathcal{S}$, there holds
+\item \label{def:set-function-additive}
+\hl[2]{\emph{additive}} if for any $A_1, \ldots, A_n \in \mathcal{S}$ with $A_i \cap A_j = \varnothing$ for $i \neq j$ and $\bigcup_{i=1}^n A_i \in \mathcal{S}$, there holds
 \[
 \mu\left(\bigcup_{i=1}^n A_i\right) = \sum_{i=1}^n \mu(A_i)
 \]
-\item \hl[2]{\emph{$\sigma$-subadditive}} if for any $A \in \mathcal{S}$ and any $A_1, A_2, \ldots \in \mathcal{S}$ with $A \subseteq \bigcup_{i=1}^\infty A_i$ 
+\item \label{def:set-function-sigma-subadditive}
+\hl[2]{\emph{$\sigma$-subadditive}} if for any $A \in \mathcal{S}$ and any $A_1, A_2, \ldots \in \mathcal{S}$ with $A \subseteq \bigcup_{i=1}^\infty A_i$ 
 (i.e. they cover $A$)%
 , there holds
 \[
 \mu(A) \leq \sum_{i=1}^\infty \mu(A_i)
 \]
-\item \hl[2]{\emph{$\sigma$-finite}} if there exists a sequence $A_1, A_2, \ldots \in \mathcal{S}$ such that $\Omega = \bigcup_{i=1}^\infty A_i$ and $\mu(A_i) < \infty$ for all $i \in \N$.
+\item \label{def:set-function-sigma-finite}
+\hl[2]{\emph{$\sigma$-finite}} if there exists a sequence $A_1, A_2, \ldots \in \mathcal{S}$ such that $\Omega = \bigcup_{i=1}^\infty A_i$ and $\mu(A_i) < \infty$ for all $i \in \N$.
 \qedhere
 \end{enumerate}
 \end{definition}
@@ -2838,8 +3010,8 @@ Let $\mathcal{S} \subseteq 2^\Omega$ be a semiring and
 \[
 \mu : \mathcal{S} \to [0,\infty]
 \]
-be an additive, $\sigma$-subadditive and $\sigma$-finite set function with $\mu(\varnothing) = 0$.
-Then there is a unique $\sigma$-finite measure (\autoref{def:measure})
+be an additive \ref{def:set-function-additive}, $\sigma$-subadditive \ref{def:set-function-sigma-subadditive} and $\sigma$-finite \ref{def:set-function-sigma-finite} set function with $\mu(\varnothing) = 0$.
+Then there is a unique $\sigma$-finite measure % (\autoref{def:measure})
 \[
 \tilde{\mu} : \sigma(\mathcal{S}) \to [0,\infty]
 \]
@@ -3162,7 +3334,7 @@ F(-\infty) \coloneq \lim_{x \to -\infty} F(x) = 0
 \qquad\text{and}\qquad
 F(\infty) \coloneq \lim_{x \to \infty} F(x) = 1
 \]
-is called a \emph{cumulative distribution function}, \emph{probability distribution function} or simply \emph{distribution function}.
+is called a \emph{cumulative distribution function}, \emph{probability distribution function} or simply \emph{\hl{distribution function}}.
 If $\Prob$ is a probability measure on $(\R, \mathcal{B}(\R))$, then
 \[
 \begin{aligned}
@@ -3216,107 +3388,104 @@ for some $x_1 < \dots < x_n$ and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_
 \end{enumerate}
 \end{exercise}
 
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label=(\alph*)]
+\item
+\begin{enumerate}[label=(\roman*)]
+\item 
+Let $x \le y$. 
+Then 
+\[
+\chi_{[x_k,\infty)}(x) \le \chi_{[x_k,\infty)}(y)
+\]
+for every $k \in \{1,\dots,n\}$.
+Since $p_k \ge 0$ for all $k$, summing over $k$ yields $F(x) \le F(y)$. 
+Hence $F$ is monotonically increasing.
 
-% \begin{solution}
-% \leavevmode
-% \begin{enumerate}[label=(\alph*)]
-% \item
-% \begin{enumerate}[label=(\roman*)]
-% \item If $x \le y$, then for every $k$,
-% \(
-% \chi_{[x_k,\infty)}(x)\le \chi_{[x_k,\infty)}(y)
-% \).
-% Since $p_k\ge 0$, it follows that
-% \[
-% F(x)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x)
-% \le
-% \sum_{k=1}^n p_k\chi_{[x_k,\infty)}(y)=F(y)
-% \]
+\item Each function $\chi_{[x_k,\infty)}$ is right continuous. 
+Indeed, if $y_m \searrow x$, then:
+if $x < x_k$, eventually $y_m < x_k$, so $\chi_{[x_k,\infty)}(y_m)=0$;
+if $x \ge x_k$, then $y_m \ge x_k$ for all $m$, so $\chi_{[x_k,\infty)}(y_m)=1$.
+\rlap{Thus}
+\[
+\lim_{m\to\infty} \chi_{[x_k,\infty)}(y_m)=\chi_{[x_k,\infty)}(x)
+\]
+A finite sum of right continuous functions is right continuous, so $F$ is right continuous.
 
-% \item Fix $x\in\R$ and let $y_m\downarrow x$. 
-% Then for each $k$,
-% \(
-% \chi_{[x_k,\infty)}(y_m)\to \chi_{[x_k,\infty)}(x)
-% \),
-% since $\chi_{[x_k,\infty)}$ is right continuous. 
-% As the sum is finite,
-% \[
-% F(y_m)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(y_m)\to \sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x)=F(x).
-% \]
-% Thus $F$ is right continuous.
+\item 
+If $x \to -\infty$, then for every $k$ we eventually have $x < x_k$, hence
+\(\chi_{[x_k,\infty)}(x)=0\).
+Therefore $F(x)=0$ eventually, and so $\lim_{x\to -\infty} F(x)=0$.
+If $x \to \infty$, then for every $k$ we eventually have $x \ge x_k$, hence
+\(\chi_{[x_k,\infty)}(x)=1\).
+Therefore $F(x)=\sum_{k=1}^n p_k=1$ eventually, and so $\lim_{x\to \infty} F(x)=1$.
+\end{enumerate}
 
-% \item If $x<x_1$, then $\chi_{[x_k,\infty)}(x)=0$ for all $k$, hence $F(x)=0$. So
-% \[
-% \lim_{x\to-\infty}F(x)=0.
-% \]
-% If $x\ge x_n$, then $\chi_{[x_k,\infty)}(x)=1$ for all $k$, hence
-% \[
-% F(x)=\sum_{k=1}^n p_k=1,
-% \]
-% so
-% \[
-% \lim_{x\to\infty}F(x)=1.
-% \]
-% \end{enumerate}
+\item 
+% By the defining property of the Lebesgue--Stieltjes measure associated with $F$,
+% \(\mu_F((a,b]) = F(b)-F(a)\).
+Using the definition of $F$, we obtain
+\[
+\mu_F((a,b]) = \sum_{k=1}^n p_k\bigl(\chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)\bigr).
+\]
+For fixed $k$,
+\[
+\chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)
+=
+\begin{cases}
+1 & \text{if } a < x_k \le b\\
+0 & \text{otherwise}
+\end{cases}
+\]
+Hence
+\(\mu_F((a,b]) = \sum_{k: a < x_k \le b} p_k\).
 
-% \item By definition of the Lebesgue--Stieltjes measure,
-% \[
-% \mu_F((a,b])=F(b)-F(a)
-% =\sum_{k=1}^n p_k\bigl(\chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)\bigr).
-% \]
-% Now
-% \[
-% \chi_{[x_k,\infty)}(b)-\chi_{[x_k,\infty)}(a)=1
-% \iff a<x_k\le b,
-% \]
-% hence
-% \[
-% \mu_F((a,b])=\sum_{a<x_k\le b} p_k.
-% \]
+\item Fix $k \in \{1,\dots,n\}$. Choose $\varepsilon>0$ such that
+\((x_k-\varepsilon,x_k] \cap \{x_1,\dots,x_n\} = \{x_k\}\).
+Then by part (b),
+\(\mu_F((x_k-\varepsilon,x_k]) = \sum_{j: x_k-\varepsilon < x_j \le x_k} p_j = p_k\).
+Moreover, $F$ is constant on $(x_k-\varepsilon,x_k)$, since this interval contains no point $x_j$. Hence for every $u,v$ with $x_k-\varepsilon < u \le v < x_k$ we have
+\(\mu_F((u,v]) = F(v)-F(u)=0\).
+Therefore \(\mu_F((x_k-\varepsilon,x_k))=0\).
+Since
+\((x_k-\varepsilon,x_k] = (x_k-\varepsilon,x_k) \sqcup \{x_k\}\),
+additivity yields
+\[
+\mu_F((x_k-\varepsilon,x_k])
+=
+\mu_F((x_k-\varepsilon,x_k)) + \mu_F(\{x_k\})
+=
+\mu_F(\{x_k\}).
+\]
+Consequently, $\mu_F(\{x_k\})=p_k$.
 
-% \item Fix $k$. Choose $\varepsilon>0$ such that
-% \[
-% (x_k-\varepsilon,x_k]\cap\{x_1,\dots,x_n\}=\{x_k\}.
-% \]
-% Then by (b),
-% \[
-% \mu_F((x_k-\varepsilon,x_k])=\sum_{x_k-\varepsilon<x_i\le x_k}p_i=p_k.
-% \]
-% Also,
-% \[
-% \mu_F((x_k-\varepsilon,x_k))=0,
-% \]
-% since this interval contains no support point. Therefore
-% \[
-% p_k=\mu_F((x_k-\varepsilon,x_k])=\mu_F(\{x_k\}),
-% \]
-% so $\mu_F(\{x_k\})=p_k$.
+\item Define a probability measure $\mu$ on $(\mathbb{R},\mathcal{B}(\mathbb{R}))$ by
+\(\mu := \sum_{k=1}^n p_k\delta_{x_k}\).
+Then for every Borel set $A \subseteq \mathbb{R}$,
+\(\mu(A)=\sum_{x_k\in A} p_k\).
+Moreover, for every $a \le b$,
+\(\mu((a,b]) = \sum_{k: a < x_k \le b} p_k\).
+By part (b),
+\(\mu((a,b]) = \mu_F((a,b])\)
+for all $a \le b$.
+Since both $\mu$ and $\mu_F$ are finite Borel measures on $\mathbb{R}$ and the family
+\(\mathcal{H} := \{(a,b] : a,b \in \mathbb{R},\ a \le b\}\)
+generates $\mathcal{B}(\mathbb{R})$, uniqueness in the Lebesgue--Stieltjes construction implies that $\mu=\mu_F$. Therefore, for every $A \in \mathcal{B}(\mathbb{R})$,
+\(\mu_F(A)=\mu(A)=\sum_{x_k\in A} p_k = \sum_{k=1}^n p_k\chi_A(x_k)\).
 
-% \item Let $A\in\mathcal B(\R)$. Since $\mu_F$ is concentrated on $\{x_1,\dots,x_n\}$,
-% \[
-% \mu_F(A)=\mu_F\bigl(A\cap\{x_1,\dots,x_n\}\bigr)
-% =\sum_{x_k\in A}\mu_F(\{x_k\})
-% =\sum_{x_k\in A}p_k
-% =\sum_{k=1}^n p_k\chi_A(x_k).
-% \]
-
-% \item If
-% \[
-% \mu=\sum_{k=1}^n p_k\delta_{x_k},
-% \]
-% define
-% \[
-% F(x)=\sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x).
-% \]
-% By (a), $F$ is increasing, right continuous, and has limits $0$ and $1$ at $\pm\infty$, so it defines a Lebesgue--Stieltjes measure $\mu_F$. By (d),
-% \[
-% \mu_F(A)=\sum_{k=1}^n p_k\chi_A(x_k)=\mu(A)
-% \qquad\text{for all }A\in\mathcal B(\R).
-% \]
-% Hence $\mu=\mu_F$.
-% \end{enumerate}
-% \end{solution}
-
+\item Let $\nu$ be a finitely supported probability measure on $\mathbb{R}$. Then there exist real numbers $x_1 < \dots < x_n$ and numbers $p_1,\dots,p_n \ge 0$ with $\sum_{k=1}^n p_k = 1$ such that
+\(\nu = \sum_{k=1}^n p_k\delta_{x_k}\).
+Define
+\(F(x) := \sum_{k=1}^n p_k\chi_{[x_k,\infty)}(x)\).
+By part (d), the Lebesgue--Stieltjes measure $\mu_F$ associated with $F$ satisfies
+\(\mu_F(A)=\sum_{x_k\in A} p_k = \nu(A)\)
+for all $A \in \mathcal{B}(\mathbb{R})$.
+Hence $\nu = \mu_F$.
+Thus every finitely supported probability measure on $(\mathbb{R},\mathcal{B}(\mathbb{R}))$ is a Lebesgue--Stieltjes measure.
+\qedhere
+\end{enumerate}
+\end{solution}
 
 
 
@@ -4297,7 +4466,6 @@ If the pointwise limit of $f_i$ exists, then the limit inferior and limit superi
 
 
 
-
 \begin{theorem} % assignment 6, exercise 2
 Let $(\Omega, \mathcal{F})$ be a measurable space and let $f: \Omega \rightarrow \overline{\mathbb{R}}$ be measurable. 
 For $n \in \mathbb{N}$, define the truncation
@@ -4337,22 +4505,127 @@ Describe the behavior of $f_n(\omega)$ when $f(\omega)=\infty$ and when $f(\omeg
 \qedhere
 \end{enumerate}
 \end{theorem}
+% \begin{proof}
+% \begin{enumerate}[label=(\alph*)]
+% \item
+% Let $a,b \in \R$ with $a < b$.
+% We have
+% \[
+% f_n^{-1}([a,b])
+% =
+% \begin{cases}
+% \varnothing & \text{if }  n < a \text{ or } b < -n  \\
+% \Omega & \text{if } a \leq -n \text{ and }  n \leq b\\
+% f^{-1}([-\infty, b]) & \text{if } a \leq -n \text{ and } b < n \\
+% f^{-1}([a, b]) & \text{if } -n < a \text{ and } b < n \\
+% f^{-1}([a, +\infty]) & \text{if } -n < a \text{ and }  n \leq b \\
+% \end{cases}
+% \]
+% \end{enumerate}
+% \end{proof}
+
 \begin{proof}
 \begin{enumerate}[label=(\alph*)]
 \item
-Let $a,b \in \mathbb{R}$ with $a < b$.
-We have
+% We show that $f_n : \Omega \to \R$ is measurable by checking the preimages of the generator
+We employ \autoref{thm:function-measurable-iff-generator} to check the preimages of the generator
+\[
+\mathcal{A}
+=
+\{[a,b] : a,b \in \R,\ a \le b\}
+\]
+of $\mathcal{B}(\R)$.
+Let $a,b \in \R$ with $a \le b$.
+Since $f_n(\omega) \in [-n,n]$ for every $\omega \in \Omega$,
+we have
 \[
 f_n^{-1}([a,b])
 =
 \begin{cases}
-\varnothing & \text{if }  n < a \text{ or } b < -n  \\
-\Omega & \text{if } a \leq -n \text{ and }  n \leq b\\
-f^{-1}([-\infty, b]) & \text{if } a \leq -n \text{ and } b < n \\
-f^{-1}([a, b]) & \text{if } -n < a \text{ and } b < n \\
-f^{-1}([a, +\infty]) & \text{if } -n < a \text{ and }  n \leq b \\
+\varnothing & \text{if } b < -n \text{ or } a > n
+\\
+\Omega & \text{if } a \le -n \text{ and } b \ge n
+\\
+f^{-1}([ -\infty, b]) & \text{if } a \le -n \le b < n
+\\
+f^{-1}([a,b]) & \text{if } -n < a \le b < n
+\\
+f^{-1}([a,\infty]) & \text{if } -n < a \le n \le b
 \end{cases}
 \]
+% Indeed:
+% \begin{itemize}
+% \item if $b < -n$ or $a > n$, then $[a,b] \cap [-n,n] = \varnothing$, so the preimage is empty;
+% \item if $a \le -n$ and $b \ge n$, then $[-n,n] \subseteq [a,b]$, so the preimage is $\Omega$;
+% \item if $a \le -n$ and $-n \le b < n$, then
+% \[
+% f_n(\omega) \in [a,b]
+% \iff
+% f_n(\omega) \le b
+% \iff
+% f(\omega) \le b,
+% \]
+% so $f_n^{-1}([a,b]) = f^{-1}([ -\infty, b])$;
+% \item if $-n < a \le b < n$, then
+% \[
+% f_n(\omega) \in [a,b]
+% \iff
+% a \le f(\omega) \le b,
+% \]
+% so $f_n^{-1}([a,b]) = f^{-1}([a,b])$;
+% \item if $-n < a \le n$ and $b \ge n$, then
+% \[
+% f_n(\omega) \in [a,b]
+% \iff
+% f_n(\omega) \ge a
+% \iff
+% f(\omega) \ge a,
+% \]
+% so $f_n^{-1}([a,b]) = f^{-1}([a,\infty])$.
+% \end{itemize}
+In every case, $f_n^{-1}([a,b]) \in \mathcal{F}$ because $f$ is $(\mathcal{F}, \mathcal{B}(\overline{\R}))$-measurable.
+Hence $f_n$ is measurable.
+
+\item
+By definition of $f_n$, we always have
+\(
+-n \le f_n(\omega) \le n
+\).
+Therefore
+\(
+|f_n(\omega)| \le n
+\)
+for all $\omega \in \Omega$.
+
+\item
+Assume that $f(\omega) \in \R$.
+Choose $N \in \N$ with $N \ge |f(\omega)|$, e.g. $N = \lceil |f(\omega)| \rceil$.
+Then for every $n \ge N$ we have
+\[
+-n \le f(\omega) \le n
+\]
+so by the definition of the truncation,
+\(
+f_n(\omega) = f(\omega)
+\)
+for every $n \ge N$.
+Hence $f_n(\omega) \to f(\omega)$ as $n \to \infty$.
+
+\item
+If $f(\omega) = \infty$, then $f(\omega) > n$ $\forall n \in \N$, hence
+\(
+f_n(\omega) = n
+\)
+$\forall n$.
+Thus $f_n(\omega) \to \infty$.
+
+If $f(\omega) = -\infty$, then $f(\omega) < -n$ $\forall n \in \N$, hence
+\(
+f_n(\omega) = -n
+\)
+$\forall n$.
+Thus $f_n(\omega) \to -\infty$.
+\qedhere
 \end{enumerate}
 \end{proof}
 
@@ -4442,6 +4715,59 @@ for all $A_1 \in \mathcal{F}_1$ and $A_2 \in \mathcal{F}_2$.
 \begin{theorem}
 Two random variables $X$ and $Y$ are independent if and only if the $\sigma$-algebras $\sigma(X)$ and $\sigma(Y)$ are independent.
 \end{theorem}
+
+The independence of random variables is already guaranteed, if they are independent on a semiring (\autoref{def:semiring}) generating the Borel $\sigma$-algebra (\autoref{def:borel-sigma-field}).
+\begin{theorem}
+Let $(\Omega, \mathcal{F}, \Prob)$ be a probability space and let $X, Y : \Omega \to \R$ be random variables.
+Suppose that the Borel $\sigma$-algebra $\mathcal{B}(\R)$ is generated by a semiring $\mathcal{S} \subseteq 2^{\R}$, i.e. $\sigma(\mathcal{S}) = \mathcal{B}(\R)$.
+If 
+\[
+\Prob(X \in A, Y \in B) = \Prob(X \in A) \Prob(Y \in B)
+\]
+for all $A, B \in \mathcal{S}$, then $X$ and $Y$ are independent.
+\end{theorem}
+\begin{proof}
+We start by showing that the product $\mathcal{S} \times \mathcal{S} \coloneq \{S_1 \times S_2 : S_1, S_2 \in \mathcal{S}\}$ is again a semiring (\autoref{def:semiring}):
+\begin{itemize}
+\item 
+\end{itemize}
+
+Moreover, we have $\sigma(\mathcal{S} \times \mathcal{S}) = \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S}) = \mathcal{B}(\R) \otimes \mathcal{B}(\R) = \mathcal{B}(\R^2)$, where $\otimes$ denotes the product $\sigma$-algebra (see \autoref{ex:product-sigma-algebra}):
+
+We define the set functions $\mu, \mu_{\text{prod}} : \mathcal{S} \times \mathcal{S} \to [0,1]$ by
+\[
+\mu(A \times B) \coloneq \Prob(X \in A, Y \in B)
+\qquad
+\mu_{\text{prod}}(A \times B) \coloneq \Prob_{X}(A) \Prob_{Y}(B)
+\]
+where the \hl{image measure} $\Prob_{Z}$ is defined as
+\[
+\Prob_{Z}(C) \coloneq (\Prob \circ Z^{-1})(C) = \Prob(Z^{-1}(C)) = \Prob(Z \in C)
+\]
+for any random variable $Z : \Omega \to \R$ and any $C \in \mathcal{B}(\R)$.
+
+By assumption we have $\mu(A \times B) = \mu_{\text{prod}}(A \times B)$ for all $A, B \in \mathcal{S}$.
+Both set functions $\mu$ and $\mu_{\text{prod}}$ satisfy the assumptions of the Carathéodory extension \autoref{thm:caratheodory-extension}:
+\begin{itemize}
+  \item 
+\end{itemize}
+
+Therefore, the extensions $\tilde{\mu}, \tilde{\mu}_{\text{prod}}$ of ${\mu}, {\mu}_{\text{prod}}$ to $\sigma(\mathcal{S} \times \mathcal{S})$ are unique.
+
+
+We \rlap{conclude}
+\[
+\Prob(X \in A, Y \in B)
+=
+\tilde{\mu}(A \times B) 
+=
+\tilde{\mu}_{\text{prod}}(A \times B)
+=
+\Prob_{X}(A) \Prob_{Y}(B) 
+\]
+for all $A, B \in \mathcal{B}(\R)$, which implies that $X$ and $Y$ are independent.
+\end{proof}
+
 
 
 
