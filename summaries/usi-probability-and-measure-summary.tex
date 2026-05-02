@@ -204,6 +204,10 @@
 \definecolor{highlightpurple}{rgb}{0.6,0,0.6}
 \definecolor{fancycol}{HTML}{\eat #ff00ae}
 \renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
+\definecolor{interludecolor}{HTML}{\eat #7f7f7f}
+\definecolor{overvieworange}{HTML}{\eat #f17e00}
+\definecolor{exercisecolor}{HTML}{\eat #01a765}
+
 
 % ===================== theorem environments =====================
 \usepackage{thmtools}
@@ -243,11 +247,6 @@ line width=0.16pt}}%
 \declaretheorem[style=definitionstyle,name=Notation,sibling=definition]{notation}
 \declaretheorem[style=definitionstyle,name=Notation,numbered=no]{notation*}
 
-\declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
-\declaretheorem[style=exercisestyle,name=Exercise,numberwithin=section]{exercise}
-\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
-\declaretheorem[style=solutionstyle,name=Solution,numbered=no]{solution}
-
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\square},postheadspace=1em]{proofstyle}
 \let\proof\relax \let\endproof\relax
 \declaretheorem[style=proofstyle,name=Proof,numbered=no]{proof}
@@ -262,6 +261,8 @@ line width=0.16pt}}%
 
 \declaretheoremstyle[headfont=\bfseries\color{funblue},bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{funblue}\blacktriangleleft},postheadspace=1em]{examplestyle}
 \declaretheorem[style=examplestyle,name=Example,sibling=remark]{example}
+\declaretheoremstyle[headfont=\bfseries\color{overvieworange}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{overvieworange}\blacktriangleleft}, postheadspace=1em]{overviewstyle}
+\declaretheorem[style=overviewstyle, name=Overview, sibling=remark]{overview}
 
 \declaretheoremstyle[headfont=\color{alizarincrimsonred}\bfseries,bodyfont=\normalfont\normalsize,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{alizarincrimsonred}\blacktriangleleft},postheadspace=1em]{cautionstyle}
 \declaretheorem[style=cautionstyle,name=Caution,sibling=remark]{caution}
@@ -271,6 +272,18 @@ line width=0.16pt}}%
 
 \declaretheoremstyle[headfont=\bfseries\color{amethyst},bodyfont=\normalfont,spaceabove=6pt,spacebelow=6pt,qed=\ensuremath{\color{amethyst}\blacktriangleleft},postheadspace=1em]{digressionstyle}
 \declaretheorem[style=digressionstyle,name=Digression,sibling=remark]{digression}
+\declaretheoremstyle[headfont=\bfseries\color{interludecolor}, bodyfont=\normalfont, spaceabove=6pt, spacebelow=6pt, qed=\ensuremath{\color{interludecolor}\blacktriangleleft}, postheadspace=1em]{interludestyle}
+\declaretheorem[style=interludestyle, name=Interlude, sibling=remark]{interlude}
+
+
+
+% \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ding{45},postheadspace=1em]{exercisestyle}
+\declaretheoremstyle[headfont=\bfseries\color{exercisecolor},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\color{exercisecolor}\ding{45},postheadspace=1em]{exercisestyle}
+% \declaretheorem[style=exercisestyle,name=Exercise,numberwithin=section]{exercise}
+\declaretheorem[style=exercisestyle,name=Exercise,sibling=remark]{exercise}
+\declaretheoremstyle[headfont=\bfseries\color{red},bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\color{red}\blacktriangleleft},postheadspace=1em]{solutionstyle}
+\declaretheorem[style=solutionstyle,name=Solution,numbered=no]{solution}
+
 
 % ===================== meta environments =====================
 \declaretheoremstyle[headfont=\bfseries,bodyfont=\normalfont,spaceabove=\thmspace,spacebelow=\thmspace,qed=\ensuremath{\vartriangleleft},postheadspace=1em]{metastyle}
@@ -340,9 +353,11 @@ line width=0.16pt}}%
 
 % \newcommand{\ind}{1}
 % \newcommand{\ind}{\boldsymbol{1}}
+\newcommand{\ind}{\mathbf{1}}
+% \newcommand{\ind}{\mathbf{I}}
 % \newcommand{\ind}{I}
 % \newcommand{\ind}{\mathbb{I}}
-\newcommand{\ind}{\chi}
+% \newcommand{\ind}{\chi}
 
 
 \newcommand{\R}{\mathbb{R}}
@@ -1332,11 +1347,11 @@ The \emph{product $\sigma$-algebra} is defined as
 \]
 
 
-Note that
+Note that the family
 \[
 \{A_1 \times A_2 : A_1 \in \mathcal{F}_1, A_2 \in \mathcal{F}_2\}
 \]
-is no $\sigma$-algebra in general.
+is not a $\sigma$-algebra in general.
 Intuitively, it corresponds to the fact that while rectangles are closed under intersections the same is not true for unions.
 The union of two rectangles in general is not a rectangle.
 \[
@@ -1358,6 +1373,7 @@ The union of two rectangles in general is not a rectangle.
 
 Hence the family is not even an algebra, and therefore certainly not a $\sigma$-algebra.
 If it were closed under complements, closure under unions would follow by De Morgan's laws, leading to a contradiction.
+It is, however, a semiring (\autoref{def:semiring}) of subsets of $\Omega_1 \times \Omega_2$.
 \end{example}
 \begin{example} % Assignment 1, Problem 3
 Let $\Omega_1 = \Omega_2 = \mathbb{N}$ and $\mathcal{F}_1 = \mathcal{F}_2 = 2^{\mathbb{N}}$. Consider
@@ -1482,10 +1498,11 @@ Then, the set function $\Prob: 2^\Omega \to [0,1]$ is a probability measure and 
 Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
 Let $A,B \in \mathcal{F}$ with $A \subset B$.
 Then,
-\[
+\begin{equation}
+\label{eq:subset-measure}
   \mu(A) \le \mu(B)
   \qedhere
-\]
+\end{equation}
 \end{theorem}
 
 \begin{proof}
@@ -2914,6 +2931,17 @@ A \setminus B = \bigcup_{k=1}^n C_k
 \end{enumerate}
 \end{definition}
 
+% \begin{remark}%[Number of semirings on a finite set]
+% If $\Omega$ is finite with $|\Omega|=n$, then the number of semirings on $\Omega$ is finite.
+% It can be described as
+% \[
+% \sum_{m=0}^{n} \binom{n}{m} \sum_{k=0}^{m} S(m,k) a_k,
+% \]
+% where $S(m,k)$ denotes the Stirling number of the second kind and $a_k$ denotes the number of intersection-stable families of subsets of $\{1,\dots,k\}$ which contain
+% $\varnothing, \{1\},\dots,\{k\}$.
+% Here $m$ is the size of the part of $\Omega$ that occurs in the semiring, and $k$ is the number of blocks in a partition of that part.
+% % For example, if $|\Omega|=4$, this number is $1316$.
+% \end{remark}
 
 % \begin{table}[h]
 % \caption{Overview over set systems}
@@ -3442,6 +3470,29 @@ Then there is a unique $\sigma$-finite measure % (\autoref{def:measure})
 such that $\tilde{\mu}(E) = \mu(E)$ for all $E \in \mathcal{S}$.
 \end{theorem}
 
+\begin{example}
+\label{ex:product-measure}
+Let $(\Omega_i, \mathcal{F}_i, \mu_i)$, $i = 1, \ldots, n$ be measure spaces (\autoref{def:measure}).
+As in \autoref{ex:product-sigma-algebra}, we set
+\[
+\begin{aligned}
+\Omega &= \bigtimes_{i=1}^n \Omega_i \\
+\mathcal{F} &= \bigotimes_{i=1}^n \mathcal{F}_i \coloneq \sigma\left(\left\{\bigtimes_{i=1}^n A_i : A_i \in \mathcal{F}_i\right\}\right) \\
+\end{aligned}
+\]
+If all measures $\mu_i$ are $\sigma$-finite \ref{def:set-function-sigma-finite}, then there exists a unique measure
+\(
+\mu = \bigotimes_{i=1}^n \mu_i %: \mathcal{F} \to [0,\infty]
+\)
+called the \emph{product measure} such that
+\[
+\begin{verticalhack}
+\mu\left(\bigtimes_{i=1}^n A_i\right) = \prod_{i=1}^n \mu_i(A_i)
+\end{verticalhack}
+\qedhere
+\]
+\end{example}
+
 Using \autoref{thm:caratheodory-extension}, we are now able to prove the following result:
 \begin{theorem}\label{thm:lebesgue-borel-measure}
 There exists a uniquely determined measure $\lambda^d$ on $(\R^d, \mathcal{B}(\R^d))$ with the property that
@@ -3484,6 +3535,7 @@ In $\R^d$, the following definitions of compact sets are equivalent:
 \end{itemize}
 This is the Heine--Borel theorem.
 \end{remark}
+\pagebreak[3]
 
 
 \begin{proof}[of \autoref{thm:lebesgue-borel-measure}]
@@ -3726,12 +3778,12 @@ $\mathcal{S}$ is a semiring (see \autoref{ex:half-open-rectangles}) with $\sigma
 
 Consider a monotonically increasing and right-continuous function $F : \R \to \R$.
 Then the set function
-\[
+\begin{equation}\label{eq:lebesgue-stieltjes-set-function}
 \begin{aligned}
 \tilde{\mu}_F : \mathcal{S} &\longrightarrow [0,\infty) \\
 (a,b] &\longmapsto \tilde{\mu}_F((a,b]) = F(b) - F(a)
 \end{aligned}
-\]
+\end{equation}
 is 
 additive, 
 $\sigma$-subadditive,
@@ -3785,25 +3837,33 @@ The map $\Prob \longmapsto F_{\Prob}$ is a bijection from the set of probability
 \begin{exercise}[Lebesgue-Stieltjes measure for step functions]\label{exer:lebesgue-stieltjes-step-function} % assignment 5, exercise 1
 Let $x_1 < \dots < x_n$ be real numbers and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_k = 1$.
 Define 
-\[
+\begin{equation}\label{eq:lebesgue-stieltjes-step-function}
 F(x) \coloneq \sum_{k=1}^n p_k \ind_{[x_k,\infty)}(x)
-\]
+\end{equation}
 for $x \in \R$.
 Let $\mu_F$ be the Lebesgue-Stieltjes measure (\autoref{ex:lebesgue-stieltjes-measure}) associated with $F$.
-\begin{enumerate}[label=(\alph*)]
-\item Show that $F$
-\begin{enumerate}[label=(\roman*)]
-\item is monotonically increasing
-\item is right continuous
-\item satisfies $\lim_{x \to -\infty} F(x) = 0$ and $\lim_{x \to \infty} F(x) = 1$
+\begin{enumerate}[label={\protect\hyperref[solitem:lebesgue-stieltjes-step-function:\arabic*]{(\alph*)}}]
+\item \label{exitem:lebesgue-stieltjes-step-function:1}
+Show that $F$
+\begin{enumerate}[label={\protect\hyperref[solitem:lebesgue-stieltjes-step-function:\arabic{enumi}.\arabic*]{(\roman*)}}]
+\item \label{exitem:lebesgue-stieltjes-step-function:1.1}
+is monotonically increasing
+\item \label{exitem:lebesgue-stieltjes-step-function:1.2}
+is right continuous
+\item \label{exitem:lebesgue-stieltjes-step-function:1.3}
+satisfies $\lim_{x \to -\infty} F(x) = 0$ and $\lim_{x \to \infty} F(x) = 1$
 \end{enumerate}
-\item Compute $\mu_F((a, b])$ explicitly in terms of the points $x_k$ and the weights $p_k$.
-\item Show that $\mu_F(\{x_k\}) = p_k$ for $k = 1, \ldots, n$.
-\item Show that if $A \in \mathcal{B}(\R)$, then 
+\item \label{exitem:lebesgue-stieltjes-step-function:2}
+Compute $\mu_F((a, b])$ explicitly in terms of the points $x_k$ and the weights $p_k$.
+\item \label{exitem:lebesgue-stieltjes-step-function:3}
+Show that $\mu_F(\{x_k\}) = p_k$ for $k = 1, \ldots, n$.
+\item \label{exitem:lebesgue-stieltjes-step-function:4}
+Show that if $A \in \mathcal{B}(\R)$, then 
 \[
 \mu_F(A) = \sum_{k=1}^n p_k \ind_A(x_k)
 \]
-\item Conclude that every finitely supported probability measure on $\R$, that is, every probability measure of the form
+\item \label{exitem:lebesgue-stieltjes-step-function:5}
+Conclude that every finitely supported probability measure on $\R$, that is, every probability measure of the form
 \[
 \mu = \sum_{k=1}^n p_k \delta_{x_k}
 \]
@@ -3811,13 +3871,14 @@ for some $x_1 < \dots < x_n$ and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_
 \qedhere
 \end{enumerate}
 \end{exercise}
+\pagebreak[3]
 
 \begin{solution}
 \leavevmode
-\begin{enumerate}[label=(\alph*)]
-\item
-\begin{enumerate}[label=(\roman*)]
-\item 
+\begin{enumerate}[label={\protect\hyperref[exitem:lebesgue-stieltjes-step-function:\arabic*]{(\alph*)}}]
+\item \label{solitem:lebesgue-stieltjes-step-function:1}
+\begin{enumerate}[label={\protect\hyperref[exitem:lebesgue-stieltjes-step-function:\arabic{enumi}.\arabic*]{(\roman*)}}]
+\item \label{solitem:lebesgue-stieltjes-step-function:1.1}
 Let $x \le y$. 
 Then 
 \[
@@ -3827,17 +3888,29 @@ for every $k \in \{1,\dots,n\}$.
 Since $p_k \ge 0$ for all $k$, summing over $k$ yields $F(x) \le F(y)$. 
 Hence $F$ is monotonically increasing.
 
-\item Each function $\ind_{[x_k,\infty)}$ is right continuous. 
+\item \label{solitem:lebesgue-stieltjes-step-function:1.2}
+Each function $\ind_{[x_k,\infty)}$ is right continuous. 
 Indeed, if $y_m \searrow x$, then:
-if $x < x_k$, eventually $y_m < x_k$, so $\ind_{[x_k,\infty)}(y_m)=0$;
-if $x \ge x_k$, then $y_m \ge x_k$ for all $m$, so $\ind_{[x_k,\infty)}(y_m)=1$.
+if $x < x_k$, eventually $y_m < x_k$, so $
+\ind_{[x_k,\infty)}(y_m)
+=
+0
+=
+\ind_{[x_k,\infty)}(x)
+$;
+if $x \ge x_k$, then $y_m \ge x_k$ for all $m$, so $
+\ind_{[x_k,\infty)}(y_m)
+=
+\ind_{[x_k,\infty)}(x)
+=
+1$.
 \rlap{Thus}
 \[
 \lim_{m\to\infty} \ind_{[x_k,\infty)}(y_m)=\ind_{[x_k,\infty)}(x)
 \]
 A finite sum of right continuous functions is right continuous, so $F$ is right continuous.
 
-\item 
+\item \label{solitem:lebesgue-stieltjes-step-function:1.3}
 If $x \to -\infty$, then for every $k$ we eventually have $x < x_k$, hence
 \(\ind_{[x_k,\infty)}(x)=0\).
 Therefore $F(x)=0$ eventually, and so $\lim_{x\to -\infty} F(x)=0$.
@@ -3846,32 +3919,73 @@ If $x \to \infty$, then for every $k$ we eventually have $x \ge x_k$, hence
 Therefore $F(x)=\sum_{k=1}^n p_k=1$ eventually, and so $\lim_{x\to \infty} F(x)=1$.
 \end{enumerate}
 
-\item 
+\item \label{solitem:lebesgue-stieltjes-step-function:2}
+\label{sol:lebesgue-stieltjes-step-function:explicit-mu-interval}
 % By the defining property of the Lebesgue--Stieltjes measure associated with $F$,
 % \(\mu_F((a,b]) = F(b)-F(a)\).
 Using the definition of $F$, we obtain
 \[
-\mu_F((a,b]) = \sum_{k=1}^n p_k\bigl(\ind_{[x_k,\infty)}(b)-\ind_{[x_k,\infty)}(a)\bigr).
-\]
-For fixed $k$,
-\[
-\ind_{[x_k,\infty)}(b)-\ind_{[x_k,\infty)}(a)
+% \begin{equation}
+% \label{eq:lebesgue-stieltjes-step-function:explicit-mu-interval}
+\begin{aligned}
+\mu_F((a,b]) 
+&\overset{\text{\eqref{eq:lebesgue-stieltjes-set-function}}}{=} 
+F(b)-F(a)
+\overset{\text{\eqref{eq:lebesgue-stieltjes-step-function}}}{=}
+\sum_{k=1}^n p_k \ind_{[x_k,\infty)}(b) - \sum_{k=1}^n p_k \ind_{[x_k,\infty)}(a) \\
+&=
+\sum_{k=1}^n p_k\bigl(\ind_{[x_k,\infty)}(b)-\ind_{[x_k,\infty)}(a)\bigr)
 =
-\begin{cases}
-1 & \text{if } a < x_k \le b\\
-0 & \text{otherwise}
-\end{cases}
+\sum_{k=1}^n p_k \ind_{(a,b]}(x_k)
+=
+\sum_{k: a < x_k \le b} p_k
+\end{aligned}
+% \end{equation}
 \]
-Hence
-\(\mu_F((a,b]) = \sum_{k: a < x_k \le b} p_k\).
+% For fixed $k$,
+% \[
+% \ind_{[x_k,\infty)}(b)-\ind_{[x_k,\infty)}(a)
+% =
+% \begin{cases}
+% 1 & \text{if } a < x_k \le b\\
+% 0 & \text{otherwise}
+% \end{cases}
+% \]
+% Hence
+% \(\mu_F((a,b]) = \sum_{k: a < x_k \le b} p_k\).
 
-\item Fix $k \in \{1,\dots,n\}$. Choose $\varepsilon>0$ such that
-\((x_k-\varepsilon,x_k] \cap \{x_1,\dots,x_n\} = \{x_k\}\).
-Then by part (b),
-\(\mu_F((x_k-\varepsilon,x_k]) = \sum_{j: x_k-\varepsilon < x_j \le x_k} p_j = p_k\).
-Moreover, $F$ is constant on $(x_k-\varepsilon,x_k)$, since this interval contains no point $x_j$. Hence for every $u,v$ with $x_k-\varepsilon < u \le v < x_k$ we have
-\(\mu_F((u,v]) = F(v)-F(u)=0\).
-Therefore \(\mu_F((x_k-\varepsilon,x_k))=0\).
+\item \label{solitem:lebesgue-stieltjes-step-function:3}
+Fix $k \in \{1,\dots,n\}$. 
+If we choose $\varepsilon>0$ such that
+\[
+(x_k-\varepsilon,x_k] \cap \{x_1,\dots,x_n\} = \{x_k\}
+\]
+then by part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-interval},
+\[
+\mu_F((x_k-\varepsilon,x_k]) \overset{\text{\ref{sol:lebesgue-stieltjes-step-function:explicit-mu-interval}}}= \sum_{j: x_k-\varepsilon < x_j \le x_k} p_j = p_k
+\]
+Moreover, $F$ is constant on 
+% $(x_k-\varepsilon,x_k)$, 
+\[
+(x_k-\varepsilon,x_k) = \bigcup_{\frac{1}{\varepsilon} < m \in \N} \left(x_k-\varepsilon, x_k - \frac{1}{m}\right]
+% (x_k-\varepsilon,x_k) = \bigcup_{\substack{m\in\mathbb{N}\\ m>1/\varepsilon}} \left(x_k-\varepsilon, x_k - \frac{1}{m}\right]
+\]
+since this interval contains no point $x_j$. 
+% Hence for every $u,v$ with $x_k-\varepsilon < u \le v < x_k$ we have
+% \(\mu_F((u,v]) = F(v)-F(u)=0\).
+% Therefore \(\mu_F((x_k-\varepsilon,x_k))=0\). % why?
+Hence
+\[
+\mu_F((x_k-\varepsilon,x_k)) 
+% =
+% \mu_F\left(\bigcup_{\frac{1}{\varepsilon} < m \in \N} \left(x_k-\varepsilon, x_k - \frac{1}{m}\right]\right)
+\overset{\text{\eqref{eq:continuity-increasing}}}{=}
+\lim_{m\to\infty} \mu_F\left(\left(x_k-\varepsilon, x_k - \frac{1}{m}\right]\right)
+% =
+% \lim_{m\to\infty} \left(F(x_k - \frac{1}{m}) - F(x_k-\varepsilon)\right)
+=
+0
+\]
 Since
 \((x_k-\varepsilon,x_k] = (x_k-\varepsilon,x_k) \sqcup \{x_k\}\),
 additivity yields
@@ -3880,33 +3994,52 @@ additivity yields
 =
 \mu_F((x_k-\varepsilon,x_k)) + \mu_F(\{x_k\})
 =
-\mu_F(\{x_k\}).
+\mu_F(\{x_k\})
 \]
 Consequently, $\mu_F(\{x_k\})=p_k$.
 
-\item Define a probability measure $\mu$ on $(\mathbb{R},\mathcal{B}(\mathbb{R}))$ by
-\(\mu := \sum_{k=1}^n p_k\delta_{x_k}\).
-Then for every Borel set $A \subseteq \mathbb{R}$,
-\(\mu(A)=\sum_{x_k\in A} p_k\).
+\item \label{solitem:lebesgue-stieltjes-step-function:4}
+\label{sol:lebesgue-stieltjes-step-function:explicit-mu-set}
+Define a probability measure $\mu$ on $(\R,\mathcal{B}(\R))$ by
+\[
+\mu := \sum_{k=1}^n p_k\delta_{x_k}
+\]
+where 
+% $\delta_{x_k}$ is the Dirac measure at $x_k$, that is, 
+$\delta_{x_k}(A) = \ind_A(x_k)$ for every 
+% Borel set
+ $A \allowbreak \in \allowbreak \mathcal{B}(\R)$.
+Then for every $A \in \mathcal{B}(\R)$,
+\(
+\mu(A)=\sum_{x_k\in A} p_k
+\).
 Moreover, for every $a \le b$,
 \(\mu((a,b]) = \sum_{k: a < x_k \le b} p_k\).
-By part (b),
+By part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-interval},
 \(\mu((a,b]) = \mu_F((a,b])\)
 for all $a \le b$.
-Since both $\mu$ and $\mu_F$ are finite Borel measures on $\mathbb{R}$ and the family
-\(\mathcal{H} := \{(a,b] : a,b \in \mathbb{R},\ a \le b\}\)
-generates $\mathcal{B}(\mathbb{R})$, uniqueness in the Lebesgue--Stieltjes construction implies that $\mu=\mu_F$. Therefore, for every $A \in \mathcal{B}(\mathbb{R})$,
-\(\mu_F(A)=\mu(A)=\sum_{x_k\in A} p_k = \sum_{k=1}^n p_k\ind_A(x_k)\).
+Since both $\mu$ and $\mu_F$ are finite Borel measures on $\R$ and the family
+\(\mathcal{S} := \{(a,b] : a,b \in \R,\ a \le b\}\)
+generates $\mathcal{B}(\R)$, 
+% uniqueness in the Lebesgue--Stieltjes construction 
+\autoref{thm:caratheodory-extension}
+implies that $\mu=\mu_F$. 
+Therefore, 
+\[
+\mu_F(A)=\mu(A)=\sum_{x_k\in A} p_k = \sum_{k=1}^n p_k\ind_A(x_k)
+\]
+for every $A \in \mathcal{B}(\R)$.
 
-\item Let $\nu$ be a finitely supported probability measure on $\mathbb{R}$. Then there exist real numbers $x_1 < \dots < x_n$ and numbers $p_1,\dots,p_n \ge 0$ with $\sum_{k=1}^n p_k = 1$ such that
+\item \label{solitem:lebesgue-stieltjes-step-function:5}
+Let $\nu$ be a finitely supported probability measure on $\R$. Then there exist real numbers $x_1 < \dots < x_n$ and numbers $p_1,\dots,p_n \ge 0$ with $\sum_{k=1}^n p_k = 1$ such that
 \(\nu = \sum_{k=1}^n p_k\delta_{x_k}\).
 Define
 \(F(x) := \sum_{k=1}^n p_k\ind_{[x_k,\infty)}(x)\).
-By part (d), the Lebesgue--Stieltjes measure $\mu_F$ associated with $F$ satisfies
+By part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-set}, the Lebesgue--Stieltjes measure $\mu_F$ associated with $F$ satisfies
 \(\mu_F(A)=\sum_{x_k\in A} p_k = \nu(A)\)
-for all $A \in \mathcal{B}(\mathbb{R})$.
+for all $A \in \mathcal{B}(\R)$.
 Hence $\nu = \mu_F$.
-Thus every finitely supported probability measure on $(\mathbb{R},\mathcal{B}(\mathbb{R}))$ is a Lebesgue--Stieltjes measure.
+Thus every finitely supported probability measure on $(\R,\mathcal{B}(\R))$ is a Lebesgue--Stieltjes measure.
 \qedhere
 \end{enumerate}
 \end{solution}
@@ -4067,6 +4200,7 @@ Thus $\bigcup_{i=1}^{\infty} G_i \in \mathcal{G}$.
 \cmark
 \end{enumerate}
 Hence $\mathcal{G}$ is a $\sigma$-algebra.
+% \pagebreak[3]
 
 Since $A = A \cup \emptyset \in \mathcal{G}$ for every $A \in \mathcal{F}$ and $N = \emptyset \cup N \in \mathcal{G}$ for every $N \in \mathcal{N}_\mu$, we have
 \[
@@ -4076,6 +4210,8 @@ As $\mathcal{G}$ is a $\sigma$-algebra, \autoref{thm:generated-sigma-algebra} yi
 \[
 \sigma(\mathcal{F} \cup \mathcal{N}_\mu) \subseteq \mathcal{G}
 \]
+% \pagebreak[3]
+
 Conversely, if $G \in \mathcal{G}$, then $G = A \cup N$ with $A \in \mathcal{F}$ and $N \in \mathcal{N}_\mu$. Since both $A$ and $N$ belong to $\mathcal{F} \cup \mathcal{N}_\mu$, they belong to $\sigma(\mathcal{F} \cup \mathcal{N}_\mu)$ by \autoref{thm:generated-sigma-algebra}. As this is a $\sigma$-algebra, it is closed under unions, hence $G \in \sigma(\mathcal{F} \cup \mathcal{N}_\mu)$. Therefore
 \[
 \mathcal{G} \subseteq \sigma(\mathcal{F} \cup \mathcal{N}_\mu)
@@ -5165,68 +5301,166 @@ If
 \]
 for all $A, B \in \mathcal{S}$, then $X$ and $Y$ are independent.
 \end{theorem}
-% PATCH 1: Replace third item in semiring itemize with new text
+% \clearpage
 \begin{proof}
 We start by showing that the product $\mathcal{S} \times \mathcal{S} \coloneq \{S_1 \times S_2 : S_1, S_2 \in \mathcal{S}\}$ is again a semiring (\autoref{def:semiring}):
-\vspace{4em}
-% \begin{itemize}
+\begin{itemize}
+\item 
+$\varnothing = \varnothing \times \varnothing \in \mathcal{S} \times \mathcal{S}$. \cmark
+\item 
+If $A_1 \times A_2, B_1 \times B_2 \in \mathcal{S} \times \mathcal{S}$, then
+\[
+(A_1 \times A_2) \cap (B_1 \times B_2)
+\overset{\text{\eqref{eq:intersection-of-product}}}{=}
+(A_1 \cap B_1) \times (A_2 \cap B_2)
+\]
+and since $\mathcal{S}$ is a semiring, $A_1 \cap B_1 \in \mathcal{S}$ and $A_2 \cap B_2 \in \mathcal{S}$.
+Hence $(A_1 \times A_2) \cap (B_1 \times B_2) \allowbreak \in \allowbreak \mathcal{S} \allowbreak \times \allowbreak \mathcal{S}$. \cmark
 % \item 
-% $\varnothing = \varnothing \times \varnothing \in \mathcal{S} \times \mathcal{S}$. \cmark
-% \item 
-% If $A_1 \times B_1, A_2 \times B_2 \in \mathcal{S} \times \mathcal{S}$, then
-% \[
-% (A_1 \times B_1) \cap (A_2 \times B_2)
-% \overset{\text{\eqref{eq:intersection-of-product}}}{=}
-% (A_1 \cap A_2) \times (B_1 \cap B_2)
-% \]
-% and since $\mathcal{S}$ is a semiring, $A_1 \cap A_2 \in \mathcal{S}$ and $B_1 \cap B_2 \in \mathcal{S}$.
-% Hence $(A_1 \times B_1) \cap (A_2 \times B_2) \allowbreak \in \allowbreak \mathcal{S} \allowbreak \times \allowbreak \mathcal{S}$. \cmark
-% \item 
-% Let $A_1 \times B_1, A_2 \times B_2 \in \mathcal{S} \times \mathcal{S}$ with
+% Let $A \times B, C \times D \in \mathcal{S} \times \mathcal{S}$ with
 % \(
-% A_2 \times B_2 \subseteq A_1 \times B_1
+% C \times D \subseteq A \times B
 % \).
-% If $A_2 = \varnothing$ or $B_2 = \varnothing$, then $A_2 \times B_2 = \varnothing$, hence
+% If $C = \varnothing$ or $D = \varnothing$, then $C \times D = \varnothing$, hence
 % \[
-% (A_1 \times B_1) \setminus (A_2 \times B_2) = A_1 \times B_1 \in \mathcal{S} \times \mathcal{S}.
+% (A \times B) \setminus (C \times D) = A \times B \in \mathcal{S} \times \mathcal{S}.
 % \]
-% Otherwise, choose $a_0 \in A_2$ and $b_0 \in B_2$. Then for every $a \in A_2$ we have
+% Otherwise, choose $a_0 \in C$ and $b_0 \in D$. Then for every $a \in C$ we have
 % \(
-% (a,b_0) \in A_2 \times B_2 \subseteq A_1 \times B_1
+% (a,b_0) \in C \times D \subseteq A \times B
 % \),
-% so $a \in A_1$.
-% Hence $A_2 \subseteq A_1$.
-% Similarly, for every $b \in B_2$ we have
+% so $a \in A$.
+% Hence $C \subseteq A$.
+% Similarly, for every $b \in D$ we have
 % \(
-% (a_0,b) \in A_2 \times B_2 \subseteq A_1 \times B_1
+% (a_0,b) \in C \times D \subseteq A \times B
 % \),
-% so $b \in B_1$.
-% Hence $B_2 \subseteq B_1$.
+% so $b \in B$.
+% Hence $D \subseteq B$.
 % Moreover,
 % \[
-% (A_1 \times B_1) \setminus (A_2 \times B_2)
+% (A \times B) \setminus (C \times D)
 % =
-% \bigl((A_1 \setminus A_2) \times B_1\bigr)
+% \bigl((A \setminus C) \times B\bigr)
 % \cup
-% \bigl(A_2 \times (B_1 \setminus B_2)\bigr)
+% \bigl(C \times (B \setminus D)\bigr)
 % \]
 % and the union is disjoint.
-% Since $\mathcal{S}$ is a semiring, there exist pairwise disjoint sets $C_1,\dots,C_m \in \mathcal{S}$ and $D_1,\dots,D_n \in \mathcal{S}$ such that
+% Since $\mathcal{S}$ is a semiring, there exist pairwise disjoint sets $A_1,\dots,A_m \in \mathcal{S}$ and $B_1,\dots,B_n \in \mathcal{S}$ such that
 % \[
-% A_1 \setminus A_2 = \bigsqcup_{i=1}^m C_i
+% A \setminus C = \bigsqcup_{i=1}^m A_i
 % \qquad\text{and}\qquad
-% B_1 \setminus B_2 = \bigsqcup_{j=1}^n D_j.
+% B \setminus D = \bigsqcup_{j=1}^n B_j.
 % \]
 % Therefore,
 % \[
-% (A_1 \times B_1) \setminus (A_2 \times B_2)
+% (A \times B) \setminus (C \times D)
 % =
-% \bigsqcup_{i=1}^m (C_i \times B_1)
+% \bigsqcup_{i=1}^m (A_i \times B)
 % \sqcup
-% \bigsqcup_{j=1}^n (A_2 \times D_j),
+% \bigsqcup_{j=1}^n (C \times B_j),
 % \]
-% which is a finite disjoint union of sets in $\mathcal{S} \times \mathcal{S}$. Thus $\mathcal{S} \times \mathcal{S}$ is a semiring. \cmark
-% \end{itemize}
+% which is a finite disjoint union of sets in $\mathcal{S} \times \mathcal{S}$. \cmark
+\item 
+Let $A \times B, C \times D \in \mathcal{S} \times \mathcal{S}$ with
+\(
+C \times D \subseteq A \times B
+\).
+If $C = \varnothing$ or $D = \varnothing$, then $C \times D = \varnothing$, hence
+\[
+(A \times B) \setminus (C \times D) = A \times B \in \mathcal{S} \times \mathcal{S}.
+\]
+Otherwise, choose $a_0 \in C$ and $b_0 \in D$. Then for every $a \in C$ we have
+\(
+(a,b_0) \in C \times D \subseteq A \times B
+\),
+so $a \in A$.
+Hence $C \subseteq A$.
+Similarly, for every $b \in D$ we have
+\(
+(a_0,b) \in C \times D \subseteq A \times B
+\),
+so $b \in B$.
+Hence $D \subseteq B$.
+
+Since $\mathcal{S}$ is a semiring, there exist pairwise disjoint sets $A_1,\dots,A_m \in \mathcal{S}$ and $B_1,\dots,B_n \in \mathcal{S}$ such that
+\[
+A \setminus C = \bigsqcup_{i=1}^m A_i
+\qquad\text{and}\qquad
+B \setminus D = \bigsqcup_{j=1}^n B_j
+\]
+\[
+\begin{tikzpicture}[scale=0.7, line cap=round, line join=round, font=\footnotesize]
+
+% coordinates
+\def\xMin{0}
+\def\xone{2.0}
+\def\xtwo{4.0}
+\def\xMax{6}
+\def\yMin{0}
+\def\yone{1}
+\def\ytwo{2}
+\def\yMax{3}
+
+% green arms only:
+% % C x (B \ D)
+% \fill[pattern=north east lines, pattern color=green!80!black] (\xMin,\yone) rectangle (\xone,\ytwo);
+% \fill[pattern=north east lines, pattern color=green!80!black] (\xtwo,\yone) rectangle (\xMax,\ytwo);
+% C x (B \ D)
+\fill[green!80!black, opacity=0.2] (\xMin,\yone) rectangle (\xone,\ytwo);
+\fill[green!80!black, opacity=0.2] (\xtwo,\yone) rectangle (\xMax,\ytwo);
+% % (A \ C) x D
+% \fill[pattern=north east lines, pattern color=green!80!black] (\xone,\yMin) rectangle (\xtwo,\yone);
+% \fill[pattern=north east lines, pattern color=green!80!black] (\xone,\ytwo) rectangle (\xtwo,\yMax);
+% (A \ C) x D
+\fill[green!80!black, opacity=0.2] (\xone,\yMin) rectangle (\xtwo,\yone);
+\fill[green!80!black, opacity=0.2] (\xone,\ytwo) rectangle (\xtwo,\yMax);
+
+
+% black middle: C x D
+\fill[pattern=north east lines, pattern color=black] (\xone,\yone) rectangle (\xtwo,\ytwo);
+
+% outer rectangle A x B
+\draw[semithick] (\xMin,\yMin) rectangle (\xMax,\yMax);
+
+% partition lines
+\draw[semithick] (\xone,\yMin) -- (\xone,\yMax);
+\draw[semithick] (\xtwo,\yMin) -- (\xtwo,\yMax);
+\draw[semithick] (\xMin,\yone) -- (\xMax,\yone);
+\draw[semithick] (\xMin,\ytwo) -- (\xMax,\ytwo);
+
+% A and B indications
+\draw[<->, semithick] (-0.9,\yMin) -- node[left, outer sep=2pt, inner sep=0pt] {$A$} (-0.9,\yMax);
+\draw[<->, semithick] (\xMin,-0.8) -- node[below, outer sep=2pt, inner sep=0pt] {$B$} (\xMax,-0.8);
+
+% C and D indications
+\draw[<->, semithick] (-0.25,\yone) -- node[left, outer sep=2pt, inner sep=0pt] {$C$} (-0.25,\ytwo);
+\draw[<->, semithick] (\xone,-0.25) -- node[below, outer sep=2pt, inner sep=0pt] {$D$} (\xtwo,-0.25);
+
+\end{tikzpicture}
+\]
+Therefore,
+\[
+\begin{aligned}
+(A \times B) \setminus (C \times D)
+&=
+\left((A \setminus C) \times (B \setminus D)\right)
+\sqcup
+\left(C \times (B \setminus D)\right)
+\sqcup
+\left((A \setminus C) \times D\right)
+\\
+&=
+\left(\bigsqcup_{i=1}^m \bigsqcup_{j=1}^n (A_i \times B_j)\right)
+\sqcup
+\left(\bigsqcup_{j=1}^n (C \times B_j)\right)
+\sqcup
+\left(\bigsqcup_{i=1}^m (A_i \times D)\right)
+\end{aligned}
+\]
+which is a finite disjoint union of sets in $\mathcal{S} \times \mathcal{S}$. \cmark
+\end{itemize}
+Thus $\mathcal{S} \times \mathcal{S}$ is a semiring.
 
 Moreover, we have $\sigma(\mathcal{S} \times \mathcal{S}) = \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S}) = \mathcal{B}(\R) \otimes \mathcal{B}(\R) = \mathcal{B}(\R^2)$, where $\otimes$ denotes the product $\sigma$-algebra (see \autoref{ex:product-sigma-algebra}):
 \vspace{4em}
@@ -5257,7 +5491,7 @@ We define the set functions $\mu, \mu_{\text{prod}} : \mathcal{S} \times \mathca
 \qquad
 \mu_{\text{prod}}(A \times B) \coloneq \Prob_{X}(A) \Prob_{Y}(B)
 \]
-where the \hl{image measure} $\Prob_{Z}$ is defined as
+where the \hl[2]{image measure} $\Prob_{Z}$ is defined as
 \[
 \Prob_{Z}(C) \coloneq (\Prob \circ Z^{-1})(C) = \Prob(Z^{-1}(C)) = \Prob(Z \in C)
 \]
@@ -5265,90 +5499,246 @@ for any random variable $Z : \Omega \to \R$ and any $C \in \mathcal{B}(\R)$.
 
 By assumption we have $\mu(A \times B) = \mu_{\text{prod}}(A \times B)$ for all $A, B \in \mathcal{S}$.
 Both set functions $\mu$ and $\mu_{\text{prod}}$ satisfy the assumptions of the Carathéodory extension \autoref{thm:caratheodory-extension}:
-\vspace{4em}
-% \begin{itemize}
-%   \item 
-%   Both satisfy $\mu(\varnothing)=\mu_{\text{prod}}(\varnothing)=0$. \cmark
-%   % PATCH 2: Replace additive item with new text
-%   \item 
-%   Both are additive on $\mathcal{S} \times \mathcal{S}$: if
-%   \[
-%   A \times B = \bigsqcup_{k=1}^n (A_k \times B_k)
-%   \]
-%   with $A \times B, A_k \times B_k \in \mathcal{S} \times \mathcal{S}$, then
-%   \[
-%   \mu(A \times B)
-%   =
-%   \Prob\left((X,Y) \in \bigsqcup_{k=1}^n (A_k \times B_k)\right)
-%   =
-%   \sum_{k=1}^n \Prob((X,Y) \in A_k \times B_k)
-%   =
-%   \sum_{k=1}^n \mu(A_k \times B_k)
-%   \]
-%   by finite additivity of probability.
-%   For $\mu_{\text{prod}}$, refine the finite families $A_1,\dots,A_n$ and $B_1,\dots,B_n$ to pairwise disjoint partitions
-%   \[
-%   A = \bigsqcup_{r=1}^m C_r
-%   \qquad\text{and}\qquad
-%   B = \bigsqcup_{s=1}^{\ell} D_s
-%   \]
-%   with $C_r,D_s \in \mathcal{S}$ such that every rectangle $A_k \times B_k$ is a disjoint union of some of the rectangles $C_r \times D_s$.
-%   Then
-%   \[
-%   \mu_{\text{prod}}(A \times B)
-%   =
-%   \Prob_X(A)\Prob_Y(B)
-%   =
-%   \left(\sum_{r=1}^m \Prob_X(C_r)\right)
-%   \left(\sum_{s=1}^{\ell} \Prob_Y(D_s)\right)
-%   =
-%   \sum_{r=1}^m \sum_{s=1}^{\ell} \Prob_X(C_r)\Prob_Y(D_s),
-%   \]
-%   and regrouping the terms according to the rectangles $A_k \times B_k$ yields
-%   \[
-%   \mu_{\text{prod}}(A \times B)
-%   =
-%   \sum_{k=1}^n \mu_{\text{prod}}(A_k \times B_k).
-%   \]
-%   Hence $\mu_{\text{prod}}$ is additive as well. \cmark
-%   % PATCH 3: Replace sigma-subadditive item with new text
-%   \item 
-%   Both are $\sigma$-subadditive: if
-%   \[
-%   A \times B \subseteq \bigcup_{k=1}^{\infty} (A_k \times B_k)
-%   \]
-%   with $A \times B, A_k \times B_k \in \mathcal{S} \times \mathcal{S}$, then
-%   \[
-%   \mu(A \times B)
-%   =
-%   \Prob\left((X,Y) \in A \times B\right)
-%   \leq
-%   \sum_{k=1}^{\infty} \Prob\left((X,Y) \in A_k \times B_k\right)
-%   =
-%   \sum_{k=1}^{\infty} \mu(A_k \times B_k)
-%   \]
-%   by countable subadditivity of probability.
-%   For $\mu_{\text{prod}}$, $\sigma$-subadditivity follows from the fact that it is an additive set function on the rectangle semiring induced by the finite measures $\Prob_X$ and $\Prob_Y$, hence a premeasure on $\mathcal{S} \times \mathcal{S}$. \cmark
-%   % PATCH 4: Replace sigma-finite item with new text
-%   \item 
-%   Both are $\sigma$-finite: choose sets $S_1,S_2,\dots \in \mathcal{S}$ such that
-%   \[
-%   \R = \bigcup_{n=1}^{\infty} S_n.
-%   \]
-%   Then
-%   \[
-%   \R^2 = \bigcup_{m,n=1}^{\infty} (S_m \times S_n),
-%   \]
-%   and for all $m,n \in \N$,
-%   \[
-%   \mu(S_m \times S_n) \le 1 < \infty
-%   \qquad\text{and}\qquad
-%   \mu_{\text{prod}}(S_m \times S_n) \le 1 < \infty.
-%   \]
-%   Hence both set functions are $\sigma$-finite. \cmark
-% \end{itemize}
+% \vspace{4em}
+\begin{itemize}
+  \item 
+  $\mu(\varnothing)=\mu_{\text{prod}}(\varnothing)=0$. \cmark % why???
+  \item 
+  % For $\mu_1$, suppose
+  \ref{def:set-function-additive}:
+  Let $A_1 \times B_1, \ldots, A_n \times B_n$ be pairwise disjoint sets in $\mathcal{S} \times \mathcal{S}$ such that their union is in $\mathcal{S} \times \mathcal{S}$.
+  We can write
+  \[
+    \bigsqcup_{k = 1}^n (A_k \times B_k)
+    = 
+    A \times B 
+  \]
+  since we know that the union on the left must be in $\mathcal{S} \times \mathcal{S}$.
+  Then
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
+\{\omega \in \Omega : X(\omega) \in A, Y(\omega) \in B\} 
+&=
+\{\omega \in \Omega : X(\omega) \in A \wedge Y(\omega) \in B\} \\
+&=
+\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A \times B\}  \\
+&=
+\left\{\omega \in \Omega : (X(\omega), Y(\omega)) \in \bigsqcup_{k = 1}^n (A_k \times B_k)\right\}  \\
+&=
+\left\{\omega \in \Omega : \bigvee_{k = 1}^n \left((X(\omega), Y(\omega)) \in A_k \times B_k \right)\right\}   \\
+&=
+\bigsqcup_{k = 1}^n \left\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_k \times B_k\right\} 
+\end{align*}
+\endgroup
+where the last union is indeed disjoint, since, for $i \neq j$,
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
+& \{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_i \times B_i\}
+\cap
+\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_j \times B_j\} \\
+&=
+\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_i \times B_i
+\wedge
+(X(\omega), Y(\omega)) \in A_j \times B_j\} \\
+&=
+\{\omega \in \Omega : (X(\omega), Y(\omega)) \in (A_i \times B_i) \cap (A_j \times B_j)\} \\
+&=
+\{\omega \in \Omega : (X(\omega), Y(\omega)) \in \varnothing\} \\
+&=
+\varnothing 
+\end{align*}
+\endgroup
+% for every $i \neq j$.
+Hence,
+\[
+\begin{aligned}
+% \mu\left(\bigsqcup_{k = 1}^n (A_k \times B_k)\right)
+% &=
+\mu(A \times B)
+&=
+\Prob\left(\{\omega \in \Omega : X(\omega) \in A, Y(\omega) \in B\}\right) \\
+&=
+\Prob\left(\bigsqcup_{k = 1}^n \left\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_k \times B_k\right\}\right) \\
+&=
+\sum_{k = 1}^n \Prob\left(\left\{\omega \in \Omega : (X(\omega), Y(\omega)) \in A_k \times B_k\right\}\right) \\
+&=
+\sum_{k = 1}^n \Prob\left(\left\{\omega \in \Omega : X(\omega)\in A_k, Y(\omega) \in B_k\right\}\right) \\
+&=
+\sum_{k = 1}^n \mu(A_k \times B_k) 
+\end{aligned}
+\]
 
-Therefore, the extensions $\tilde{\mu}, \tilde{\mu}_{\text{prod}}$ of ${\mu}, {\mu}_{\text{prod}}$ to $\sigma(\mathcal{S} \times \mathcal{S})$ are unique.
+% Thus $\mu$ is additive.
+
+For $\mu_{\text{prod}}$, let
+\(
+\nu \coloneq \Prob_X \otimes \Prob_Y
+\)
+be the product measure (see \autoref{ex:product-measure}) on $\sigma(\mathcal{S} \times \mathcal{S})$.
+% As seen in \autoref{ex:product-measure},
+On rec\-tan\-gles $A \times B \allowbreak \in \allowbreak \mathcal{S} \times \mathcal{S}$, we have by definition
+\[
+\nu(A \times B)
+=
+\Prob_X(A)\Prob_Y(B)
+=
+\mu_{\text{prod}}(A \times B)
+\]
+% as seen in \autoref{ex:product-measure}.
+% Using again
+% \[
+% A \times B
+% =
+% \bigsqcup_{k=1}^n (A_k \times B_k)
+% \]
+% and the finite additivity of the measure $\nu$, we obtain
+Since $\nu$ is a measure (\autoref{def:measure}), it is $\sigma$-additive, hence in particular finitely additive, hence %on disjoint unions, hence
+\[
+\begin{aligned}
+\mu_{\text{prod}}(A \times B)
+&=
+\nu(A \times B) \\
+&=
+\nu\left(\bigsqcup_{k=1}^n (A_k \times B_k)\right) \\
+&=
+\sum_{k=1}^n \nu(A_k \times B_k) \\
+&=
+\sum_{k=1}^n \mu_{\text{prod}}(A_k \times B_k)
+\end{aligned}
+\]
+Thus $\mu_{\text{prod}}$ is additive as well. \cmark
+
+\item
+\ref{def:set-function-sigma-subadditive}:
+Let \(A \times B \in \mathcal{S} \times \mathcal{S}\) and \((A_i \times B_i)_{i \in \N}\) with \(A_i \times B_i \in \mathcal{S} \times \mathcal{S}\) for all \(i\) be such that
+\[
+A \times B \subseteq \bigcup_{k=1}^{\infty} (A_k \times B_k)
+\]
+For \(\mu\), this implies % why???
+% \[
+% \{\omega \in \Omega : X(\omega) \in A, Y(\omega) \in B\}
+% \subseteq
+% \bigcup_{k=1}^{\infty}
+% \{\omega \in \Omega : X(\omega) \in A_k, Y(\omega) \in B_k\}
+% \]
+% % \textcolor{gray}{
+% since
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
+% \SwapAboveDisplaySkip
+\{\omega  : X(\omega) \in A, Y(\omega) \in B\}
+% &=
+% \{\omega  : X(\omega) \in A \wedge Y(\omega) \in B\} \\
+&=
+\{\omega  : (X(\omega),Y(\omega)) \in A \times B\} \\
+&\subseteq % why?
+\left\{\omega  : (X(\omega),Y(\omega)) \in \bigcup_{k=1}^{\infty}(A_k \times B_k)\right\} \\
+&=
+\left\{\omega  : \bigvee_{k=1}^{\infty}\left((X(\omega),Y(\omega)) \in A_k \times B_k\right)\right\} \\
+&=
+\bigcup_{k=1}^{\infty}
+\left\{\omega  : (X(\omega),Y(\omega)) \in A_k \times B_k\right\} \\
+% &=
+% \bigcup_{k=1}^{\infty}
+% \left\{\omega  : X(\omega) \in A_k \wedge Y(\omega) \in B_k\right\} \\
+&=
+\bigcup_{k=1}^{\infty}
+\{\omega  : X(\omega) \in A_k, Y(\omega) \in B_k\}
+\end{align*}
+\endgroup
+% }
+Hence, by the \(\sigma\)-subadditivity of the probability measure \(\Prob\),
+\[
+% \begin{aligned}
+% \mu(A \times B)
+% &=
+% \Prob(X \in A, Y \in B) \\
+% &\leq
+% \sum_{k=1}^{\infty} \Prob(X \in A_k, Y \in B_k) \\
+% &=
+% \sum_{k=1}^{\infty} \mu(A_k \times B_k).
+% \end{aligned}
+\begin{aligned}
+\mu(A \times B)
+&=
+\Prob(X \in A, Y \in B) \\
+&\overset{\text{\eqref{eq:subset-measure}}}{\leq}
+\Prob\left(
+\bigcup_{k=1}^{\infty}\{X \in A_k, Y \in B_k\}
+\right) \\
+&\overset{\text{\eqref{eq:countable-subadditivity}}}{\leq}
+\sum_{k=1}^{\infty}\Prob(X \in A_k, Y \in B_k) \\
+&=
+\sum_{k=1}^{\infty}\mu(A_k \times B_k)
+\end{aligned}
+\]
+Thus \(\mu\) is \(\sigma\)-subadditive.
+
+For \(\mu_{\text{prod}}\), we again use
+\(
+\nu \coloneq \Prob_X \otimes \Prob_Y
+\).
+Since \(\nu\) is a measure and \(\mu_{\text{prod}}=\nu\) on rectangles in \(\mathcal{S}\times\mathcal{S}\), we obtain
+\[
+\begin{aligned}
+\mu_{\text{prod}}(A \times B)
+&=
+\nu(A \times B) \\
+&\overset{\text{\eqref{eq:subset-measure}}}{\leq}
+\nu\left(\bigcup_{k=1}^{\infty} (A_k \times B_k)\right) \\
+&\overset{\text{\eqref{eq:countable-subadditivity}}}{\leq}
+\sum_{k=1}^{\infty} \nu(A_k \times B_k) \\
+&=
+\sum_{k=1}^{\infty} \mu_{\text{prod}}(A_k \times B_k)
+\end{aligned}
+\]
+Thus \(\mu_{\text{prod}}\) is \(\sigma\)-subadditive as well. \cmark
+
+\item
+\ref{def:set-function-sigma-finite}:
+For simplicity\footnote{%
+This assumption is stronger than needed, but for our proof strategy, it is necessary.%
+}, assume the semiring \(\mathcal{S}\) covers \(\R\), i.e.
+\[
+\R = \bigcup_{m=1}^{\infty} S_m
+\]
+for some $(S_m)_{m \in \N}$ with $S_m \in \mathcal{S}$ for all $m$.
+Hence
+\[
+\R^2
+=
+\R \times \R
+=
+\left(\bigcup_{m=1}^{\infty} S_m\right) \times \left(\bigcup_{n=1}^{\infty} S_n\right)
+= % why?
+\bigcup_{m=1}^{\infty} \bigcup_{n=1}^{\infty} (S_m \times S_n)
+\]
+and since \(\N \times \N\) is countable, this is a countable cover of \(\R^2\) by sets in
+\(\mathcal{S} \times \mathcal{S}\).
+
+Moreover, for every \(m,n \in \N\),
+\[
+0 \leq \mu(S_m \times S_n)
+=
+\Prob(X \in S_m, Y \in S_n)
+\leq 1
+\]
+and
+\[
+0 \leq \mu_{\text{prod}}(S_m \times S_n)
+=
+\Prob_X(S_m)\Prob_Y(S_n)
+\leq 1
+\]
+Thus each covering set has finite \(\mu\)- and \(\mu_{\text{prod}}\)-mass.
+Therefore both \(\mu\) and \(\mu_{\text{prod}}\) are \(\sigma\)-finite. \cmark
+\end{itemize}
+Therefore, 
+by \autoref{thm:caratheodory-extension},
+the extensions $\tilde{\mu}, \tilde{\mu}_{\text{prod}}$ of ${\mu}, {\mu}_{\text{prod}}$ to $\sigma(\mathcal{S} \times \mathcal{S})$ are unique.
 
 
 
@@ -5718,7 +6108,7 @@ In particular, the word $w$ appears at least once in the infinite string in $n$ 
     outer sep=0pt,
     yshift=1em,
   ] at ($(current page text area.east|-{pic cs:monkeyTypingEquationAnchor})$) {%
-  \includegraphics[width=0.2\textwidth]{images/Chimpanzee_seated_at_typewriter.jpg}
+  \includegraphics[width=0.18\textwidth]{images/Chimpanzee_seated_at_typewriter.jpg}
   };
 \end{tikzpicture}%
 
@@ -6544,12 +6934,14 @@ If either of the terms on the right hand side is bounded, we define the $\mu$-in
 \in [-\infty,\infty]
 \end{verticalhack}
 \]
-Finally, for $A \in \mathcal{F}$, we define the integral over $A$ by
+Finally, for $A \in \mathcal{F}$, we define the integral of $f$ over $A$ by
 \[
 \begin{verticalhack}
+\boxed{
 \int_A f\,\dif\mu
 \coloneq
-\int f\ind_A\,\dif\mu
+\int f \cdot \ind_A\,\dif\mu
+}
 \end{verticalhack}
 \qedhere
 \]
