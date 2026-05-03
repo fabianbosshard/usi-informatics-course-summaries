@@ -99,6 +99,12 @@
 \usepackage{pgfornament}
 \usetikzlibrary{external}
 \tikzexternalize[prefix=tikz-cache/]
+\pgfmathdeclarefunction{summarysigmoid}{1}{%
+  \pgfmathparse{2*exp(2*(#1 - 1.5))/(1 + exp(2*(#1 - 1.5)))}%
+}
+\pgfmathdeclarefunction{summarysigmoidinv}{1}{%
+  \pgfmathparse{1.5 + 0.5*ln((#1)/(2 - (#1)))}%
+}
 
 % ===================== highlighting (SOUL + math-safe \hl) =====================
 \usepackage{soulutf8}
@@ -510,6 +516,74 @@ line width=0.16pt}}%
 \renewcommand{\sectionautorefname}{Section}
 \renewcommand{\subsectionautorefname}{Section}
 \renewcommand{\subsubsectionautorefname}{Section}
+
+
+
+
+
+
+
+
+
+\usepackage{varwidth}
+
+% Circled-star marked statements with clickable references.
+\newcounter{circledaststatement}
+
+\DeclareRobustCommand{\circledastrepeat}[1]{%
+  \ifcase#1\relax
+  \or \ensuremath{\circledast}%
+  \or \ensuremath{\circledast\circledast}%
+  \or \ensuremath{\circledast\circledast\circledast}%
+  \or \ensuremath{\circledast\circledast\circledast\circledast}%
+  \else \ensuremath{\circledast^{#1}}%
+  \fi
+}
+
+\renewcommand{\thecircledaststatement}{%
+  \circledastrepeat{\arabic{circledaststatement}}%
+}
+
+\newsavebox{\circledastblockbox}
+\newlength{\circledastblockwidth}
+\newlength{\circledastblockxoffset}
+\NewDocumentCommand{\circledastblock}{O{} m +m}{%
+  \refstepcounter{circledaststatement}%
+  \label{#2}%
+  \begingroup
+  \begin{lrbox}{\circledastblockbox}%
+    \IfBlankTF{#1}{%
+      \begin{varwidth}{\linewidth}%
+        #3%
+      \end{varwidth}%
+    }{%
+      #1%
+    }%
+  \end{lrbox}%
+  \global\circledastblockwidth=\wd\circledastblockbox
+  \global\circledastblockxoffset=.5\linewidth
+  \global\advance\circledastblockxoffset by .5\circledastblockwidth
+  \endgroup
+  \par\noindent\tikzmark{circledastblock-#2-start}#3\tikzmark{circledastblock-#2-end}%
+  \tikzexternaldisable
+  \begin{tikzpicture}[remember picture,overlay]
+    \coordinate (circledastblock-start-east) at
+      ([xshift=\dimexpr\circledastblockxoffset+1em\relax]pic cs:circledastblock-#2-start);
+    \coordinate (circledastblock-end-west) at
+      (pic cs:circledastblock-#2-end);
+    \coordinate (circledastblock-end-east) at
+      (circledastblock-start-east |- circledastblock-end-west);
+    \draw[line width=0.7pt]
+      ([yshift=1.8ex]circledastblock-start-east)
+      --
+      ([yshift=-0.8ex]circledastblock-end-east);
+    \node[anchor=west,inner sep=0pt,outer sep=0pt]
+      at ([xshift=0.5em]circledastblock-start-east)
+      {\huge\thecircledaststatement};
+  \end{tikzpicture}%
+  \tikzexternalenable
+}
+
 
 \begin{document}
 
@@ -2724,17 +2798,12 @@ As $f^{-1}(V)$ is open, there exists $\delta > 0$ such that
     \pgfmathsetmacro{\del}{0.25}
     \pgfmathsetmacro{\eps}{0.55}
 
-    % function
-    % use \f{<x>} to evaluate f(x)
-    \newcommand{\f}[1]{2*exp(2*(#1 - 1.5))/(1 + exp(2*(#1 - 1.5)))}
-    \newcommand{\finv}[1]{1.5 + 0.5*ln((#1)/(2 - (#1)))}
-
     % derived values
-    \pgfmathsetmacro{\fxzero}{\f{\xzero}}
+    \pgfmathsetmacro{\fxzero}{summarysigmoid(\xzero)}
     \pgfmathsetmacro{\ymin}{\fxzero-\eps}
     \pgfmathsetmacro{\ymax}{\fxzero+\eps}
-    \pgfmathsetmacro{\xmin}{\finv{\ymin}}
-    \pgfmathsetmacro{\xmax}{\finv{\ymax}}
+    \pgfmathsetmacro{\xmin}{summarysigmoidinv(\ymin)}
+    \pgfmathsetmacro{\xmax}{summarysigmoidinv(\ymax)}
     \pgfmathsetmacro{\deltaleft}{\xzero - \del}
     \pgfmathsetmacro{\deltaright}{\xzero + \del}
 
@@ -2759,7 +2828,7 @@ As $f^{-1}(V)$ is open, there exists $\delta > 0$ such that
 
     % function graph
     \draw[thick,domain=-0.5:3.5,samples=200]
-        plot (\x,{\f{\x}});
+        plot (\x,{summarysigmoid(\x)});
 
     % delta marker
     \draw[{Parenthesis}-{Parenthesis}, black, thick] (\xmin,0) -- node[pos=0.5,below=3.0mm, black] {$\scriptstyle f^{-1}(V)$} (\xmax,0);
@@ -2811,21 +2880,16 @@ By $\varepsilon$-$\delta$-continuity at $x_0$, there exists $\delta > 0$ such th
     \pgfmathsetmacro{\del}{0.3}
     \pgfmathsetmacro{\eps}{0.35}
 
-    % function
-    % use \f{<x>} to evaluate f(x)
-    \newcommand{\f}[1]{2*exp(2*(#1 - 1.5))/(1 + exp(2*(#1 - 1.5)))}
-    \newcommand{\finv}[1]{1.5 + 0.5*ln((#1)/(2 - (#1)))}
-
     % derived values
-    \pgfmathsetmacro{\fxzero}{\f{\xzero}}
+    \pgfmathsetmacro{\fxzero}{summarysigmoid(\xzero)}
     \pgfmathsetmacro{\ymin}{1.87}
     \pgfmathsetmacro{\ymax}{0.6}
-    \pgfmathsetmacro{\xmin}{\finv{\ymin}}
-    \pgfmathsetmacro{\xmax}{\finv{\ymax}}
+    \pgfmathsetmacro{\xmin}{summarysigmoidinv(\ymin)}
+    \pgfmathsetmacro{\xmax}{summarysigmoidinv(\ymax)}
     \pgfmathsetmacro{\epsilonlower}{\fxzero-\eps}
     \pgfmathsetmacro{\epsilonupper}{\fxzero+\eps}
-    \pgfmathsetmacro{\xepsilonleft}{\finv{\epsilonlower}}
-    \pgfmathsetmacro{\xepsilonright}{\finv{\epsilonupper}}
+    \pgfmathsetmacro{\xepsilonleft}{summarysigmoidinv(\epsilonlower)}
+    \pgfmathsetmacro{\xepsilonright}{summarysigmoidinv(\epsilonupper)}
     \pgfmathsetmacro{\deltaleft}{\xzero - \del}
     \pgfmathsetmacro{\deltaright}{\xzero + \del}
 
@@ -2849,7 +2913,7 @@ By $\varepsilon$-$\delta$-continuity at $x_0$, there exists $\delta > 0$ such th
 
     % function graph
     \draw[thick,domain=-0.5:3.5,samples=200]
-        plot (\x,{\f{\x}});
+        plot (\x,{summarysigmoid(\x)});
 
     % delta marker
     \draw[{Parenthesis}-{Parenthesis}, black, thick] (\xmin,0) -- node[pos=0.5,below=3.0mm, black] {$\scriptstyle f^{-1}(V)$} (\xmax,0);
@@ -5303,6 +5367,7 @@ for all $A, B \in \mathcal{S}$, then $X$ and $Y$ are independent.
 \end{theorem}
 % \clearpage
 \begin{proof}
+% assignment 7, exercise 4 a)
 We start by showing that the product $\mathcal{S} \times \mathcal{S} \coloneq \{S_1 \times S_2 : S_1, S_2 \in \mathcal{S}\}$ is again a semiring (\autoref{def:semiring}):
 \begin{itemize}
 \item 
@@ -5462,28 +5527,169 @@ which is a finite disjoint union of sets in $\mathcal{S} \times \mathcal{S}$. \c
 \end{itemize}
 Thus $\mathcal{S} \times \mathcal{S}$ is a semiring.
 
+% assignment 7, exercise 4 e)
 Moreover, we have $\sigma(\mathcal{S} \times \mathcal{S}) = \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S}) = \mathcal{B}(\R) \otimes \mathcal{B}(\R) = \mathcal{B}(\R^2)$, where $\otimes$ denotes the product $\sigma$-algebra (see \autoref{ex:product-sigma-algebra}):
-\vspace{4em}
-% Indeed, every rectangle $A \times B$ with $A,B \in \mathcal{S}$ belongs to $\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})$, so
-% \(
-% \sigma(\mathcal{S} \times \mathcal{S}) \subseteq \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
-% \).
-% Conversely, for fixed $B \in \mathcal{S}$, the class
+\begin{itemize}[]
+\item[\(\subseteq\):]
+Every set \(S_1 \times S_2\) with \(S_1,S_2 \in \mathcal{S}\) belongs to
+\(\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})\), since
+\(\mathcal{S} \subseteq \sigma(\mathcal{S})\).
+Hence, by the minimality of the generated \(\sigma\)-algebra
+(\autoref{thm:generated-sigma-algebra}),
+\(
+\sigma(\mathcal{S} \times \mathcal{S})
+\subseteq
+\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
+\).
+
+\item[\(\supseteq\):]
+For the converse inclusion, it is enough to show that
+\(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\) for all
+\(A,B \in \allowbreak \sigma(\mathcal{S})\), 
+i.e. 
+\[
+\{A \times B : A,B \in \sigma(\mathcal{S})\} \subseteq \sigma(\mathcal{S} \times \mathcal{S})
+\]
+because
+\(\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})\) is generated by such rectangles
+(\autoref{ex:product-sigma-algebra}).
+
+Fix \(B \in \mathcal{S}\) and define
+\[
+\mathcal{D}_B
+\coloneq
+\{A \subseteq \mathbb{R} : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
+\]
+We show that \(\mathcal{D}_B\) is a \(\sigma\)-algebra.
+First, \(\varnothing \in \mathcal{D}_B\), since
+\(\varnothing \times B = \varnothing\).
+Next, let \(A \in \mathcal{D}_B\). By the countable covering assumption from the
+\(\sigma\)-finiteness part, choose \(S_m \in \mathcal{S}\) such that
+\(\mathbb{R} = \bigcup_{m=1}^{\infty} S_m\).
+Then
+\[
+\mathbb{R} \times B
+=
+\bigcup_{m=1}^{\infty} (S_m \times B)
+\in
+\sigma(\mathcal{S} \times \mathcal{S})
+\]
+because \(S_m \times B \in \mathcal{S} \times \mathcal{S}\) for all \(m \in \mathbb{N}\).
+Since \(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\), we obtain
+\[
+A^c \times B
+=
+(\mathbb{R} \times B) \setminus (A \times B)
+\in
+\sigma(\mathcal{S} \times \mathcal{S})
+\]
+and hence \(A^c \in \mathcal{D}_B\).
+Finally, if \(A_n \in \mathcal{D}_B\) for all \(n \in \mathbb{N}\), then
+\[
+\left(\bigcup_{n=1}^{\infty} A_n\right) \times B
+=
+\bigcup_{n=1}^{\infty} (A_n \times B)
+\in
+\sigma(\mathcal{S} \times \mathcal{S})
+\]
+so \(\bigcup_{n=1}^{\infty} A_n \in \mathcal{D}_B\).
+Thus \(\mathcal{D}_B\) is a \(\sigma\)-algebra.
+
+% Moreover, \(\mathcal{S} \subseteq \mathcal{D}_B\), % why?
+% because \(A \times B \in \mathcal{S} \times \mathcal{S} \subseteq \sigma(\mathcal{S} \times \mathcal{S})\) for every \(A \in \mathcal{S}\).
+Moreover, \(\mathcal{S} \subseteq \mathcal{D}_B\), because \(A \times B \in \mathcal{S} \times \mathcal{S} \subseteq \sigma(\mathcal{S} \times \mathcal{S})\) for every \(A \in \mathcal{S}\).
+Therefore, by the minimality of \(\sigma(\mathcal{S})\)
+(\autoref{thm:generated-sigma-algebra}), we have
+\(\sigma(\mathcal{S}) \subseteq \mathcal{D}_B\).
+
+% That means
 % \[
-% \mathcal{C}_B \coloneq \{A \subseteq \R : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
+% A \times B \in \sigma(\mathcal{S} \times \mathcal{S})
 % \]
-% is a $\sigma$-algebra containing $\mathcal{S}$, hence $\sigma(\mathcal{S}) \subseteq \mathcal{C}_B$.
-% Thus $A \times B \in \sigma(\mathcal{S} \times \mathcal{S})$ for all $A \in \sigma(\mathcal{S})$, $B \in \mathcal{S}$.
-% Now for fixed $A \in \sigma(\mathcal{S})$, the class
+% for all \(A \in \sigma(\mathcal{S})\) and all \(B \in \mathcal{S}\).
+\circledastblock{star:first-coordinate-upgrade}{%
+That means 
+\[
+A \times B \in \sigma(\mathcal{S} \times \mathcal{S})
+\]
+for all \(A \in \sigma(\mathcal{S})\) and all \(B \in \mathcal{S}\). 
+}
+
+Now fix \(A \in \sigma(\mathcal{S})\) and define
+\[
+\mathcal{D}_A
+\coloneq
+\{B \subseteq \mathbb{R} : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
+\]
+By the same argument, \(\mathcal{D}_A\) is a \(\sigma\)-algebra.
+% By the previous step, \(\mathcal{S} \subseteq \mathcal{D}_A\).
+By \ref{star:first-coordinate-upgrade}, \(\mathcal{S} \subseteq \mathcal{D}_A\): 
+ if \(B \in \mathcal{S}\), then \ref{star:first-coordinate-upgrade}, applied to the fixed \(A \in \sigma(\mathcal{S})\), gives \(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\), hence \(B \in \mathcal{D}_A\).
+Thus, again by the minimality of \(\sigma(\mathcal{S})\)
+(\autoref{thm:generated-sigma-algebra}), we get
+\(\sigma(\mathcal{S}) \subseteq \mathcal{D}_A\).
+
+Therefore
+\[
+A \times B \in \sigma(\mathcal{S} \times \mathcal{S})
+\]
+for all \(A,B \in \sigma(\mathcal{S})\).
+
+Hence every generating rectangle of
+\(\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})\) belongs to
+\(\sigma(\mathcal{S} \times \mathcal{S})\), and so
+\[
+\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
+\subseteq
+\sigma(\mathcal{S} \times \mathcal{S})
+\]
+\end{itemize}
+
+Since by assumption $\sigma(\mathcal{S}) = \mathcal{B}(\R)$, we conclude that
+\[
+\sigma(\mathcal{S} \times \mathcal{S})
+=
+\sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
+=
+\mathcal{B}(\R) \otimes \mathcal{B}(\R)
+=
+\mathcal{B}(\R^2)
+\]
+as claimed.
+% Combining both inclusions yields
 % \[
-% \mathcal{D}_A \coloneq \{B \subseteq \R : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
+% \sigma(\mathcal{S} \times \mathcal{S})
+% =
+% \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
 % \]
-% is again a $\sigma$-algebra containing $\mathcal{S}$, hence $\sigma(\mathcal{S}) \subseteq \mathcal{D}_A$.
-% Therefore $A \times B \in \sigma(\mathcal{S} \times \mathcal{S})$ for all $A,B \in \sigma(\mathcal{S})$, which yields
-% \(
-% \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S}) \subseteq \sigma(\mathcal{S} \times \mathcal{S})
-% \).
-% This proves the first equality, and the remaining equalities follow from $\sigma(\mathcal{S})=\mathcal{B}(\R)$ and the standard identity $\mathcal{B}(\R) \otimes \mathcal{B}(\R)=\mathcal{B}(\R^2)$.
+
+
+% Since \(\sigma(\mathcal{S})=\mathcal{B}(\mathbb{R})\), we obtain
+% \[
+% \sigma(\mathcal{S} \times \mathcal{S})
+% =
+% \mathcal{B}(\mathbb{R}) \otimes \mathcal{B}(\mathbb{R})
+% \]
+% Finally, by \autoref{prop:rational-open-rectangles-generate-borel-sigma-algebra} or \autoref{ex:product-sigma-algebra}, we have
+% \[
+% \mathcal{B}(\mathbb{R}) \otimes \mathcal{B}(\mathbb{R})
+% =
+% \mathcal{B}(\mathbb{R}^2)
+% \]
+% and therefore
+% \[
+% \sigma(\mathcal{S} \times \mathcal{S})
+% =
+% \sigma(\mathcal{S}) \otimes \sigma(\mathcal{S})
+% =
+% \mathcal{B}(\mathbb{R}) \otimes \mathcal{B}(\mathbb{R})
+% =
+% \mathcal{B}(\mathbb{R}^2)
+% \]
+
+
+
+
 
 We define the set functions $\mu, \mu_{\text{prod}} : \mathcal{S} \times \mathcal{S} \to [0,1]$ by
 \[
@@ -5499,6 +5705,7 @@ for any random variable $Z : \Omega \to \R$ and any $C \in \mathcal{B}(\R)$.
 
 By assumption we have $\mu(A \times B) = \mu_{\text{prod}}(A \times B)$ for all $A, B \in \mathcal{S}$.
 Both set functions $\mu$ and $\mu_{\text{prod}}$ satisfy the assumptions of the Carathéodory extension \autoref{thm:caratheodory-extension}:
+% assignment 7, exercise 4 b), c), d)
 % \vspace{4em}
 \begin{itemize}
   \item 
@@ -5552,8 +5759,10 @@ where the last union is indeed disjoint, since, for $i \neq j$,
 \endgroup
 % for every $i \neq j$.
 Hence,
-\[
-\begin{aligned}
+\begingroup
+\allowdisplaybreaks
+\begin{align*}
+\SwapAboveDisplaySkip
 % \mu\left(\bigsqcup_{k = 1}^n (A_k \times B_k)\right)
 % &=
 \mu(A \times B)
@@ -5567,8 +5776,8 @@ Hence,
 \sum_{k = 1}^n \Prob\left(\left\{\omega \in \Omega : X(\omega)\in A_k, Y(\omega) \in B_k\right\}\right) \\
 &=
 \sum_{k = 1}^n \mu(A_k \times B_k) 
-\end{aligned}
-\]
+\end{align*}
+\endgroup
 
 % Thus $\mu$ is additive.
 
