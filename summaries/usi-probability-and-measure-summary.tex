@@ -525,66 +525,6 @@ line width=0.16pt}}%
 
 
 
-\usepackage{varwidth}
-
-% Circled-star marked statements with clickable references.
-\newcounter{circledaststatement}
-
-\DeclareRobustCommand{\circledastrepeat}[1]{%
-  \ifcase#1\relax
-  \or \ensuremath{\circledast}%
-  \or \ensuremath{\circledast\circledast}%
-  \or \ensuremath{\circledast\circledast\circledast}%
-  \or \ensuremath{\circledast\circledast\circledast\circledast}%
-  \else \ensuremath{\circledast^{#1}}%
-  \fi
-}
-
-\renewcommand{\thecircledaststatement}{%
-  \circledastrepeat{\arabic{circledaststatement}}%
-}
-
-\newsavebox{\circledastblockbox}
-\newlength{\circledastblockwidth}
-\newlength{\circledastblockxoffset}
-\NewDocumentCommand{\circledastblock}{O{} m +m}{%
-  \refstepcounter{circledaststatement}%
-  \label{#2}%
-  \begingroup
-  \begin{lrbox}{\circledastblockbox}%
-    \IfBlankTF{#1}{%
-      \begin{varwidth}{\linewidth}%
-        #3%
-      \end{varwidth}%
-    }{%
-      #1%
-    }%
-  \end{lrbox}%
-  \global\circledastblockwidth=\wd\circledastblockbox
-  \global\circledastblockxoffset=.5\linewidth
-  \global\advance\circledastblockxoffset by .5\circledastblockwidth
-  \endgroup
-  \par\noindent\tikzmark{circledastblock-#2-start}#3\tikzmark{circledastblock-#2-end}%
-  \tikzexternaldisable
-  \begin{tikzpicture}[remember picture,overlay]
-    \coordinate (circledastblock-start-east) at
-      ([xshift=\dimexpr\circledastblockxoffset+1em\relax]pic cs:circledastblock-#2-start);
-    \coordinate (circledastblock-end-west) at
-      (pic cs:circledastblock-#2-end);
-    \coordinate (circledastblock-end-east) at
-      (circledastblock-start-east |- circledastblock-end-west);
-    \draw[line width=0.7pt]
-      ([yshift=1.8ex]circledastblock-start-east)
-      --
-      ([yshift=-0.8ex]circledastblock-end-east);
-    \node[anchor=west,inner sep=0pt,outer sep=0pt]
-      at ([xshift=0.5em]circledastblock-start-east)
-      {\huge\thecircledaststatement};
-  \end{tikzpicture}%
-  \tikzexternalenable
-}
-
-
 \begin{document}
 
 \begin{center}
@@ -5560,15 +5500,21 @@ Fix \(B \in \mathcal{S}\) and define
 \coloneq
 \{A \subseteq \mathbb{R} : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
 \]
-We show that \(\mathcal{D}_B\) is a \(\sigma\)-algebra.
+We show that \(\mathcal{D}_B\) is a \(\sigma\)-algebra:
+\begin{itemize}
+\item
 First, \(\varnothing \in \mathcal{D}_B\), since
-\(\varnothing \times B = \varnothing\).
+\(\varnothing \times B = \varnothing \in \sigma(\mathcal{S} \times \mathcal{S})
+\). \cmark
+\item
 Next, let \(A \in \mathcal{D}_B\). By the countable covering assumption from the
 \(\sigma\)-finiteness part, choose \(S_m \in \mathcal{S}\) such that
 \(\mathbb{R} = \bigcup_{m=1}^{\infty} S_m\).
 Then
 \[
 \mathbb{R} \times B
+=
+\left(\bigcup_{m=1}^{\infty} S_m\right) \times B
 =
 \bigcup_{m=1}^{\infty} (S_m \times B)
 \in
@@ -5577,13 +5523,17 @@ Then
 because \(S_m \times B \in \mathcal{S} \times \mathcal{S}\) for all \(m \in \mathbb{N}\).
 Since \(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\), we obtain
 \[
-A^c \times B
+A^{\complement} \times B
+=
+\left(\R \setminus A\right) \times B
 =
 (\mathbb{R} \times B) \setminus (A \times B)
 \in
 \sigma(\mathcal{S} \times \mathcal{S})
 \]
-and hence \(A^c \in \mathcal{D}_B\).
+and hence \(A^{\complement} \in \mathcal{D}_B\).
+\cmark
+\item
 Finally, if \(A_n \in \mathcal{D}_B\) for all \(n \in \mathbb{N}\), then
 \[
 \left(\bigcup_{n=1}^{\infty} A_n\right) \times B
@@ -5593,27 +5543,40 @@ Finally, if \(A_n \in \mathcal{D}_B\) for all \(n \in \mathbb{N}\), then
 \sigma(\mathcal{S} \times \mathcal{S})
 \]
 so \(\bigcup_{n=1}^{\infty} A_n \in \mathcal{D}_B\).
+\cmark
+\end{itemize}
 Thus \(\mathcal{D}_B\) is a \(\sigma\)-algebra.
 
 % Moreover, \(\mathcal{S} \subseteq \mathcal{D}_B\), % why?
 % because \(A \times B \in \mathcal{S} \times \mathcal{S} \subseteq \sigma(\mathcal{S} \times \mathcal{S})\) for every \(A \in \mathcal{S}\).
 Moreover, \(\mathcal{S} \subseteq \mathcal{D}_B\), because \(A \times B \in \mathcal{S} \times \mathcal{S} \subseteq \sigma(\mathcal{S} \times \mathcal{S})\) for every \(A \in \mathcal{S}\).
+
 Therefore, by the minimality of \(\sigma(\mathcal{S})\)
 (\autoref{thm:generated-sigma-algebra}), we have
 \(\sigma(\mathcal{S}) \subseteq \mathcal{D}_B\).
 
-% That means
-% \[
-% A \times B \in \sigma(\mathcal{S} \times \mathcal{S})
-% \]
-% for all \(A \in \sigma(\mathcal{S})\) and all \(B \in \mathcal{S}\).
-\circledastblock{star:first-coordinate-upgrade}{%
-That means 
+\hypertarget{star:first-coordinate-upgrade}{}That means\tikzmark{star-first-coordinate-upgrade-start}
 \[
-A \times B \in \sigma(\mathcal{S} \times \mathcal{S})
+A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\tikzmark{star-first-coordinate-upgrade-equation-east}
 \]
-for all \(A \in \sigma(\mathcal{S})\) and all \(B \in \mathcal{S}\). 
-}
+for all \(A \in \sigma(\mathcal{S})\) and all \(B \in \mathcal{S}\).\tikzmark{star-first-coordinate-upgrade-end}
+\tikzexternaldisable
+\begin{tikzpicture}[remember picture,overlay, line cap=round]
+  \coordinate (starfirstcoordstart) at (pic cs:star-first-coordinate-upgrade-start);
+  \coordinate (starfirstcoordend) at (pic cs:star-first-coordinate-upgrade-end);
+  \coordinate (starfirstcoordeqeast) at (pic cs:star-first-coordinate-upgrade-equation-east);
+  \path let
+    \p1 = (starfirstcoordstart),
+    \p2 = (starfirstcoordeqeast),
+    \p3 = (starfirstcoordend)
+  in
+    coordinate (starfirstcoordbarstart) at ({max(\x1,\x2,\x3) + 2em}, {\y1 + 1.8ex})
+    coordinate (starfirstcoordbarend) at ({max(\x1,\x2,\x3) + 2em}, {\y3 - 0.8ex});
+  \draw[line width=0.7pt]
+    (starfirstcoordbarstart) -- (starfirstcoordbarend);
+  \node[anchor=north west,inner sep=0pt,outer sep=0.2em] at ([xshift=0.0em]starfirstcoordbarstart) {\(\circledast\)};
+\end{tikzpicture}%
+\tikzexternalenable
 
 Now fix \(A \in \sigma(\mathcal{S})\) and define
 \[
@@ -5621,11 +5584,15 @@ Now fix \(A \in \sigma(\mathcal{S})\) and define
 \coloneq
 \{B \subseteq \mathbb{R} : A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\}
 \]
-By the same argument, \(\mathcal{D}_A\) is a \(\sigma\)-algebra.
+which is again a \(\sigma\)-algebra by the same argument as for \(\mathcal{D}_B\).
+
+% By the same argument, \(\mathcal{D}_A\) is a \(\sigma\)-algebra.
+
 % By the previous step, \(\mathcal{S} \subseteq \mathcal{D}_A\).
-By \ref{star:first-coordinate-upgrade}, \(\mathcal{S} \subseteq \mathcal{D}_A\): 
- if \(B \in \mathcal{S}\), then \ref{star:first-coordinate-upgrade}, applied to the fixed \(A \in \sigma(\mathcal{S})\), gives \(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\), hence \(B \in \mathcal{D}_A\).
-Thus, again by the minimality of \(\sigma(\mathcal{S})\)
+By \hyperlink{star:first-coordinate-upgrade}{\(\circledast\)}, \(\mathcal{S} \subseteq \mathcal{D}_A\): 
+ if \(B \in \mathcal{S}\), then \hyperlink{star:first-coordinate-upgrade}{\(\circledast\)}, applied to the fixed \(A \in \sigma(\mathcal{S})\), gives \(A \times B \in \sigma(\mathcal{S} \times \mathcal{S})\), hence \(B \in \mathcal{D}_A\).
+
+ Thus, again by the minimality of \(\sigma(\mathcal{S})\)
 (\autoref{thm:generated-sigma-algebra}), we get
 \(\sigma(\mathcal{S}) \subseteq \mathcal{D}_A\).
 
@@ -5909,7 +5876,7 @@ Thus \(\mu_{\text{prod}}\) is \(\sigma\)-subadditive as well. \cmark
 \item
 \ref{def:set-function-sigma-finite}:
 For simplicity\footnote{%
-This assumption is stronger than needed, but for our proof strategy, it is necessary.%
+for our proof strategy via semirings, it is necessary%
 }, assume the semiring \(\mathcal{S}\) covers \(\R\), i.e.
 \[
 \R = \bigcup_{m=1}^{\infty} S_m
