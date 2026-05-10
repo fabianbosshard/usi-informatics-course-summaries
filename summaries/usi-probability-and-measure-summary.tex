@@ -1508,9 +1508,10 @@ For any $A \subset \Omega$, we define
 Then, the set function $\Prob: 2^\Omega \to [0,1]$ is a probability measure and $(\Omega,2^\Omega,\Prob)$ is a probability space.
 \end{example}
 
-\begin{theorem}\label{thm:subset-measure}
+\begin{theorem}[\textcolor{red}{monotonicity}]
+\label{thm:subset-measure}
 Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
-Let $A,B \in \mathcal{F}$ with $A \subset B$.
+Let $A,B \in \mathcal{F}$ with $A \subseteq B$.
 Then,
 \begin{equation}
 \label{eq:subset-measure}
@@ -3459,7 +3460,7 @@ By additivity, we have
 Hence \(\mu\) is finitely subadditive.
 \end{proof}
 
-\pagebreak[2]
+% \pagebreak[2]
 
 \begin{theorem}[\textcolor{red}{Carathéodory Extension}]\label{thm:caratheodory-extension}
 Let $\mathcal{S} \subseteq 2^\Omega$ be a semiring and 
@@ -3683,6 +3684,265 @@ for all \(\vect{a},\vect{b}\in\R^d\) with \(\vect{a}<\vect{b}\).
 This is the Lebesgue--Borel measure.
 \end{proof}
 
+\pagebreak[3]
+
+\begin{exercise}[Translation invariance on cuboids] % assignment 4, exercise 3
+Work on $\R^d$ and let $\lambda^d$ be the Lebesgue--Borel measure.
+For $\vect{h} \in \R^d$ and $A \subseteq \R^d$, define
+\[
+A+\vect{h}
+\coloneq
+\{\vect{x}+\vect{h} : \vect{x} \in A\}
+\]
+\begin{enumerate}[label={\protect\hyperref[solitem:translation-invariance-cuboids:\arabic*]{(\alph*)}}]
+\item \label{exitem:translation-invariance-cuboids:1}
+Show that for every half-open cuboid $C=(\vect{a},\vect{b}]$ and every $\vect{h} \in \R^d$, one has
+\[
+C+\vect{h}
+=
+(\vect{a}+\vect{h},\vect{b}+\vect{h}]
+\]
+\item \label{exitem:translation-invariance-cuboids:2}
+Deduce that
+\[
+\lambda^d(C+\vect{h})
+=
+\lambda^d(C)
+\]
+for every half-open cuboid $C$.
+\item \label{exitem:translation-invariance-cuboids:3}
+Fix $\vect{h}\in\R^d$ and consider
+\[
+\mu_{\vect{h}}(A)
+\coloneq
+\lambda^d(A+\vect{h})
+\]
+for 
+$
+A \in \mathcal{B}(\R^d)
+$.
+Show that $\mu_{\vect{h}}$ is a measure on $\mathcal{B}(\R^d)$.
+\item \label{exitem:translation-invariance-cuboids:4}
+Show that $\mu_{\vect{h}}$ and $\lambda^d$ coincide on the semiring
+\[
+\mathcal{C}
+=
+\{(\vect{a},\vect{b}] : \vect{a}<\vect{b}\}
+\]
+\item \label{exitem:translation-invariance-cuboids:5}
+Deduce from the uniqueness statement in \autoref{thm:caratheodory-extension} that
+\[
+\lambda^d(A+\vect{h})
+=
+\lambda^d(A)
+\]
+for all $A \in \mathcal{B}(\R^d)$.
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label={\protect\hyperref[exitem:translation-invariance-cuboids:\arabic*]{(\alph*)}}]
+\item \label{solitem:translation-invariance-cuboids:1}
+Let $C=(\vect{a},\vect{b}]$ and $\vect{h}\in\R^d$.
+% Then
+% \[
+% \begin{aligned}
+% C+\vect{h}
+% &=
+% \{\vect{x}+\vect{h} : \vect{x}\in C\} \\
+% &=
+% \{\vect{x}+\vect{h} : \vect{a}<\vect{x}\leq \vect{b}\} \\
+% &=
+% \{\vect{y} \in \R^d : \vect{a}<\vect{y}-\vect{h}\leq \vect{b}\} \\
+% &=
+% \{\vect{y} \in \R^d : \vect{a}+\vect{h}<\vect{y}\leq \vect{b}+\vect{h}\} \\
+% &=
+% (\vect{a}+\vect{h},\vect{b}+\vect{h}]
+% \end{aligned}
+% \]
+% where the inequalities are understood componentwise.
+We show both inclusions.
+\begin{itemize}
+\item[$\subseteq$:]
+First, let $\vect{y}\in C+\vect{h}$.
+Then there exists $\vect{x}\in C$ such that $\vect{y}=\vect{x}+\vect{h}$.
+Since $\vect{x}\in C=(\vect{a},\vect{b}]$, we have $\vect{a}<\vect{x}\leq \vect{b}$ componentwise, and hence
+\[
+\vect{a}+\vect{h}
+<
+\vect{x}+\vect{h}
+=
+\vect{y}
+\leq
+\vect{b}+\vect{h}
+\]
+Thus $\vect{y}\in (\vect{a}+\vect{h},\vect{b}+\vect{h}]$.
+%  so
+% \[
+% C+\vect{h}
+% \subseteq
+% (\vect{a}+\vect{h},\vect{b}+\vect{h}]
+% \]
+\item[$\supseteq$:]
+Conversely, let $\vect{y}\in (\vect{a}+\vect{h},\vect{b}+\vect{h}]$.
+Define $\vect{x}\coloneq \vect{y}-\vect{h}$.
+Then
+\[
+\vect{a}+\vect{h}<\vect{y}\leq \vect{b}+\vect{h}
+\quad\Longrightarrow\quad
+\vect{a}<\vect{y}-\vect{h}\leq \vect{b}
+\]
+and therefore $\vect{x}\in (\vect{a},\vect{b}]=C$.
+Since $\vect{y}=\vect{x}+\vect{h}$, this implies $\vect{y}\in C+\vect{h}$.
+% Hence
+% \[
+% (\vect{a}+\vect{h},\vect{b}+\vect{h}]
+% \subseteq
+% C+\vect{h}
+% \]
+\end{itemize}
+Combining both inclusions yields the desired equality.
+
+\item \label{solitem:translation-invariance-cuboids:2}
+% By \ref{solitem:translation-invariance-cuboids:1}, we have
+% \[
+% C+\vect{h}
+% =
+% (\vect{a}+\vect{h},\vect{b}+\vect{h}]
+% \]
+% Hence, 
+By 
+% the defining property of the Lebesgue--Borel measure from 
+\autoref{thm:lebesgue-borel-measure},
+\[
+% \begin{aligned}
+\lambda^d(C+\vect{h})
+\overset{\text{\ref{solitem:translation-invariance-cuboids:1}}}=
+\lambda^d((\vect{a}+\vect{h},\vect{b}+\vect{h}]) 
+=
+\prod_{i=1}^d \bigl((b_i+h_i)-(a_i+h_i)\bigr) 
+=
+\prod_{i=1}^d (b_i-a_i)
+=
+\lambda^d(C)
+% \end{aligned}
+\]
+
+\item \label{solitem:translation-invariance-cuboids:3}
+We first note that $A+\vect{h} \in \mathcal{B}(\R^d)$ for every $A \in \mathcal{B}(\R^d)$.
+Indeed, the translation map
+\[
+\begin{aligned}
+T_{\vect{h}} : \R^d &\longrightarrow \R^d \\
+\vect{x} &\longmapsto T_{\vect{h}}(\vect{x})=\vect{x}+\vect{h}
+\end{aligned}
+\]
+is a homeomorphism, hence maps Borel sets to Borel sets.
+Thus $\mu_{\vect{h}}$ is well-defined.
+
+Clearly,
+\[
+\mu_{\vect{h}}(\varnothing)
+=
+\lambda^d(\varnothing+\vect{h})
+=
+\lambda^d(\varnothing)
+=
+0
+\]
+
+Now let $(A_n)_{n\in\N}$ be pairwise disjoint sets in $\mathcal{B}(\R^d)$.
+Then the translated sets $(A_n+\vect{h})_{n\in\N}$ are pairwise disjoint:
+if
+\(
+\vect{y}\in (A_i+\vect{h})\cap(A_j+\vect{h})
+\), then
+\[
+\vect{y}=\vect{x}_i+\vect{h}=\vect{x}_j+\vect{h}
+\]
+for some $\vect{x}_i\in A_i$ and $\vect{x}_j\in A_j$, so $\vect{x}_i=\vect{x}_j$. 
+Therefore $A_i\cap A_j\neq \varnothing$, which implies $i=j$.
+More\-over,
+\begin{equation}\label{eq:translation-union-commutes}
+\left(\bigcup_{n=1}^{\infty} A_n\right)+\vect{h}
+=
+\bigcup_{n=1}^{\infty}(A_n+\vect{h})
+\end{equation}
+% Indeed,
+% \[
+% \begin{aligned}
+% \vect{y}\in \left(\bigcup_{n=1}^{\infty} A_n\right)+\vect{h}
+% &\Longleftrightarrow
+% \vect{y}=\vect{x}+\vect{h}\text{ for some }\vect{x}\in\bigcup_{n=1}^{\infty} A_n \\
+% &\Longleftrightarrow
+% \vect{y}=\vect{x}+\vect{h}\text{ for some }\vect{x}\in A_n\text{ and some }n\in\N \\
+% &\Longleftrightarrow
+% \vect{y}\in \bigcup_{n=1}^{\infty}(A_n+\vect{h})
+% \end{aligned}
+% \]
+% Therefore, by the $\sigma$-additivity of $\lambda^d$,
+Hence,
+\[
+\begin{aligned}
+\mu_{\vect{h}}\left(\bigcup_{n=1}^{\infty} A_n\right)
+&=
+\lambda^d\left(\left(\bigcup_{n=1}^{\infty} A_n\right)+\vect{h}\right) 
+\overset{\text{\eqref{eq:translation-union-commutes}}}{=}
+\lambda^d\left(\bigcup_{n=1}^{\infty}(A_n+\vect{h})\right) \\
+&\overset{\text{\eqref{eq:sigma-additivity}}}{=}
+\sum_{n=1}^{\infty} \lambda^d(A_n+\vect{h})
+=
+\sum_{n=1}^{\infty} \mu_{\vect{h}}(A_n)
+\end{aligned}
+\]
+
+Thus $\mu_{\vect{h}}$ is a measure on $\mathcal{B}(\R^d)$.
+
+\item \label{solitem:translation-invariance-cuboids:4}
+Let $C=(\vect{a},\vect{b}]\in\mathcal{C}$.
+Then by \ref{solitem:translation-invariance-cuboids:2},
+\[
+\mu_{\vect{h}}(C)
+=
+\lambda^d(C+\vect{h})
+=
+\lambda^d(C)
+\]
+Hence $\mu_{\vect{h}}$ and $\lambda^d$ coincide on $\mathcal{C}$.
+
+\item \label{solitem:translation-invariance-cuboids:5}
+Both $\mu_{\vect{h}}$ and $\lambda^d$ are measures on $\mathcal{B}(\R^d)=\sigma(\mathcal{C})$ and, by \ref{solitem:translation-invariance-cuboids:4}, they agree on $\mathcal{C}$.
+Moreover, $\lambda^d$ is $\sigma$-finite on $\mathcal{C}$, since
+\[
+\R^d
+=
+\bigcup_{n=1}^{\infty} (-n,n]^d
+\qquad
+\text{and}
+\qquad
+\lambda^d((-n,n]^d)=(2n)^d<\infty
+\]
+By the uniqueness statement in \autoref{thm:caratheodory-extension}, we obtain
+\[
+\mu_{\vect{h}}
+=
+\lambda^d
+\]
+on $\mathcal{B}(\R^d)$.
+Thus, 
+\[
+\lambda^d(A+\vect{h})
+=
+\mu_{\vect{h}}(A)
+=
+\lambda^d(A)
+\]
+for all $A\in\mathcal{B}(\R^d)$.
+\qedhere
+\end{enumerate}
+\end{solution}
 
 
 
@@ -3691,7 +3951,8 @@ This is the Lebesgue--Borel measure.
 
 
 
-\begin{definition}[Semicontinuity]
+
+\begin{definition}[Semicontinuity]\label{def:semicontinuity}
 A function $f : \R \to \R$ is called 
 \begin{itemize}
 \item 
@@ -3699,78 +3960,82 @@ A function $f : \R \to \R$ is called
 \[
 |x-x_0| < \delta \implies f(x) < f(x_0) + \varepsilon
 \]
+i.e. it \hl{cannot suddenly ``jump upward''}
 \item 
 \emph{lower semicontinuous} if for every $x_0 \in \R$ and every $\varepsilon > 0$ there exists $\delta > 0$ such that
 \[
 |x-x_0| < \delta \implies f(x) > f(x_0) - \varepsilon
 \]
+i.e. it \hl{cannot suddenly ``jump downward''}
 \end{itemize}
-% \begin{figure}[ht]
-%   \newcommand{\leftrightcontcolor}{black}
-%   \centering
-%   \captionsetup[subfigure]{labelformat=empty}
-%   \subfloat[upper semicontinuous, but \\not lower semicontinuous at $x_0$]{%
-%     \begin{tikzpicture}
-%       \begin{axis}[
-%         axis x line=bottom,
-%         axis y line=left,
-%         axis line style={
-%     ->,
-%       >=Computer Modern Rightarrow
-%     },
-%         xlabel={$x$},ylabel={$f(x)$},
-%         xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
-%         ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
-%         width=5.5cm,height=4cm,
-%         xmin=-1,xmax=1,ymin=0,ymax=1.4,
-%         xtick={0},xticklabels={$x_0$},
-%         ytick=\empty
-%       ]
-%         % data shifted up by 0.2
-%         \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
-%         \addplot[thick,\leftrightcontcolor,domain=0:1]{0.4};
-%         % markers
-%         \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
-%           coordinates {(0,0.4)};
-%         \addplot[only marks,mark=*,thick,\leftrightcontcolor]
-%           coordinates {(0,1.0)};
-%         % jump
-%         \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
-%       \end{axis}
-%     \end{tikzpicture}
-%   }%
-%   \hspace{5em}
-%   \subfloat[lower semicontinuous, but \\not upper semicontinuous at $x_0$]{%
-%     \begin{tikzpicture}
-%       \begin{axis}[
-%         axis x line=bottom,
-%         axis y line=left,
-%         axis line style={
-%     ->,
-%       >=Computer Modern Rightarrow
-%     },
-%         xlabel={$x$},ylabel={$f(x)$},
-%         xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
-%         ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
-%         width=5.5cm,height=4cm,
-%         xmin=-1,xmax=1,ymin=0,ymax=1.4,
-%         xtick={0},xticklabels={$x_0$},
-%         ytick=\empty
-%       ]
-%         % data shifted up by 0.2
-%         \addplot[thick,\leftrightcontcolor,domain=-1:0]{1.0};
-%         \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
-%         % markers
-%         \addplot[only marks,mark=*,thick,\leftrightcontcolor]
-%           coordinates {(0,0.4)};
-%         \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
-%           coordinates {(0,1.0)};
-%         % jump
-%         \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
-%       \end{axis}
-%     \end{tikzpicture}
-%   }%
-% \end{figure}
+\pagebreak[2]
+\begin{figure}[h]
+  \newcommand{\leftrightcontcolor}{black}
+  \centering
+  \captionsetup[subfigure]{labelformat=empty}
+  \subfloat[upper semicontinuous, but \\not lower semicontinuous at $x_0$]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$x$},ylabel={$f(x)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$x_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{0.4};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{0.4};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,0.4) -- (axis cs:0,1.0);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+  \hspace{5em}
+  \subfloat[lower semicontinuous, but \\not upper semicontinuous at $x_0$]{%
+    \begin{tikzpicture}
+      \begin{axis}[
+        axis x line=bottom,
+        axis y line=left,
+        axis line style={
+    ->,
+      >=Computer Modern Rightarrow
+    },
+        xlabel={$x$},ylabel={$f(x)$},
+        xlabel style={at={(axis description cs:1,0)},anchor=south,yshift=2pt},
+        ylabel style={at={(axis description cs:0.35,1)},anchor=west,xshift=2pt,rotate=-90},
+        width=5.5cm,height=4cm,
+        xmin=-1,xmax=1,ymin=0,ymax=1.4,
+        xtick={0},xticklabels={$x_0$},
+        ytick=\empty
+      ]
+        % data shifted up by 0.2
+        \addplot[thick,\leftrightcontcolor,domain=-1:0]{1.0};
+        \addplot[thick,\leftrightcontcolor,domain=0:1]{1.0};
+        % markers
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor]
+          coordinates {(0,0.4)};
+        \addplot[only marks,mark=*,thick,\leftrightcontcolor,mark options={fill=white}]
+          coordinates {(0,1.0)};
+        % jump
+        \draw[densely dashed,\leftrightcontcolor] (axis cs:0,1.0) -- (axis cs:0,0.4);
+      \end{axis}
+    \end{tikzpicture}
+  }%
+\end{figure}
+
 A real-valued function $f$ is upper (respectively, lower) semicontinuous at a point $x_0$ if, roughly speaking, the function values for arguments near $x_0$ are not much higher (respectively, lower) than $f\left(x_0\right)$. 
 Equivalently, a function on a domain $X$ is lower semi-continuous if its epigraph $\{(x, t) \in X \times \mathbb{R}: t \geq f(x)\}$ is closed in $X \times \R$, and upper semi-continuous if $-f$ is lower semi-continuous.
 \end{definition}
@@ -3814,7 +4079,7 @@ F(-\infty) \coloneq \lim_{x \to -\infty} F(x) = 0
 \qquad\text{and}\qquad
 F(\infty) \coloneq \lim_{x \to \infty} F(x) = 1
 \]
-is called a \emph{cumulative distribution function}, \emph{probability distribution function} or simply \emph{\hl{distribution function}}.
+is called a \emph{cumulative distribution function}, \emph{probability distribution function} or simply \emph{\hl[2]{distribution function}}.
 If $\Prob$ is a probability measure on $(\R, \mathcal{B}(\R))$, then
 \[
 \begin{aligned}
@@ -3832,6 +4097,209 @@ Clearly, $F_{\Prob}$ is right continuous and $F_{\Prob}(-\infty)=0$, since $\Pro
 Since $\Prob$ is lower semicontinuous, we have $F_{\Prob}(\infty)=\Prob(\R)=1$. 
 Therefore, $F_{\Prob}$ is indeed a distribution function if $\Prob$ is a probability measure. 
 More generally, every finite measure on $(\R, \mathcal{B}(\R))$ is a Lebesgue-Stieltjes measure for some function $F$.
+
+% --- BEGIN REPLACEMENT BLOCK ---
+\begin{exercise}[Semicontinuity and distribution functions] % assignment 4, exercise 1
+Work on $\R$ equipped with its canonical topology.
+Recall \autoref{def:semicontinuity}.
+% Let $\Prob$ be a probability measure on $(\R,\mathcal{B}(\R))$ and define
+% \[
+% F_{\Prob}(x)
+% \coloneq
+% \Prob((-\infty,x])
+% \]
+% for all $x \in \R$.
+\begin{enumerate}[label={\protect\hyperref[solitem:semicontinuity-distribution-functions:\arabic*]{(\alph*)}}]
+\item \label{exitem:semicontinuity-distribution-functions:1}
+Show that $F_{\Prob}$ is monotonically increasing.
+\item \label{exitem:semicontinuity-distribution-functions:2}
+Show that $F_{\Prob}$ is upper semicontinuous.
+\item \label{exitem:semicontinuity-distribution-functions:3}
+Show that $F_{\Prob}$ is lower semicontinuous from the right.
+\item \label{exitem:semicontinuity-distribution-functions:4}
+Show that $F_{\Prob}$ is right continuous.
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label={\protect\hyperref[exitem:semicontinuity-distribution-functions:\arabic*]{(\alph*)}}]
+\item \label{solitem:semicontinuity-distribution-functions:1}
+Let $x,y \in \R$ with $x \le y$.
+Then
+\(
+(-\infty,x] \subseteq (-\infty,y]
+\).
+Hence, by \autoref{thm:subset-measure},
+\[
+F_{\Prob}(x)
+=
+\Prob((-\infty,x])
+\le
+\Prob((-\infty,y])
+=
+F_{\Prob}(y)
+\]
+% Thus $F_{\Prob}$ is monotonically increasing.
+
+\item \label{solitem:semicontinuity-distribution-functions:2}
+Fix $x \in \R$ and $\varepsilon > 0$.
+% We need to find $\delta > 0$ such that
+% \[
+% |y-x| < \delta
+% \quad\Longrightarrow\quad
+% F_{\Prob}(y) < F_{\Prob}(x)+\varepsilon
+% \]
+\begin{itemize}
+\item
+If $y \le x$, then by \ref{solitem:semicontinuity-distribution-functions:1},
+\[
+F_{\Prob}(y)
+\le
+F_{\Prob}(x)
+<
+F_{\Prob}(x)+\varepsilon
+\]
+\item
+It remains to control the case $y>x$.
+Let $(\delta_n)_{n \in \N}$ be a sequence with $\delta_n > 0$ and $\delta_n \searrow 0$.
+Consider %the events
+\[
+C_n \coloneq (x,x+\delta_n]
+\]
+for $n \in \N$.
+Then $(C_n)_{n \in \N}$ is a decreasing sequence of events with
+\[
+\bigcap_{n=1}^{\infty} C_n = \varnothing
+\]
+Thus, by continuity of $\Prob$ from above (\autoref{thm:continuity-from-above}),
+\[
+\lim_{n \to \infty} \Prob(C_n)
+=
+\Prob\left(\bigcap_{n=1}^{\infty} C_n\right)
+=
+\Prob(\varnothing)
+=
+0
+\]
+Hence there exists $N \in \N$ such that
+\(
+\Prob((x,x+\delta_N]) < \varepsilon
+\) for all $n \ge N$.
+Set
+\(
+\delta \coloneq \delta_N
+\).
+If $x<y<x+\delta$, then
+\[
+(x,y] \subseteq (x,x+\delta]
+\]
+and therefore
+\[
+\begin{aligned}
+F_{\Prob}(y)
+&=
+\Prob((-\infty,y]) \\
+&=
+\Prob((-\infty,x] \sqcup (x,y]) \\
+&\overset{\text{\eqref{eq:sigma-additivity}}}{=}
+\Prob((-\infty,x]) + \Prob((x,y]) \\
+&\overset{\text{\eqref{eq:subset-measure}}}{\leq}
+\Prob((-\infty,x]) + \Prob((x,x+\delta]) \\
+&<
+F_{\Prob}(x)+\varepsilon
+\end{aligned}
+\]
+\end{itemize}
+Combining the cases $y \le x$ and $y>x$ yields
+\[
+|y-x| < \delta
+\quad\Longrightarrow\quad
+F_{\Prob}(y) < F_{\Prob}(x)+\varepsilon
+\]
+Thus $F_{\Prob}$ is upper semicontinuous.
+
+\item \label{solitem:semicontinuity-distribution-functions:3}
+Fix $x \in \R$ and $\varepsilon > 0$.
+Since $F_{\Prob}$ is monotonically increasing by \ref{solitem:semicontinuity-distribution-functions:1}, we have for every $y \ge x$
+\[
+F_{\Prob}(y)
+\ge
+F_{\Prob}(x)
+>
+F_{\Prob}(x)-\varepsilon
+\]
+Thus we may choose any $\delta > 0$, and then
+\[
+x \le y < x+\delta
+\quad\Longrightarrow\quad
+F_{\Prob}(y) > F_{\Prob}(x)-\varepsilon
+\]
+Hence $F_{\Prob}$ is lower semicontinuous from the right.
+
+\item \label{solitem:semicontinuity-distribution-functions:4}
+Fix $x \in \R$ and $\varepsilon > 0$.
+By \ref{solitem:semicontinuity-distribution-functions:2}, there exists $\delta_{\text{\ref{solitem:semicontinuity-distribution-functions:2}}}>0$ such that
+\[
+|y-x| < \delta_{\text{\ref{solitem:semicontinuity-distribution-functions:2}}}
+\quad\Longrightarrow\quad
+F_{\Prob}(y) < F_{\Prob}(x)+\varepsilon
+\]
+By \ref{solitem:semicontinuity-distribution-functions:3}, there exists $\delta_{\text{\ref{solitem:semicontinuity-distribution-functions:3}}}>0$ such that
+\[
+x \le y < x+\delta_{\text{\ref{solitem:semicontinuity-distribution-functions:3}}}
+\quad\Longrightarrow\quad
+F_{\Prob}(y) > F_{\Prob}(x)-\varepsilon
+\]
+Set
+\(
+\delta \coloneq \min\{\delta_{\text{\ref{solitem:semicontinuity-distribution-functions:2}}},\delta_{\text{\ref{solitem:semicontinuity-distribution-functions:3}}}\}
+\).
+Then, for every $y \in [x,x+\delta)$, both estimates hold, and hence
+\[
+F_{\Prob}(x)-\varepsilon
+<
+F_{\Prob}(y)
+<
+F_{\Prob}(x)+\varepsilon
+\]
+Equivalently,
+\[
+|F_{\Prob}(y)-F_{\Prob}(x)| < \varepsilon
+\]
+for all $y \in [x,x+\delta)$.
+Thus
+\[
+\lim_{y \searrow x} F_{\Prob}(y) = F_{\Prob}(x)
+\]
+so $F_{\Prob}$ is right continuous.
+
+Alternatively, let $(y_n)_{n \in \N}$ be a sequence with $y_n \searrow x$.
+Then the events $(-\infty,y_n]$ form a decreasing sequence and
+\[
+\bigcap_{n=1}^{\infty} (-\infty,y_n]
+=
+(-\infty,x]
+\]
+Therefore, by continuity of $\Prob$ from above (\autoref{thm:continuity-from-above}),
+\[
+\begin{verticalhack}
+\lim_{n \to \infty} F_{\Prob}(y_n)
+=
+\lim_{n \to \infty} \Prob((-\infty,y_n])
+=
+\Prob\left(\bigcap_{n=1}^{\infty} (-\infty,y_n]\right)
+=
+\Prob((-\infty,x])
+=
+F_{\Prob}(x)
+\end{verticalhack}
+\qedhere
+\]
+\end{enumerate}
+\end{solution}
+% --- END REPLACEMENT BLOCK ---
 
 \begin{theorem}
 The map $\Prob \longmapsto F_{\Prob}$ is a bijection from the set of probability measures on $(\R, \allowbreak \mathcal{B}(\R))$ to the set of probability distribution functions.
@@ -3869,7 +4337,7 @@ Show that if $A \in \mathcal{B}(\R)$, then
 \item \label{exitem:lebesgue-stieltjes-step-function:5}
 Conclude that every finitely supported probability measure on $\R$, that is, every probability measure of the form
 \[
-\mu = \sum_{k=1}^n p_k \delta_{x_k}
+\nu = \sum_{k=1}^n p_k \delta_{x_k}
 \]
 for some $x_1 < \dots < x_n$ and $p_1, \ldots, p_n \geq 0$ with $\sum_{k=1}^n p_k = 1$, is a Lebesgue-Stieltjes measure (\autoref{ex:lebesgue-stieltjes-measure}).
 \qedhere
@@ -4014,11 +4482,11 @@ $\delta_{x_k}(A) = \ind_A(x_k)$ for every
 % Borel set
  $A \allowbreak \in \allowbreak \mathcal{B}(\R)$.
 Then for every $A \in \mathcal{B}(\R)$,
-\(
-\mu(A)=\sum_{x_k\in A} p_k
-\).
+\[
+\mu(A)=\sum_{k : x_k\in A} p_k
+\]
 Moreover, for every $a \le b$,
-\(\mu((a,b]) = \sum_{k: a < x_k \le b} p_k\).
+\[\mu((a,b]) = \sum_{k: a < x_k \le b} p_k\]
 By part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-interval},
 \(\mu((a,b]) = \mu_F((a,b])\)
 for all $a \le b$.
@@ -4030,23 +4498,34 @@ generates $\mathcal{B}(\R)$,
 implies that $\mu=\mu_F$. 
 Therefore, 
 \[
-\mu_F(A)=\mu(A)=\sum_{x_k\in A} p_k = \sum_{k=1}^n p_k\ind_A(x_k)
+\mu_F(A)=\mu(A)=\sum_{k : x_k\in A} p_k = \sum_{k=1}^n p_k\ind_A(x_k)
 \]
 for every $A \in \mathcal{B}(\R)$.
 
 \item \label{solitem:lebesgue-stieltjes-step-function:5}
-Let $\nu$ be a finitely supported probability measure on $\R$. Then there exist real numbers $x_1 < \dots < x_n$ and numbers $p_1,\dots,p_n \ge 0$ with $\sum_{k=1}^n p_k = 1$ such that
-\(\nu = \sum_{k=1}^n p_k\delta_{x_k}\).
+% Let $\nu$ be a finitely supported probability measure on $\R$. Then there exist real numbers $x_1 < \dots < x_n$ and numbers $p_1,\dots,p_n \ge 0$ with $\sum_{k=1}^n p_k = 1$ such that
+% \(\nu = \sum_{k=1}^n p_k\delta_{x_k}\).
 Define
 \(F(x) := \sum_{k=1}^n p_k\ind_{[x_k,\infty)}(x)\).
-By part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-set}, the Lebesgue--Stieltjes measure $\mu_F$ associated with $F$ satisfies
-\(\mu_F(A)=\sum_{x_k\in A} p_k = \nu(A)\)
+By part \ref{sol:lebesgue-stieltjes-step-function:explicit-mu-set}, the Lebesgue--Stieltjes measure $\mu_F$ as\-so\-ciated with $F$ satisfies
+\[
+\mu_F(A)
+=
+\sum_{k : x_k\in A} p_k 
+= 
+\sum_{k=1}^n p_k \ind_A(x_k)
+=
+\sum_{k=1}^n p_k \delta_{x_k}(A)
+=
+\nu(A)
+\]
 for all $A \in \mathcal{B}(\R)$.
 Hence $\nu = \mu_F$.
 Thus every finitely supported probability measure on $(\R,\mathcal{B}(\R))$ is a Lebesgue--Stieltjes measure.
 \qedhere
 \end{enumerate}
 \end{solution}
+\pagebreak[3]
 
 
 
@@ -4064,7 +4543,9 @@ Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
   A set $B \in \mathcal{F}$ with $\mu(B)=0$ is called a $\mu$-null set.
   By 
   \[
-  \mathcal{N}_\mu \coloneq \{N \subseteq B : B \in \mathcal{F}, \mu(B) = 0\}
+  % \mathcal{N}_\mu \coloneq \{N \in 2^\Omega : \exists B \in \mathcal{F},\ N \subseteq B,\ \mu(B)=0\}
+  \mathcal{N}_\mu \coloneq \{N \in 2^\Omega : B \in \mathcal{F},\ N \subseteq B,\ \mu(B)=0\}
+  % \mathcal{N}_\mu \coloneq \{N \subseteq B : B \in \mathcal{F}, \mu(B) = 0\}
   \]
   we denote the family of all subsets of $\mu$-null sets.
   \item 
@@ -4085,9 +4566,9 @@ Let $(\Omega,\mathcal{F},\mu)$ be a measure space.
 % [Concrete description of the completion]
 \label{thm:concrete-description-completion}
 Let $(\Omega,\mathcal{F},\mu)$ be a $\sigma$-finite measure space and define
-\(
+\[
 \mathcal{G} \coloneq \{A \cup N : A \in \mathcal{F},\ N \in \mathcal{N}_\mu\}
-\).
+\]
 Then
 \(
 \mathcal{G} = \sigma(\mathcal{F} \cup \mathcal{N}_\mu)
@@ -4098,7 +4579,7 @@ In particular, $\mathcal{G}$ is a $\sigma$-algebra.
 \begin{proof} % assignment 5, exercise 2
 First note that if $N \in \mathcal{N}_\mu$, then by \autoref{def:null-sets} there exists a measurable $\mu$-null set $B \in \mathcal{F}$ such that $N \subseteq B$.
 
-We show that $\mathcal{G}$ is a $\sigma$-algebra:
+We show that $\mathcal{G}$ is a $\sigma$-algebra (\autoref{def:sigma-algebra}):
 \begin{enumerate}[label=(\roman*)]
 \item
 Since $\emptyset \in \mathcal{N}_\mu$ and $\Omega \in \mathcal{F}$, we have $\Omega = \Omega \cup \emptyset \in \mathcal{G}$.
@@ -4187,9 +4668,26 @@ Then
 \bigcup_{i=1}^{\infty} G_i 
 = 
 \bigcup_{i=1}^{\infty} \left(A_i \cup N_i\right)
-=
+\refstepcounter{footnote}
+\overset{\text{\normalfont\footnotesize\hyperlink{fn:\thefootnote}{\thefootnote}}}{=}
 \left(\bigcup_{i=1}^{\infty} A_i\right) \cup \left(\bigcup_{i=1}^{\infty} N_i\right)
 \]
+\footnotetext[\value{footnote}]{%
+\hypertarget{fn:\thefootnote}{}%
+\resizebox{0.95\linewidth}{!}{%
+\(\displaystyle
+x \in \bigcup_{i=1}^{\infty}(A_i \cup N_i)
+\Leftrightarrow
+\exists i \in \mathbb{N}: x \in A_i \cup N_i
+\Leftrightarrow
+\exists i \in \mathbb{N}: (x \in A_i \lor x \in N_i)
+\Leftrightarrow
+x \in \bigcup_{i=1}^{\infty} A_i \lor x \in \bigcup_{i=1}^{\infty} N_i
+\Leftrightarrow
+x \in \left(\bigcup_{i=1}^{\infty} A_i\right) \cup \left(\bigcup_{i=1}^{\infty} N_i\right)
+\)%
+}%
+}%
 By \autoref{def:sigma-algebra}, $\bigcup_{i=1}^{\infty} A_i \in \mathcal{F}$. 
 Since $N_i \subseteq B_i$ for all $i$, we have
 \[
@@ -4430,7 +4928,7 @@ if $X$ were not constant, there would be $\omega_1,\omega_2\in\Omega$ with $X(\o
 If $\mathcal{F}$ is the power set $2^\Omega$, then every function $X : \Omega \to \Omega'$ is measurable.
 \end{example}
 
-\begin{theorem}
+\begin{theorem}\label{thm:indicator-function-measurable}
 Let $(\Omega,\mathcal{F})$ be a measurable space (\autoref{def:sigma-algebra}) and $A \subseteq \Omega$.
 The indicator function
 \[
@@ -5004,7 +5502,7 @@ Therefore, we may characterize them as follows:
 
 
 
-\begin{theorem}
+\begin{theorem}\label{thm:limsup-liminf-measurable-functions}
 Let $f_i : \Omega \to \overline{\R}$, $i \in \mathbb{N}$, be a sequence of measurable functions.
 Then, the functions 
 \[
@@ -5031,12 +5529,207 @@ If the pointwise limit of $f_i$ exists, then the limit inferior and limit superi
 \end{proof}
 
 
+
+\begin{exercise}[Indicators, limsup, and liminf of sets] % assignment 6, exercise 3
+Let $(\Omega,\mathcal{F})$ be a measurable space and let $(A_n)_{n \in \N}$ be a sequence of sets in $\mathcal{F}$.
+\begin{enumerate}[label={\protect\hyperref[solitem:indicators-limsup-liminf-sets:\arabic*]{(\roman*)}}]
+% \setcounter{enumi}{1}
+\item \label{exitem:indicators-limsup-liminf-sets:1}
+Show that
+\[
+\ind_{\bigcup_{n=1}^{\infty} A_n}
+=
+\sup_{n \in \N} \ind_{A_n},
+\qquad
+\ind_{\bigcap_{n=1}^{\infty} A_n}
+=
+\inf_{n \in \N} \ind_{A_n}
+\]
+\item \label{exitem:indicators-limsup-liminf-sets:2}
+Show \rlap{that}
+\[
+\ind_{\limsup_{n \to \infty} A_n}
+=
+\limsup_{n \to \infty} \ind_{A_n},
+\qquad
+\ind_{\liminf_{n \to \infty} A_n}
+=
+\liminf_{n \to \infty} \ind_{A_n}
+\]
+\item \label{exitem:indicators-limsup-liminf-sets:3}
+Show that
+\[
+\limsup_{n \to \infty} A_n,
+\qquad
+\liminf_{n \to \infty} A_n
+\]
+belong to $\mathcal{F}$.
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label={\protect\hyperref[exitem:indicators-limsup-liminf-sets:\arabic*]{(\roman*)}}]
+% \setcounter{enumi}{1}
+\item \label{solitem:indicators-limsup-liminf-sets:1}
+We prove both identities pointwise.
+Fix $\omega \in \Omega$.
+\begin{itemize}[leftmargin=*]
+\item sup:
+\begin{itemize}[leftmargin=*]
+\item
+If $\omega \in \bigcup_{n=1}^{\infty} A_n$, then $\omega \in A_n$ for some $n \in \N$.
+Hence $\ind_{A_n}(\omega)=1$ for some $n \allowbreak \in \allowbreak \N$, so
+\[
+\sup_{n \in \N}\ind_{A_n}(\omega)=1
+=
+\ind_{\bigcup_{n=1}^{\infty} A_n}(\omega)
+\]
+\item
+If $\omega \notin \bigcup_{n=1}^{\infty} A_n$, then $\omega \notin A_n$ for all $n \in \N$.
+Hence $\ind_{A_n}(\omega)=0$ for all $n \allowbreak \in \allowbreak \N$, so
+\[
+\sup_{n \in \N}\ind_{A_n}(\omega)=0
+=
+\ind_{\bigcup_{n=1}^{\infty} A_n}(\omega)
+\]
+\end{itemize}
+Thus for every $\omega \in \Omega$,
+\[
+\ind_{\bigcup_{n=1}^{\infty} A_n}(\omega)
+=
+\sup_{n \in \N}\ind_{A_n}(\omega)
+\]
+
+\item inf:
+\begin{itemize}[leftmargin=*]
+\item
+If $\omega \in \bigcap_{n=1}^{\infty} A_n$, then $\omega \in A_n$ for all $n \in \N$.
+Hence $\ind_{A_n}(\omega)=1$ for all $n \allowbreak \in \allowbreak \N$, so
+\[
+\inf_{n \in \N}\ind_{A_n}(\omega)=1
+=
+\ind_{\bigcap_{n=1}^{\infty} A_n}(\omega)
+\]
+\item
+If $\omega \notin \bigcap_{n=1}^{\infty} A_n$, then $\omega \notin A_n$ for some $n \in \N$.
+Hence $\ind_{A_n}(\omega)=0$ for some $n \allowbreak \in \allowbreak \N$, so
+\[
+\inf_{n \in \N}\ind_{A_n}(\omega)=0
+=
+\ind_{\bigcap_{n=1}^{\infty} A_n}(\omega)
+\]
+\end{itemize}
+Thus for every $\omega \in \Omega$,
+\[
+\ind_{\bigcap_{n=1}^{\infty} A_n}(\omega)
+=
+\inf_{n \in \N}\ind_{A_n}(\omega)
+\]
+\end{itemize}
+
+Since $\omega \in \Omega$ was arbitrary, both identities follow.
+
+\item \label{solitem:indicators-limsup-liminf-sets:2}
+We again prove both identities pointwise.
+Fix $\omega \in \Omega$.
+% Since $\ind_{A_n}(\omega) \in \{0,1\}$ for all $n \in \N$, we distinguish the two relevant cases.
+\begin{itemize}[leftmargin=*]
+\item limsup:
+\begin{itemize}[leftmargin=*]
+\item
+If $\omega \in \limsup_{n \to \infty} A_n$, then $\omega \in A_n$ for infinitely many $n \in \N$.
+Hence $\ind_{A_n}(\omega)=1$ for infinitely many $n \in \N$, and therefore
+\[
+\limsup_{n \to \infty}\ind_{A_n}(\omega)=1
+=
+\ind_{\limsup_{n \to \infty} A_n}(\omega)
+\]
+\item
+If $\omega \notin \limsup_{n \to \infty} A_n$, then $\omega$ belongs to only finitely many $A_n$.
+Hence $\ind_{A_n}(\omega)=0$ for all sufficiently large $n$, and therefore
+\[
+\limsup_{n \to \infty}\ind_{A_n}(\omega)=0
+=
+\ind_{\limsup_{n \to \infty} A_n}(\omega)
+\]
+\end{itemize}
+Thus
+\[
+\ind_{\limsup_{n \to \infty} A_n}(\omega)
+=
+\limsup_{n \to \infty}\ind_{A_n}(\omega)
+\]
+
+\item liminf:
+\begin{itemize}[leftmargin=*]
+\item
+If $\omega \in \liminf_{n \to \infty} A_n$, then $\omega \in A_n$ for all sufficiently large $n$.
+Hence $\ind_{A_n}(\omega)=1$ for all sufficiently large $n$, and therefore
+\[
+\liminf_{n \to \infty}\ind_{A_n}(\omega)=1
+=
+\ind_{\liminf_{n \to \infty} A_n}(\omega)
+\]
+\item
+If $\omega \notin \liminf_{n \to \infty} A_n$, then $\omega \notin A_n$ for infinitely many $n \in \N$.
+Hence $\ind_{A_n}(\omega)=0$ for infinitely many $n \in \N$, and therefore
+\[
+\liminf_{n \to \infty}\ind_{A_n}(\omega)=0
+=
+\ind_{\liminf_{n \to \infty} A_n}(\omega)
+\]
+\end{itemize}
+Thus
+\[
+\ind_{\liminf_{n \to \infty} A_n}(\omega)
+=
+\liminf_{n \to \infty}\ind_{A_n}(\omega)
+\]
+\end{itemize}
+Since $\omega \in \Omega$ was arbitrary, both identities follow.
+
+\item \label{solitem:indicators-limsup-liminf-sets:3}
+By \autoref{thm:indicator-function-measurable}, each $\ind_{A_n}$ is measurable.
+Hence, by \autoref{thm:limsup-liminf-measurable-functions}, the functions
+\[
+\limsup_{n \to \infty}\ind_{A_n},
+\qquad
+\liminf_{n \to \infty}\ind_{A_n}
+\]
+are measurable.
+By \ref{solitem:indicators-limsup-liminf-sets:2}, this means that
+\[
+\ind_{\limsup_{n \to \infty} A_n},
+\qquad
+\ind_{\liminf_{n \to \infty} A_n}
+\]
+are measurable.
+Moreover, since $\{1\} \in \mathcal{B}(\R)$, we have
+\[
+\begin{verticalhack}
+\limsup_{n \to \infty} A_n
+=
+\ind_{\limsup_{n \to \infty} A_n}^{-1}(\{1\}),
+\qquad
+\liminf_{n \to \infty} A_n
+=
+\ind_{\liminf_{n \to \infty} A_n}^{-1}(\{1\})
+\end{verticalhack}
+\]
+so, by \autoref{def:measurable-function}, both sets belong to $\mathcal{F}$.
+\qedhere
+\end{enumerate}
+\end{solution}
+
+
+
+
 % \[
 % \{\omega:f(\omega)\le a\}
 % =\bigcap_{n=1}^\infty \{\omega:f(\omega)<a+\tfrac1n\}.
 % \]
-
-
 
 
 \begin{proposition} % assignment 6, exercise 2
@@ -5281,7 +5974,7 @@ the \hl[2]{\emph{$\sigma$-algebra generated by $X$}}.
 It encodes the information carried by $X$. % what is meant by "informatino" here?
 \end{definition}
 
-\begin{definition}
+\begin{definition}\label{def:independence-of-sigma-algebras}
 Let $(\Omega, \mathcal{F}, \Prob)$ be a probability space and let $\mathcal{F}_1, \mathcal{F}_2 \subseteq \mathcal{F}$ be two $\sigma$-algebras.
 We say that $\mathcal{F}_1$ and $\mathcal{F}_2$ are \emph{independent} if 
 \[
@@ -5291,7 +5984,7 @@ for all $A_1 \in \mathcal{F}_1$ and $A_2 \in \mathcal{F}_2$.
 \end{definition}
 
 % The following result is immediate:
-\begin{theorem}
+\begin{theorem}\label{thm:independence-of-random-variables-sigma-algebras}
 Two random variables $X$ and $Y$ are independent if and only if the $\sigma$-algebras $\sigma(X)$ and $\sigma(Y)$ are independent.
 \end{theorem}
 
@@ -6035,6 +6728,168 @@ By the independence of $X$ and $Y$, the events $\{X \in f^{-1}(A)\}$ and $\{Y \i
 Thus $\{f(X) \in A\}$ and $\{g(Y) \in B\}$ are independent.
 \end{proof}
 
+\begin{exercise}[Independence under derived observables] % assignment 6, exercise 4
+Let $(\Omega,\mathcal{F},\Prob)$ be a probability space and let $X,Y : \Omega \to \R$ be independent random variables, i.e. $X \perp Y$ (\autoref{def:independence-of-random-variables}).
+\begin{enumerate}[label={\protect\hyperref[solitem:independence-derived-observables:\arabic*]{(\alph*)}}]
+\item \label{exitem:independence-derived-observables:1}
+Let $Z : \Omega \to \R$ be a random variable and
+$h : \R \to \R$ be a measurable function (\autoref{def:measurable-function}). 
+Show that
+\[
+\sigma(h(Z)) \subseteq \sigma(Z)
+\]
+% Similarly, for measurable $g : \R \to \R$, show that
+% \[
+% \sigma(g(Y)) \subseteq \sigma(Y)
+% \]
+\item \label{exitem:independence-derived-observables:2}
+Let $f, g : \R \to \R$ be measurable functions.
+Deduce from the independence of $\sigma(X)$ and $\sigma(Y)$ that $f(X)$ and $g(Y)$ are independent.
+\item \label{exitem:independence-derived-observables:3}
+Let $A,B \in \mathcal{B}(\R)$. Show that the Bernoulli random variables
+\[
+U \coloneq \ind_{\{X \in A\}},
+\qquad
+V \coloneq \ind_{\{Y \in B\}}
+\]
+are independent.
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\pagebreak[3]
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label={\protect\hyperref[exitem:independence-derived-observables:\arabic*]{(\alph*)}}]
+\item \label{solitem:independence-derived-observables:1}
+% We prove a slightly more general statement.
+% Let $Z : \Omega \to \R$ be a random variable and let $h : \R \to \R$ be measurable.
+% We show that
+% \[
+% \sigma(h(Z)) \subseteq \sigma(Z)
+% \]
+% Recall that
+% \[
+% \sigma(h(Z))
+% =
+% \{(h(Z))^{-1}(B) : B \in \mathcal{B}(\R)\}
+% \]
+Let $C \in \sigma(h(Z))$. % be arbitrary.
+Then, by \autoref{def:sigma-algebra-generated-by-random-variable}, there exists $D \allowbreak \in \allowbreak \mathcal{B}(\R)$ such that
+\[
+C
+=
+(h(Z))^{-1}(D)
+\]
+By \autoref{fact:preimage-properties}.\ref{item:preimage-properties-composition},
+\[
+(h(Z))^{-1}(D)
+=
+(h \circ Z)^{-1}(D)
+=
+Z^{-1}(h^{-1}(D))
+\]
+Since $h$ is measurable, %we have
+\[
+E \coloneq h^{-1}(D) \in \mathcal{B}(\R)
+\]
+Thus, 
+% setting
+% \[
+% E \coloneq h^{-1}(D)
+% \]
+we can write
+\[
+C
+=
+Z^{-1}(h^{-1}(D))
+=
+Z^{-1}(E)
+\]
+with $E \in \mathcal{B}(\R)$.
+Hence $C \in \sigma(Z)$.
+Since $C \in \sigma(h(Z))$ was arbitrary, we conclude that
+\[
+\sigma(h(Z)) \subseteq \sigma(Z)
+\]
+
+
+\item \label{solitem:independence-derived-observables:2}
+Since \(X \perp Y\), by \autoref{thm:independence-of-random-variables-sigma-algebras},  \(\sigma(X)\) and \(\sigma(Y)\) are independent in the sense of \autoref{def:independence-of-sigma-algebras}, i.e.
+\[
+\Prob(A_1 \cap A_2)
+=
+\Prob(A_1)\Prob(A_2)
+\]
+for all \(A_1 \in \sigma(X)\) and \(A_2 \in \sigma(Y)\).
+By \ref{solitem:independence-derived-observables:1},
+\[
+\sigma(f(X)) \subseteq \sigma(X),
+\qquad
+\sigma(g(Y)) \subseteq \sigma(Y)
+\]
+and thus 
+% \[
+% \Prob(A_1 \cap A_2)
+% =
+% \Prob(A_1)\Prob(A_2)
+% \]
+% for all \(A_1 \in \sigma(f(X))\) and \(A_2 \in \sigma(g(Y))\).
+% Hence 
+the same 
+% identity
+ holds for all \(A_1 \in \sigma(f(X))\) and \(A_2 \in \sigma(g(Y))\).
+Hence, \(\sigma(f(X))\) and \(\sigma(g(Y))\) are independent in the sense of \autoref{def:independence-of-sigma-algebras},
+and thus, again by \autoref{thm:independence-of-random-variables-sigma-algebras},
+\(f(X)\) and \(g(Y)\) are independent.
+
+\item \label{solitem:independence-derived-observables:3}
+Denote
+\[
+f \coloneq \ind_A,
+\qquad
+g \coloneq \ind_B
+\]
+Since \(A,B \in \mathcal{B}(\R)\), the functions \(f,g : \R \to \R\) are measurable by \autoref{thm:indicator-function-measurable}.
+Moreover,
+\[
+U
+=
+\ind_{\{X \in A\}}
+=
+\ind_A(X)
+=
+f(X),
+\qquad
+V
+=
+\ind_{\{Y \in B\}}
+=
+\ind_B(Y)
+=
+g(Y)
+\]
+Indeed, for every \(\omega \in \Omega\),
+\[
+U(\omega)
+=
+\ind_{\{X \in A\}}(\omega)
+=
+\ind_A(X(\omega)),
+\qquad
+V(\omega)
+=
+\ind_{\{Y \in B\}}(\omega)
+=
+\ind_B(Y(\omega))
+\]
+Since $X \perp Y$,
+by \ref{solitem:independence-derived-observables:2}, \(f(X)\) and \(g(Y)\) are independent.
+Hence, $U \perp V$.
+\qedhere
+\end{enumerate}
+\end{solution}
+
 \begin{remark}
 \autoref{thm:independence-under-measurable-transformations} particularly applies to continuous and piecewise continuous functions and directly extends to random vectors.
 \end{remark}
@@ -6297,7 +7152,7 @@ Let $w$ be the complete works of Shakespeare and consider a monkey randomly typi
 
 
 Combining \autoref{thm:first-borel-cantelli-lemma} and \autoref{thm:second-borel-cantelli-lemma} yields Kolmogorov's zero-one law for independent events.
-\begin{theorem}
+\begin{theorem}\label{thm:kolmogorov-zero-one-law}
 Let $(\Omega,\mathcal{F},\Prob)$ be a probability space and let $(A_n)_{n \in \N}$ be a sequence of independent events.
 Then
 \[
@@ -6344,6 +7199,352 @@ In contrast, for a single random variable $X$, the collection
 \]
 is already a $\sigma$-algebra, since, by \autoref{fact:preimage-properties}, preimages preserve the set operations required for a $\sigma$-algebra (\autoref{def:sigma-algebra}).
 \end{remark}
+
+
+\begin{exercise}[Borel--Cantelli and almost sure behavior of maxima] % assignment 7, exercise 2
+Let $(X_n)_{n \in \N}$ be independent real-valued random variables on $(\Omega,\mathcal{F},\Prob)$.
+Assume that
+\[
+\Prob(X_n > n) = \frac{1}{n^2}
+\]
+for all $n \in \N$.
+Define
+\[
+M_n \coloneq \max\{X_1,\dots,X_n\}
+\]
+for $n \in \N$.
+\begin{enumerate}[label={\protect\hyperref[solitem:borel-cantelli-maxima:\arabic*]{(\alph*)}}]
+\item \label{exitem:borel-cantelli-maxima:1}
+Show that the event
+\[
+A
+\coloneq
+\{\omega \in \Omega : X_n(\omega)>n \text{ i.o.}\}
+\]
+has probability zero.
+\item \label{exitem:borel-cantelli-maxima:2}
+Show that, with probability one, there exists $N(\omega)$ such that 
+\[
+X_n(\omega) \le n
+\]
+for all $n \ge N(\omega)$.
+\item \label{exitem:borel-cantelli-maxima:3}
+Show that, almost surely,
+\[
+\frac{M_n}{n} \le 1
+\]
+eventually.
+\item \label{exitem:borel-cantelli-maxima:4}
+Interpret this result in terms of the growth of the sequence $(X_n)_{n \in \N}$.
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\begin{solution}
+\leavevmode
+\begin{enumerate}[label={\protect\hyperref[exitem:borel-cantelli-maxima:\arabic*]{(\alph*)}}]
+\item \label{solitem:borel-cantelli-maxima:1}
+Define the events
+\[
+A_n
+\coloneq
+\{\omega \in \Omega : X_n(\omega)>n\}
+\]
+for $n \in \N$.
+Then
+\[
+A
+% =
+% \{\omega \in \Omega : X_n(\omega)>n \text{ i.o.}\}
+=
+\limsup_{n \to \infty} A_n
+=
+\bigcap_{k=1}^{\infty} \bigcup_{n=k}^{\infty} A_n
+\]
+By assumption,
+\[
+\Prob(A_n)
+=
+\Prob(X_n>n)
+=
+\frac{1}{n^2}
+\]
+Hence
+\[
+\sum_{n=1}^{\infty} \Prob(A_n)
+=
+\sum_{n=1}^{\infty} \frac{1}{n^2}
+=
+\zeta(2)
+=
+\frac{\pi^2}{6}
+<
+\infty
+\]
+where \(\zeta(x) \coloneq \sum_{n=1}^{\infty} n^{-x}\) is the Riemann zeta function, defined for \(x>1\).
+Thus, by \autoref{thm:first-borel-cantelli-lemma},
+\[
+\Prob(A)
+=
+\Prob\left(\limsup_{n \to \infty} A_n\right)
+=
+0
+\]
+
+\item \label{solitem:borel-cantelli-maxima:2}
+Observe that
+\[
+\begin{aligned}
+A^{\complement}
+&=
+\{\omega \in \Omega : X_n(\omega)>n \text{ only finitely often}\} \\
+&=
+\{\omega \in \Omega : X_n(\omega) \le n \text{ eventually}\} \\
+&=
+\{\omega \in \Omega : \exists N(\omega) \in \N \text{ such that }  X_n(\omega) \le n \text{ for all } n \ge N(\omega)\}
+\end{aligned}
+\]
+From \ref{solitem:borel-cantelli-maxima:1}, we know that \(\Prob(A)=0\), hence
+\[
+\Prob(A^{\complement})
+=
+1-\Prob(A)
+=
+1
+\]
+Therefore, 
+% with probability one, 
+for almost every \(\omega \in \Omega\), 
+there exists \(N(\omega)\) such that for all \(n \ge N(\omega)\),
+\[
+X_n(\omega) \le n
+\]
+
+\item \label{solitem:borel-cantelli-maxima:3}
+Fix \(\omega \in A^{\complement}\).
+By \ref{solitem:borel-cantelli-maxima:2}, there exists \(N(\omega) \in \N\) such that for all \(n \ge N(\omega)\),
+\[
+X_n(\omega) \le n
+\]
+Since the random variables are real-valued, i.e. $-\infty < X_i(\omega) < \infty$ for all $i \in \N$, define
+\[
+C(\omega)
+\coloneq
+\max\{0,X_1(\omega),\dots,X_{N(\omega)-1}(\omega)\}
+\]
+and
+\[
+m(\omega)
+\coloneq
+\max\{N(\omega),\lceil C(\omega)\rceil\}
+\]
+Then, for every \(n \ge m(\omega)\), we have
+\begin{itemize}
+\item
+\(
+X_i(\omega) \le C(\omega) \le n
+\)
+for all \(i \in \{1,\dots,N(\omega)-1\}\)
+\item
+\(
+X_i(\omega) \le i \le n
+\)
+for all \(i \in \{N(\omega),\dots,n\}\)
+\end{itemize}
+Hence
+\[
+M_n(\omega)
+=
+\max_{1 \le i \le n} X_i(\omega)
+=
+\max\{\underbrace{X_1(\omega),\dots,X_{N(\omega)-1}(\omega)}_{\le C(\omega) \le n},\underbrace{X_{N(\omega)}(\omega),\dots,X_n(\omega)}_{\le n}\}
+\le
+n
+\]
+for all \(n \ge m(\omega)\).
+Therefore
+\[
+\frac{M_n(\omega)}{n} \le 1
+\]
+for all \(n \ge m(\omega)\).
+Since \(\Prob(A^{\complement})=1\), we conclude that
+\[
+\frac{M_n}{n} \le 1
+\]
+eventually almost surely.
+
+\item \label{solitem:borel-cantelli-maxima:4}
+The running maximum \(M_n\) grows no faster than linearly, almost surely.
+More precisely, with probability one, there exists \(m(\omega) \in \N\) such that
+\[
+M_n(\omega) \le n
+\]
+for all \(n \ge m(\omega)\).
+Equivalently, the sequence \((X_n)_{n \in \N}\) exceeds the linear threshold \(n\) only finitely often.
+\qedhere
+\end{enumerate}
+\end{solution}
+
+\begin{exercise}[Infinitely many successes] % assignment 7, exercise 3
+Let $(X_n)_{n \in \N}$ be independent Bernoulli random variables with
+\[
+\Prob(X_n = 1) = p
+\qquad
+\Prob(X_n = 0) = 1-p
+\qquad
+p \in (0,1)
+\]
+Consider the event
+\[
+A \coloneq \{\omega \in \Omega : \text{$X_n(\omega) = 1$ for infinitely many $n \in \N$}\}
+\]
+\begin{enumerate}[label=(\alph*)]
+\item 
+Show that $A$ belongs to the tail $\sigma$-algebra 
+\[
+\mathcal{T} \coloneq \bigcap_{N=1}^{\infty} \sigma(\{X_n : n \ge N\})
+\]
+\item 
+Deduce that $\Prob(A) \in \{0,1\}$
+\item 
+Show that $\Prob(A) = 1$ 
+\qedhere
+\end{enumerate}
+\end{exercise}
+
+\pagebreak[3]
+\begin{solution}
+% \nopagebreak[3]
+\leavevmode
+% \nopagebreak[3]
+\begin{enumerate}[label=(\alph*)]
+% \nopagebreak[3]
+\item
+Define $A_n \coloneq \{\omega \in \Omega : X_n(\omega) = 1\}$ for $n \in \N$.
+We have
+\[
+A = \limsup_{n \to \infty} A_n
+=
+\bigcap_{k=1}^{\infty} \bigcup_{n = k}^{\infty} A_n 
+=
+\bigcap_{k=N}^{\infty} \bigcup_{n = k}^{\infty} A_n 
+\]
+for any fixed $N \in \N$, since removing finitely many initial events 
+% \(A_1,\dots,A_{N-1}\) 
+does not change the event that \(A_k\) occurs for infinitely many \(k\).
+
+Next, we define 
+\[\mathcal{T}_N \coloneq \sigma(\{X_n : n \ge N\})\] 
+for $N \in \N$.
+Obviously, $A_n \in \mathcal{T}_N$ for all $n \ge N$.
+Since $\mathcal{T}_N$ is closed under countable unions, we have 
+\[\bigcup_{n = k}^{\infty} A_n \in \mathcal{T}_N\]
+ for all $k \ge N$.
+Hence, for any fixed $N \in \N$, we also have 
+\[A = \bigcap_{k=N}^{\infty} \bigcup_{n = k}^{\infty} A_n \in \mathcal{T}_N\] 
+since $\mathcal{T}_N$ is closed under countable intersections.
+Since this holds for all $N \in \N$, we have 
+\[
+A \in \bigcap_{N=1}^{\infty} \mathcal{T}_N = \mathcal{T}
+\]
+\item
+Since the $X_n$ are independent random variables, the $A_n = X_n^{-1}(\{1\}) \in \sigma(X_n)$ are independent events.
+Since
+\[
+A = \limsup_{n \to \infty} A_n
+\]
+we have by \autoref{thm:kolmogorov-zero-one-law} that $\Prob(A) \in \{0,1\}$.
+
+\item
+We show that the value is in fact $1$.
+Consider the complement
+\[
+A^{\complement}
+=
+\{\omega \in \Omega : \text{$X_n(\omega)=0$ eventually}\}
+=
+\bigcup_{N=1}^{\infty} \bigcap_{n=N}^{\infty} \{X_n = 0\}
+\]
+For fixed $N \in \N$, define
+\[
+B_N
+\coloneq
+\bigcap_{n=N}^{\infty} \{X_n = 0\}
+\]
+and, for $m \ge N$,
+\[
+B_{N,m}
+\coloneq
+\bigcap_{n=N}^{m} \{X_n = 0\}
+\]
+Then $(B_{N,m})_{m \ge N}$ is a decreasing sequence of events with
+\[
+B_N
+=
+\bigcap_{m=N}^{\infty} B_{N,m}
+\]
+By continuity of $\Prob$ from above (\autoref{thm:continuity-from-above}), we obtain
+\[
+\Prob(B_N)
+=
+\lim_{m \to \infty} \Prob(B_{N,m})
+\]
+Using the independence of the random variables $X_n$, we get
+\[
+\Prob(B_{N,m})
+=
+\Prob\left(\bigcap_{n=N}^{m} \{X_n = 0\}\right)
+\overset{\text{\eqref{eq:independent-family-events}}}{=}
+\prod_{n=N}^{m} \Prob(X_n = 0)
+=
+(1-p)^{m-N+1}
+\]
+Since $0 < 1-p < 1$, it follows that
+\[
+\Prob(B_N)
+=
+\lim_{m \to \infty}(1-p)^{m-N+1}
+=
+0
+\]
+for every $N \in \N$.
+Hence, by countable subadditivity (\autoref{thm:countable-subadditivity}),
+\[
+\Prob(A^{\complement})
+=
+\Prob\left(\bigcup_{N=1}^{\infty} B_N\right)
+\overset{\text{\eqref{eq:countable-subadditivity}}}{\leq}
+\sum_{N=1}^{\infty} \Prob(B_N)
+=
+0
+\]
+Thus $\Prob(A^{\complement}) = 0$, and therefore $\Prob(A)=1$.
+
+Alternatively, this follows immediately from \autoref{thm:second-borel-cantelli-lemma}.
+The events $A_n = \{X_n = 1\}$ are independent and %we have
+\[
+\Prob(A_n) = \Prob(X_n = 1) = p \in (0,1)
+\]
+for all $n \in \N$.
+Thus,
+\[
+\sum_{n=1}^{\infty} \Prob(A_n)
+=
+\sum_{n=1}^{\infty} p
+=
+\infty
+\]
+and hence, by \autoref{thm:second-borel-cantelli-lemma}, we obtain
+\(
+\Prob(A)
+% =
+% \Prob\left(\limsup_{n \to \infty} A_n\right)
+=
+1
+\).
+\qedhere
+\end{enumerate}
+\end{solution}
 
 
 \clearpage
