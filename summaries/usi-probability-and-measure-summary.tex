@@ -6,6 +6,26 @@
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 
+% ===================== line breaking / justification =====================
+\usepackage[final,babel=true,protrusion=false,expansion=true]{microtype}
+\usepackage[htt]{hyphenat}
+
+\pretolerance=50
+\tolerance=200
+\emergencystretch=0pt
+\hfuzz=0.1pt
+\vfuzz=0.1pt
+\hbadness=100
+\hyphenpenalty=25
+\exhyphenpenalty=25
+\doublehyphendemerits=10000
+\finalhyphendemerits=5000
+\adjdemerits=10000
+
+\spaceskip=0.3333em plus 0.06em minus 0.04em
+\xspaceskip=0.5em plus 0.08em minus 0.05em
+\frenchspacing
+
 \newcommand{\eat}[1]{} % can be used to eat the next character, useful for VS code color picker, e.g. \definecolor{mycolor}{HTML}{\eat #20a61e}
 
 % ===================== page style =====================
@@ -95,6 +115,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,arrows.meta,shapes,positioning,calc,fit,patterns,intersections,math,3d,tikzmark,decorations.pathreplacing,decorations.markings,shapes.geometric,svg.path}
 \usepackage{tikz-dependency,tikz-qtree,tikz-qtree-compat,tikz-3dplot,tikzpagenodes}
+\usepackage{tikz-cd}
 \usepackage{pgfplots}
 \usepackage{pgfornament}
 \usetikzlibrary{external}
@@ -5330,14 +5351,14 @@ Alternatively, using \autoref{thm:measurable-functions-basic-operations} we coul
 \end{proof}
 
 Recall that for a sequence of real numbers $(x_n)_{n \in \mathbb{N}}$, the limit inferior and limit superior may~be written as
-\[
+\begin{equation}\label{eq:liminf-limsup-real-sequence}
 \liminf_{n \to \infty} x_n = \sup_{n \in \mathbb{N}} \inf_{k \ge n} x_k
 \qquad
 \text{and}
 \qquad
 \limsup_{n \to \infty} x_n = \inf_{n \in \mathbb{N}} \sup_{k \ge n} x_k
-\]
-respectively, since the sequence of infima is monotonically increasing and the sequence of suprema is monotonically decreasing.
+\end{equation}
+respectively, since the sequence of infima is monotonically increasing and the sequence of supre\-ma is monotonically decreasing.
 
 
 \[
@@ -8377,7 +8398,7 @@ $\int (f+g)\,\dif\mu = \int f\,\dif\mu + \int g\,\dif\mu$
 \item \label{lem:elementary-properties-integral-nonnegative-measurable-functions:homogeneity}
 $\int (af)\,\dif\mu = a\int f\,\dif\mu$
 \item \label{lem:elementary-properties-integral-nonnegative-measurable-functions:monotonicity}
-$f \leq g$ implies $\int f\,\dif\mu \leq \int g\,\dif\mu$
+$f \leq g$ (pointwise) implies $\int f\,\dif\mu \leq \int g\,\dif\mu$
 \qedhere
 \end{enumerate}
 \end{lemma}
@@ -9289,7 +9310,7 @@ $(\Exp[X])^2 \leq \Exp[X^2]$ and, more generally, $|\Exp[X]|^p \leq \Exp[|X|^p]$
 
 \begin{definition}\label{def:variance}
 Let $X : \Omega \to \R$ be a random variable with $\Exp[X^2]<\infty$.
-Then, the \emph{variance} of $X$ is defined as
+Then, the \emph{variance} of $X$ is defined \rlap{as}
 \begin{equation}\label{eq:variance}
 \Var[X]
 \coloneq
@@ -9440,6 +9461,345 @@ Apply \autoref{thm:chebyshev-markov} to $X-\Exp[X]$ for $p=2$.
 
 
 \subsection{Convergence theorems}
+
+We give a brief overview on the most important convergence theorems for sequences of random variables.
+As before, let $(\Omega,\mathcal{F},\Prob)$ always denote a probability space.
+
+\begin{definition}\label{def:convergence-random-variables}
+Let $X,(X_n)_{n \in \N}$ be random variables.
+\begin{enumerate}[label=(\roman*)]
+\item \label{item:convergence-random-variables:pointwise}
+We say $(X_n)_{n \in \N}$ converges to $X$ pointwise, denoted by $X_n \xlongrightarrow{\text{p.w.}} X$%
+, if
+\[
+\lim_{n \to \infty}X_n(\omega)
+=
+X(\omega)
+\]
+for all $\omega \in \Omega$.
+\item \label{item:convergence-random-variables:almost-surely}
+We say $(X_n)_{n \in \N}$ converges to $X$ $\Prob$-almost surely, denoted by $X_n \xlongrightarrow{\text{a.s.}} X$%
+, if 
+% \(
+% \lim_{n \to \infty}X_n
+% \)
+% exists and almost surely coincides with $X$, i.e.
+\[
+% \Prob(\{\omega \in \Omega : \lim_{n \to \infty}X_n(\omega) = X(\omega)\})
+\Prob\left(\lim_{n \to \infty}X_n = X\right)
+=
+1
+\]
+\item \label{item:convergence-random-variables:probability}
+We say $(X_n)_{n \in \N}$ converges to $X$ in probability, denoted by $X_n \xlongrightarrow{\text{i.p.}} X$%
+, if
+\[
+\Prob\left(|X_n-X| \geq a\right)
+\xrightarrow{n \to \infty}
+0
+\]
+for all $a > 0$.
+\item \label{item:convergence-random-variables:distribution}
+We say $(X_n)_{n \in \N}$ converges to $X$ in distribution, denoted by $X_n \xlongrightarrow{\text{i.d.}} X$%
+, if
+\[
+\Exp[f(X_n)]
+\xrightarrow{n \to \infty}
+\Exp[f(X)]
+\]
+for all bounded $f \in C(\R)$.
+\item \label{item:convergence-random-variables:Lp}
+We say $(X_n)_{n \in \N}$ converges to $X$ in $L^p$, denoted by $X_n \xlongrightarrow{L^p} X$%
+, if
+\[
+\|X_n-X\|_p
+\xrightarrow{n \to \infty}
+0
+\qedhere
+\]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+The following diagram summarizes the implications between the different types of convergence.
+\tikzexternaldisable%
+\[
+% \begin{verticalhack}
+\begin{tikzcd}[column sep=normal, row sep=normal, font=\footnotesize]
+\text{pointwise \ref{item:convergence-random-variables:pointwise}}
+\arrow[r, Rightarrow]
+&
+\text{almost surely \ref{item:convergence-random-variables:almost-surely}}
+\arrow[r, Rightarrow]
+&
+\text{in probability \ref{item:convergence-random-variables:probability}}
+\arrow[r, Rightarrow]
+&
+\text{in distribution \ref{item:convergence-random-variables:distribution}}
+\\
+&&
+\text{in }L^p\text{ \ref{item:convergence-random-variables:Lp}}
+\arrow[u, Rightarrow]
+\end{tikzcd}
+% \end{verticalhack}
+% \qedhere
+\]
+\tikzexternalenable%
+
+There holds \ref{item:convergence-random-variables:almost-surely} $\Rightarrow$ \ref{item:convergence-random-variables:probability}.
+The reverse implication \ref{item:convergence-random-variables:probability} $\Rightarrow$ \ref{item:convergence-random-variables:almost-surely} holds along a subsequence.
+
+Moreover, we have \ref{item:convergence-random-variables:probability} $\Rightarrow$ \ref{item:convergence-random-variables:distribution}, while the reverse \ref{item:convergence-random-variables:distribution} $\Rightarrow$ \ref{item:convergence-random-variables:probability} only holds if $X$ is almost surely constant.
+
+Further, there holds \ref{item:convergence-random-variables:Lp} $\Rightarrow$ \ref{item:convergence-random-variables:probability}, where $p=1$ is sufficient.
+Vice versa, we have \ref{item:convergence-random-variables:probability} $\Rightarrow$ \ref{item:convergence-random-variables:Lp} if $(X_n)_{n \in \N}$ is uniformly $L^p$-integrable, i.e. if
+\[
+\sup_{n \in \N}\int_{\{|X_n|>M\}} |X_n|^p\,\dif\Prob
+\xrightarrow{M \to \infty}
+0
+\]
+Finally, there holds \ref{item:convergence-random-variables:almost-surely} $\Rightarrow$ \ref{item:convergence-random-variables:Lp} if there exist an $L^p$-majorant for $(X_n)_{n \in \N}$, as we will see in \autoref{thm:dominated-convergence}.
+\end{remark}
+
+\begin{fact}\label{fact:convergence-in-distribution-distribution-functions}
+The sequence of random variables $(X_n)_{n \in \N}$ converges in distribution to $X$ if and only if the corresponding distribution functions $F_n$ satisfy
+\[
+F_n(x)
+\xrightarrow{n \to \infty}
+F(x)
+\]
+for all $x \in \R$ at which the distribution function $F$ of $X$ is continuous.
+\end{fact}
+
+We have the following result known as monotone convergence theorem.
+
+\begin{theorem}[Monotone Convergence Theorem]\label{thm:monotone-convergence}
+Let $(X_n)_{n \in \N}$, $X_n \geq 0$, be a monotonically increasing sequence of random variables.
+Then, there holds
+\begin{equation}\label{eq:monotone-convergence}
+\Exp\biggl[\sup_{n \in \N} X_n\biggr]
+=
+\sup_{n \in \N}\Exp[X_n]
+\qedhere
+\end{equation}
+\end{theorem}
+% \begin{proof}
+% We have for $n \in \N$ that $X_n = \sup_{m \in \N}X_{n,m}$ for a monotonically increasing sequence of non-negative simple functions.
+% There holds
+% \[
+% \begin{verticalhack}
+% \Exp[X_n]
+% \leq
+% \Exp\left[\sup_{n \in \N}X_n\right]
+% =
+% \Exp\left[\sup_{n,m \in \N}X_{n,m}\right]
+% \coloneq
+% \sup_{n,m \in \N}\Exp[X_{n,m}]
+% \leq
+% \sup_{n \in \N}\Exp[X_n]
+% \end{verticalhack}
+% \qedhere
+% \]
+% \end{proof}
+\begin{proof}
+For every $n \in \N$, we have
+\(
+X_n
+=
+\sup_{m\in\N}X_{n,m}
+\)
+for some monotonically increasing sequence $(X_{n,m})_{m\in\N}$ of non-negative simple functions
+by \autoref{lem:approximation-by-simple-functions}.
+Moreover,
+\[
+\sup_{n\in\N}X_n
+=
+\sup_{n\in\N}\left(\sup_{m\in\N}X_{n,m}\right)
+= 
+\sup_{n,m\in\N}X_{n,m}
+\]
+If we define
+\(
+Y_k
+\coloneq
+\max\{X_{n,m}:1\leq n,m\leq k\}
+\)
+% pointwise by
+% \[
+% Y_k(\omega)
+% \coloneq
+% \max\{X_{n,m}(\omega):1\leq n,m\leq k\}
+% \]
+then $(Y_k)_{k\in\N}$ is a monotonically increasing sequence of non-negative simple functions and
+\[
+\sup_{k\in\N}Y_k
+= 
+\sup_{k\in\N}\max_{1\leq n,m\leq k}X_{n,m}
+=
+\sup_{n,m\in\N}X_{n,m}
+=
+\sup_{n\in\N}X_n
+\]
+We have
+\[
+\Exp[X_n]
+\leq
+\Exp\biggl[\sup_{n\in\N}X_n\biggr]
+=
+\Exp\biggl[\sup_{k\in\N}Y_k\biggr]
+\overset{\text{\eqref{eq:integral-of-nonnegative-measurable-function}}}{=}
+\sup_{k\in\N}\Exp[Y_k]
+\leq
+\sup_{k\in\N}\Exp[X_k]
+\]
+for every $n\in\N$.
+The left inequality follows by monotonicity of the integral (\autoref{lem:elementary-properties-integral-nonnegative-measurable-functions} \ref{lem:elementary-properties-integral-nonnegative-measurable-functions:monotonicity}).
+For the right inequality, observe that $Y_k \leq X_k$ for every $k\in\N$, since $X_{n,m}\leq X_n\leq X_k$ whenever $1\leq n,m\leq k$.
+Thus, again by \autoref{lem:elementary-properties-integral-nonnegative-measurable-functions} \ref{lem:elementary-properties-integral-nonnegative-measurable-functions:monotonicity}, $\Exp[Y_k]\leq\Exp[X_k]$ for every $k\in\N$.
+
+
+Taking the supremum over $n\in\N$ on the left-hand side 
+and
+renaming the (dummy) index 
+% $k$ to $n$ 
+on the right-hand side
+yiel\rlap{ds} 
+\[
+\sup_{n\in\N}\Exp[X_n]
+\leq
+\Exp\biggl[\sup_{n\in\N}X_n\biggr]
+\leq
+\sup_{n\in\N}\Exp[X_n]
+\]
+and hence the claimed identity.
+\end{proof}
+
+The next result is Fatou's lemma, which is a consequence of the Monotone Convergence \autoref{thm:monotone-convergence}.
+
+\begin{theorem}[Fatou's lemma]\label{thm:fatou}
+Let $(X_n)_{n \in \N}$, $X_n \geq 0$, be a sequence of random variables.
+Then, there holds
+\begin{equation}\label{eq:fatou}
+\Exp\left[\liminf_{n \to \infty} X_n\right]
+\leq
+\liminf_{n \to \infty}\Exp[X_n]
+\qedhere
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let
+\(
+Y_n
+\coloneq
+\inf_{k \geq n}X_k
+\).
+Then $(Y_n)_{n \in \N}$ is a monotonically increasing sequence of random variables and we have
+\[
+\Exp\left[\liminf_{n \to \infty}X_n\right]
+\overset{\text{\eqref{eq:liminf-limsup-real-sequence}}}{=}
+\Exp\left[\sup_{n \in \N}Y_n\right]
+% \overset{\text{\autoref{thm:monotone-convergence}}}{=}
+\overset{\text{\eqref{eq:monotone-convergence}}}{=}
+\sup_{n \in \N}\Exp[Y_n]
+\leq
+\sup_{n \in \N}\inf_{k \geq n}\Exp[X_k]
+\overset{\text{\eqref{eq:liminf-limsup-real-sequence}}}{=}
+\liminf_{n \to \infty}\Exp[X_n]
+\]
+since,
+by \autoref{lem:elementary-properties-integral-nonnegative-measurable-functions} \ref{lem:elementary-properties-integral-nonnegative-measurable-functions:monotonicity},
+$\Exp[Y_n] \leq \Exp[X_k]$ for all $k \geq n$.
+\end{proof}
+
+The final theorem, we are going to show is the famous Dominated Convergence Theorem.
+
+\begin{theorem}[Dominated Convergence Theorem]\label{thm:dominated-convergence}
+Let $p \in [1,\infty)$ and let
+% \(
+% X_n
+% \xrightarrow{n \to \infty}
+% X
+% \)
+% $\Prob$-almost surely 
+\(X_n \xlongrightarrow{\text{a.s.}} X\)
+as well as $|X_n| \leq Y$ $\Prob$-almost surely for all $n \in \N$ and some $Y \in \mathcal{L}^p(\Omega,\mathcal{F},\Prob)$.
+Then, 
+% there holds
+% \(
+% X_n
+% \xrightarrow{n \to \infty}
+% X
+% \)
+% in $L^p$.
+\(
+\smash[t]{X_n \xlongrightarrow{L^p} X}
+\).
+\end{theorem}
+\begin{proof}
+Since $|X_n| \leq Y$ 
+% uniformly  % what does this mean?
+% in $n$, 
+for all $n \in \N$,
+we have $|X| \leq Y$ $\Prob$-almost surely.
+Consequently, there also holds 
+$\Exp[|X|^p]
+\leq
+\Exp[Y^p]
+<\infty$.
+Set
+\(
+Z_n
+\coloneq
+|X_n-X|^p
+\).
+We need to show 
+$\Exp[Z_n] 
+\to 0$.
+There holds
+\[
+0 \leq Z_n \leq (|X|+Y)^p \eqqcolon Z
+\]
+with $\Exp[Z]<\infty$.
+Invoking \autoref{thm:fatou}, we have
+\[
+\Exp\left[\liminf_{n \to \infty}(Z-Z_n)\right]
+\overset{\text{\eqref{eq:fatou}}}{\leq}
+\liminf_{n \to \infty}\Exp[Z-Z_n]
+= % why?
+\Exp[Z]-\limsup_{n \to \infty}\Exp[Z_n]
+\]
+Furthermore, since
+\(
+X_n
+\xrightarrow{n \to \infty}
+X
+\)
+$\Prob$-almost surely, we have that
+\(
+Z_n
+\xrightarrow{n \to \infty}
+0
+\)
+$\Prob$-almost surely and, consequently,
+\[
+\Exp\left[\liminf_{n \to \infty}(Z-Z_n)\right]
+=
+\Exp[Z]
+\]
+Inserting this in the previous inequality yields
+\(
+\limsup_{n \to \infty}\Exp[Z_n]
+\leq
+0
+\)
+and consequently
+\[
+\lim_{n \to \infty}\Exp[Z_n]
+=
+0
+\]
+since $Z_n \geq 0$.
+\end{proof}
 
 
 
