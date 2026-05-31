@@ -362,6 +362,10 @@ line width=0.16pt}}%
 \newcommand{\im}{\Im}
 \newcommand{\re}{\Re}
 
+
+\newcommand{\id}{\operatorname{id}}
+
+
 \newcommand*{\matrspace}{0.8mu}
 \newcommand{\matr}[1]{\mspace{\matrspace}\underline{\mspace{-\matrspace}\smash[b]{\boldsymbol{#1}}\mspace{-\matrspace}}\mspace{\matrspace}}
 \newcommand{\vect}[1]{{\boldsymbol{#1}}}
@@ -8475,28 +8479,28 @@ $\int |f|\,\dif\mu < \infty$ implies $|f| < \infty$ $\mu$-almost everywhere
 \end{enumerate}
 \end{lemma}
 
-\begin{example}
+\begin{example}\label{ex:integral-recovering-Riemann-notation}
 \leavevmode
 \begin{enumerate}
 \item \label{ex:lebesgue-integral}
 For $(\Omega,\mathcal{F},\mu) = (\R^d,\mathcal{B}(\R^d),\lambda^d)$, we denote the Lebesgue integral by
-\[
+\begin{equation}\label{eq:lebesgue-integral-over-whole-space}
 \int_{\R^d} f(\vect{x})\,\dif \vect{x}
 \coloneq
 \int_{\R^d} f\,\dif\lambda^d
-\]
+\end{equation}
 More generally, for $A \in \mathcal{B}(\R^d)$, we write
-\[
+\begin{equation}\label{eq:lebesgue-integral-over-set}
 \int_A f(\vect{x})\,\dif \vect{x}
 \coloneq
 \int_A f\,\dif\lambda^d
-\]
+\end{equation}
 In case $d=1$ and $A=(a,b)$ or $A=[a,b]$, we also write
-\[
+\begin{equation}\label{eq:lebesgue-integral-interval}
 \int_a^b f(x)\,\dif x
 \coloneq
 \int_A f\,\dif\lambda^1
-\]
+\end{equation}
 
 \item \label{ex:stieltjes-integral}
 For $(\Omega,\mathcal{F},\mu) = (\R,\mathcal{B}(\R),\mu_F)$ with the Stieltjes measure
@@ -8553,9 +8557,11 @@ Let $(\Omega,\mathcal{F},\Prob)$ be a probability space and let $X \in \mathcal{
 The expectation of $X$ is defined as
 \begin{equation}\label{eq:expectation}
 % \begin{verticalhack}
+{\color{red}\boxed{\color{black}
 \Exp[X]
 \coloneq
 \int_{\Omega} X\,\dif\Prob
+}}
 % \end{verticalhack}
 \qedhere
 \end{equation}
@@ -8858,6 +8864,137 @@ and
 \sum_{k \in \N} k^2 \mskip\thinmuskip \Prob(X=k)
 \).
 \end{remark}
+
+% % BEGIN --- how to derive the "normal" formulas for expectations in the discrete and continuous setting 
+% \begin{remark}
+% The usual formulae for expectations in the discrete and continuous settings are recovered directly from
+% \autoref{cor:expectation-image-measure}.
+
+% If $X : \Omega \to \N$, then by
+% \autoref{ex:counting-measure-integral},
+% \[
+% \begin{aligned}
+% \Exp[X]
+% &\overset{\text{\eqref{eq:expectation}}}{=}
+% \int_{\Omega} X\,\dif\Prob \\
+% &\overset{\text{C.\ref{cor:expectation-image-measure}}}{=}
+% \int_{\N} t\,\dif\Prob_X \\
+% &\overset{\text{\eqref{eq:counting-measure-integral}}}{=}
+% \sum_{k\in\N} k\,\Prob(X=k)
+% \end{aligned}
+% \]
+
+% If $\Prob_X$ admits a density $f$ with respect to Lebesgue measure, i.e.
+% \[
+% \Prob_X(A)
+% =
+% \int_A f\,\dif\lambda^1
+% \]
+% then by \autoref{thm:density-defines-measure},
+% \[
+% \begin{aligned}
+% \Exp[X]
+% &\overset{\text{\eqref{eq:expectation}}}{=}
+% \int_{\Omega} X\,\dif\Prob \\
+% &\overset{\text{C.\ref{cor:expectation-image-measure}}}{=}
+% \int_{\R} t\,\dif\Prob_X \\
+% &\overset{\text{\eqref{eq:density-integral-identity}}}{=}
+% \int_{\R} t f(t)\,\dif t
+% \end{aligned}
+% \]
+% \end{remark}
+% % --- END --- 
+
+\begin{remark}
+The usual formulas for expectations in the discrete and continuous settings are recovered directly from
+\autoref{cor:expectation-image-measure}.
+
+If $\Prob_X$ admits a density with respect to Lebesgue measure, i.e.
+there exists a measurable function $f : \R \to [0,\infty]$ such that
+\begin{equation}\label{eq:distribution-density}
+\Prob_X(A)
+=
+\int_A f\,\dif\lambda^1
+\overset{\text{\eqref{eq:lebesgue-integral-over-set}}}{=}
+\int_A f(x)\,\dif x
+\end{equation}
+for all $A \in \mathcal{B}(\R)$, then we say that $\Prob_X$ admits the density $f$ with respect to Lebesgue measure.
+In this case, by \autoref{thm:density-defines-measure}, applied with
+\[
+(\Omega,\mathcal{F},\mu)
+=
+(\R,\mathcal{B}(\R),\lambda^1),
+\qquad
+\nu=\Prob_X,
+\qquad
+f=f
+\]
+then, 
+% applying \autoref{cor:expectation-image-measure} with
+% \[
+% g=\id_{\R}
+% \]
+% yields
+% \[
+% g(X)
+% =
+% \id_{\R}\circ X
+% =
+% X
+% \]
+% and therefore
+\[
+\begin{aligned}
+\Exp[X]
+&\overset{\text{\eqref{eq:expectation}}}{=}
+\int_{\Omega} X\,\dif\Prob \\
+&=
+\int_{\Omega} \id_{\R}\circ X\,\dif\Prob \\
+&\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+\int_{\R} \id_{\R}\,\dif\Prob_X \\
+&\overset{\text{\eqref{eq:density-integral-identity}}}{=}
+\int_{\R} \id_{\R}\cdot f\,\dif\lambda^1 \\
+&\overset{\text{\eqref{eq:lebesgue-integral-over-whole-space}}}{=}
+\int_{\R} \big(\id_{\R} \cdot f\big)(x)\,\dif x \\
+&=
+\int_{\R} x \cdot f(x)\,\dif x
+\end{aligned}
+\]
+where the second-last equality is just the notation from
+\autoref{ex:lebesgue-integral}.
+\pagebreak[3]
+
+
+If $X : \Omega \to \N$, then
+\[
+\begin{aligned}
+\Exp[X]
+&\overset{\text{\eqref{eq:expectation}}}{=}
+\int_{\Omega} X\,\dif\Prob \\
+&\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+\int_{\R} \id_{\R}\,\dif\Prob_X \\
+&= % why??
+\int_{\N} \id_{\N}\,\dif\Prob_X \\
+&=
+\int_{\N}
+\sum_{k\in\N} k \ind_{\{k\}}
+\,\dif\Prob_X \\
+&\overset{\text{\eqref{eq:integral-nonnegative-function}}}{=}
+\sum_{k\in\N}
+\int_{\N} k \ind_{\{k\}}\,\dif\Prob_X \\
+&=
+\sum_{k\in\N}
+k \int_{\N} \ind_{\{k\}}\,\dif\Prob_X \\
+&\overset{\text{\eqref{eq:integral-indicator-function}}}{=}
+\sum_{k\in\N} k\,\Prob_X(\{k\}) \\
+&=
+\sum_{k\in\N} k\,\Prob(X=k)
+\end{aligned}
+\]
+\end{remark}
+
+
+
 
 We have the following important result for product measures (\autoref{ex:product-measure}).
 

@@ -5623,7 +5623,7 @@ In this representation of the unit rays, or projectors, ``orthogonal'' becomes `
  0);
 \end{scope}
 
-\foreach \P in {Yp,Ym,Xp,Xm}
+\foreach \P in {Zp,Zm,Yp,Ym,Xp,Xm}
   \fill (\P) circle (1.8pt);
 
 \node[black!85, above=3pt] at (Zp) {$\ket{0}$};
@@ -6148,7 +6148,7 @@ In the basis
 \),
 its matrix is
 \[
-\matr{CNOT}
+\matr{A}_{\text{CNOT}}
 =
 \begin{bmatrix}
 1&0&0&0\\
@@ -6164,7 +6164,7 @@ A first surprise occurs if one works in the diagonal basis.
 For example, on a suitable product of diagonal states, the CNOT again yields a product state, but the roles of control and target are exchanged.
 Equivalently,
 \[
-(\matr{H}\otimes \matr{H}) \,\matr{CNOT}\, (\matr{H}\otimes \matr{H})
+({H}\otimes {H}) \,\text{CNOT}\, ({H}\otimes {H})
 \]
 is a CNOT with swapped control and target.
 
@@ -6172,9 +6172,9 @@ A more important fact is that the CNOT can generate entanglement.
 Indeed,
 \[
 \ket{0}\ket{0}
-\xmapsto{\matr{H}\otimes \id}
+\xmapsto{{H}\otimes \id}
 \frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\ket{0}
-\xmapsto{\matr{CNOT}}
+\xmapsto{\text{CNOT}}
 \frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
 =
 \ket{\Phi^+}
@@ -6194,7 +6194,7 @@ To understand the gate better, suppose the control is classical and the target i
 If \(x=0\), nothing happens.
 If \(x=1\), the target is acted on by the NOT gate
 \[
-\matr{N}
+\matr{A}_{\text{NOT}}
 =
 \begin{bmatrix}
 0&1\\
@@ -6207,7 +6207,7 @@ so that
 \longmapsto
 \alpha\ket{1}+\beta\ket{0}
 \]
-Hence the CNOT applies \(\matr{N}\) conditionally on the value of the control wire.
+Hence the CNOT applies NOT conditionally on the value of the control wire.
 
 
 
@@ -6264,7 +6264,7 @@ So what does the CNOT do instead when the target starts in \(\ket{0}\) and the c
 We get
 \[
 (\alpha\ket{0}+\beta\ket{1})\ket{0}
-\xmapsto{\matr{CNOT}}
+\xmapsto{\text{CNOT}}
 \alpha\ket{00}+\beta\ket{11}
 \]
 This is generally an entangled state, not two copies of \(\ket{\varphi}\).
@@ -6300,7 +6300,7 @@ it produces the same local effect as a measurement in the computational basis, b
 This is not a genuine measurement, because the overall process is still unitary and reversible.
 Indeed, the CNOT is an involution:
 \[
-\matr{CNOT}^2=\id
+\text{CNOT}^2=\id
 \]
 
 This suggests a broader picture of measurement.
@@ -6312,6 +6312,297 @@ Locally, the superposition turns into a mixture, even though globally the evolut
 This phenomenon is called \emph{decoherence}.
 It explains why interaction with uncontrolled external degrees of freedom is so harmful in quantum computation:
 if even a single external two-level system becomes entangled with the computer and then escapes, the coherent superposition inside the computer is effectively turned into a mixture, and the computation is spoiled.
+
+
+
+
+
+
+\section{Algorithms}
+
+
+\subsection{Grover}
+
+Grover's algorithm solves the unstructured search problem: given a Boolean function
+\[
+f:\{0,1\}^n\to\{0,1\}
+\]
+with a small number $M$ of marked inputs satisfying
+\(
+f(x)=1
+\),
+find such an input.
+Classically this requires
+\(
+\Theta(N/M)
+\)
+queries on average, where
+\(
+N=2^n
+\).
+Grover reduces this to
+\[
+\Theta\!\left(\sqrt{N/M}\right)
+\]
+queries.
+
+The algorithm begins in the computational basis state
+\(
+\ket{0}^{\otimes n}
+\)
+and applies Hadamards:
+\[
+\ket{\Psi}
+=
+H^{\otimes n}\ket{0}^{\otimes n}
+=
+\frac{1}{\sqrt N}
+\sum_{x\in\{0,1\}^n}
+\ket{x}
+\]
+which is the equal superposition over all candidates.
+
+The two ingredients are:
+\begin{enumerate}[label=(\roman*)]
+\item The \emph{oracle}
+\[
+O_f\ket{x}
+=
+(-1)^{f(x)}\ket{x}
+\]
+which flips the phase of marked states.
+
+\item The \emph{diffusion operator}
+\[
+D
+=
+2\ket{\Psi}\bra{\Psi}-\id
+=
+H^{\otimes n}(2\ket{0}\bra{0}-\id)H^{\otimes n}
+\]
+which reflects amplitudes about their average.
+\end{enumerate}
+
+The product
+\[
+G
+=
+DO_f
+\]
+is called the \emph{Grover iterate}.
+
+\medskip
+{\textbf{Geometric picture}}
+
+Let
+\[
+\ket{\alpha}
+=
+\frac{1}{\sqrt{N-M}}
+\sum_{f(x)=0}\ket{x}
+\qquad
+\ket{\beta}
+=
+\frac{1}{\sqrt M}
+\sum_{f(x)=1}\ket{x}
+\]
+be the normalized superpositions of non-solutions and solutions.
+Then
+\[
+\ket{\Psi}
+=
+\sqrt{\frac{N-M}{N}}\ket{\alpha}
++
+\sqrt{\frac{M}{N}}\ket{\beta}
+\]
+so all dynamics take place in the two-dimensional plane
+\(
+\Span\{\ket{\alpha},\ket{\beta}\}
+\).
+
+The oracle reflects at
+\(
+\ket{\alpha}
+\),
+while the diffusion operator reflects at
+\(
+\ket{\Psi}
+\).
+Two reflections compose to a rotation, hence each Grover iteration rotates the state toward
+\(
+\ket{\beta}
+\),
+thereby amplifying the probability of observing a marked state.
+
+If
+\(
+\Theta
+\)
+denotes the rotation angle, then for
+\(
+M\ll N
+\)
+we have
+\[
+\Theta
+\approx
+2\sqrt{\frac{M}{N}}
+\]
+and therefore the optimal number of Grover iterations is approximately
+\[
+k
+\approx
+\frac{\pi}{4}
+\sqrt{\frac{N}{M}}
+\]
+after which a measurement returns a solution with high probability.
+
+\medskip
+{\textbf{Circuit}}
+
+\[
+\begin{quantikz}
+\lstick{$\ket{0}$} & \gate{H} & \qw & \gate[wires=3]{O_f} & \gate[wires=3]{D} & \qw & \gate[wires=3]{\cdots} & \meter{} \\
+\lstick{$\vdots$} & \gate{H} & \qw & & & \qw & & \meter{} \\
+\lstick{$\ket{0}$} & \gate{H} & \qw & & & \qw & & \meter{}
+\end{quantikz}
+\]
+
+The block
+\(
+O_f
+\)
+followed by
+\(
+D
+\)
+is repeated
+\(
+k\approx \frac{\pi}{4}\sqrt{N/M}
+\)
+times.
+
+\tikzexternaldisable
+\begin{algorithm}[h]
+\caption{Grover algorithm}\label{alg:grover}
+\begin{algorithmic}[1]
+\Require Oracle $O_f\ket{x}=(-1)^{f(x)}\ket{x}$, number of solutions $M$, search space size $N=2^n$
+\State $\ket{\psi}\gets\ket{0}^{\otimes n}$
+\State $\ket{\psi}\gets H^{\otimes n}\ket{\psi}$ \Comment{equal superposition over all candidates}
+\State $k\gets \left\lfloor \frac{\pi}{4}\sqrt{\frac{N}{M}}\right\rfloor$
+\For{$j=1,\ldots,k$}
+  \State $\ket{\psi}\gets O_f\ket{\psi}$ \Comment{flip the phase of marked states}
+  \State $\ket{\psi}\gets D\ket{\psi}$ \Comment{diffusion / reflection about the average}
+\EndFor
+\State Measure $\ket{\psi}$ in the computational basis
+\State \Return measured bit string $x$
+\end{algorithmic}
+\end{algorithm}
+\tikzexternalenable
+
+The algorithm amplifies the amplitudes of marked states while suppressing the others. Unlike Shor's algorithm, the speedup is quadratic rather than exponential, but it applies to essentially any unstructured search problem.
+
+
+
+
+
+
+\clearpage
+\section{Shor}
+
+\subsection{Quantum Fourier transform}
+
+
+The quantum Fourier transform (QFT) maps
+$\ket{\vect{j}} = \ket{j_1 \cdots j_n}$ to
+\[
+\frac{1}{2^{n/2}} 
+\bigotimes_{k=n}^{1}
+\left(
+\ket{0}
++
+\eu^{2\pi\iu\,\phi_k(j)}
+\ket{1}
+\right)
+\]
+where
+\[
+\phi_k(j)
+\coloneqq
+\sum_{\ell=k}^n \frac{j_\ell}{2^{\ell-k+1}}
+\]
+is the binary fraction corresponding to 
+% the bits $j_k\cdots j_n$, also written as 
+$0.j_k\cdots j_n$ in binary notation.
+
+
+
+
+
+
+
+
+\subsection{Number Theory}
+
+\newlength{\propw}
+\newlength{\propsep}
+\settowidth{\propw}{{Identity element:}}
+\setlength{\propsep}{\propw + 2em}
+
+\newlength{\quantw}
+\settowidth{\quantw}{$\forall a\in G\ \exists a^{-1}\in G$}
+\newlength{\quantsep}
+\setlength{\quantsep}{\quantw + 1.5em}
+
+\newcommand{\propitem}[3]{%
+  \item
+  \makebox[\propsep][l]{#1}%
+  \makebox[\quantsep][l]{$#2$}%
+  $#3$%
+}
+\begin{definition}[Group]
+A \emph{group} is a set $G$ together with a binary operation
+\[
+\circ : G \times G \to G
+\]
+such that:
+\begin{enumerate}
+  \propitem{Associativity:}
+    {\forall a,b,c\in G}
+    {(a\circ b)\circ c = a\circ(b\circ c)}
+
+  \propitem{Identity element:}
+    {\exists e\in G\ \forall a\in G}
+    {e\circ a = a\circ e = a}
+
+  \propitem{Inverse element:}
+    {\forall a\in G\ \exists a^{-1}\in G}
+    {a\circ a^{-1} = a^{-1}\circ a = e}
+\qedhere
+\end{enumerate}
+\end{definition}
+\begin{remark}
+Uniqueness of the identity and uniqueness of inverse elements are not part of the axioms; 
+they are consequences of the three axioms.
+\end{remark}
+
+
+
+
+\begin{definition}[Cyclic group]
+A group $G$ is called \emph{cyclic} if there exists an element $g\in G$ such that every element of $G$ can be written as a power of $g$, i.e.
+\[
+G = \{g^n : n\in\Z\}
+\]
+The element $g$ is called a \emph{generator} of $G$, and we write
+\[
+G = \langle g\rangle
+\]
+\end{definition}
+
+
+
+
 
 
 
