@@ -1220,6 +1220,12 @@ We rewrite the singlet in rotated measurement bases of Alice and Bob.
 \end{bmatrix}
 \]
 
+
+
+
+
+
+
 Let Alice rotate her basis by an angle $\alpha_A$ and Bob by $\alpha_B$.
 % \[
 % \begin{aligned}
@@ -1293,6 +1299,85 @@ Thus the probabilities depend only on the difference of the angles,
 \end{aligned}
 \]
 
+
+
+
+% \subsubsection*{Alice \& Bob both rotate with the same angle:}
+% % \(
+% % \ket{0}=c\ket{0'}-s\ket{1'}
+% % \),
+% % \(
+% % \ket{1}=s\ket{0'}+c\ket{1'}
+% % \)
+% % where
+% % \(
+% % c\coloneq \cos(\alpha)
+% % \),
+% % \(
+% % s\coloneq \sin(\alpha)
+% % \).
+
+% If both parties rotate by the same angle and thus measure $\ket{\Psi^{-}}$ in the same basis, then their outcomes are perfectly anti-correlated:
+% \[
+% \begin{aligned}
+% \ket{\Psi^-}
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% (c\ket{0'}-s\ket{1'})\otimes(s\ket{0'}+c\ket{1'})
+% -
+% (s\ket{0'}+c\ket{1'})\otimes(c\ket{0'}-s\ket{1'})
+% \Bigr)
+% \\[0.4em]
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% cs\,\ket{0' 0'}
+% +
+% c^2\,\ket{0' 1'}
+% -
+% s^2\,\ket{1' 0'}
+% -
+% sc\,\ket{1' 1'}
+% % \\
+% % &\hspace{1.6cm}
+% -
+% sc\,\ket{0' 0'}
+% +
+% s^2\,\ket{0' 1'}
+% -
+% c^2\,\ket{1' 0'}
+% +
+% cs\,\ket{1' 1'}
+% \Bigr)
+% \\[0.4em]
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% \cancel{(cs-sc)\,\ket{0'}\otimes\ket{0'}}
+% +
+% (c^2+s^2)\ket{0'}\otimes\ket{1'}
+% -
+% (s^2+c^2)\ket{1'}\otimes\ket{0'}
+% +
+% \cancel{(-sc+cs)\,\ket{1'}\otimes\ket{1'}}
+% \Bigr)
+% \\[0.4em]
+% &=
+% \frac{1}{\sqrt{2}}
+% \left(
+% \ket{0'}\otimes\ket{1'}
+% -
+% \ket{1'}\otimes\ket{0'}
+% \right)
+% \end{aligned}
+% \]
+
+% This computation is only meant to show that the singlet keeps the same form under a common rotation of both bases.
+% Hence, if Alice and Bob measure in the same basis, their outcomes are always perfectly anti-correlated.
+% To obtain the probabilities relevant for Bell's argument, we must instead consider the case where Alice and Bob measure in different bases.
+
+
 % Hence if the measurement bases differ by an angle $\Delta$ then
 % \(
 % \Prob(\text{opposite})=\cos^2(\Delta)
@@ -1306,6 +1391,198 @@ then
 \Prob(\text{opposite})=1
 \),
 so their outcomes are perfectly anti-correlated.
+
+
+
+
+
+
+% \subsubsection*{Alice rotates $\alpha=30^\circ$, Bob $\alpha=-30^\circ$:}
+
+% Alice chooses between the standard basis and a basis rotated by $30^\circ$.
+% Bob chooses between the standard basis and a basis rotated by $-30^\circ$.
+% Thus, the angle between the bases for the pairs $(A_1,B_2)$ and $(A_2,B_1)$ is $30^\circ$, whereas the angle between the bases for $(A_2,B_2)$ is $60^\circ$.
+
+% % \[
+% % \begin{aligned}
+% % \ket{0}_A&=c\ket{0'}-s\ket{1'},
+% % &\qquad
+% % \ket{1}_A&=s\ket{0'}+c\ket{1'},
+% % \\
+% % \ket{0}_B&=c\ket{0'}+s\ket{1'},
+% % &\qquad
+% % \ket{1}_B&=-s\ket{0'}+c\ket{1'} .
+% % \end{aligned}
+% % \]
+
+
+% We rewrite the state again in the respective measurement bases of Alice and Bob:
+% \[
+% \begin{aligned}
+% \ket{\Psi^-}
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% (c\ket{0'}-s\ket{1'})\otimes(-s\ket{0'}+c\ket{1'})
+% -
+% (s\ket{0'}+c\ket{1'})\otimes(c\ket{0'}+s\ket{1'})
+% \Bigr)
+% \\[0.4em]
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% -cs\,\ket{0' 0'}
+% +
+% c^2\,\ket{0' 1'}
+% +
+% s^2\,\ket{1' 0'}
+% -
+% sc\,\ket{1' 1'}
+% % \\
+% % &\hspace{1.6cm}
+% -
+% sc\,\ket{0' 0'}
+% -
+% s^2\,\ket{0' 1'}
+% -
+% c^2\,\ket{1' 0'}
+% -
+% cs\,\ket{1' 1'}
+% \Bigr)
+% \\[0.4em]
+% &=
+% \frac{1}{\sqrt{2}}
+% \Bigl(
+% -2cs\,\ket{0'}\otimes\ket{0'}
+% +
+% (c^2-s^2)\ket{0'}\otimes\ket{1'}
+% +
+% (s^2-c^2)\ket{1'}\otimes\ket{0'}
+% -
+% 2cs\,\ket{1'}\otimes\ket{1'}
+% \Bigr)
+% \\[0.4em]
+% &=
+% -\frac{\sqrt{3}}{2\sqrt{2}}\,\ket{0'}\otimes\ket{0'}
+% +
+% \frac{1}{2\sqrt{2}}\,\ket{0'}\otimes\ket{1'}
+% -
+% \frac{1}{2\sqrt{2}}\,\ket{1'}\otimes\ket{0'}
+% -
+% \frac{\sqrt{3}}{2\sqrt{2}}\,\ket{1'}\otimes\ket{1'}
+% \end{aligned}
+% \]
+% where we used the trigonometric identities in the last step:
+% \[
+% \sin(30^\circ)
+% =
+% \frac{l/2}{l}
+% =
+% \frac{1}{2}
+% \qquad
+% \cos(30^\circ)
+% =
+% \sqrt{1-\left(\frac{1}{2}\right)^2}
+% =
+% \frac{\sqrt{3}}{2}\tikzmark{triangleanchor}
+% \begin{tikzpicture}[scale=2.4, font=\footnotesize, overlay, remember picture]%
+%   \def\h{0.55}
+%   \pgfmathsetmacro{\x}{sqrt(3)*\h}
+
+%   \begin{scope}[shift={($(pic cs:triangleanchor)+(0.6cm,-0.1cm)$)}]
+%   \coordinate (A) at (0,0);
+%   \coordinate (B) at (\x,\h);
+%   \coordinate (C) at (\x,0);
+%   \coordinate (M) at (\x,0);
+
+%   \draw (A)-- node[midway, above left] {$l$} (B)-- node[pos=0.5, right] {$\frac{l}{2}$} (C)--cycle;
+%   \draw[black] (0.25,0) arc (0:30:0.25) node[pos=0.7, right] {$30^\circ$};
+%   \draw[black] ($(B)-(0,0.25)$) arc (-90:-150:0.25) node[pos=0.3, below left, outer sep=0.0em, inner sep=0.1em] {$60^\circ$};
+
+%   % right-angle marker at M
+%   \draw ($(M)+(-0.10cm,0)$) -- ($(M)+(-0.10cm,0.10cm)$) -- ($(M)+(0,0.10cm)$);
+%   \end{scope}
+% \end{tikzpicture}
+% \]%
+
+
+
+
+% Assume now, in the spirit of \autoref{claim:epr}, that the outcomes of all possible measurements are already fixed in the preparation stage.  
+% Then Alice has two potential output bits, $A_1$ and $A_2$, corresponding to her two possible measurement bases, and Bob analogously has $B_1$ and $B_2$.  
+% Here, index $1$ denotes the standard basis, while index $2$ denotes the rotated basis.  
+% % Even though in a single run each party chooses only one basis and therefore reveals only one of these bits, the hidden-variable assumption says that all four bits exist simultaneously.
+% In any single run, Alice and Bob each choose only one basis, so only one pair of outputs is actually observed.
+% However, according to \autoref{claim:epr}, all four hypothetical outputs
+% $A_1,A_2,B_1,B_2$
+% already must have predetermined values before the measurements are chosen.
+
+% For convenience, we flip Bob's output bit, so that equal bases lead to correlation instead of anti-correlation.  
+% Therefore,
+% \(
+% \Prob(A_1 = B_1)=1
+% \),
+% \(
+% \Prob(A_1 = B_2)=\cos^2(30^\circ)=\frac{3}{4}
+% \),
+% \(
+% \Prob(A_2 = B_1)=\cos^2(30^\circ)=\frac{3}{4}
+% \).
+% \[
+% \begin{tikzpicture}[
+%   scale=0.7, 
+%   every node/.style={inner sep=1pt, font=\small}
+%   ]
+%   % Nodes
+%   \node[outer sep=0.3em] (A1) at (0,2) {$A_1$};
+%   \node[outer sep=0.3em] (B1) at (4,2) {$B_1$};
+%   \node[outer sep=0.3em] (A2) at (0,0) {$A_2$};
+%   \node[outer sep=0.3em] (B2) at (4,0) {$B_2$};
+
+%   % Top horizontal double edge
+%   \draw[double distance=0.8pt] (A1) -- node[midway, above, outer sep=0.2em, font=\scriptsize] {$1$} (B1);
+
+%   % Bottom red double edge
+%   \draw[red, double distance=0.8pt] (A2) -- (B2);
+
+%   % Crossing double edges
+%   \draw[double distance=0.8pt] (A1) -- node[pos=0.15, below left, font=\scriptsize] {$3/4$}(B2);
+%   \draw[double distance=0.8pt] (A2) -- node[pos=0.15, above left, font=\scriptsize] {$3/4$}(B1);
+
+% \end{tikzpicture}
+% \]
+
+% Under the hidden-variable assumption, the four bits $A_1,A_2,B_1,B_2$ exist simultaneously.  
+% If $A_2\neq B_2$, then at least one of the equalities
+% $A_1=B_1$, $A_1=B_2$, or $A_2=B_1$
+% must fail.
+% Hence we obtain (the simplest example of) a so-called Bell inequality
+% \[
+% \Prob(A_2 \neq B_2)
+% \leq
+% \Prob(A_1 \neq B_1) + \Prob(A_1 \neq B_2) + \Prob(A_2 \neq B_1)
+% =
+% 0 + \frac{1}{4} + \frac{1}{4}
+% =
+% \frac{1}{2}
+% \]
+% by the transitivity of equality and the union bound.
+
+% But according to quantum theory, the angle between the corresponding bases for $(A_2,B_2)$ is $60^\circ$, so
+% \[
+% \Prob(A_2 = B_2) = \cos^2(60^\circ) = \frac{1}{4}
+% \]
+% and therefore
+% \[
+% \Prob(A_2 \neq B_2) = 1 - \Prob(A_2 = B_2) = \frac{3}{4}
+% \]
+% which violates the Bell inequality.
+
+% So the observed correlations cannot be explained by pre-shared classical information.  
+% Quantum correlations are therefore stronger than any correlations obtainable from local hidden variables.
+
+
+
 
 For Bell's experiment, Alice chooses between the standard basis and a basis rotated by $30^\circ$, while Bob chooses between the standard basis and a basis rotated by $-30^\circ$.
 \[
@@ -1441,6 +1718,10 @@ Quantum correlations are stronger than any correlations obtainable from local hi
 
 This phenomenon is called \emph{Bell non-locality}.
 It shows that entanglement produces correlations that arise only upon measurement and cannot be understood as predetermined data carried by the particles.
+
+
+
+
 
 
 % maybe add something about PR box???
