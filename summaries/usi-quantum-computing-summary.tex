@@ -1312,15 +1312,14 @@ For Bell's experiment, Alice chooses between the standard basis and a basis rota
 \begin{tikzpicture}[x=1cm, y=1cm, scale=0.75, font=\footnotesize]
   \definecolor{basisstatecolor}{HTML}{\eat #20a61e}
 
-  % #1 = prefix, #2 = shift, #3 = angle between bases (from the ' basis to the standard basis)
-  \newcommand{\basispanel}[3]{%
-    \begin{scope}[shift={#2}]
+  \foreach \panel/\xshift/\basisangle in {L/-4/30,R/4/-30}{
+    \begin{scope}[shift={(\xshift,0)}]
 
       \pgfmathsetmacro{\halfwidth}{2.2}
       \pgfmathsetmacro{\graysquaretop}{2.2}
 
-      \coordinate (#1-tl) at (-\halfwidth,\graysquaretop);
-      \coordinate (#1-tr) at (\halfwidth,\graysquaretop);
+      \coordinate (\panel-tl) at (-\halfwidth,\graysquaretop);
+      \coordinate (\panel-tr) at (\halfwidth,\graysquaretop);
 
       \fill[black!05, rounded corners=0.5pt] (-\halfwidth,-1.7) rectangle (\halfwidth,\graysquaretop);
       
@@ -1329,10 +1328,10 @@ For Bell's experiment, Alice chooses between the standard basis and a basis rota
       \draw[-Stealth, black] (0,0) -- (2.0,0) node[right] {$\ket{0}$};
       \draw[-Stealth, black] (0,0) -- (0,2.0) node[right] {$\ket{1}$};
 
-      \draw[-Stealth, basisstatecolor] (0,0) -- ({2.0*cos(-#3)},{2.0*sin(-#3)}) node[ right] {$\ket{0'}$}; 
-      \draw[-Stealth, basisstatecolor] (0,0) -- ({-2.0*sin(-#3)},{2.0*cos(-#3)}) node[ right] {$\ket{1'}$};
+      \draw[-Stealth, basisstatecolor] (0,0) -- ({2.0*cos(-\basisangle)},{2.0*sin(-\basisangle)}) node[ right] {$\ket{0'}$}; 
+      \draw[-Stealth, basisstatecolor] (0,0) -- ({-2.0*sin(-\basisangle)},{2.0*cos(-\basisangle)}) node[ right] {$\ket{1'}$};
 
-      \draw[black] (0.85,0) arc (0:-#3:0.85) node[pos=0.7, right] {$#3^\circ$};
+      \draw[black] (0.85,0) arc (0:-\basisangle:0.85) node[pos=0.7, right] {$\basisangle^\circ$};
       \end{scope}
 
     \end{scope}
@@ -1346,9 +1345,6 @@ For Bell's experiment, Alice chooses between the standard basis and a basis rota
 
   \draw[densely dashed, ->, thick] (source.west) -- (ma.east);
   \draw[densely dashed, ->, thick] (source.east) -- (mb.west);
-
-  \basispanel{L}{(-4,0)}{30} % alice
-  \basispanel{R}{(4,0)}{-30} % bob
 
   \draw[gray!70] (ma.south west) -- (L-tl);
   \draw[gray!70] (ma.south east) -- (L-tr);
@@ -1374,6 +1370,7 @@ is $60^\circ$.
 Assume now, in the spirit of \autoref{claim:epr}, that the outcomes of all possible measurements are already fixed in the preparation stage.
 
 Then Alice has two potential output bits $A_1,A_2$ and Bob analogously $B_1,B_2$.
+Here index \(1\) denotes the standard basis, while index \(2\) denotes the rotated basis.
 
 In any single run each party reveals only one of these bits, but the hidden-variable assumption says that all four bits already have predetermined values.
 
@@ -5940,6 +5937,30 @@ a_1^* a_2 c_1^* c_2 + a_1^* a_2 d_1^* d_2 + b_1^* b_2 c_1^* c_2 + b_1^* b_2 d_1^
 
 \medskip
 {\textbf{Operations}}
+
+% If \(U\) and \(V\) are unitary on the individual Qbits, then
+% \[
+% (U\otimes V)(\ket{\psi}\otimes\ket{\varphi})
+% =
+% U\ket{\psi}\otimes V\ket{\varphi}
+% \]
+% extends linearly to a unitary on the joint system.
+% Such operations are called \emph{product operations}.
+
+% For example,
+% \[
+% \matr{H}^{\otimes 2}
+% =
+% \matr{H}\otimes \matr{H}
+% =
+% \frac12
+% \begin{bmatrix}
+% 1 & 1 & 1 & 1\\
+% 1 & -1 & 1 & -1\\
+% 1 & 1 & -1 & -1\\
+% 1 & -1 & -1 & 1
+% \end{bmatrix}
+% \]
 
 An example of an operation that can be carried out on a pair of Qbits is a product operation. 
 Let us define it on the set of product states, which is a generating system of the full space.
