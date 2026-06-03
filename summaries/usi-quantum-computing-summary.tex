@@ -8,11 +8,16 @@
 \usepackage[T1]{fontenc}     % handle accented glyphs properly
 \usepackage[english]{babel}  % load the hyphenation patterns you need
 
-\pretolerance=1
-\tolerance=200
-\hyphenpenalty=1
-\doublehyphendemerits=0
-\finalhyphendemerits=0
+\usepackage{microtype} % improves line breaking by tiny font expansion and margin protrusion
+
+\pretolerance=1 % very strict first pass without hyphenation; quickly allows hyphenation
+\tolerance=500 % tolerance after hyphenation is allowed; lower means less ugly spacing
+% \emergencystretch=3em % fallback extra stretch to avoid overfull lines
+\hyphenpenalty=1 % low penalty for ordinary hyphenation, e.g. den-si-ty
+\exhyphenpenalty=1 % low penalty for breaks at explicit hyphens, e.g. two-dimensional
+\doublehyphendemerits=0 % no extra punishment for two hyphenated lines in a row
+\finalhyphendemerits=0 % no extra punishment if the penultimate line ends with a hyphen
+% \usepackage[shortcuts]{extdash} % provides breakable compound hyphen shortcuts
 
 
 \usepackage[automark]{scrlayer-scrpage}
@@ -95,7 +100,7 @@
 
 \usepackage{tikz}
 \usepackage{tikz-cd}
-\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings, shapes.multipart, angles, quotes}
+\usetikzlibrary{arrows, arrows.meta, shapes, positioning, calc, fit, patterns, intersections, math, 3d, tikzmark, decorations.pathreplacing, decorations.markings, shapes.multipart, angles, quotes, circuits.logic.US}
 \usepackage{tikz-dependency, tikz-qtree, tikz-qtree-compat}
 \usepackage{tikz-3dplot}
 \usepackage{tikzpagenodes}
@@ -151,6 +156,8 @@
 \declaretheorem[style=definitionstyle, name=Notation, numbered=no]{notation*} % unnumbered notation
 
 \declaretheorem[style=definitionstyle, name=Problem,    sibling=definition]{problem}
+\declaretheorem[style=definitionstyle, name=Paradox,     sibling=definition]{paradox}
+
 \declaretheoremstyle[headfont=\bfseries, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ding{45}, postheadspace=1em]{exercisestyle}
 \declaretheorem[style=exercisestyle, name=Exercise, numberwithin=section]{exercise}
 \declaretheoremstyle[headfont=\bfseries\color{red}, bodyfont=\normalfont, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{red}\blacktriangleleft}, postheadspace=1em]{solutionstyle}
@@ -760,10 +767,10 @@ where $\varphi$ is the angle between the intial polarization direction and the p
 % Image Source: https://tikz.net/malus-law/
 \begin{tikzpicture}[scale=0.75,x={(1cm,0.4cm)}, y={(8mm, -3mm)}, z={(0cm,1cm)}, line cap=round, line join=round]
 
-\node[align=left, every text node part/.style={align=left}, transform shape, scale=0.6] at (5.5,8)
-{\fontsize{5pt}{2pt}\selectfont%
-Image Source:\\[-5.5pt]
-\fontsize{5pt}{2pt}\selectfont\url{https://tikz.net/malus-law/}};
+% \node[align=left, every text node part/.style={align=left}, transform shape, scale=0.6] at (5.5,8)
+% {\fontsize{5pt}{2pt}\selectfont%
+% Image Source:\\[-5.5pt]
+% \fontsize{5pt}{2pt}\selectfont\url{https://tikz.net/malus-law/}};
 
 	% Big Axis 
 	\draw[axis] (-1,0,0) -- (12.5,0,0);% node[right, black] {\footnotesize{Polarization}\\[-0.5mm]\footnotesize{Direction}};
@@ -1887,11 +1894,11 @@ A remarkable feature of \autoref{law:second-law-thermodynamics-entropy} is that 
 
 
 
-\textbf{Maxwell's demon}:
+\begin{paradox}[Maxwell's demon]\label{par:maxwells-demon}
 Imagine a creature sitting at a separation wall  in a gas container with a frictionless door.
 The demon can open whenever a molecule moves towards the door.
 In linear time in the numbrer of particles the gas will be ``sorted'', i.e., compressed - revoltingly unfaithful to \autoref{law:second-law-thermodynamics-entropy}.
-
+\end{paradox}
 
 The understanding of what is wrong with this argument is one of the first success stories of the synergy between physics and
 
@@ -2468,8 +2475,9 @@ $r$ copies of the same, perhaps incompressible string of length $N$ have work va
 
 
 \subsection{Benett's Solution to Maxwell's Demon}
+\label{sec:solution-maxwells-demon}
 
-In the face of \nameref{claim:landauer-principle}, the paradox disappears:
+In the face of \nameref{claim:landauer-principle}, \autoref{par:maxwells-demon} disappears:
 The demon must erase the information it gathers during the sorting process. 
 This erasure requires a minimal amount of work and leads to heat dissipation into the environment, which compensates exactly for the entropy decrease created in the gas.
 
@@ -2486,24 +2494,333 @@ In this sense, information has an energetic value (``knowledge is energy'').
 Nevertheless, no perpetuum mobile of the second kind arises. 
 Any work gained through such knowledge must ultimately be paid for when the demon resets its memory, ensuring consistency with \autoref{law:second-law-thermodynamics-entropy}.
 
+
+
+
+
+
+
+
 \subsection{Reversible Computing}
 
 % Can computation be made locially reversible?
-If, in the course of a computation, information is lost about ``which branch the computation came from'', then free energy $\kB T \ln(2)$ must be invested, which is dissipates as heat to the evironment.
+If, in the course of a computation, information is lost about ``which branch the computation came from'', then free energy $\kB T \ln(2)$ must be invested, which is dissipated as heat to the environment.
 In other words, the \emph{logical} irreversibility of a computation (``information is lost'') implies its \emph{thermodynamic} irreversibility (``free energy is lost'').
-Thus, it appears advantageous if a computaiton does not have such collisions of branches.
+Thus, it appears advantageous if a computation does not have such collisions of branches.
 
-As it turns out, it is (at least in principle) possible to carry out any logically reversible computation in a thermodynamically reversible way: \nameref{claim:landauer-principle} is {``tight''} in this sense.
-
-
-
-
-% to be continued....!!!
+As it turns out, it is (at least in principle) possible to carry out any logically reversible computation in a thermodynamically reversible way: 
+\nameref{claim:landauer-principle} is {``tight''} in this sense.
 
 
 
+\begin{definition}
+%[Reversible gate]
+\label{def:reversible-gate}
+A classical gate is logically reversible iff its output determines its input uniquely.
+Equivalently, the gate must be a bijection on the set of possible bit strings.
+\end{definition}
+
+\tikzset{
+  revfig/.style={line cap=round, line join=round, font=\footnotesize},
+  revline/.style={line width=0.45pt},
+  revbox/.style={draw, line width=0.45pt, minimum width=1.4cm, minimum height=0.55cm, inner sep=2pt},
+  revgate/.style={draw, line width=0.45pt, minimum width=0.8cm, minimum height=1.6cm, inner sep=2pt},
+  revand/.style={and gate US, draw, line width=0.45pt, logic gate inputs=nn, minimum width=0.85cm, minimum height=0.85cm, inner sep=0pt}
+}
+
+\begin{example}
+\label{ex:and-gate-not-reversible}
+The ordinary AND gate is not reversible:
+\[
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revand] (and) at (0,0) {};
+  \node[font=\footnotesize] at (and.center) {\texttt{AND}};
+  \draw[revline] (-2.5,0 |- and.input 1) node[left] {$a$} -- (and.input 1);
+  \draw[revline] (-2.5,0 |- and.input 2) node[left] {$b$} -- (and.input 2);
+  \draw[revline] (and.output) -- (2.5,0 |- and.output) node[right] {$a\wedge b$};
+  \coordinate (energyIn) at (-0.8,-1.2);
+  \coordinate (energyGate) at ($(and.south west)!0.8!(and.south)$);
+  \coordinate (heatGate) at ($(and.south)+(and.south)-(energyGate)$);
+  \coordinate (heatOut) at (0.8,-1.2);
+  \draw[revline, ->] (energyIn) to[bend left] (energyGate);
+  \draw[revline, ->] (heatGate) to[bend left] (heatOut);
+  \node[below left, inner sep=0pt, outer sep=2pt] at (energyIn) {free energy};
+  \node[below right, inner sep=0pt, outer sep=2pt] at (heatOut) {$\kB T\ln 2$};
+\end{tikzpicture}
+\]
+because, from the output \(0\), one cannot reconstruct whether the input was
+\((0,0)\), \((0,1)\), or \((1,0)\).
+The missing information has to be dumped into the environment; in the minimal
+case this costs the Landauer heat \(\kB T\ln 2\) per erased bit.
+
+A first way to avoid this loss of information is to keep the inputs:
+\[
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revand] (and) at (0,0) {};
+  \node[font=\footnotesize] at (and.center) {\texttt{AND}};
+  \coordinate (ain) at (-2.5,0 |- and.input 1);
+  \coordinate (bin) at (-2.5,0 |- and.input 2);
+  \coordinate (aout) at (2.5,1.5);
+  \coordinate (bout) at ($(aout) - ($(ain) - (bin)$)$);
+  \draw[revline] (ain) node[left] {$a$} -- (and.input 1);
+  \draw[revline] (bin) node[left] {$b$} -- (and.input 2);
+  \draw[revline] (and.output) -- (2.5,0 |- and.output) node[right] {$a\wedge b$};
+  \draw[revline, rounded corners] (-1.8,0 |- and.input 1) |- (aout) node[right] {$a$};
+  \draw[revline, rounded corners] (-1.5,0 |- and.input 2) |- (bout) node[right] {$b$};
+\end{tikzpicture}
+\]
+This is now injective, but it is not yet a reversible gate in the strict circuit sense, because the number of wires has changed.
+Reversible gates should have the same number of input and output wires.
+\end{example}
+
+% \begin{example}[Irreversible Turing machine]
+An ordinary deterministic Turing machine is still logically irreversible in general:
+``deterministic'' merely means that the next configuration is uniquely determined by the present configuration, 
+but it does not mean that the previous configuration can be reconstructed from the next one.
+Many different histories may lead to the same final output.
+
+One can make such a logically irreversible computation reversible by giving the machine a ``history tape'' for storing the entire path of the computation.
+\[
+\begin{tikzpicture}[revfig, scale=0.8]
+  \node[revbox, minimum width=1.8cm, minimum height=1.2cm, font=\normalsize, outer sep=0pt] (tm) at (0,0) {TM};
+  \node[left] (input) at (-2.4,0) {input};
+  \node[right] (output) at (2.4,0) {output};
+  \node[below] (waste) at (0,-1.5) {waste, history tape};
+  \draw[revline, ->] (input) -- (tm.west);
+  \draw[revline, ->] (tm.east) -- (output);
+  \draw[revline, ->] (tm.south) -- (waste);
+\end{tikzpicture}
+\]
+However, keeping the entire ``history'' of the computation is not ``sustainable''.
+The reason is that the original state of that history tape, say the all-$0$-string, 
+is lost and replaced by the waste that has piled up 
+--- 
+just as in Maxwell's demons's brain (see \autoref{sec:solution-maxwells-demon} and \autoref{par:maxwells-demon}).
+(If the history tape was filled with a random string instead of the all-$0$-string,
+then ordinary writing to it would overwrite its previous contents.
+That overwriting is already a logically irreversible erasure, 
+and hence carries a Landauer cost, 
+wasting free energy as heat into the environment.)
 
 
+Bennett's idea is to get rid of the waste in systematic way:
+store the history tape, 
+copy the desired output,
+and then run the computation backwards in order to ``uncompute'' instead of erasing the history tape.
+\[
+\begin{tikzpicture}[revfig, scale=0.8]
+  \node[revbox] (zeroTop) at (-6,1.5) {$000\cdots$};
+  \node[revbox] (outTop) at (0,1.5) {output};
+  \node[revbox] (outTopR) at (6,1.5) {output};
+  \draw[revline, ->] (zeroTop.east) -- (outTop.west);
+  \draw[revline, ->] (outTop.east) -- (outTopR.west);
+
+  \node[revbox] (inputL) at (-6,0) {input};
+  \node[revbox] (zeroL) at (-6,-1) {$000\cdots$};
+  \node[revbox, minimum width=1.8cm, minimum height=1.2cm, font=\normalsize, outer sep=0pt] (tm1) at (-3,-0.5) {TM};
+  \node[below=0.05cm of tm1] {computation};
+  \node[revbox] (outMid) at (0,0) {output};
+  \node[revbox] (wasteMid) at (0,-1) {waste};
+  \node[revbox, minimum width=1.8cm, minimum height=1.2cm, font=\normalsize, outer sep=0pt] (tm2) at (3,-0.5) {TM};
+  \node[below=0.05cm of tm2] {inverse comp.};
+  \node[revbox] (inputR) at (6,0) {input};
+  \node[revbox] (zeroR) at (6,-1) {$000\cdots$};
+  \draw[revline, ->] (inputL.east) -- (tm1.west|-inputL);
+  \draw[revline, ->] (zeroL.east) -- (tm1.west|-zeroL);
+  \draw[revline, ->] (tm1.east|-outMid) -- (outMid.west);
+  \draw[revline, ->] (tm1.east|-wasteMid) -- (wasteMid.west);
+  \draw[revline, ->] (outMid.east) -- (tm2.west|-outMid);
+  \draw[revline, ->] (wasteMid.east) -- (tm2.west|-wasteMid);
+  \draw[revline, ->] (tm2.east|-inputR) -- (inputR.west);
+  \draw[revline, ->] (tm2.east|-zeroR) -- (zeroR.west);
+  \draw[revline, ->] (outMid.north) -- (outTop.south);
+  \node[left] at ($(outMid.north)!0.5!(outTop.south)$) {copy};
+\end{tikzpicture}
+\]
+We have shown that every computation can be embedded into a logically reversible one:
+no information has to be thrown away.
+This removes the fundamental Landauer cost caused by erasure.
+
+
+
+\begin{definition}[Toffoli gate]
+The \hl[2]{Toffoli gate} \(T\) maps
+\(
+(x,y,b) \longmapsto \bigl(x,y,b\oplus(x\wedge y)\bigr)
+\).
+\[
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revgate, font=\normalsize] (T) at (0,0) {$T$};
+  \foreach \y/\l/\r in {0.75/x/x,0/y/y,-0.75/b/{b\oplus(x\wedge y)}} {
+    \draw[revline] (-2,\y) -- (T.west|-0,\y);
+    \draw[revline] (T.east|-0,\y) -- (2,\y);
+    \node[left] at (-2,\y) {$\l$};
+    \node[right] at (2,\y) {$\r$};
+  }
+\end{tikzpicture}
+\]
+It is reversible because \(T^{-1}=T\): applying it twice restores the original triple.
+\end{definition}
+
+By fixing some wires, the Toffoli gate contains the usual irreversible Boolean
+operations without becoming irreversible itself:
+\[
+\begin{array}{@{}ccc@{}}
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revgate, font=\normalsize] (T) at (0,0) {$T$};
+  \foreach \y/\l/\r in {0.75/1/1,0/1/1,-0.75/x/{\neg x}} {
+    \draw[revline] (-1.5,\y) -- (T.west|-0,\y);
+    \draw[revline] (T.east|-0,\y) -- (1.5,\y);
+    \node[left] at (-1.5,\y) {$\l$};
+    \node[right] at (1.5,\y) {$\r$};
+  }
+\end{tikzpicture}
+&
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revgate, font=\normalsize] (T) at (0,0) {$T$};
+  \foreach \y/\l/\r in {0.75/x/x,0/y/y,-0.75/0/{x\wedge y}} {
+    \draw[revline] (-1.5,\y) -- (T.west|-0,\y);
+    \draw[revline] (T.east|-0,\y) -- (1.5,\y);
+    \node[left] at (-1.5,\y) {$\l$};
+    \node[right] at (1.5,\y) {$\r$};
+  }
+\end{tikzpicture}
+&
+\begin{tikzpicture}[revfig, scale=0.7]
+  \node[revgate, font=\normalsize] (T) at (0,0) {$T$};
+  \foreach \y/\l/\r in {0.75/x/x,0/1/1,-0.75/0/x} {
+    \draw[revline] (-1.5,\y) -- (T.west|-0,\y);
+    \draw[revline] (T.east|-0,\y) -- (1.5,\y);
+    \node[left] at (-1.5,\y) {$\l$};
+    \node[right] at (1.5,\y) {$\r$};
+  }
+\end{tikzpicture}
+\end{array}
+\]
+Thus Toffoli gives NOT, AND with a clean target bit, and FAN-OUT (copying of a classical bit). 
+Since NOT and AND are functionally complete for classical computation, 
+the Toffoli gate is universal for classical reversible computation, 
+up to additional ancilla and garbage wires.
+
+\begin{definition}[Reversible embedding]
+Let \(f:\{0,1\}^n\to\{0,1\}^m\) be computed by some irreversible circuit.
+A reversible circuit \(C\) can compute it in the form
+\[
+\begin{tikzpicture}[revfig, scale=0.8]
+  \node[revbox, minimum width=0.9cm, minimum height=1.2cm, font=\normalsize] (C) at (0,0) {$C$};
+%   \node[left] (x) at (-2,0.5) {$x$};
+%   \node[left] (c) at (-2,-0.5) {$c$};
+%   \node[right] (fx) at (2,0.5) {$f(x)$};
+%   \node[right] (Jx) at (2,-0.5) {$J(x)$};
+  \draw[revline] (-2,0.5) node[left] {$x$} -- node[above, inner sep=0pt, outer sep=2pt]  {\tiny \(n\)} (C.west |- 0,0.5); % last part is = (C.west|-{(0,0.5)});
+  \draw[revline] (-2,-0.5) node[left] {$c$} -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(t\)} (C.west |- 0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(m\)} (2,0.5) node[right] {$f(x)$};
+  \draw[revline] (C.east|-0,-0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(m+t-n\)}  (2,-0.5) node[right] {$J(x)$};
+\end{tikzpicture}
+\qquad
+\begin{tikzpicture}[revfig, scale=0.8]
+    \node[revbox, minimum width=0.9cm, minimum height=1.2cm, font=\normalsize, inner sep=0pt] (C) at (0,0) {$C^{-1}$};
+%   \node[left] at (-2,0.5) {$f(x)$};
+%   \node[left] at (-2,-0.5) {$J(x)$};
+%   \node[right] at (2,0.5) {$x$};
+%   \node[right] at (2,-0.5) {$c$};
+  \draw[revline] (-2,0.5) node[left] {$f(x)$} -- (C.west|-0,0.5);
+  \draw[revline] (-2,-0.5) node[left] {$J(x)$} -- (C.west|-0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- (2,0.5) node[right] {$x$};
+  \draw[revline] (C.east|-0,-0.5) -- (2,-0.5) node[right] {$c$};
+\end{tikzpicture}
+\]
+where \(c\) is ancillary input and \(J(x)\) is the garbage or junk information
+that makes the map bijective.
+\end{definition}
+
+Bennett's trick removes the junk without erasing it: compute, copy the useful
+answer to a clean register, and uncompute.
+\[
+% (A |- B) = (x-coordinate of A, y-coordinate of B)
+% (A -| B) = (x-coordinate of B, y-coordinate of A)
+\begin{tikzpicture}[revfig, scale=0.75]
+  \node[revbox, minimum width=1cm, minimum height=1.5cm, font=\normalsize] (C) at (-3,1.5) {$C$};
+  \node[revbox, minimum width=1cm, minimum height=1.5cm, font=\normalsize] (Ci) at (3,1.5) {$C^{-1}$};
+
+  \draw[revline] (C.west|-0,2) -- (-4,2) node[left] {$\vect{x}$};
+  \draw[revline]  (C.west|-0,1) -- (-4,1) node[left] {$\vect{c}$};
+  \draw[revline] (C.east|-0,1) -- (Ci.west|-0,1);
+  \draw[revline] (Ci.east|-0,2) -- (4,2) node[right] {$\vect{x}$};
+  \draw[revline] (Ci.east|-0,1) -- (4,1) node[right] {$\vect{c}$};
+
+  \node[revbox, minimum width=1cm, minimum height=2.0cm] (copy) at (0,-1) {};
+  \coordinate (copyLTop) at ($(copy.west)!0.7!(copy.north west)$);
+  \coordinate (copyRTop) at ($(copy.east)!0.7!(copy.north east)$);
+  \coordinate (copyLMid) at (copy.west);
+  \coordinate (copyRMid) at (copy.east);
+  \coordinate (copyLBot) at ($(copy.west)!0.7!(copy.south west)$);
+  \coordinate (copyRBot) at ($(copy.east)!0.7!(copy.south east)$);
+
+  \draw[revline] (copyLMid) -- (-4,0 |- copyLMid) node[left] {$\vect{1}$};
+  \draw[revline] (copyRMid) -- (4,0 |- copyRMid) node[right] {$\vect{1}$};
+  \draw[revline] (copyLBot) -- (-4,-2 |- copyLBot) node[left] {$\vect{b}$};
+  \draw[revline] (copyRBot) -- (4,-2 |- copyRBot) node[right] {$\vect{b} \oplus \vect{f}(\vect{x})$};
+
+  \coordinate (copyLbendTop) at ($(C.east)!0.4!(copy.west)$);
+  \coordinate (copyLbendBot) at ($(C.east)!0.6!(copy.west)$);
+  \coordinate (copyRbendTop) at ($(Ci.west)!0.4!(copy.east)$);
+  \coordinate (copyRbendBot) at ($(Ci.west)!0.6!(copy.east)$);
+  \draw[revline, rounded corners=6pt] (C.east |- 0,2) -- (copyLbendTop |- 0,2) -- (copyLbendBot |- copyLTop) -- (copyLTop);
+  \draw[revline, rounded corners=6pt] (Ci.west |- 0,2) -- (copyRbendTop |- 0,2) -- (copyRbendBot |- copyRTop) -- (copyRTop);
+\end{tikzpicture}
+\]
+The middle box denotes a reversible copy/XOR operation controlled by the
+computed value \(f(\vect{x})\). The lower wire obtains the useful value while
+the upper wires are restored.
+
+Equivalently, if \(C\) computes \(f\) as
+\[
+\begin{tikzpicture}[revfig, scale=0.8]
+  \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (C) at (0,0) {$C$};
+  \draw[revline] (-1.5,0.5) -- (C.west|-0,0.5);
+  \draw[revline] (-1.5,-0.5) -- (C.west|-0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- (1.5,0.5);
+  \draw[revline] (C.east|-0,-0.5) -- (1.5,-0.5);
+  \node[above=0.05cm of C] {$f$};
+  \node[left] at (-1.5,0.5) {$x$};
+  \node[left] at (-1.5,-0.5) {$a$};
+  \node[right] at (1.5,0.5) {$x$};
+  \node[right] at (1.5,-0.5) {$a\oplus f(x)$};
+\end{tikzpicture}
+\qquad
+\begin{tikzpicture}[revfig, scale=0.8]
+  \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (D) at (0,0) {$D$};
+  \draw[revline] (-1.5,0.5) -- (D.west|-0,0.5);
+  \draw[revline] (-1.5,-0.5) -- (D.west|-0,-0.5);
+  \draw[revline] (D.east|-0,0.5) -- (1.5,0.5);
+  \draw[revline] (D.east|-0,-0.5) -- (1.5,-0.5);
+  \node[above=0.05cm of D] {$f^{-1}$};
+  \node[left] at (-1.5,0.5) {$f(x)$};
+  \node[left] at (-1.5,-0.5) {$b$};
+  \node[right] at (1.5,0.5) {$f(x)$};
+  \node[right] at (1.5,-0.5) {$a\oplus x$};
+\end{tikzpicture}
+\]
+then the two can be composed after swapping the middle wires:
+\[
+\begin{tikzpicture}[revfig, scale=0.75]
+  \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (C) at (-2.5,0) {$C$};
+  \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (D) at (2.5,0) {$D$};
+  \draw[revline] (-4,0.5) -- (C.west|-0,0.5);
+  \draw[revline] (-4,-0.5) -- (C.west|-0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- (-1,0.5) -- (1,-0.5) -- (D.west|-0,-0.5);
+  \draw[revline] (C.east|-0,-0.5) -- (-1,-0.5) -- (1,0.5) -- (D.west|-0,0.5);
+  \draw[revline] (D.east|-0,0.5) -- (4,0.5);
+  \draw[revline] (D.east|-0,-0.5) -- (4,-0.5);
+  \node[left] at (-4,0.5) {$x$};
+  \node[left] at (-4,-0.5) {$0$};
+  \node[right] at (4,0.5) {$f(x)$};
+  \node[right] at (4,-0.5) {$0$};
+\end{tikzpicture}
+\]
+This realizes the apparently irreversible map \(x\mapsto f(x)\) as a reversible
+process on a larger state space.
 
 
 
@@ -4506,7 +4823,7 @@ E_{\psi,\psi}(\omega)
 for $\omega \in \mathcal{B}(\sigma_A)$, 
 defines a probability measure $\Prob_A^\psi(\cdot) \coloneq \mu_\psi^A(\cdot)$ on $\sigma_A$.
 This is the probability distribution of the measurement outcomes of $A$ in the state $\psi$.
-This is called the \emph{Born rule}.
+This is called the \hl[2]{\emph{Born rule}}.
 
 % So the generalization of the discrete formula
 % \(
@@ -4793,6 +5110,26 @@ basis
 and hence to
 work with vectors and matrices instead of general Hilbert-space operators. % and spectral measures.
 
+\begin{theorem}\label{thm:spectral-theorem-finite-dimensional}
+%[Finite-Dimensional Spectral Theorem]
+Let \(\matr{A} \in \C^{n\times n}\) be Hermitian. 
+Then there exists a unitary matrix \(\matr U\) and a real diagonal matrix \(\matr\Lambda\) 
+% of the form
+% \[
+% \matr\Lambda
+% =
+% \operatorname{diag}(\lambda_1,\dots,\lambda_n)
+% \]
+such that
+\begin{equation}\label{eq:spectral-theorem-finite-dimensional}
+\matr{A}
+=
+\matr U \matr\Lambda \matr U^*
+\end{equation}
+where $\matr{\Lambda} = \operatorname{diag}(\lambda_1,\dots,\lambda_n)$ is a diagonal matrix of eigenvalues listed with algebraic multiplicity.
+Equivalently, \(\matr{A}\) admits an orthonormal basis of eigenvectors.
+\end{theorem}
+
 
 For $\psi \in \mathcal{H} \cong \C^n$, the corresponding column vector
 \[
@@ -5025,13 +5362,13 @@ To see this, recall that
 \Trace(A B) = \Trace(B A)
 \).
 Hence for a unitary change of basis $U$,
-\[
+\begin{equation}\label{eq:trace-basis-independence}
 \Trace(U A U^*)
 =
 \Trace(U^* U A)
 =
 \Trace(A)
-\]
+\end{equation}
 
 
 This can also be seen using the trick mentioned above:
@@ -5230,7 +5567,7 @@ Equivalently, \(\rho\) is pure if and only if one eigenvalue equals \(1\) and al
 Thus pure states are precisely the rank-one orthogonal projections (compare also \autoref{eq:post-measurement-state} and \autoref{ex:finite-dimensional-case}).
 
 
-\begin{overview}[pure vs. mixed states]
+\begin{overview}[pure vs. mixed states]\label{overview:pure-vs-mixed-states}
 A density operator $\rho$ is
 \begin{itemize}
 \item pure iff $\rho^2 = \rho$  (i.e. $\rho$ is a rank-$1$ projection)
@@ -5552,7 +5889,8 @@ Using
 we get
 \[
 \begin{aligned}
-\Trace_B \bigl(\ket{\Psi^-}\bra{\Psi^-}\bigr)
+&\Trace_B \bigl(\ket{\Psi^-}\bra{\Psi^-}\bigr)
+\\
 &=
 \frac12\Bigl(
 \Trace_B(\ket{01}\bra{01})
@@ -5577,7 +5915,8 @@ we get
 % \Trace_B(\ket{1}\bra{1}\otimes \ket{0}\bra{0})
 % \Bigr)
 -
-\mathrlap{
+%\mathrlap%
+{
 \Trace_B(\ket{1}\bra{0}\otimes \ket{0}\bra{1})
 +
 \Trace_B(\ket{1}\bra{1}\otimes \ket{0}\bra{0})
@@ -5592,7 +5931,8 @@ we get
 % \\
 % &\qquad\qquad
 -
-\mathrlap{
+%\mathrlap%
+{
 \Trace(\ket{0}\bra{1})\,\ket{1}\bra{0}
 +
 \Trace(\ket{0}\bra{0})\,\ket{1}\bra{1}
@@ -5770,11 +6110,15 @@ At first sight this seems to involve four real parameters minus one normalizatio
 But one more degree of freedom is physically irrelevant:
 If $c \in \C$, \(|c|=1\), then
 \[
+% P_{c\ket{\psi}}
+% =
   (c\ket{\psi})(c\ket{\psi})^*
   =
   c\ket{\psi}\bra{\psi}\overline{c}
   =
   \ket{\psi}\bra{\psi}
+% =
+% P_{\ket{\psi}}
 \]
 Thus \(\ket{\psi}\) and \(c\ket{\psi}\) represent the same physical pure state.
 Global phase factors cannot be observed.
@@ -5921,6 +6265,10 @@ In this representation of the unit rays, or projectors, ``orthogonal'' becomes `
 \end{tikzpicture}
 \end{center}
 
+
+
+This equals the coordinate system on earth (including the fact that the poles do not have a well-defined longitude).
+
 Orientation on the Bloch sphere:
 \begin{itemize}
   \item Computational Basis: $\ket{0}$, $\ket{1}$ 
@@ -5928,7 +6276,282 @@ Orientation on the Bloch sphere:
   \item Circular States: $\ket{\iu} = \frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$, $\ket{-\iu} = \frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$
 \end{itemize}
 
+\medskip
 
+
+% BEGIN: from Wikipedia; https://en.wikipedia.org/wiki/Bloch_sphere
+
+While the surface of the Bloch sphere represents pure states, the interior corresponds to mixed states.
+To see this, recall that a mixed state is represented by a density operator $\rho$.
+% For mixed states, one considers the density operator. 
+Any two-dimensional density operator $\rho$ can be expanded using the identity $\matr{I}$ and the Hermitian, traceless Pauli matrices 
+$
+\vect{\sigma} = [\matr{\sigma}_x, \matr{\sigma}_y, \matr{\sigma}_z]
+$,
+\[
+\begin{aligned}
+\rho 
+&=
+\frac{1}{2}(\matr{I} + \vect{a} \cdot \vect{\sigma}) 
+\\
+&=
+\frac{1}{2}
+\begin{bmatrix}
+1 & 0 \\
+0 & 1
+\end{bmatrix}
++
+\frac{a_x}{2}
+\begin{bmatrix}
+0 & 1 \\
+1 & 0
+\end{bmatrix}
++
+\frac{a_y}{2}
+\begin{bmatrix}
+0 & -\iu \\
+\iu & 0
+\end{bmatrix}
++
+\frac{a_z}{2}
+\begin{bmatrix}
+1 & 0 \\
+0 & -1
+\end{bmatrix}
+\\
+&=\frac{1}{2}
+\begin{bmatrix}
+1+a_z & a_x-\iu a_y \\
+a_x+\iu a_y & 1-a_z
+\end{bmatrix}
+\end{aligned}
+\]
+where 
+$
+\vect{a} = [a_x, a_y, a_z] \in \R^3
+$ 
+is called the Bloch vector.
+
+% \begin{digression}
+% This is because $\{\matr{I}, \matr{\sigma}_x, \matr{\sigma}_y, \matr{\sigma}_z\}$ is a basis of the vector space of $2\times 2$ Hermitian matrices.
+% This space consists a priori of 4 real dimensions, since
+% a general Hermitian $2\times2$ matrix can be written as
+% $
+% \rho
+% =
+% c \matr{I} + a_x \matr{\sigma}_x + a_y \matr{\sigma}_y + a_z \matr{\sigma}_z
+% $.
+
+% But density matrices satisfy
+% $
+% \operatorname{tr}(\rho)=1
+% $
+% and the Pauli matrices are traceless, hence
+% $
+% \operatorname{tr}(\rho)
+% =
+% \operatorname{tr}(cI)
+% =
+% 2c$, so
+% $
+% c=\frac12
+% $.
+
+% So the identity coefficient is not free. 
+% It is fixed by normalization.
+
+% That is why we write
+% \[
+% \rho
+% =
+% \frac12(\matr{I}+\vect{a} \cdot \vect{\sigma})
+% \]
+
+% The remaining freedom is exactly the 3 real coordinates
+% $(a_x,a_y,a_z)$.
+
+
+% However, the affine space of trace-one Hermitian matrices is 3-dimensional. 
+% The Bloch ball lives in that 3-dimensional affine slice.
+% \end{digression}
+\begin{digression}
+This is because $\{\matr{I}, \matr{\sigma}_x, \matr{\sigma}_y, \matr{\sigma}_z\}$ is a basis of the vector space of $2\times 2$ Hermitian matrices.
+This space has 4 real dimensions, since a general Hermitian $2\times2$ matrix can be written as
+$
+\rho
+=
+c \matr{I} + a_x \matr{\sigma}_x + a_y \matr{\sigma}_y + a_z \matr{\sigma}_z
+$.
+
+For density matrices, however, the normalization condition
+$
+\operatorname{tr}(\rho)=1
+$
+removes one degree of freedom.
+Since the Pauli matrices are traceless,
+$
+\operatorname{tr}(\rho)
+=
+\operatorname{tr}(c\matr{I})
+=
+2c
+$,
+so
+$
+c=\frac12
+$.
+
+Thus the identity coefficient is not free, but fixed by normalization.
+The remaining freedom is exactly the 3 real coordinates
+$(a_x,a_y,a_z)$.
+
+Equivalently, the trace-one Hermitian matrices form a 3-dimensional affine slice of the 4-dimensional real vector space of Hermitian matrices.
+The Bloch ball lives in that affine slice.
+\end{digression}
+
+It is this Bloch vector $\vect{a}$ that indicates the point within the sphere that corresponds to a given mixed state. 
+% Specifically, as a basic feature of the Pauli vector, 
+It can be shown that
+the eigenvalues of $\rho$ are $\lambda_{\pm} = \frac{1}{2}(1 \pm \|\vect{a}\|)$. 
+Density operators must be positive-semidefinite, so it follows that $\|\vect{a}\| \leq 1$.
+
+We \rlap{have}
+\[
+% \begin{aligned}
+\Trace(\rho^2)
+\overset{\text{\eqref{eq:spectral-theorem-finite-dimensional}}}{=}
+\Trace(
+\matr{U} \matr{\Lambda} \matr{U}^* \matr{U} \matr{\Lambda} \matr{U}^*
+) 
+% \\
+\overset{\text{\eqref{eq:trace-basis-independence}}}{=}
+\Trace(\matr{\Lambda}^2)
+% \\
+=
+\lambda_+^2+\lambda_-^2
+% \\
+% =
+% \left(\frac{1+\|\vect a\|}{2}\right)^2
+% +
+% \left(\frac{1-\|\vect a\|}{2}\right)^2\\
+% &=
+% \frac{
+% (1+\|\vect a\|)^2
+% +
+% (1-\|\vect a\|)^2
+% }{4}\\
+% &=
+% \frac{2+2\|\vect a\|^2}{4}
+% \\
+=
+\frac12(1+\|\vect a\|^2)
+% \end{aligned}
+\]
+% \[
+% \Trace(\rho^2)=\frac{1}{2}(1 + \|\vect{a}\|^2)=1 \quad \Leftrightarrow \quad\|\vect{a}\|=1
+% \]
+which, by \autoref{overview:pure-vs-mixed-states}, is equal to \(1\) if and only if \(\rho\) is pure.
+Hence $\|\vect{a}\|=1$ if and only if $\rho$ is pure.
+% confirming that
+% the surface of the Bloch sphere represents all the pure states of a two-dimensional quantum system, whereas the interior corresponds to all the mixed states.
+
+
+For a pure state
+\(
+\ket{\psi}
+% =
+% \cos\frac{\Theta}{2}\ket0
+% +
+% \eu^{\iu\varphi}\sin\frac{\Theta}{2}\ket1
+=
+[\cos\frac{\Theta}{2}, \eu^{\iu\varphi}\sin\frac{\Theta}{2}]^\top
+\)
+the corresponding density matrix is
+\[
+% \begin{aligned}
+\rho
+=
+\ket{\psi}\bra{\psi}
+=
+% \begin{bmatrix}
+% \cos\frac{\Theta}{2}\\
+% \eu^{\iu\varphi}\sin\frac{\Theta}{2}
+% \end{bmatrix}
+% \begin{bmatrix}
+% \cos\frac{\Theta}{2} &
+% \eu^{-\iu\varphi}\sin\frac{\Theta}{2}
+% \end{bmatrix}
+% \\
+% &=
+% \begin{bmatrix}
+% \cos^2\frac{\Theta}{2}
+% &
+% \eu^{-\iu\varphi}\sin\frac{\Theta}{2}\cos\frac{\Theta}{2}
+% \\
+% \eu^{\iu\varphi}\sin\frac{\Theta}{2}\cos\frac{\Theta}{2}
+% &
+% \sin^2\frac{\Theta}{2}
+% \end{bmatrix}
+% \\
+% &=
+% \frac12
+% \begin{bmatrix}
+% 1+\cos\Theta
+% &
+% \eu^{-\iu\varphi}\sin\Theta
+% \\
+% \eu^{\iu\varphi}\sin\Theta
+% &
+% 1-\cos\Theta
+% \end{bmatrix}
+% \\
+\frac12
+\begin{bmatrix}
+1+\cos\Theta
+&
+\sin\Theta\cos\varphi-\iu\sin\Theta\sin\varphi
+\\
+\sin\Theta\cos\varphi+\iu\sin\Theta\sin\varphi
+&
+1-\cos\Theta
+\end{bmatrix}
+\]
+Comparing this with
+% \[
+% \rho
+% =
+% \frac12
+% \begin{bmatrix}
+% 1+a_z & a_x-\iu a_y\\
+% a_x+\iu a_y & 1-a_z
+% \end{bmatrix}
+% \]
+the expansion of $\rho$ in the Pauli basis above, we obtain
+\[
+\vect a
+=
+\begin{bmatrix}
+\sin\Theta\cos\varphi\\
+\sin\Theta\sin\varphi\\
+\cos\Theta
+\end{bmatrix}
+\]
+which is exactly the point on the unit sphere introduced above.
+Together with
+% \[
+% \Trace(\rho^2)=1
+% \quad\Longleftrightarrow\quad
+% \|\vect a\|=1,
+% \]
+with the previous calculation
+this shows that the surface of the Bloch sphere represents precisely the pure states, whereas its interior corresponds to mixed states.
+
+
+% END: from Wikipedia
+
+
+
+\medskip
 
 Operations on one Qbit are unitary \(2\times2\)-matrices.
 \begin{example}
@@ -6035,7 +6658,10 @@ The Bell states, which are the following maximally entangled two-Qbit states,
 cannot be written as a product state,
 %  and are therefore entangled,
 see \autoref{sec:aspect-gisin-zeilinger-experiments}.
+They are also called EPR (Einstein-Po\-dol\-sky-Rosen) pairs. 
 \end{example}
+\pagebreak[3]
+
 \begin{remark}
 % For product states \(\psi_{1,A} \otimes \psi_{1,B}\) and \(\psi_{2,A} \otimes \psi_{2,B}\), the sum
 % \[
@@ -6100,14 +6726,21 @@ The state space of a Qbit pair is the tensor product of the individual spaces, w
 \cong
 \C^4
 \]
-and for \(n\) Qbits,
+
+% \subsubsection{$n$ Qbits: $\mathcal{H} = \C^{2^n}$}
+Analogously, 
+for \(n\) Qbits, the state space is
 \[
-\underbrace{\C^2 \otimes \cdots \otimes \C^2}_{n\text{ factors}}
+\Span(\{\ket{\vect{x}} : \vect{x} \in \{0,1\}^n\})
+=
+\left(\C^2\right)^{\otimes n}
+% =
+% \underbrace{\C^2 \otimes \cdots \otimes \C^2}_{n\text{ factors}}
 \cong
 \C^{2^n}
 \]
-% with computational basis indexed by classical \(n\)-bit strings.
-where a bsis is given by the classical \(n\)-bit strings, $\{\ket{\vect{x}} : \vect{x} \in \{0,1\}^n\}$.
+with computational basis indexed by classical \(n\)-bit strings.
+% where a basis is given by the classical \(n\)-bit strings, $\{\ket{\vect{x}} : \vect{x} \in \{0,1\}^n\}$.
 
 On the level of coordinates, the tensor product is given by the Kronecker product:
 \[
@@ -6160,9 +6793,11 @@ The inner product therefore behaves multiplicatively on tensor products:
 \]
 as mentioned in \autoref{dig:tensor-products}.
 
+\pagebreak[2]
 
 In particular, two tensor products are orthogonal if and only if in at least one factor the corresponding states are orthogonal.
 
+\pagebreak[3]
 
 % For two Qbits, the computational basis
 % \(
@@ -6215,6 +6850,7 @@ a_1^* a_2 c_1^* c_2 + a_1^* a_2 d_1^* d_2 + b_1^* b_2 c_1^* c_2 + b_1^* b_2 d_1^
 \braket{\psi_{B,1} | \psi_{B,2}}
 \end{aligned}
 \]
+\pagebreak[3]
 
 \medskip
 {\textbf{Operations}}
@@ -6341,7 +6977,9 @@ we have
 \]
 where
 \[
-\vect{b} \cdot \vect{x} \coloneq \bigoplus_{j=1}^n b_j \wedge x_j
+\vect{b} \cdot \vect{x} 
+\coloneq 
+\bigoplus_{j=1}^n \left(b_j \wedge x_j\right)
 \]
 denotes the XOR of the bitswise AND of $\vect{b}$ and $\vect{x}$.
 \pagebreak[2]
@@ -6353,7 +6991,7 @@ In particular,
 \frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n} \ket{\vect{x}}
 \]
 will be the initial state for most quantum algorithms, and as a equal superposition of all classical inputs, the basis for ``Quantum parallelism''.
-
+\pagebreak[3]
 
 \medskip
 {\textbf{Measurements}}
@@ -6421,27 +7059,40 @@ Once again we see: parts of entangled pure states are mixed.
 
 
 
-\clearpage
+% \clearpage
 
 \subsubsection{The CNOT gate}
 
-The most important two-Qbit gate is the \hl[2]{controlled NOT} gate, abbreviated \(\mathrm{CNOT}\).
-Its action on the computational basis is
-\[
-\ket{x}\ket{b}
-\longmapsto
-\ket{x}\ket{b\oplus x}
-\qquad
-(x,b \in \{0,1\})
-\]
-That is, the first Qbit is the \emph{control} and the second is the \emph{target}:
-the second bit is flipped exactly if the first bit equals \(1\).
+Similarly to states, also operations on multiple Qbits are not necessarily just products of operations on the individual Qbits.
+
+
+An important two-Qbit gate is the \hl[2]{controlled NOT} gate, abbreviated \(\mathrm{CNOT}\).
+It can be seen as a ``made-reversible'' XOR gate.
 \[
 \begin{quantikz}
-\lstick{$\ket{x}$} & \ctrl{1} & \rstick{$\ket{x}$} \\
-\lstick{$\ket{b}$} & \targ{}  & \rstick{$\ket{b \oplus x}$}
+\lstick{} & \ctrl{1} & \rstick{} \\
+\lstick{} & \targ{}  & \rstick{}
 \end{quantikz}
 \]
+
+As mentioned above, there exist unitaries on multiple Qbits that cannot be written as a product of unitaries on the individual Qbits.
+Remarkably, it is enough to have the CNOT plus unary (one-bit unitary) operations, and every unitary on an arbitrary number of Qbits becomes possible.
+
+Its action on the computational basis is
+\[
+\ket{x} \otimes \ket{b}
+\longmapsto
+\ket{x}\otimes\ket{b\oplus x}
+\]
+where $x,b \in \{0,1\}$ and $\oplus$ denotes addition modulo $2$ (i.e., XOR).
+That is, the first Qbit is the \emph{control} and the second is the \emph{target}:
+the second bit is flipped exactly if the first bit equals \(1\).
+% \[
+% \begin{quantikz}
+% \lstick{$\ket{x}$} & \ctrl{1} & \rstick{$\ket{x}$} \\
+% \lstick{$\ket{b}$} & \targ{}  & \rstick{$\ket{b \oplus x}$}
+% \end{quantikz}
+% \]
 
 
 In the basis
@@ -6463,12 +7114,41 @@ its matrix is
 Since the gate is linear, its action on arbitrary superpositions is determined automatically.
 
 A first surprise occurs if one works in the diagonal basis.
-For example, on a suitable product of diagonal states, the CNOT again yields a product state, but the roles of control and target are exchanged.
+There are four possible products of diagonal states:
+\[
+\begin{aligned}
+\ket{++} &= \frac{\ket{0}+\ket{1}}{\sqrt{2}} \otimes \frac{\ket{0}+\ket{1}}{\sqrt{2}} = \frac{1}{2}(\ket{00}+\ket{01}+\ket{10}+\ket{11}) \\
+\ket{+-} &= \frac{\ket{0}+\ket{1}}{\sqrt{2}} \otimes \frac{\ket{0}-\ket{1}}{\sqrt{2}} = \frac{1}{2}(\ket{00}-\ket{01}+\ket{10}-\ket{11}) \\
+\ket{-+} &= \frac{\ket{0}-\ket{1}}{\sqrt{2}} \otimes \frac{\ket{0}+\ket{1}}{\sqrt{2}} = \frac{1}{2}(\ket{00}+\ket{01}-\ket{10}-\ket{11}) \\
+\ket{--} &= \frac{\ket{0}-\ket{1}}{\sqrt{2}} \otimes \frac{\ket{0}-\ket{1}}{\sqrt{2}} = \frac{1}{2}(\ket{00}-\ket{01}-\ket{10}+\ket{11})
+\end{aligned}
+\]
+
+
+On a product of diagonal states (one of the 4 possible), % ++, +-, -+, --
+the CNOT again yields again a product of diagonal states, 
+but the roles of control and target are exchanged;
+% it flips the first diagonal bit exactly if the second diagonal bit equals \(-\).
+the second Qbit acts as the control, and whenever it is in the state $\ket{-}$, the first Qbit is flipped between $\ket{+}$ and $\ket{-}$.
+
 Equivalently,
 \[
 ({H}\otimes {H}) \,\text{CNOT}\, ({H}\otimes {H})
 \]
-is a CNOT with swapped control and target.
+is a CNOT with swapped control and target:
+\[
+\begin{array}{c@{\qquad = \qquad}c}
+\begin{quantikz}
+\qw & \gate{H} & \ctrl{1} & \gate{H} & \qw \\
+\qw & \gate{H} & \targ{}  & \gate{H} & \qw
+\end{quantikz}
+&
+\begin{quantikz}
+\qw & \targ{}  & \qw \\
+\qw & \ctrl{-1} & \qw
+\end{quantikz}
+\end{array}
+\]
 
 A more important fact is that the CNOT can generate entanglement.
 Indeed,
@@ -6618,7 +7298,7 @@ if even a single external two-level system becomes entangled with the computer a
 
 
 
-
+\clearpage
 
 \section{Algorithms}
 
@@ -6897,9 +7577,9 @@ A group $G$ is called \emph{cyclic} if there exists an element $g\in G$ such tha
 G = \{g^n : n\in\Z\}
 \]
 The element $g$ is called a \emph{generator} of $G$, and we write
-\[
+\(
 G = \langle g\rangle
-\]
+\).
 \end{definition}
 
 
