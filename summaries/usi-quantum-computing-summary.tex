@@ -2469,7 +2469,7 @@ is the binary entropy function.
 
 
 
-\begin{example}
+\begin{example}\label{ex:copies-work-value}
 $r$ copies of the same, perhaps incompressible string of length $N$ have work value at least $(r - 1) N \kB T \ln(2)$.
 \end{example}
 
@@ -2505,7 +2505,7 @@ Any work gained through such knowledge must ultimately be paid for when the demo
 
 % Can computation be made locially reversible?
 If, in the course of a computation, information is lost about ``which branch the computation came from'', then free energy $\kB T \ln(2)$ must be invested, which is dissipated as heat to the environment.
-In other words, the \emph{logical} irreversibility of a computation (``information is lost'') implies its \emph{thermodynamic} irreversibility (``free energy is lost'').
+In other words, the \hl{\emph{logical} irreversibility of a computation (``information is lost'') implies its \emph{thermodynamic} irreversibility (``free energy is lost'')}.
 Thus, it appears advantageous if a computation does not have such collisions of branches.
 
 As it turns out, it is (at least in principle) possible to carry out any logically reversible computation in a thermodynamically reversible way: 
@@ -2513,12 +2513,6 @@ As it turns out, it is (at least in principle) possible to carry out any logical
 
 
 
-\begin{definition}
-%[Reversible gate]
-\label{def:reversible-gate}
-A classical gate is logically reversible iff its output determines its input uniquely.
-Equivalently, the gate must be a bijection on the set of possible bit strings.
-\end{definition}
 
 \tikzset{
   revfig/.style={line cap=round, line join=round, font=\footnotesize},
@@ -2527,6 +2521,15 @@ Equivalently, the gate must be a bijection on the set of possible bit strings.
   revgate/.style={draw, line width=0.45pt, minimum width=0.8cm, minimum height=1.6cm, inner sep=2pt},
   revand/.style={and gate US, draw, line width=0.45pt, logic gate inputs=nn, minimum width=0.85cm, minimum height=0.85cm, inner sep=0pt}
 }
+
+
+
+% \begin{definition}
+% %[Reversible gate]
+% \label{def:reversible-gate}
+% A classical gate is logically reversible iff its output determines its input uniquely.
+% Equivalently, the gate must be a bijection on the set of possible bit strings.
+% \end{definition}
 
 \begin{example}
 \label{ex:and-gate-not-reversible}
@@ -2553,7 +2556,7 @@ because, from the output \(0\), one cannot reconstruct whether the input was
 The missing information has to be dumped into the environment; in the minimal
 case this costs the Landauer heat \(\kB T\ln 2\) per erased bit.
 
-A first way to avoid this loss of information is to keep the inputs:
+A first way to avoid this loss of information is to keep (copy) the inputs:
 \[
 \begin{tikzpicture}[revfig, scale=0.7]
   \node[revand] (and) at (0,0) {};
@@ -2569,9 +2572,12 @@ A first way to avoid this loss of information is to keep the inputs:
   \draw[revline, rounded corners] (-1.5,0 |- and.input 2) |- (bout) node[right] {$b$};
 \end{tikzpicture}
 \]
-This is now injective, but it is not yet a reversible gate in the strict circuit sense, because the number of wires has changed.
-Reversible gates should have the same number of input and output wires.
+% This is now injective, but it is not yet a reversible gate in the strict circuit sense, because the number of wires has changed.
+This is now injective, but the gate is still the same, so if before we found out that this gate will produce energy, it will still produce the same amount of energy, even if we keep the inputs.
+Moreover, we already saw in \autoref{ex:copies-work-value} that copying, since it creates redundancy, has a work value.
+Reversible gates should always have the same number of input and output wires.
 \end{example}
+\pagebreak[2]
 
 % \begin{example}[Irreversible Turing machine]
 An ordinary deterministic Turing machine is still logically irreversible in general:
@@ -2603,10 +2609,17 @@ and hence carries a Landauer cost,
 wasting free energy as heat into the environment.)
 
 
-Bennett's idea is to get rid of the waste in systematic way:
-store the history tape, 
-copy the desired output,
-and then run the computation backwards in order to ``uncompute'' instead of erasing the history tape.
+% Bennett's idea is to get rid of the waste in systematic way:
+% do the computation and
+% store every step in the history tape, 
+% copy the desired output to a separate output tape,
+% and then run the computation backwards step by step in order to ``uncompute'' instead of erasing the history tape.
+
+Bennett's idea is to get rid of the waste in systematic way,
+i.e., to uncompute instead of erase it: 
+Do the computation (including writing to the (typically long) history tape), 
+copy the  output to a separate (typically much shorter) output tape, 
+and then undo computation step by step in reverse order (similar to Hänsel und Gretel retracing their steps in the forest).
 \[
 \begin{tikzpicture}[revfig, scale=0.8]
   \node[revbox] (zeroTop) at (-6,1.5) {$000\cdots$};
@@ -2639,11 +2652,60 @@ and then run the computation backwards in order to ``uncompute'' instead of eras
 \]
 We have shown that every computation can be embedded into a logically reversible one:
 no information has to be thrown away.
-This removes the fundamental Landauer cost caused by erasure.
+% This removes the fundamental Landauer cost caused by erasure.
+
+
+% Historically, this point was made precise by Bennett: 
+% a computation need not pay Landauer's cost at every gate, only when information is actually erased.
+% Fredkin and Toffoli later emphasized reversible logic gates as a model of computation. 
+% Fredkin's ``ballistic computer'' is the physical picture behind this idea: 
+% hard spheres scatter elastically, so the microscopic dynamics are reversible. 
+% The schematic is useful intuition, but the logical content is the same: 
+% avoid merging computational branches.
+
+
+% However, 
+\nameref{claim:landauer-principle} only tells us that logical irreversibility implies thermodynamic irreversibility, 
+but it does not give us the other direction, 
+i.e., 
+it does not tell us if a logically reversible computation can be implemented in a thermodynamically reversible way.
+
+
+% We have therefore shown that any computation can be embedded into a reversible one by keeping enough information to run it backwards.
+In 1982, Fredkin and Toffoli showed exactly that, namely that, 
+at least
+in principle, 
+such logically reversible computations can be realized thermodynamically reversible:
+in a ballistic computer, bits are represented by moving balls, and gates by elastic collisions.
+They showed that this device can carry out any computation by a Turing machine --- as long as no information is lost (that would be impossible due to the time-reversal symmetry of the laws of classical mechanics), i.e., as long as the computation is logically reversible.
+% Since the underlying mechanical laws are time-reversal symmetric, 
+% the final configuration determines the initial one.
+% Thus such a device can compute only as long as the computation does not merge distinct branches, 
+% i.e. only as long as no information is lost.
+
+
+Given these encouraging results, it was a natural question to ask what might be the basic building block of reversible computing (such as the NOT and AND gate for irreversible computing).
 
 
 
-\begin{definition}[Toffoli gate]
+
+
+
+\subsection{Toffoli gate} \label{sec:toffoli-gate}
+
+
+The Toffoli gate is obtained by making the AND gate reversible in the strict circuit sense.
+% We keep the two input bits as part of the output, and add a third wire which stores the value of the AND.
+% Since this third wire is also a physical bit, its initial value must not be ignored.
+% Therefore the gate does not map \((x,y)\) to \((x,y,x\wedge y)\), but instead maps
+% \[
+% (x,y,b)
+% \longmapsto
+% \bigl(x,y,b\oplus(x\wedge y)\bigr)
+% \]
+% so that the original value of the target wire can still be reconstructed.
+
+\begin{definition}[Toffoli gate]\label{def:toffoli-gate}
 The \hl[2]{Toffoli gate} \(T\) maps
 \(
 (x,y,b) \longmapsto \bigl(x,y,b\oplus(x\wedge y)\bigr)
@@ -2699,12 +2761,24 @@ operations without becoming irreversible itself:
 \]
 Thus Toffoli gives NOT, AND with a clean target bit, and FAN-OUT (copying of a classical bit). 
 Since NOT and AND are functionally complete for classical computation, 
-the Toffoli gate is universal for classical reversible computation, 
-up to additional ancilla and garbage wires.
+% the Toffoli gate is universal for classical reversible computation, 
+% up to additional ancilla and garbage wires.
+an ordinary irreversible circuit can be translated gate by gate into a reversible one using Toffoli gates.
+The price is that we have to add constant input wires, 
+and at the end these wires generally do not contain constants any more.
+They contain intermediate results of the computation, 
+analogous to the history tape in Bennett's reversible Turing-machine simulation.
+% Thus the translation is not yet thermodynamically satisfactory: 
+And just as in that case, leaving it like that is not yet ``sustainable'':
+if this intermediate information were simply reset, 
+it would be erased and Landauer's cost would reappear.
 
-\begin{definition}[Reversible embedding]
+
+% \begin{definition}[Reversible embedding]
 Let \(f:\{0,1\}^n\to\{0,1\}^m\) be computed by some irreversible circuit.
-A reversible circuit \(C\) can compute it in the form
+A reversible circuit cannot in general map only \(\vect{x}\) to \(f(\vect{x})\), since this need not be injective.
+Instead, it embeds the computation into a bijection by adding ancillary input \(\vect{c}\) and garbage output \(J(\vect{x})\).
+Then it can be used in either direction:
 \[
 \begin{tikzpicture}[revfig, scale=0.8]
   \node[revbox, minimum width=0.9cm, minimum height=1.2cm, font=\normalsize] (C) at (0,0) {$C$};
@@ -2712,10 +2786,10 @@ A reversible circuit \(C\) can compute it in the form
 %   \node[left] (c) at (-2,-0.5) {$c$};
 %   \node[right] (fx) at (2,0.5) {$f(x)$};
 %   \node[right] (Jx) at (2,-0.5) {$J(x)$};
-  \draw[revline] (-2,0.5) node[left] {$x$} -- node[above, inner sep=0pt, outer sep=2pt]  {\tiny \(n\)} (C.west |- 0,0.5); % last part is = (C.west|-{(0,0.5)});
-  \draw[revline] (-2,-0.5) node[left] {$c$} -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(t\)} (C.west |- 0,-0.5);
-  \draw[revline] (C.east|-0,0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(m\)} (2,0.5) node[right] {$f(x)$};
-  \draw[revline] (C.east|-0,-0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(m+t-n\)}  (2,-0.5) node[right] {$J(x)$};
+  \draw[revline] (-2,0.5) node[left] {$\vect{x}$} -- node[above, inner sep=0pt, outer sep=2pt]  {\tiny \(n\)} (C.west |- 0,0.5); % last part is = (C.west|-{(0,0.5)});
+  \draw[revline] (-2,-0.5) node[left] {$\vect{c}$} -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(t\)} (C.west |- 0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(m\)} (2,0.5) node[right] {$f(\vect{x})$};
+  \draw[revline] (C.east|-0,-0.5) -- node[above, inner sep=0pt, outer sep=2pt] {\tiny \(n + t - m\)}  (2,-0.5) node[right] {$J(\vect{x})$};
 \end{tikzpicture}
 \qquad
 \begin{tikzpicture}[revfig, scale=0.8]
@@ -2724,24 +2798,28 @@ A reversible circuit \(C\) can compute it in the form
 %   \node[left] at (-2,-0.5) {$J(x)$};
 %   \node[right] at (2,0.5) {$x$};
 %   \node[right] at (2,-0.5) {$c$};
-  \draw[revline] (-2,0.5) node[left] {$f(x)$} -- (C.west|-0,0.5);
-  \draw[revline] (-2,-0.5) node[left] {$J(x)$} -- (C.west|-0,-0.5);
-  \draw[revline] (C.east|-0,0.5) -- (2,0.5) node[right] {$x$};
-  \draw[revline] (C.east|-0,-0.5) -- (2,-0.5) node[right] {$c$};
+  \draw[revline] (-2,0.5) node[left] {$f(\vect{x})$} -- (C.west|-0,0.5);
+  \draw[revline] (-2,-0.5) node[left] {$J(\vect{x})$} -- (C.west|-0,-0.5);
+  \draw[revline] (C.east|-0,0.5) -- (2,0.5) node[right] {$\vect{x}$};
+  \draw[revline] (C.east|-0,-0.5) -- (2,-0.5) node[right] {$\vect{c}$};
 \end{tikzpicture}
 \]
-where \(c\) is ancillary input and \(J(x)\) is the garbage or junk information
-that makes the map bijective.
-\end{definition}
+Here \(\vect{c}\) is usually a fixed string of clean ancillas, and \(J(\vect{x})\) is the garbage or junk information that makes the total map bijective.
+The inverse circuit $C^{-1}$ works only if both \(f(\vect{x})\) and \(J(\vect{x})\) are supplied: 
+the junk is exactly the information needed to reconstruct the input and the ancillas.
+% \end{definition}
 
-Bennett's trick removes the junk without erasing it: compute, copy the useful
-answer to a clean register, and uncompute.
+Bennett's trick removes this junk without erasing it.
+First compute with \(C\), producing \(f(\vect{x})\) together with all intermediate information.
+Then copy the useful output to a clean register, bit by bit, using reversible FAN-OUT/XOR operations.
+Finally run \(C^{-1}\).
+Since \(C^{-1}\) receives the full pair \(f(\vect{x}),J(\vect{x})\), it reverses the whole computation and restores the ancillas to their original clean state.
 \[
 % (A |- B) = (x-coordinate of A, y-coordinate of B)
 % (A -| B) = (x-coordinate of B, y-coordinate of A)
 \begin{tikzpicture}[revfig, scale=0.75]
-  \node[revbox, minimum width=1cm, minimum height=1.5cm, font=\normalsize] (C) at (-3,1.5) {$C$};
-  \node[revbox, minimum width=1cm, minimum height=1.5cm, font=\normalsize] (Ci) at (3,1.5) {$C^{-1}$};
+  \node[revbox, minimum width=0.9cm, minimum height=1.2cm, font=\normalsize] (C) at (-3,1.5) {$C$};
+  \node[revbox, minimum width=0.9cm, minimum height=1.2cm, font=\normalsize] (Ci) at (3,1.5) {$C^{-1}$};
 
   \draw[revline] (C.west|-0,2) -- (-4,2) node[left] {$\vect{x}$};
   \draw[revline]  (C.west|-0,1) -- (-4,1) node[left] {$\vect{c}$};
@@ -2760,7 +2838,7 @@ answer to a clean register, and uncompute.
   \draw[revline] (copyLMid) -- (-4,0 |- copyLMid) node[left] {$\vect{1}$};
   \draw[revline] (copyRMid) -- (4,0 |- copyRMid) node[right] {$\vect{1}$};
   \draw[revline] (copyLBot) -- (-4,-2 |- copyLBot) node[left] {$\vect{b}$};
-  \draw[revline] (copyRBot) -- (4,-2 |- copyRBot) node[right] {$\vect{b} \oplus \vect{f}(\vect{x})$};
+  \draw[revline] (copyRBot) -- (4,-2 |- copyRBot) node[right] {$\vect{b} \oplus f(\vect{x})$};
 
   \coordinate (copyLbendTop) at ($(C.east)!0.4!(copy.west)$);
   \coordinate (copyLbendBot) at ($(C.east)!0.6!(copy.west)$);
@@ -2770,11 +2848,20 @@ answer to a clean register, and uncompute.
   \draw[revline, rounded corners=6pt] (Ci.west |- 0,2) -- (copyRbendTop |- 0,2) -- (copyRbendBot |- copyRTop) -- (copyRTop);
 \end{tikzpicture}
 \]
-The middle box denotes a reversible copy/XOR operation controlled by the
-computed value \(f(\vect{x})\). The lower wire obtains the useful value while
-the upper wires are restored.
+The middle box denotes the reversible copy/XOR operation controlled by the
+computed value \(f(\vect{x})\).
+After uncomputation, the only lasting change is that the clean target
+\(\vect{b}\) has become \(\vect{b}\oplus f(\vect{x})\); the input
+\(\vect{x}\) is still present, and the scratch space can be reused without
+being reset.
+Thus reversibility costs only a constant-factor overhead: compute, copy,
+uncompute.
 
-Equivalently, if \(C\) computes \(f\) as
+There is one important special case.
+If \(f\) is bijective, then keeping \(\vect{x}\) as part of the final output is not
+logically necessary: the value \(f(\vect{x})\) already determines \(\vect{x}\).
+Assume we have reversible circuits \(C\) and \(D\) implementing \(f\) and
+\(f^{-1}\) in the XOR form
 \[
 \begin{tikzpicture}[revfig, scale=0.8]
   \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (C) at (0,0) {$C$};
@@ -2783,10 +2870,10 @@ Equivalently, if \(C\) computes \(f\) as
   \draw[revline] (C.east|-0,0.5) -- (1.5,0.5);
   \draw[revline] (C.east|-0,-0.5) -- (1.5,-0.5);
   \node[above=0.05cm of C] {$f$};
-  \node[left] at (-1.5,0.5) {$x$};
-  \node[left] at (-1.5,-0.5) {$a$};
-  \node[right] at (1.5,0.5) {$x$};
-  \node[right] at (1.5,-0.5) {$a\oplus f(x)$};
+  \node[left] at (-1.5,0.5) {$\vect{x}$};
+  \node[left] at (-1.5,-0.5) {$\vect{a}$};
+  \node[right] at (1.5,0.5) {$\vect{x}$};
+  \node[right] at (1.5,-0.5) {$\vect{a}\oplus f(\vect{x})$};
 \end{tikzpicture}
 \qquad
 \begin{tikzpicture}[revfig, scale=0.8]
@@ -2796,13 +2883,16 @@ Equivalently, if \(C\) computes \(f\) as
   \draw[revline] (D.east|-0,0.5) -- (1.5,0.5);
   \draw[revline] (D.east|-0,-0.5) -- (1.5,-0.5);
   \node[above=0.05cm of D] {$f^{-1}$};
-  \node[left] at (-1.5,0.5) {$f(x)$};
-  \node[left] at (-1.5,-0.5) {$b$};
-  \node[right] at (1.5,0.5) {$f(x)$};
-  \node[right] at (1.5,-0.5) {$a\oplus x$};
+  \node[left] at (-1.5,0.5) {$f(\vect{x})$};
+  \node[left] at (-1.5,-0.5) {$\vect{b}$};
+  \node[right] at (1.5,0.5) {$f(\vect{x})$};
+  \node[right] at (1.5,-0.5) {$\vect{b}\oplus \vect{x}$};
 \end{tikzpicture}
 \]
-then the two can be composed after swapping the middle wires:
+Note that \(D\) is \emph{not} the inverse circuit \(C^{-1}\): 
+it is a circuit that computes the inverse function \(f^{-1}\) \emph{without} needing the ``computation history'' $J(\vect{x})$ as part of the input.
+Now apply \(C\) to \((\vect{x},\vect{0})\), swap the two middle wires, and feed them into
+\(D\):
 \[
 \begin{tikzpicture}[revfig, scale=0.75]
   \node[revbox, minimum width=1.2cm, minimum height=1.2cm, font=\normalsize] (C) at (-2.5,0) {$C$};
@@ -2813,26 +2903,32 @@ then the two can be composed after swapping the middle wires:
   \draw[revline] (C.east|-0,-0.5) -- (-1,-0.5) -- (1,0.5) -- (D.west|-0,0.5);
   \draw[revline] (D.east|-0,0.5) -- (4,0.5);
   \draw[revline] (D.east|-0,-0.5) -- (4,-0.5);
-  \node[left] at (-4,0.5) {$x$};
-  \node[left] at (-4,-0.5) {$0$};
-  \node[right] at (4,0.5) {$f(x)$};
-  \node[right] at (4,-0.5) {$0$};
+  \node[left] at (-4,0.5) {$\vect{x}$};
+  \node[left] at (-4,-0.5) {$\vect{0}$};
+  \node[right] at (4,0.5) {$f(\vect{x})$};
+  \node[right] at (4,-0.5) {$\vect{0}$};
 \end{tikzpicture}
 \]
-This realizes the apparently irreversible map \(x\mapsto f(x)\) as a reversible
-process on a larger state space.
-
-
-
-
-
+% The lower output becomes \(\vect{0}\oplus \vect{x}\oplus \vect{x}= \vect{0}\), 
+% while the upper output is \(f(\vect{x})\).
+% Thus, for bijections, the clean reversible map \((\vect{x},\vect{0})\mapsto(f(\vect{x}),\vect{0})\) can be obtained, 
+% provided that both \(f\) and \(f^{-1}\) can be computed efficiently.
+% This last condition is substantial: if \(f\) is easy to compute but hard to invert, 
+% then a reversible circuit of this clean form may be much less efficient.
+This circuit may sometimes be necessarily much less efficient than the best irreversible circuit for $f$.  
+In fact, this is the case if and only if $f$ is a ``one-way function'', a central notion in cryptography: 
+A one-way function is a bijective function that can be computed efficiently, 
+but for which no efficient inversion algorithm exists. 
+Clearly, a function for which this reversible circuit is efficient cannot be one-way since that circuit can be used in both directions
+(Again, note that this does not apply for those reversible circuits for which $\vect{x}$ is again part of the output in the form of the junk $J(\vect{x})$). 
+On the other hand, a function for which the reversible circuit is necessarily inefficient cannot have an efficient inversion algorithm. %because of the construction shown.
 
 
 
 
 
 \clearpage
-\section{Quantum Physics}
+\section{From Classical to Quantum Physics}
 
 \subsection{Black-Body Radiation}
 
@@ -3644,7 +3740,7 @@ Properties:
 
 
 
-\begin{definition}[adjoint operator]
+\begin{definition}[adjoint operator]\label{def:adjoint}
 The adjoint $A^*$ of a linear operator $A$ is defined as
 \[
 \braket{\psi_1|A\psi_2} = \braket{A^*\psi_1|\psi_2}
@@ -3679,11 +3775,26 @@ a linear operator $A$ is \hl[2]{self-adjoint} or Hermitian iff $A^* = A$
 a linear operator $U$ is \hl[2]{unitary} iff $U U^* = \id$, or, equivalently, $U^* = U^{-1}$
 \end{definition}
 
+\begin{theorem}[Unitary operators preserve inner products]\label{thm:unitary-preserves-inner-products}
+If \(U\) is unitary, then
+\begin{equation}\label{eq:unitary-preserves-inner-products}
+\braket{U\psi_1|U\psi_2}
+=
+\braket{\psi_1|\psi_2}
+\end{equation}
+for all \(\psi_1,\psi_2\).
+\end{theorem}
 
-
-
-
-
+\begin{proof}
+By \autoref{def:adjoint} and \autoref{def:unitary}, 
+\(
+\braket{U\psi_1|U\psi_2}
+=
+\braket{\psi_1|U^*U\psi_2}
+=
+\braket{\psi_1|\psi_2}
+\).
+\end{proof}
 
 
 
@@ -3856,9 +3967,11 @@ Furthermore, we have the properties
 
 % \pagebreak
 
-\subsection{Digression on Operators}\label{sec:operators}
+\clearpage
 
-\subsubsection{Bounded Operators}
+\section{Digression on Operators}\label{sec:operators}
+
+\subsection{Bounded Operators}
 
 \begin{definition}\label{def:compact-operator}
 Suppose $X$ and $Y$ are Banach spaces and $U$ is the open unit ball in $X$.
@@ -4126,7 +4239,7 @@ A normal $T \in B(\mathcal{H})$ is
 
 
 
-\subsubsection{Unbounded operators}
+\subsection{Unbounded operators}
 
 Let $\mathcal H$ be a Hilbert space.
 By an \emph{operator} in $\mathcal H$ we mean a linear map
@@ -4437,13 +4550,13 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 
 
+\clearpage
+
+\section{Postulates of Quantum Mechanics} \label{sec:postulates-of-quantum-mechanics}
 
 
-\subsection{Postulates} \label{sec:postulates-of-quantum-mechanics}
 
-
-
-\subsubsection{The state}
+\subsection{The state}
 
 To an isolated quantum system we associate a complex Hilbert space $\mathcal{H}$.
 A \emph{state} of the system is represented by a normalized vector
@@ -4726,7 +4839,7 @@ so the ``position basis'' is the Dirac-notation form of the spectral decompositi
 \end{digression}
 
 
-\subsubsection{The time evolution}\label{sec:time-evolution}
+\subsection{The time evolution}\label{sec:time-evolution}
 
 As already introduced in \eqref{eq:schroedinger}, the time evolution of a quantum state is governed by the Schrödinger equation
 \[
@@ -4760,7 +4873,7 @@ for all $t \in \R$.
 
 
 
-\subsubsection{Observables} \label{sec:observables}
+\subsection{Observables} \label{sec:observables}
 
 A measurable physical quantity is represented by an observable, that is, by a self-adjoint operator
 \(
@@ -5074,7 +5187,7 @@ Thus the state collapses to the normalized component of $\psi$ in the eigenspace
 
 
 
-\subsubsection{Joint systems and composition}
+\subsection{Joint systems and composition}
 
 If two quantum systems are described by Hilbert spaces \(\mathcal H_A\) and \(\mathcal H_B\), then the composite system is described by the tensor product Hilbert space
 \(
@@ -5094,7 +5207,7 @@ More generally, the composite Hilbert space also contains superpositions of prod
 \pagebreak[2]
 
 
-\subsubsection{Abstraction and simplification}
+\subsection{Abstraction and simplification}
 
 From now on, we restrict to the case where the Hilbert space is finite-dimensional.
 Then
@@ -5262,7 +5375,7 @@ The entry in the $k^\text{th}$ row and $l^\text{th}$ column is $[\matr{A}]_{kl} 
 
 The way in which it is written here is rather an expansion in a basis of the vector space of linear operators $\operatorname{End}(\mathcal{H})$, and $\braket{k|A|l}$ is the coefficient before the basis vector $\ket{k}\bra{l}$, i.e., a matrix with a one in the $k^\text{th}$ row and the $l^\text{th}$ column.
 
-\subsubsection{The trace} \label{sec:trace}
+\subsection{The trace} \label{sec:trace}
 
 \begin{definition}
 For an operator $A \in \operatorname{End}(\mathcal{H})$ on a finite-dimensional Hilbert space, the trace is defined by
@@ -5416,7 +5529,7 @@ which is the form that extends naturally to mixed states.  % [oai_citation:7‡b
 
 
 
-\subsubsection{Density matrices}\label{sec:density-matrices}
+\subsection{Density matrices}\label{sec:density-matrices}
 
 So far, we have described quantum states by normalized vectors
 \(
@@ -5759,13 +5872,13 @@ and extended linearly to all of \(V\otimes W\).
 % \]
 
 If \(V\) and \(W\) are Hilbert spaces, then \(V\otimes W\) becomes a Hilbert space with inner product determined by
-\[
+\begin{equation}\label{eq:inner-product-tensor-product}
 {\color{red}\boxed{\color{black}
 \braket{v_1\otimes w_1\,|\,v_2\otimes w_2}
 =
 \braket{v_1|v_2}\,\braket{w_1|w_2}
 }}
-\]
+\end{equation}
 and extended sesquilinearly.
 % Hence orthonormal bases tensor to orthonormal bases. % is that even a sentence?
 Hence, if $\{\ket{i}\}_i$ and $\{\ket{j}\}_j$ are orthonormal bases of $V$ and $W$, then $\{\ket{i}\otimes\ket{j}\}_{i,j}$ is an orthonormal basis of $V\otimes W$.
@@ -6056,9 +6169,9 @@ A\,\Trace_B(\rho)
 
 
 
-% \clearpage
+ \clearpage
 
-\subsection{Qbits}
+\section{Qbits}
 
 
 
@@ -6069,7 +6182,7 @@ The basic unit is the quantum bit, or qubit, corresponding to a $2$-dimensional 
 Unlike classical bits, however, understanding a single qubit is not enough to understand systems of several qubits, 
 because qualitatively new phenomena arise there, most importantly entanglement, which lies at the heart of the power of quantum information processing.
 
-\subsubsection{One Qbit: $\mathcal{H} = \C^2$}
+\subsection{One Qbit: $\mathcal{H} = \C^2$}
 
 
 A quantum bit, or qubit, or {Qbit} is a quantum system whose state space is
@@ -6161,7 +6274,19 @@ and
 A representation of states which takes into account the irrelevance of global phases is the Bloch sphere. 
 In this representation of the unit rays, or projectors, ``orthogonal'' becomes ``antipodal''.
 
-% missing: inside ~ mixed, outside ~ pure states
+
+
+This equals the coordinate system on earth (including the fact that the poles do not have a well-defined longitude).
+
+Orientation on the Bloch sphere:
+\begin{itemize}
+%   \item Computational Basis: $\ket{0}$, $\ket{1}$ 
+\item Standard / Computational / Z Basis: $\ket{0}$, $\ket{1}$ 
+%   \item Diagonal States: $\ket{+} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$, $\ket{-} = \frac{\ket{0} - \ket{1}}{\sqrt{2}}$
+\item Diagonal / Hadamard / X Basis: $\ket{+} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$, $\ket{-} = \frac{\ket{0} - \ket{1}}{\sqrt{2}}$
+%   \item Circular States: $\ket{\iu} = \smash[t]{\frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}}$, $\ket{-\iu} = \smash[t]{\frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}}$
+\item Circular / Y Basis: $\ket{\iu} = \smash[t]{\frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}}$, $\ket{-\iu} = \smash[t]{\frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}}$
+\end{itemize}
 
 % \tikzset{external/export next=false}
 \begin{center}
@@ -6267,14 +6392,7 @@ In this representation of the unit rays, or projectors, ``orthogonal'' becomes `
 
 
 
-This equals the coordinate system on earth (including the fact that the poles do not have a well-defined longitude).
 
-Orientation on the Bloch sphere:
-\begin{itemize}
-  \item Computational Basis: $\ket{0}$, $\ket{1}$ 
-  \item Diagonal States: $\ket{+} = \frac{\ket{0} + \ket{1}}{\sqrt{2}}$, $\ket{-} = \frac{\ket{0} - \ket{1}}{\sqrt{2}}$
-  \item Circular States: $\ket{\iu} = \frac{\ket{0} + \iu \ket{1}}{\sqrt{2}}$, $\ket{-\iu} = \frac{\ket{0} - \iu \ket{1}}{\sqrt{2}}$
-\end{itemize}
 
 \medskip
 
@@ -6604,7 +6722,7 @@ For instance, a measurement in the diagonal basis is a Hadamard transform follow
 
 
 
-\subsubsection{Two Qbits: $\mathcal{H} = \C^4$}
+\subsection{Two Qbits: $\mathcal{H} = \C^4$}
 
 % For two Qbits the state space is
 % \[
@@ -6638,6 +6756,7 @@ A product state has the form
 
 Not every state of two Qbits is of this form.
 \begin{example}
+\label{ex:bell-states}
 The Bell states, which are the following maximally entangled two-Qbit states,
 \[
 \begin{aligned}
@@ -6659,6 +6778,8 @@ cannot be written as a product state,
 %  and are therefore entangled,
 see \autoref{sec:aspect-gisin-zeilinger-experiments}.
 They are also called EPR (Einstein-Po\-dol\-sky-Rosen) pairs. 
+They form an orthonormal basis of the two-Qbit Hilbert space, hence together they are often referred to as the Bell basis.
+We will see how to translate between the computational basis and the Bell basis in \autoref{sec:cnot-gate}.
 \end{example}
 \pagebreak[3]
 
@@ -6882,9 +7003,9 @@ a_1^* a_2 c_1^* c_2 + a_1^* a_2 d_1^* d_2 + b_1^* b_2 c_1^* c_2 + b_1^* b_2 d_1^
 An example of an operation that can be carried out on a pair of Qbits is a product operation. 
 Let us define it on the set of product states, which is a generating system of the full space.
 The operation 
-\[
+\begin{equation}\label{eq:product-operations}
 (U \otimes V)(\ket{\psi_A} \otimes \ket{\psi_B}) \coloneq U\ket{\psi_A} \otimes V\ket{\psi_B}
-\]
+\end{equation}
 is thus uniquely defined by linearity,
 as already mentioned in \autoref{dig:tensor-products}.
 
@@ -7061,7 +7182,8 @@ Once again we see: parts of entangled pure states are mixed.
 
 % \clearpage
 
-\subsubsection{The CNOT gate}
+\subsection{The CNOT gate}
+\label{sec:cnot-gate}
 
 Similarly to states, also operations on multiple Qbits are not necessarily just products of operations on the individual Qbits.
 
@@ -7114,7 +7236,8 @@ its matrix is
 Since the gate is linear, its action on arbitrary superpositions is determined automatically.
 
 A first surprise occurs if one works in the diagonal basis.
-There are four possible products of diagonal states:
+% There are four possible products of diagonal states:
+To understand the action of the CNOT on the diagonal basis, we first express the diagonal basis states in terms of the computational basis:
 \[
 \begin{aligned}
 \ket{++} &= \frac{\ket{0}+\ket{1}}{\sqrt{2}} \otimes \frac{\ket{0}+\ket{1}}{\sqrt{2}} = \frac{1}{2}(\ket{00}+\ket{01}+\ket{10}+\ket{11}) \\
@@ -7125,8 +7248,8 @@ There are four possible products of diagonal states:
 \]
 
 
-On a product of diagonal states (one of the 4 possible), % ++, +-, -+, --
-the CNOT again yields again a product of diagonal states, 
+A straightforward calculation reveals that, on a product of diagonal states (one of the 4 possible from above), % ++, +-, -+, --
+the CNOT again yields a product of diagonal states, 
 but the roles of control and target are exchanged;
 % it flips the first diagonal bit exactly if the second diagonal bit equals \(-\).
 the second Qbit acts as the control, and whenever it is in the state $\ket{-}$, the first Qbit is flipped between $\ket{+}$ and $\ket{-}$.
@@ -7150,150 +7273,537 @@ is a CNOT with swapped control and target:
 \end{array}
 \]
 
-A more important fact is that the CNOT can generate entanglement.
+
+More interestingly even, the CNOT can generate entanglement, i.e., map product states to non-product states:
+\[
+\begin{quantikz}
+% \lstick{$\ket{0}$} & 
+\qw & \gate{H} & \ctrl{1} & \qw & %\rstick[wires=2]{$\dfrac{\ket{00}+\ket{11}}{\sqrt{2}}$} 
+\\
+% \lstick{$\ket{0}$} & 
+\qw  &   & \targ{}  & \qw &
+\end{quantikz}
+\]
+
 Indeed,
 \[
-\ket{0}\ket{0}
-\xmapsto{{H}\otimes \id}
+% \ket{0}\ket{0}
+% \xmapsto{{H}\otimes \id}
+% \frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\ket{0}
+% \xmapsto{\text{CNOT}}
+% \frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
+% =
+% \ket{\Phi^+}
+\begin{aligned}
+\ket{00} 
+&\xmapsto{{H}\otimes \id}
 \frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\ket{0}
 \xmapsto{\text{CNOT}}
 \frac{1}{\sqrt{2}}(\ket{00}+\ket{11})
 =
-\ket{\Phi^+}
+\ket{\Phi^+} \\
+\ket{01}
+&\xmapsto{{H}\otimes \id}
+\frac{1}{\sqrt{2}}(\ket{0}+\ket{1})\ket{1}
+\xmapsto{\text{CNOT}}
+\frac{1}{\sqrt{2}}(\ket{01}+\ket{10})
+=
+\ket{\Psi^+} \\
+\ket{10}
+&\xmapsto{{H}\otimes \id}
+\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})\ket{0}
+\xmapsto{\text{CNOT}}
+\frac{1}{\sqrt{2}}(\ket{00}-\ket{11})
+=
+\ket{\Phi^-} \\
+\ket{11}
+&\xmapsto{{H}\otimes \id}
+\frac{1}{\sqrt{2}}(\ket{0}-\ket{1})\ket{1}
+\xmapsto{\text{CNOT}}
+\frac{1}{\sqrt{2}}(\ket{01}-\ket{10})
+=
+\ket{\Psi^-} 
+\end{aligned}
 \]
-Thus a Hadamard on the control followed by a CNOT maps computational basis states to Bell states from \autoref{sec:aspect-gisin-zeilinger-experiments}.
+Thus a Hadamard on the control followed by a CNOT maps computational basis states to Bell states from \autoref{sec:aspect-gisin-zeilinger-experiments} and \autoref{ex:bell-states}.
 So this combination implements the basis change between the computational basis and the Bell basis.
 
-Consequently, a Bell-basis measurement can be implemented by reversing this basis change and then measuring in the computational basis.
-
-The CNOT is also classically universal once combined with suitable one-Qbit gates:
-together they allow the construction of the Toffoli gate and therefore arbitrary classical reversible computation.
-
-To understand the gate better, suppose the control is classical and the target is arbitrary:
+Consequently, a Bell-basis measurement can be implemented by reversing this basis change (recall that $H^{-1} = H$) and then measuring in the computational basis:
+% \begingroup
+% \tikzset{bellmeasure/.style={circle,draw,fill=white,inner sep=0pt,minimum size=2.2em}}
 \[
-\ket{x}\otimes(\alpha\ket{0}+\beta\ket{1})
+\begin{quantikz}
+% \qw & \ctrl{1} & \gate{H} & \gate[style=bellmeasure][2.2em][2.2em]{M} \\
+% \qw & \targ{}  & \qw      & \gate[style=bellmeasure][2.2em][2.2em]{M}
+\qw & \ctrl{1} & \gate{H} & \meter{} & \setwiretype{c} \cw \\
+\qw & \targ{}  & \qw      & \meter{} & \setwiretype{c} \cw
+\end{quantikz}
 \]
-If \(x=0\), nothing happens.
-If \(x=1\), the target is acted on by the NOT gate
+% \endgroup
+% This is a measurement in the Bell basis.
+
+\medskip
+{\textbf{Classical universality}}
+
+The CNOT is universal together with one-Qbit gates.
+For classical universality, it is enough to obtain a Toffoli gate (\autoref{def:toffoli-gate}), 
+also called CCNOT (controlled-controlled NOT), i.e., the gate that maps
 \[
-\matr{A}_{\text{NOT}}
+  \ket{x} \otimes \ket{y} \otimes \ket{b}
+  \longmapsto
+  \ket{x} \otimes \ket{y} \otimes\ket{b \oplus (x \wedge y)}
+ \]
+since this gives reversible implementations of arbitrary classical computations.
+% from CNOT gates and one-Qbit rotations.
+% \[
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$\ket{x}$} & \qw      & \ctrl{2} & \qw      & \qw      & \qw                 & \ctrl{2} & \qw                 & \rstick{$\ket{x}$} \\
+% \lstick{$\ket{y}$} & \qw      & \qw      & \qw      & \ctrl{1} & \qw                 & \qw      & \qw                 & \rstick{$\ket{y}$} \\
+% \lstick{$\ket{b}$} & \gate[1][0.42cm][0.34cm]{R} & \targ{}  & \gate[1][0.42cm][0.34cm]{R} & \targ{}  & \gate[1,style={}][0.42cm][0.34cm]{R^*}    & \targ{}  & \gate[1][0.42cm][0.34cm]{R^*}    & \rstick{$\ket{b \oplus xy}$}
+% \end{quantikz}
+% \]
+Let \(R\) be the rotation by \(22.5^\circ\),
+\[
+R
 =
 \begin{bmatrix}
-0&1\\
-1&0
+\cos 22.5^\circ & -\sin 22.5^\circ \\
+\sin 22.5^\circ & \cos 22.5^\circ
 \end{bmatrix}
 \]
-so that
+
+Let us first consider a CNOT with a classical control
+\(
+\ket{x}\in\{\ket{0},\ket{1}\}
+\)
+and an arbitrary second Qbit
+\(
+\ket{\varphi}=\alpha\ket{0}+\beta\ket{1}
+\).
+% \[
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$\ket{x}$}       & \ctrl{1} & \qw \\
+% \lstick{$\ket{\varphi}=\alpha\ket{0}+\beta\ket{1}$} & \targ{}  & \qw
+% \end{quantikz}
+% \]
+If \(x=0\), the operation is the identity; if \(x=1\), the second Qbit is negated:
 \[
-\alpha\ket{0}+\beta\ket{1}
-\longmapsto
-\alpha\ket{1}+\beta\ket{0}
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$\ket{0}$}       & \ctrl{1} & \rstick{$\ket{0}$} \\
+% \lstick{$\ket{\varphi}$} & \targ{}  & \rstick{$\ket{\varphi}$}
+% \end{quantikz}
+% \qquad 
+% \qquad
+\begin{quantikz}[column sep=0.45cm]
+\lstick{$\ket{1}$}       & \ctrl{1} & \rstick{$\ket{1}$} \\
+\lstick{$\ket{\varphi}$} & \targ{}  & \rstick{$N \ket{\varphi} = \alpha\ket{1}+\beta\ket{0}$}
+\end{quantikz}
 \]
-Hence the CNOT applies NOT conditionally on the value of the control wire.
-
-
-
-
-
-
-
-\subsubsection{Cloning, pseudo-cloning, and pseudo-measurements}
-
-For classical bits, copying is easy.
-Indeed, if the target bit starts in \(0\), then the CNOT copies the control:
-\[
-\ket{0}\ket{0}\mapsto\ket{0}\ket{0},
-\qquad
-\ket{1}\ket{0}\mapsto\ket{1}\ket{1}
-\]
-
-It is therefore natural to ask whether the same gate can clone arbitrary quantum states.
-Suppose there were a unitary operation \(U\) such that
-\[
-U(\ket{\varphi}\ket{0})=\ket{\varphi}\ket{\varphi}
-\qquad\text{and}\qquad
-U(\ket{\psi}\ket{0})=\ket{\psi}\ket{\psi}
-\]
-for two arbitrary states \(\ket{\varphi}\) and \(\ket{\psi}\).
-Since \(U\) is unitary, it preserves inner products, and therefore
-\[
-\braket{\psi|\varphi}\braket{0|0}
+with
+\(
+N
 =
-\braket{\psi|\varphi}\braket{\psi|\varphi}
-\]
-hence
-\[
-\braket{\psi|\varphi}
-=
-\bigl(\braket{\psi|\varphi}\bigr)^2
-\]
-So necessarily
-\[
-\braket{\psi|\varphi}\in\{0,1\}
-\]
-Thus only identical or orthogonal states can be cloned.
+\left[
+\begin{smallmatrix}
+0 & 1 \\
+1 & 0
+\end{smallmatrix}
+\right]
+\).
+Geometrically, the case $x=1$ corresponds to a reflection of the second Qbit around the positive diagonal.
 
-\begin{theorem}[No-cloning theorem]
-There is no unitary operation that clones all pure quantum states.
-\end{theorem}
 
-So what does the CNOT do instead when the target starts in \(\ket{0}\) and the control is in the state
+
+\newcommand{\wiremark}[1]{%
+  \pgfnode{coordinate}{center}{}{#1}{}%
+}
+\tikzexternaldisable
+
+% \pagebreak[2]
+
+
+
+
+
+% % === quantum circuit diagram with angle annotations ===
+% test:
+% \[
+% \begin{quantikz}[column sep=0.3cm, row sep=0.28cm, remember picture]
+% \lstick{$\ket{x}$} \wiremark{x-start} & \qw & \qw & \qw & \ctrl{2} & \qw & \qw & \qw & \hphantomgate{R} & \qw & \qw & \qw & \ctrl{2} & \qw & \qw & \qw & \wiremark{x-end} \rstick{$\ket{x}$} \\
+% \lstick{$\ket{y}$} & \qw & \hphantomgate{R} & \qw & \hphantomgate{R} & \qw & \hphantomgate{R} & \qw & \ctrl{1} & \qw & \hphantomgate{R} & \qw & \hphantomgate{R} & \qw & \hphantomgate{R} & \qw & \rstick{$\ket{y}$} \\
+% \lstick{$\ket{b}$} \wiremark{b-start} & \qw & \gate[1][0.42cm][0.34cm]{R} & \qw & \targ{}  & \qw & \gate[1][0.42cm][0.34cm]{R} & \qw & \targ{} & \qw & \gate[1][0.42cm][0.34cm]{\makebox[\widthof{$R$}][c]{$R^*$}} & \qw & \targ{} & \qw & \gate[1][0.42cm][0.34cm]{\makebox[\widthof{$R$}][c]{$R^*$}} & \qw & \wiremark{b-end} \rstick{$\ket{b \oplus xy}$}
+% \end{quantikz}
+% \]
+%
+% \begin{tikzpicture}[
+%   remember picture,
+%   overlay,
+%   font=\scriptsize,
+%   qcguide/.style={densely dotted, gray, line width=0.35pt},
+%   anglemark/.style={font=\scriptsize, inner xsep=1pt, inner ysep=0.9pt}
+% ]
+%   \coordinate (angle-row-00) at ($(b-start)+(0,-0.85cm)$);
+%   \coordinate (angle-row-01) at ($(angle-row-00)+(0,-0.5cm)$);
+%   \coordinate (angle-row-10) at ($(angle-row-01)+(0,-0.5cm)$);
+%   \coordinate (angle-row-11) at ($(angle-row-10)+(0,-0.5cm)$);
+%
+%   \node[anchor=east] (in-00) at ($(b-start |- angle-row-00)+(-0.45cm,0)$) {$\ket{0}\otimes\ket{0}\otimes\ket{0}$};
+%   \node[anchor=east] (in-01) at ($(b-start |- angle-row-01)+(-0.45cm,0)$) {$\ket{0}\otimes\ket{1}\otimes\ket{0}$};
+%   \node[anchor=east] (in-10) at ($(b-start |- angle-row-10)+(-0.45cm,0)$) {$\ket{1}\otimes\ket{0}\otimes\ket{0}$};
+%   \node[anchor=east] (in-11) at ($(b-start |- angle-row-11)+(-0.45cm,0)$) {$\ket{1}\otimes\ket{1}\otimes\ket{0}$};
+%
+%   \node[anchor=west] (out-00) at ($(b-end |- angle-row-00)+(0.45cm,0)$) {$\ket{0}\otimes\ket{0}\otimes\ket{0}$};
+%   \node[anchor=west] (out-01) at ($(b-end |- angle-row-01)+(0.45cm,0)$) {$\ket{0}\otimes\ket{1}\otimes\ket{0}$};
+%   \node[anchor=west] (out-10) at ($(b-end |- angle-row-10)+(0.45cm,0)$) {$\ket{1}\otimes\ket{0}\otimes\ket{0}$};
+%   \node[anchor=west] (out-11) at ($(b-end |- angle-row-11)+(0.45cm,0)$) {$\ket{1}\otimes\ket{1}\otimes\ket{1}$};
+%
+%   \foreach \i/\angA/\angB/\angC/\angD in {
+%     1/{0^\circ}/{0^\circ}/{0^\circ}/{0^\circ},
+%     2/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{22.5^\circ},
+%     3/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{67.5^\circ},
+%     4/{45^\circ}/{45^\circ}/{90^\circ}/{90^\circ},
+%     5/{45^\circ}/{45^\circ}/{90^\circ}/{0^\circ},
+%     6/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{-22.5^\circ},
+%     7/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{112.5^\circ},
+%     8/{0^\circ}/{0^\circ}/{0^\circ}/{90^\circ}
+%   } {
+%     \pgfmathsetmacro{\t}{(\i-0.5)/8}
+%     \coordinate (qcb-\i) at ($(b-start)!\t!(b-end)$);
+%     \coordinate (qcx-\i) at (qcb-\i |- x-start);
+%
+%     \node[anglemark] (angle-\i-a) at (qcb-\i |- angle-row-00) {$\angA$};
+%     \node[anglemark] (angle-\i-b) at (qcb-\i |- angle-row-01) {$\angB$};
+%     \node[anglemark] (angle-\i-c) at (qcb-\i |- angle-row-10) {$\angC$};
+%     \node[anglemark] (angle-\i-d) at (qcb-\i |- angle-row-11) {$\angD$};
+%     \draw[qcguide] (qcx-\i) -- (qcb-\i);
+%     \draw[qcguide] (qcb-\i) -- (angle-\i-a.north);
+%     \draw[qcguide] (angle-\i-a.south) -- (angle-\i-b.north);
+%     \draw[qcguide] (angle-\i-b.south) -- (angle-\i-c.north);
+%     \draw[qcguide] (angle-\i-c.south) -- (angle-\i-d.north);
+%   }
+% \end{tikzpicture}
+% \vspace{3.55cm}
+% === quantum circuit diagram with angle annotations ===
 \[
-\ket{\varphi}
-=
-\alpha\ket{0}+\beta\ket{1}\,?
+\begin{quantikz}[column sep=0.28cm, row sep=0.28cm, remember picture]
+\lstick{$\ket{x}$}
+  & \qw & \qw \wiremark{qcx-1}
+  & \qw
+  & \qw \wiremark{qcx-2}
+  & \ctrl{2}
+  & \qw \wiremark{qcx-3}
+  & \qw
+  & \qw \wiremark{qcx-4}
+  & \hphantomgate{R}
+  & \qw \wiremark{qcx-5}
+  & \qw
+  & \qw \wiremark{qcx-6}
+  & \ctrl{2}
+  & \qw \wiremark{qcx-7}
+  & \qw
+  & \qw \wiremark{qcx-8}
+  & \qw
+  & \rstick{$\ket{x}$} \\
+\lstick{$\ket{y}$}
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \hphantomgate{R}
+  & \qw
+  & \qw
+  & \qw
+  & \ctrl{1}
+  & \qw
+  & \qw
+  & \qw
+  & \hphantomgate{R}
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \rstick{$\ket{y}$} \\
+\lstick{$\ket{b}$}
+  & \qw
+  & \qw \wiremark{qcb-1}
+  & \gate[1][0.42cm][0.34cm]{R}
+  & \qw \wiremark{qcb-2}
+  & \targ{}
+  & \qw \wiremark{qcb-3}
+  & \gate[1][0.42cm][0.34cm]{R}
+  & \qw \wiremark{qcb-4}
+  & \targ{}
+  & \qw \wiremark{qcb-5}
+  & \gate[1][0.42cm][0.34cm]{\makebox[\widthof{$R$}][c]{$R^*$}}
+  & \qw \wiremark{qcb-6}
+  & \targ{}
+  & \qw \wiremark{qcb-7}
+  & \gate[1][0.42cm][0.34cm]{\makebox[\widthof{$R$}][c]{$R^*$}}
+  & \qw \wiremark{qcb-8}
+  & \qw
+  & \rstick{$\ket{b \oplus (x \wedge y)}$}
+\end{quantikz}
 \]
-We get
+\begin{tikzpicture}[
+  remember picture,
+  overlay,
+  font=\scriptsize,
+  qcguide/.style={densely dotted, gray, line width=0.35pt},
+  anglemark/.style={font=\scriptsize, inner xsep=1pt, inner ysep=0.9pt}
+]
+  % \coordinate (angle-row-00) at ($(qcb-1)+(0,-0.85cm)$);
+  % \coordinate (angle-row-01) at ($(angle-row-00)+(0,-0.6cm)$);
+  % \coordinate (angle-row-10) at ($(angle-row-01)+(0,-0.6cm)$);
+  % \coordinate (angle-row-11) at ($(angle-row-10)+(0,-0.6cm)$);
+  \coordinate (angle-row-000) at ($(qcb-1)+(0,-0.95cm)$);
+  \coordinate (angle-row-010) at ($(angle-row-000)+(0,-0.48cm)$);
+  \coordinate (angle-row-100) at ($(angle-row-010)+(0,-0.48cm)$);
+  \coordinate (angle-row-110) at ($(angle-row-100)+(0,-0.48cm)$);
+  \coordinate (angle-row-001) at ($(angle-row-110)+(0,-0.68cm)$);
+  \coordinate (angle-row-011) at ($(angle-row-001)+(0,-0.48cm)$);
+  \coordinate (angle-row-101) at ($(angle-row-011)+(0,-0.48cm)$);
+  \coordinate (angle-row-111) at ($(angle-row-101)+(0,-0.48cm)$);
+
+  % \node[anchor=east] (in-00) at ($(qcb-1 |- angle-row-00)+(-0.56cm,0)$) {$\ket{000}$}; % {$\ket{0}\otimes\ket{0}\otimes\ket{0}$};
+  % \node[anchor=east] (in-01) at ($(qcb-1 |- angle-row-01)+(-0.56cm,0)$) {$\ket{010}$}; % {$\ket{0}\otimes\ket{1}\otimes\ket{0}$};
+  % \node[anchor=east] (in-10) at ($(qcb-1 |- angle-row-10)+(-0.56cm,0)$) {$\ket{100}$}; % {$\ket{1}\otimes\ket{0}\otimes\ket{0}$};
+  % \node[anchor=east] (in-11) at ($(qcb-1 |- angle-row-11)+(-0.56cm,0)$) {$\ket{110}$}; % {$\ket{1}\otimes\ket{1}\otimes\ket{0}$};
+  \node[anchor=east] (in-000) at ($(qcb-1 |- angle-row-000)+(-0.56cm,0)$) {$\ket{000}$};
+  \node[anchor=east] (in-010) at ($(qcb-1 |- angle-row-010)+(-0.56cm,0)$) {$\ket{010}$};
+  \node[anchor=east] (in-100) at ($(qcb-1 |- angle-row-100)+(-0.56cm,0)$) {$\ket{100}$};
+  \node[anchor=east] (in-110) at ($(qcb-1 |- angle-row-110)+(-0.56cm,0)$) {$\ket{110}$};
+  \node[anchor=east] (in-001) at ($(qcb-1 |- angle-row-001)+(-0.56cm,0)$) {$\ket{001}$};
+  \node[anchor=east] (in-011) at ($(qcb-1 |- angle-row-011)+(-0.56cm,0)$) {$\ket{011}$};
+  \node[anchor=east] (in-101) at ($(qcb-1 |- angle-row-101)+(-0.56cm,0)$) {$\ket{101}$};
+  \node[anchor=east] (in-111) at ($(qcb-1 |- angle-row-111)+(-0.56cm,0)$) {$\ket{111}$};
+
+  % \node[anchor=west] (out-00) at ($(qcb-8 |- angle-row-00)+(0.56cm,0)$) {$\ket{000}$}; % {$\ket{0}\otimes\ket{0}\otimes\ket{0}$};
+  % \node[anchor=west] (out-01) at ($(qcb-8 |- angle-row-01)+(0.56cm,0)$) {$\ket{010}$}; % {$\ket{0}\otimes\ket{1}\otimes\ket{0}$};
+  % \node[anchor=west] (out-10) at ($(qcb-8 |- angle-row-10)+(0.56cm,0)$) {$\ket{100}$}; % {$\ket{1}\otimes\ket{0}\otimes\ket{0}$};
+  % \node[anchor=west] (out-11) at ($(qcb-8 |- angle-row-11)+(0.56cm,0)$) {$\ket{111}$}; % {$\ket{1}\otimes\ket{1}\otimes\ket{1}$};
+  \node[anchor=west] (out-000) at ($(qcb-8 |- angle-row-000)+(0.56cm,0)$) {$\ket{000}$};
+  \node[anchor=west] (out-010) at ($(qcb-8 |- angle-row-010)+(0.56cm,0)$) {$\ket{010}$};
+  \node[anchor=west] (out-100) at ($(qcb-8 |- angle-row-100)+(0.56cm,0)$) {$\ket{100}$};
+  \node[anchor=west] (out-110) at ($(qcb-8 |- angle-row-110)+(0.56cm,0)$) {$\ket{111}$};
+  \node[anchor=west] (out-001) at ($(qcb-8 |- angle-row-001)+(0.56cm,0)$) {$\ket{001}$};
+  \node[anchor=west] (out-011) at ($(qcb-8 |- angle-row-011)+(0.56cm,0)$) {$\ket{011}$};
+  \node[anchor=west] (out-101) at ($(qcb-8 |- angle-row-101)+(0.56cm,0)$) {$\ket{101}$};
+  \node[anchor=west] (out-111) at ($(qcb-8 |- angle-row-111)+(0.56cm,0)$) {$\ket{110}$};
+
+  % \foreach \i/\angA/\angB/\angC/\angD in {
+  %   1/{0^\circ}/{0^\circ}/{0^\circ}/{0^\circ},
+  %   2/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{22.5^\circ},
+  %   3/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{67.5^\circ},
+  %   4/{45^\circ}/{45^\circ}/{90^\circ}/{90^\circ},
+  %   5/{45^\circ}/{45^\circ}/{90^\circ}/{0^\circ},
+  %   6/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{-22.5^\circ},
+  %   7/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{112.5^\circ},
+  %   8/{0^\circ}/{0^\circ}/{0^\circ}/{90^\circ}
+  % } {
+  %   \node[anglemark] (angle-\i-a) at (qcb-\i |- angle-row-00) {$\angA$};
+  %   \node[anglemark] (angle-\i-b) at (qcb-\i |- angle-row-01) {$\angB$};
+  %   \node[anglemark] (angle-\i-c) at (qcb-\i |- angle-row-10) {$\angC$};
+  %   \node[anglemark] (angle-\i-d) at (qcb-\i |- angle-row-11) {$\angD$};
+  %   \draw[qcguide] (qcx-\i) -- (qcb-\i);
+  %   \draw[qcguide] (qcb-\i) -- (angle-\i-a.north);
+  %   \draw[qcguide] (angle-\i-a.south) -- (angle-\i-b.north);
+  %   \draw[qcguide] (angle-\i-b.south) -- (angle-\i-c.north);
+  %   \draw[qcguide] (angle-\i-c.south) -- (angle-\i-d.north);
+  % }
+  \foreach \i/\angA/\angB/\angC/\angD/\angE/\angF/\angG/\angH in {
+  1/{0^\circ}/{0^\circ}/{0^\circ}/{0^\circ}/{90^\circ}/{90^\circ}/{90^\circ}/{90^\circ},
+  2/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{112.5^\circ}/{112.5^\circ}/{112.5^\circ}/{112.5^\circ},
+  3/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{67.5^\circ}/{112.5^\circ}/{112.5^\circ}/{-22.5^\circ}/{-22.5^\circ},
+  4/{45^\circ}/{45^\circ}/{90^\circ}/{90^\circ}/{135^\circ}/{135^\circ}/{0^\circ}/{0^\circ},
+  5/{45^\circ}/{45^\circ}/{90^\circ}/{0^\circ}/{135^\circ}/{135^\circ}/{0^\circ}/{90^\circ},
+  6/{22.5^\circ}/{22.5^\circ}/{67.5^\circ}/{-22.5^\circ}/{112.5^\circ}/{112.5^\circ}/{-22.5^\circ}/{67.5^\circ},
+  7/{22.5^\circ}/{22.5^\circ}/{22.5^\circ}/{112.5^\circ}/{112.5^\circ}/{112.5^\circ}/{112.5^\circ}/{22.5^\circ},
+  8/{0^\circ}/{0^\circ}/{0^\circ}/{90^\circ}/{90^\circ}/{90^\circ}/{90^\circ}/{0^\circ}
+} {
+    \node[anglemark] (angle-\i-000) at (qcb-\i |- angle-row-000) {$\angA$};
+    \node[anglemark] (angle-\i-010) at (qcb-\i |- angle-row-010) {$\angB$};
+    \node[anglemark] (angle-\i-100) at (qcb-\i |- angle-row-100) {$\angC$};
+    \node[anglemark] (angle-\i-110) at (qcb-\i |- angle-row-110) {$\angD$};
+    \node[anglemark] (angle-\i-001) at (qcb-\i |- angle-row-001) {$\angE$};
+    \node[anglemark] (angle-\i-011) at (qcb-\i |- angle-row-011) {$\angF$};
+    \node[anglemark] (angle-\i-101) at (qcb-\i |- angle-row-101) {$\angG$};
+    \node[anglemark] (angle-\i-111) at (qcb-\i |- angle-row-111) {$\angH$};
+    \draw[qcguide] (qcx-\i) -- (qcb-\i);
+    \draw[qcguide] (qcb-\i) -- (angle-\i-000.north);
+    \draw[qcguide] (angle-\i-000.south) -- (angle-\i-010.north);
+    \draw[qcguide] (angle-\i-010.south) -- (angle-\i-100.north);
+    \draw[qcguide] (angle-\i-100.south) -- (angle-\i-110.north);
+    \draw[qcguide] (angle-\i-110.south) -- (angle-\i-001.north);
+    \draw[qcguide] (angle-\i-001.south) -- (angle-\i-011.north);
+    \draw[qcguide] (angle-\i-011.south) -- (angle-\i-101.north);
+    \draw[qcguide] (angle-\i-101.south) -- (angle-\i-111.north);
+  }
+\end{tikzpicture}
+\tikzexternalenable
+\vspace{5.1cm}
+
+% The case \(b=1\) follows from unitarity, because \(\ket{xy1}\) is orthogonal to \(\ket{xy0}\).
+
+In analogy to the CNOT, the Toffoli/CCNOT gate is drawn as
 \[
-(\alpha\ket{0}+\beta\ket{1})\ket{0}
-\xmapsto{\text{CNOT}}
+\begin{quantikz}
+\lstick{} & \ctrl{1} & \rstick{} \\
+\lstick{} & \ctrl{1} & \rstick{} \\
+\lstick{} & \targ{}  & \rstick{}
+\end{quantikz}
+\]
+and the matrix in the computational basis is
+\[
+\matr{A}_{\text{CCNOT}}
+=
+\begin{bmatrix}
+1&0&0&0&0&0&0&0\\
+0&1&0&0&0&0&0&0\\
+0&0&1&0&0&0&0&0\\
+0&0&0&1&0&0&0&0\\
+0&0&0&0&1&0&0&0\\
+0&0&0&0&0&1&0&0\\
+0&0&0&0&0&0&0&1\\
+0&0&0&0&0&0&1&0
+\end{bmatrix}
+\]
+
+
+
+
+\subsection{Cloning, pseudo-cloning, and pseudo-measurements}
+
+Classical bits can be copied with a CNOT by initializing the target (source) to \(0\).
+% \[
+% \begin{array}{c@{\qquad}c}
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$0$} & \ctrl{1} & \rstick{$0$} \\
+% \lstick{$0$} & \targ{}  & \rstick{$0$}
+% \end{quantikz}
+% &
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$1$} & \ctrl{1} & \rstick{$1$} \\
+% \lstick{$0$} & \targ{}  & \rstick{$1$}
+% \end{quantikz}
+% \end{array}
+% \]
+For quantum states this cannot be extended to arbitrary inputs.
+If there were a unitary operation $C$ that cloned both \(\ket{\psi_1}\) and \(\ket{\psi_2}\) in the same way as the CNOT clones classical bits,
+i.e.,
+\begin{equation}\label{eq:cloning-assumption}
+C(\ket{\psi_i}\otimes\ket{0})=c_i\ket{\psi_i}\otimes\ket{\psi_i},
+\qquad |c_i|=1
+\end{equation} 
+for \(i=1,2\),
+% \[
+% \begin{array}{c@{\qquad}c}
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$\ket{\psi_1}$} & \ctrl{1} & \rstick{$\ket{\psi_1}$} \\
+% \lstick{$\ket{0}$}       & \targ{}  & \rstick{$\ket{\psi_1}$}
+% \end{quantikz}
+% &
+% \begin{quantikz}[column sep=0.45cm]
+% \lstick{$\ket{\psi_2}$} & \ctrl{1} & \rstick{$\ket{\psi_2}$} \\
+% \lstick{$\ket{0}$}    & \targ{}  & \rstick{$\ket{\psi_2}$}
+% \end{quantikz}
+% \end{array}
+% \]
+then preservation of inner products 
+by unitaries (\autoref{thm:unitary-preserves-inner-products}, \autoref{eq:unitary-preserves-inner-products})
+would give
+\[
+\begin{aligned}
+  \braket{\psi_1|\psi_2}\braket{0|0}
+  &\overset{\text{\eqref{eq:inner-product-tensor-product}}}{=}
+  \braket{\psi_1 0|\psi_2 0} \\
+  &\overset{\text{\eqref{eq:unitary-preserves-inner-products}}}{=}
+  \braket{C\ket{\psi_1 0}|C\ket{\psi_2 0}} \\
+  &\overset{\text{\eqref{eq:cloning-assumption}}}{=}
+  \overline{c_1}c_2\braket{\psi_1 \psi_1|\psi_2 \psi_2} \\
+  &\overset{\text{\eqref{eq:inner-product-tensor-product}}}{=}
+  \overline{c_1}c_2\braket{\psi_1|\psi_2}\braket{\psi_1|\psi_2}
+\end{aligned}
+\]
+Taking absolute values gives
+\[
+|\braket{\psi_1|\psi_2}|
+=
+|\braket{\psi_1|\psi_2}|^2
+\]
+so
+\(
+|\braket{\psi_1|\psi_2}|\in\{0,1\}
+\).
+Thus only orthogonal states or parallel states, i.e. states representing the same physical state up to global phase, can be cloned by a single unitary operation.
+Therefore no unitary cloning operation can work for arbitrary inputs.
+This is the no-cloning theorem.
+
+Instead, for a general input
+\(
+\ket{\varphi}=\alpha\ket{0}+\beta\ket{1}
+\) on the control wire
+and target \(\ket{0}\),
+CNOT gives, by linearity,
+\[
 \alpha\ket{00}+\beta\ket{11}
 \]
-This is generally an entangled state, not two copies of \(\ket{\varphi}\).
-
-If the second Qbit is now measured in the computational basis, then the outcome is
+which is generally entangled, not the product of two copies, which would be 
 \[
-0 \quad\text{with probability } |\alpha|^2,
-\qquad
-1 \quad\text{with probability } |\beta|^2
-\]
-exactly as if the original state had been measured.
-Moreover, conditioned on the outcome, the first Qbit is left in the corresponding basis state.
-If we ignore the outcome on the second wire, then the first Qbit is described by the mixture
-\[
-|\alpha|^2 \ket{0}\bra{0}
-+
-|\beta|^2 \ket{1}\bra{1}
-\]
-So, with respect to computational-basis statistics, the CNOT behaves as if the information had been copied.
-For this reason this process is sometimes called \emph{pseudo-cloning}.
-
-In fact, since the joint state is
-\[
-\alpha\ket{00}+\beta\ket{11}
-\]
-measurements of both wires in the computational basis always give the same outcome.
-Still, no actual cloning has happened, because the reduced states are mixed and the full state is entangled.
-
-If the second wire is not measured at all, then the first wire still undergoes exactly the same transition from a superposition to the corresponding mixture, which matches the density-matrix and partial-trace discussion above.
-Thus the CNOT can also be viewed as a \emph{pseudo-measurement}:
-it produces the same local effect as a measurement in the computational basis, but without yielding an explicit outcome.
-
-This is not a genuine measurement, because the overall process is still unitary and reversible.
-Indeed, the CNOT is an involution:
-\[
-\text{CNOT}^2=\id
+% \ket{\varphi}\otimes\ket{\varphi}
+% =
+\alpha^2\ket{00}+\alpha\beta\ket{01}+\alpha\beta\ket{10}+\beta^2\ket{11}.
 \]
 
-This suggests a broader picture of measurement.
-Instead of thinking of a measurement as an irreversible collapse, one may model it as a unitary interaction between the system and a large ancillary system:
-the measuring device, the laboratory, the environment, and so on.
-Then the system becomes entangled with this larger system.
-Locally, the superposition turns into a mixture, even though globally the evolution remains unitary.
+Interestingly,
+if the second Qbit is then measured in the standard basis, 
+the observed statistics are actually the same as if the input had been cloned:
+\[
+\begin{tikzpicture}[baseline=(current bounding box.center)]
+  \node (circ) at (0,0) {
+    \begin{quantikz}[column sep=0.45cm, row sep=0.35cm]
+    \lstick{$\ket{\varphi}$} & \ctrl{1} & \qw \\
+    \lstick{$\ket{0}$}       & \targ{}  & \meter{}
+    \end{quantikz}
+  };
+  \draw[->] (1.55,-0.18) -- (2.28,0.10);
+  \draw[->] (1.55,-0.38) -- (2.28,-0.66);
+  \node[anchor=west] at (2.38,0.10) {$0$ with prob. $|\alpha|^2$};
+  \node[anchor=west] at (2.38,-0.66) {$1$ with prob. $|\beta|^2$};
+\end{tikzpicture}
+\]
+The same standard-basis statistics are obtained on the first Qbit, whose reduced state is
+\[
+|\alpha|^2 P_{\ket{0}} + |\beta|^2 P_{\ket{1}}.
+\]
+The two measurement outcomes are perfectly correlated, because the joint state is \(\alpha\ket{00}+\beta\ket{11}\).
+This is why the action is sometimes called \emph{pseudo-cloning}.
 
-This phenomenon is called \emph{decoherence}.
-It explains why interaction with uncontrolled external degrees of freedom is so harmful in quantum computation:
-if even a single external two-level system becomes entangled with the computer and then escapes, the coherent superposition inside the computer is effectively turned into a mixture, and the computation is spoiled.
+If no measurement is made on the second wire, the first Qbit is nevertheless transformed as if it had been measured and the outcome had been forgotten.
+The operation is not an actual measurement, since it has no outcome and is reversible: CNOT is self-inverse,
+\[
+\begin{quantikz}[column sep=0.45cm]
+\lstick{$\ket{\varphi}$} & \ctrl{1} & \ctrl{1} & \rstick{$\ket{\varphi}$} \\
+\lstick{$\ket{0}$}       & \targ{}  & \targ{}  & \rstick{$\ket{0}$}
+\end{quantikz}
+\]
+which motivates the term \emph{pseudo-measurement}.
+
+More generally, a measurement can be pictured by replacing the second Qbit with a large system containing the apparatus, observer, laboratory, and environment, and replacing the CNOT by a controlled unitary:
+\[
+\begin{quantikz}[column sep=0.42cm, row sep={0.12cm,between origins}]
+\lstick{$\ket{\psi}$} & \ctrl{1} & \ctrl{1} & \rstick{$\ket{\psi}$} \\[0.60cm]
+                      & \gate[5,disable auto height][0.42cm][0.34cm]{\makebox[\widthof{$U^*$}][c]{$U$}} & \gate[5,disable auto height][0.42cm][0.34cm]{\makebox[\widthof{$U^*$}][c]{$U^*$}} & \qw \\
+                      &                       &                                         & \qw \\
+                      &                       &                                         & \qw \\
+                      &                       &                                         & \qw \\
+                      &                       &                                         & \qw
+\end{quantikz}
+\]
+In principle this unitary picture is reversible and does not require a literal collapse; what remains after the large system is no longer accessible is decoherence.
+The same mechanism describes disturbance: if a computation couples to even a single uncontrolled binary degree of freedom, then superpositions in the computer become mixtures once that degree of freedom escapes, and the computation can fail.
+
+
+
 
 
 
