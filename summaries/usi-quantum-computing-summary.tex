@@ -217,6 +217,14 @@
 % \newcommand{\iu}{\mathrm{i}}
 \newcommand{\iu}{\imath}
 
+% \newcommand{\ind}{1}
+% \newcommand{\ind}{\boldsymbol{1}}
+\newcommand{\ind}{\mathbf{1}}
+% \newcommand{\ind}{\mathbf{I}}
+% \newcommand{\ind}{I}
+% \newcommand{\ind}{\mathbb{I}}
+% \newcommand{\ind}{\chi}
+
 
 
 % \newcommand{\kld}[2]{D_{\mathrm{KL}}\!\left(#1 \,\middle\|\, #2\right)}
@@ -5608,11 +5616,11 @@ Thus the eigenvalues, counted with multiplicity, can be interpreted as probabili
 
 \begin{definition}[Mixed state]\label{def:mixed-state}
 If the system is in the pure state \(\ket{\varphi_i}\) with probability \(p_i\), then the corresponding density matrix is exactly
-\[
+\begin{equation}\label{eq:mixed-state-density-matrix}
 \rho
 =
 \sum_i p_i  \ket{\varphi_i}\bra{\varphi_i}
-\]
+\end{equation}
 where \(p_i \ge 0\) and \(\sum_i p_i = 1\).
 This is called a \emph{mixed state} or \emph{statistical mixture}.
 \end{definition}
@@ -6672,7 +6680,7 @@ this shows that the surface of the Bloch sphere represents precisely the pure st
 \medskip
 
 Operations on one Qbit are unitary \(2\times2\)-matrices.
-\begin{example}
+\begin{example}\label{ex:hadamard}
 A central example is the Hadamard gate
 \(
 \matr{H}
@@ -6694,7 +6702,12 @@ satisfies
 \matr{H}^2=\matr{I}
 \),
 and, hence, is not only unitary but also an involution (and, therefore, by \autoref{thm:unitary-selfadjoint-involution}, also self-adjoint).
-It maps
+For $b \in\{0,1\}$,
+\[
+% \matr{H}\ket{b}=\frac{\smash[t]{\ket{0}+(-1)^b\ket{1}}}{\smash[b]{\sqrt{2}}}
+\matr{H}\ket{b}=\frac{{\ket{0}+(-1)^b\ket{1}}}{{\sqrt{2}}}
+\]
+i.e. the Hadamard maps
 \(
 % \matr{H}
 \ket{0}
@@ -6781,7 +6794,7 @@ They are also called EPR (Einstein-Po\-dol\-sky-Rosen) pairs.
 They form an orthonormal basis of the two-Qbit Hilbert space, hence together they are often referred to as the Bell basis.
 We will see how to translate between the computational basis and the Bell basis in \autoref{sec:cnot-gate}.
 \end{example}
-\pagebreak[3]
+
 
 \begin{remark}
 % For product states \(\psi_{1,A} \otimes \psi_{1,B}\) and \(\psi_{2,A} \otimes \psi_{2,B}\), the sum
@@ -6880,8 +6893,7 @@ ac\\ad\\bc\\bd
 
 
 
-\medskip
-{\textbf{Inner Product}}
+\subsubsection*{Inner Product}
 
 The inner product on the tensor-product space is characterized by the requirement that tensor products of orthonormal basis vectors again form an orthonormal basis,
 i.e., if
@@ -6973,8 +6985,7 @@ a_1^* a_2 c_1^* c_2 + a_1^* a_2 d_1^* d_2 + b_1^* b_2 c_1^* c_2 + b_1^* b_2 d_1^
 \]
 \pagebreak[3]
 
-\medskip
-{\textbf{Operations}}
+\subsubsection*{Operations}
 
 % If \(U\) and \(V\) are unitary on the individual Qbits, then
 % \[
@@ -7014,6 +7025,7 @@ as already mentioned in \autoref{dig:tensor-products}.
 This map is unitary as long as both $U$ and $V$ are: It is easy to see that orthogonal tensor products are mapped to orthogonal tensor product along our understanding of orthogonality above.
 
 \begin{example}
+\label{ex:hadamard-two-qbits}
 The matrix Hadamard on two Qbits can again be computed through the Kronecker product:
 \NiceMatrixOptions { 
   custom-line = {
@@ -7069,15 +7081,8 @@ The matrix Hadamard on two Qbits can again be computed through the Kronecker pro
 
 
 This representation is not very intuitive or transparent. 
-A better understanding can be obtained from the following formula: 
-For $b \in\{0,1\}$,
-\[
-\matr{H}\ket{b}=\frac{\ket{0}+(-1)^b\ket{1}}{\sqrt{2}} 
-\]
-
-
-
-Accordingly, for two Qbits,
+A better understanding can be obtained from the following formula (see also \autoref{ex:hadamard}):
+For $b_1,b_2 \in\{0,1\}$,
 \[
 \begin{aligned}
 \matr{H}^{\otimes 2}\ket{b_1 b_2} & =\matr{H}\ket{b_1} \otimes \matr{H}\ket{b_2} \\
@@ -7088,34 +7093,11 @@ Accordingly, for two Qbits,
 where $\oplus$ denotes addition modulo $2$ (i.e., XOR).
 \end{example}
 
-For $n$ Qbits 
-\[
-\ket{\vect{b}} = \bigotimes_{j=1}^n \ket{b_j}
-\]
-we have
-\[
-\matr{H}^{\otimes n}\ket{\vect{b}}=\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n}(-1)^{\vect{b} \cdot \vect{x}}\ket{\vect{x}}
-\]
-where
-\[
-\vect{b} \cdot \vect{x} 
-\coloneq 
-\bigoplus_{j=1}^n \left(b_j \wedge x_j\right)
-\]
-denotes the XOR of the bitswise AND of $\vect{b}$ and $\vect{x}$.
-\pagebreak[2]
 
-In particular,
-\[
-\matr{H}^{\otimes n}\ket{\vect{0}}
-=
-\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n} \ket{\vect{x}}
-\]
-will be the initial state for most quantum algorithms, and as a equal superposition of all classical inputs, the basis for ``Quantum parallelism''.
-\pagebreak[3]
 
-\medskip
-{\textbf{Measurements}}
+% \pagebreak[3]
+
+\subsubsection*{Measurements}
 
 Measurements can also be performed on only one part of a bipartite system, in accordance with the general formalism from \autoref{sec:observables}.
 If
@@ -7328,7 +7310,7 @@ Indeed,
 Thus a Hadamard on the control followed by a CNOT maps computational basis states to Bell states from \autoref{sec:aspect-gisin-zeilinger-experiments} and \autoref{ex:bell-states}.
 So this combination implements the basis change between the computational basis and the Bell basis.
 
-Consequently, a Bell-basis measurement can be implemented by reversing this basis change (recall that $H^{-1} = H$) and then measuring in the computational basis:
+Consequently, a \hl[4]{Bell-basis measurement} can be implemented by reversing this basis change (recall that $H^{-1} = H$) and then measuring in the computational basis:
 % \begingroup
 % \tikzset{bellmeasure/.style={circle,draw,fill=white,inner sep=0pt,minimum size=2.2em}}
 \[
@@ -7342,8 +7324,7 @@ Consequently, a Bell-basis measurement can be implemented by reversing this basi
 % \endgroup
 % This is a measurement in the Bell basis.
 
-\medskip
-{\textbf{Classical universality}}
+\subsubsection*{Classical universality}
 
 The CNOT is universal together with one-Qbit gates.
 For classical universality, it is enough to obtain a Toffoli gate (\autoref{def:toffoli-gate}), 
@@ -7688,10 +7669,23 @@ Classical bits can be copied with a CNOT by initializing the target (source) to 
 % \end{array}
 % \]
 For quantum states this cannot be extended to arbitrary inputs.
+
+\begin{theorem}[No-cloning]\label{thm:no-cloning}
+There is no unitary $C$ on $\mathcal{H}\otimes\mathcal{H}$ such that for all normalized $\ket{\psi}\in\mathcal{H}$ and some initial normalized $\ket{e}\in\mathcal{H}$,
+\(
+C(\ket{\psi}\otimes\ket{e})=c_\psi\ket{\psi}\otimes\ket{\psi}
+\)
+for some $c_\psi\in\mathbb{C}$ depending on $\ket{\psi}$ with $|c_\psi|=1$.
+\end{theorem}
+
+\begin{proof}
+Consider two arbitrary normalized states \(\ket{\psi_1}\) and \(\ket{\psi_2}\) in \(\mathcal{H}\).
 If there were a unitary operation $C$ that cloned both \(\ket{\psi_1}\) and \(\ket{\psi_2}\) in the same way as the CNOT clones classical bits,
 i.e.,
 \begin{equation}\label{eq:cloning-assumption}
-C(\ket{\psi_i}\otimes\ket{0})=c_i\ket{\psi_i}\otimes\ket{\psi_i},
+C(\ket{\psi_i}\otimes\ket{e})
+=
+c_i\ket{\psi_i}\otimes\ket{\psi_i},
 \qquad |c_i|=1
 \end{equation} 
 for \(i=1,2\),
@@ -7713,11 +7707,11 @@ by unitaries (\autoref{thm:unitary-preserves-inner-products}, \autoref{eq:unitar
 would give
 \[
 \begin{aligned}
-  \braket{\psi_1|\psi_2}\braket{0|0}
+  \braket{\psi_1|\psi_2}\braket{e|e}
   &\overset{\text{\eqref{eq:inner-product-tensor-product}}}{=}
-  \braket{\psi_1 0|\psi_2 0} \\
+  \braket{\psi_1 e|\psi_2 e} \\
   &\overset{\text{\eqref{eq:unitary-preserves-inner-products}}}{=}
-  \braket{C\ket{\psi_1 0}|C\ket{\psi_2 0}} \\
+  \braket{C\ket{\psi_1 e}|C\ket{\psi_2 e}} \\
   &\overset{\text{\eqref{eq:cloning-assumption}}}{=}
   \overline{c_1}c_2\braket{\psi_1 \psi_1|\psi_2 \psi_2} \\
   &\overset{\text{\eqref{eq:inner-product-tensor-product}}}{=}
@@ -7736,7 +7730,8 @@ so
 \).
 Thus only orthogonal states or parallel states, i.e. states representing the same physical state up to global phase, can be cloned by a single unitary operation.
 Therefore no unitary cloning operation can work for arbitrary inputs.
-This is the no-cloning theorem.
+% This is the no-cloning theorem.
+\end{proof}
 
 Instead, for a general input
 \(
@@ -7751,10 +7746,10 @@ which is generally entangled, not the product of two copies, which would be
 \[
 % \ket{\varphi}\otimes\ket{\varphi}
 % =
-\alpha^2\ket{00}+\alpha\beta\ket{01}+\alpha\beta\ket{10}+\beta^2\ket{11}.
+\alpha^2\ket{00}+\alpha\beta\ket{01}+\alpha\beta\ket{10}+\beta^2\ket{11}
 \]
 
-Interestingly,
+Therefore,
 if the second Qbit is then measured in the standard basis, 
 the observed statistics are actually the same as if the input had been cloned:
 \[
@@ -7767,18 +7762,21 @@ the observed statistics are actually the same as if the input had been cloned:
   };
   \draw[->] (1.55,-0.18) -- (2.28,0.10);
   \draw[->] (1.55,-0.38) -- (2.28,-0.66);
-  \node[anchor=west] at (2.38,0.10) {$0$ with prob. $|\alpha|^2$};
-  \node[anchor=west] at (2.38,-0.66) {$1$ with prob. $|\beta|^2$};
+  \node[anchor=west, font=\footnotesize] at (2.38,0.10) {$0$ with prob. $|\alpha^2|^2 + |\alpha\beta|^2 = |\alpha|^2 (|\alpha|^2 + |\beta|^2) = |\alpha|^2$};
+  \node[anchor=west, font=\footnotesize] at (2.38,-0.66) {$1$ with prob. $|\beta^2|^2 + |\alpha\beta|^2 = |\beta|^2 (|\alpha|^2 + |\beta|^2) = |\beta|^2$};
 \end{tikzpicture}
 \]
 The same standard-basis statistics are obtained on the first Qbit, whose reduced state is
 \[
-|\alpha|^2 P_{\ket{0}} + |\beta|^2 P_{\ket{1}}.
+|\alpha|^2 P_{\ket{0}} + |\beta|^2 P_{\ket{1}}
 \]
 The two measurement outcomes are perfectly correlated, because the joint state is \(\alpha\ket{00}+\beta\ket{11}\).
 This is why the action is sometimes called \emph{pseudo-cloning}.
 
-If no measurement is made on the second wire, the first Qbit is nevertheless transformed as if it had been measured and the outcome had been forgotten.
+If the measurement on the second wire  is not done,
+this should not change the reduced state of the first wire.
+% Nevertheless, after ignoring the second wire, 
+CNOT leads to the same transition of the first Qbit as if a standard-basis measurement on the first Qbit had happened and the outcome had been forgotten.
 The operation is not an actual measurement, since it has no outcome and is reversible: CNOT is self-inverse,
 \[
 \begin{quantikz}[column sep=0.45cm]
@@ -7788,7 +7786,8 @@ The operation is not an actual measurement, since it has no outcome and is rever
 \]
 which motivates the term \emph{pseudo-measurement}.
 
-More generally, a measurement can be pictured by replacing the second Qbit with a large system containing the apparatus, observer, laboratory, and environment, and replacing the CNOT by a controlled unitary:
+More generally, a measurement can be seen as replacing the second Qbit with a large system containing 
+the apparatus, observer, laboratory, and environment, and replacing the CNOT by a controlled unitary:
 \[
 \begin{quantikz}[column sep=0.42cm, row sep={0.12cm,between origins}]
 \lstick{$\ket{\psi}$} & \ctrl{1} & \ctrl{1} & \rstick{$\ket{\psi}$} \\[0.60cm]
@@ -7799,21 +7798,1941 @@ More generally, a measurement can be pictured by replacing the second Qbit with 
                       &                       &                                         & \qw
 \end{quantikz}
 \]
-In principle this unitary picture is reversible and does not require a literal collapse; what remains after the large system is no longer accessible is decoherence.
-The same mechanism describes disturbance: if a computation couples to even a single uncontrolled binary degree of freedom, then superpositions in the computer become mixtures once that degree of freedom escapes, and the computation can fail.
+% In principle this unitary picture is reversible and does not require a literal collapse; 
+% what remains after the large system is no longer accessible is decoherence.
+In this interpretation, the measurement would always be reversible and hence not induce a ``collapse'', but merely \emph{decoherence}.
+
+The same mechanism also illustrates \emph{disturbance}: 
+if a quantum computation couples to even a single uncontrolled binary degree of freedom that should not be part of the computation,
+then, once that degree of freedom escapes, the reduced state of the computer becomes a mixture.
+The process is then effectively irreversible, and the computation may fail.
 
 
+
+\subsection{$n$ Qbits: $\mathcal{H} = \C^{2^n}$}
+\label{sec:n-qubits}
+
+The state space of \(n\) Qbits is
+\[
+\mathcal H_n
+=
+\left(\C^2\right)^{\otimes n}
+\cong
+\C^{2^n}
+\]
+with computational basis 
+$
+\left\{\ket{\vect{x}}:\vect{x}\in\{0,1\}^n\right\}
+$.
+
+
+\begin{example}
+Generalizing \autoref{ex:hadamard-two-qbits} to \(n\) Qbits
+% For $n$ Qbits 
+\[
+\ket{\vect{b}} = \bigotimes_{j=1}^n \ket{b_j}
+\]
+we have
+\begin{equation}\label{eq:nfold-hadamard-general}
+\matr{H}^{\otimes n}\ket{\vect{b}}=\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n}(-1)^{\vect{b} \cdot \vect{x}}\ket{\vect{x}}
+\end{equation}
+where
+\begin{equation}\label{eq:logical-scalar-product}
+\vect{b} \cdot \vect{x} 
+\coloneq 
+\bigoplus_{j=1}^n \left(b_j \wedge x_j\right)
+\end{equation}
+denotes the XOR of the bitswise AND of $\vect{b}$ and $\vect{x}$.
+
+
+In particular,
+\begin{equation}\label{eq:nfold-hadamard-zero}
+\matr{H}^{\otimes n}\ket{\vect{0}}
+=
+\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n} \ket{\vect{x}}
+\end{equation}
+will be the initial state for most quantum algorithms, and as a equal superposition of all classical inputs, the basis for ``Quantum parallelism''.
+\end{example}
+
+\begin{caution}
+
+\end{caution}
+
+
+
+
+
+The logical scalar product is linear, i.e.,
+\begin{equation}\label{eq:logical-scalar-product-linear}
+(\vect{x}\oplus\vect{s})\cdot\vect{z}
+=
+(\vect{x}\cdot\vect{z})\oplus(\vect{s}\cdot\vect{z})
+\end{equation}
+for all \(\vect{x},\vect{s},\vect{z}\in\{0,1\}^n\), because
+\[
+\begin{aligned}
+(\vect{x}\oplus\vect{s})\cdot\vect{z}
+&=
+\bigoplus_{j=1}^n \bigl((x_j\oplus s_j)\wedge z_j\bigr) \\
+&=
+\bigoplus_{j=1}^n \bigl((x_j\wedge z_j)\oplus(s_j\wedge z_j)\bigr) \\
+&=
+\left(\bigoplus_{j=1}^n x_j\wedge z_j\right)
+\oplus
+\left(\bigoplus_{j=1}^n s_j\wedge z_j\right) \\
+&=
+(\vect{x}\cdot\vect{z})\oplus(\vect{s}\cdot\vect{z})
+\end{aligned}
+\]
+
+
+\clearpage
+
+
+\section{Quantum Communication}\label{sec:quantum-communication}
+
+% Entanglement alone cannot transmit information: the reduced state available to one party is unchanged by operations performed by the other party.
+% Combined with an ordinary communication channel, however, a previously shared entangled state becomes a useful resource.
+% Teleportation uses entanglement and classical communication to transmit an unknown Qbit, while superdense coding uses entanglement and a Qbit channel to transmit two classical bits.
+
+\subsection{Teleportation}\label{sec:teleportation}
+
+{Quantum teleportation} transfers an unknown quantum state from Alice to Bob without sending the physical system that originally carried it.
+The transfer is neither instantaneous nor a way of copying the state: Alice's original state is destroyed during the protocol, in agreement with the no-cloning theorem (\autoref{thm:no-cloning}), and Bob can recover it only after receiving a classical message from Alice.
+
+The essential resource is an EPR pair, such as the Bell state \(\ket{\Phi^+} = \frac{\ket{00}+\ket{11}}{\sqrt{2}}\) from \autoref{ex:bell-states}, which Alice and Bob distribute before the state to be transmitted is available:
+\newcommand{\scalefactor}{0.5}
+\[
+\begin{tikzpicture}[
+  scale=\scalefactor,
+  % line cap=round,
+  % line join=round,
+  party/.style={font=\small},
+  entangled state/.style={font=\normalsize},
+  local state/.style={font=\normalsize},
+  endpoint/.style={circle, fill=black, inner sep=0pt, minimum size=2.5pt, outer sep=1pt},
+  connection/.style={semithick}
+]
+  \node[endpoint] (alice-endpoint) at (0,0) {};
+  \node[endpoint] (bob-endpoint) at (9.2,0) {};
+
+  \node[party, above=\scalefactor*1.0cm of alice-endpoint] {Alice};
+  \node[party, above=\scalefactor*1.0cm of bob-endpoint] {Bob};
+
+  \draw[connection] (alice-endpoint) to[bend left=29] 
+    node[entangled state, pos=0.5, above=\scalefactor*0.1cm] {$\ket{\Phi^+}$} %{$\frac{\ket{00}+\ket{11}}{\sqrt{2}}$} 
+  (bob-endpoint);
+
+  \coordinate (alice-state) at ($(alice-endpoint)+(0,-0.75)$);
+  \coordinate (bob-state) at ($(bob-endpoint)+(0,-0.75)$);
+  \node[local state] at (alice-state) {$\ket{\psi}$};
+  \node[local state] at (bob-state) {$\ket{\psi}$};
+  \draw[connection, ->]
+    ($(alice-state)+(0.75,0)$) -- ($(bob-state)+(-0.75,0)$);
+\end{tikzpicture}
+\]
+Alice keeps one half of the pair and Bob keeps the other.
+In this sense, teleportation moves the need for a quantum channel to an earlier time: entanglement is distributed while such a channel is available, and the unknown state can later be transmitted using only a classical channel.
+When Alice later receives the unknown state \(\ket{\psi}\), she performs a Bell-basis measurement on it together with her half of the EPR pair.
+As explained in \autoref{sec:cnot-gate}, this measurement can be implemented by a CNOT, a Hadamard gate, and two standard-basis measurements.
+
+Let
+\(
+\ket{\psi}
+=
+\alpha\ket{0}+\beta\ket{1}
+\)
+be the normalized unknown state to be teleported.
+% |\alpha|^2+|\beta|^2=1
+Writing \(X\) for negation and \(Z\) for the phase flip, the complete circuit is
+\[
+\begin{quantikz}[column sep=0.48cm, row sep=0.34cm]
+\lstick{$\ket{\psi}$}
+  & \qw \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm
+  % ,inner sep=1pt
+  }]{1}
+  & \ctrl{1} \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm
+  % ,inner sep=1pt
+  }]{2}
+  & \gate{H} \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm
+  % ,inner sep=1pt
+  }]{3}
+  & \meter{} &[-0cm] \control{}\wireoverride{c}\wire[l][1]["b_1"{above}]{c} \\
+\lstick[wires=2]{$\ket{\Phi^+}$} & \qw           & \targ{}             & \qw                 & \meter{} &[-0cm] \control{}\wireoverride{c}\wire[l][1]["b_2"{above}]{c} \\
+                                  & \qw           & \hphantomgate{H}                 & \qw                 &                           &[-0cm] \gate{Z^{b_1}X^{b_2}}\wire[u][2]{c} & \rstick{$\ket{\psi}$}
+\end{quantikz}
+\]
+
+
+At position \(1\), the unknown Qbit and the EPR pair form the product state
+\[
+% \begin{aligned}
+\ket{\psi}\otimes\ket{\Phi^+}
+=
+(\alpha\ket{0}+\beta\ket{1})
+\otimes
+\tfrac{\ket{00}+\ket{11}}{\sqrt{2}}
+% \\
+=
+\tfrac{1}{\sqrt{2}}
+\left(
+\alpha\ket{000}
++\alpha\ket{011}
++\beta\ket{100}
++\beta\ket{111}
+\right)
+% \end{aligned}
+\]
+
+At position \(2\), after the CNOT from the unknown Qbit to Alice's half of the EPR pair, the state is
+\[
+\begin{aligned}
+\tfrac{1}{\sqrt{2}}
+\left(
+\alpha\ket{000}
++\alpha\ket{011}
++\beta\ket{110}
++\beta\ket{101}
+\right)
+&=
+\alpha\ket{0}\otimes\tfrac{\ket{00}+\ket{11}}{\sqrt{2}}
++
+\beta\ket{1}\otimes\tfrac{\ket{10}+\ket{01}}{\sqrt{2}}
+\end{aligned}
+\]
+This is generally a genuinely entangled three-Qbit state.
+
+At position \(3\), after applying the Hadamard to the first Qbit, the joint state can be expanded and then regrouped by Alice's two computational-basis states:
+\[
+\begin{aligned}
+&
+\alpha H\ket{0}\otimes\tfrac{\ket{00}+\ket{11}}{\sqrt{2}}
++
+\beta H\ket{1}\otimes\tfrac{\ket{10}+\ket{01}}{\sqrt{2}}
+\\
+&=
+\alpha \tfrac{\ket{0}+\ket{1}}{\sqrt{2}}\otimes\tfrac{\ket{00}+\ket{11}}{\sqrt{2}}
++
+\beta \tfrac{\ket{0}-\ket{1}}{\sqrt{2}}\otimes\tfrac{\ket{10}+\ket{01}}{\sqrt{2}}
+\\
+&=
+\tfrac{\alpha}{2}
+\left(
+\ket{000}+\ket{011}+\ket{100}+\ket{111}
+\right)
+% \\
+% &\quad
++
+\tfrac{\beta}{2}
+\left(
+\ket{010}+\ket{001}-\ket{110}-\ket{101}
+\right)
+\\
+&=
+\tfrac{
+% \Bigl(
+\ket{00}\otimes(\alpha\ket{0}+\beta\ket{1})
++
+\ket{01}\otimes(\alpha\ket{1}+\beta\ket{0})
+% \\
+% &\quad
++
+\ket{10}\otimes(\alpha\ket{0}-\beta\ket{1})
++
+\ket{11}\otimes(\alpha\ket{1}-\beta\ket{0})
+}{2}
+% \Bigr)
+\\
+&=
+\tfrac{1}{2}\Bigl(
+\ket{00}\otimes\ket{\psi}
++
+\ket{01}\otimes X\ket{\psi}
++
+\ket{10}\otimes Z\ket{\psi}
++
+\ket{11}\otimes XZ\ket{\psi}
+\Bigr)
+\end{aligned}
+\]
+where
+\(
+X
+=
+\left[
+\begin{smallmatrix}
+0&1\\
+1&0
+\end{smallmatrix}
+\right]
+\) 
+and
+\(
+Z
+=
+\left[
+\begin{smallmatrix}
+1&0\\
+0&-1
+\end{smallmatrix}
+\right]
+\).
+
+
+Alice's measurement produces two classical bits \(b_1,b_2\), which she sends to Bob.
+Their values tell Bob which of four possible Pauli corrections to apply to his Qbit; 
+after the correction, his Qbit is in the original state \(\ket{\psi}\) in all four cases.
+The protocol therefore moves the state rather than the underlying particle.
+
+The classical message is indispensable.
+Before it arrives, Bob does not know which correction is required, and his Qbit is described by the maximally mixed state
+% \[
+% \rho
+% =
+% \frac{1}{4}
+% \left(
+% P_{\ket{\psi}}
+% +P_{X\ket{\psi}}
+% +P_{Z\ket{\psi}}
+% +P_{XZ\ket{\psi}}
+% \right)
+% =
+% \frac{1}{2}\matr{I}
+% =
+% \begin{bmatrix}
+% \frac{1}{2}&0\\
+% 0&\frac{1}{2}
+% \end{bmatrix}
+% \]
+\[
+\begin{aligned}
+\rho
+&=
+\frac{1}{4}
+\left(
+P_{\ket{\psi}}
++P_{X\ket{\psi}}
++P_{Z\ket{\psi}}
++P_{XZ\ket{\psi}}
+\right)
+\\
+&=
+\frac{1}{4}
+\left(
+P_{\alpha\ket{0}+\beta\ket{1}}
++
+P_{\alpha\ket{1}+\beta\ket{0}}
++
+P_{\alpha\ket{0}-\beta\ket{1}}
++
+P_{\alpha\ket{1}-\beta\ket{0}}
+\right)
+\\
+% &=
+% \frac{1}{4}
+% \left(
+% \left(\alpha\ket{0}+\beta\ket{1}\right)\left(\alpha^*\bra{0}+\beta^*\bra{1}\right)
+% +
+% \left(\alpha\ket{1}+\beta\ket{0}\right)\left(\alpha^*\bra{1}+\beta^*\bra{0}\right)
+% +
+% \left(\alpha\ket{0}-\beta\ket{1}\right)\left(\alpha^*\bra{0}-\beta^*\bra{1}\right)
+% +
+% \left(\alpha\ket{1}-\beta\ket{0}\right)\left(\alpha^*\bra{1}-\beta^*\bra{0}\right)
+% \right)
+&=
+\frac{1}{4}
+\left(
+\begin{bmatrix}
+|\alpha|^2 & \alpha\overline{\beta} \\
+\overline{\alpha}\beta & |\beta|^2
+\end{bmatrix}
++
+\begin{bmatrix}
+|\beta|^2 & \beta\overline{\alpha} \\
+\overline{\beta}\alpha & |\alpha|^2
+\end{bmatrix}
++
+\begin{bmatrix}
+|\alpha|^2 & -\alpha\overline{\beta} \\
+-\overline{\alpha}\beta & |\beta|^2
+\end{bmatrix}
++
+\begin{bmatrix}
+|\beta|^2 & -\beta\overline{\alpha} \\
+-\overline{\beta}\alpha & |\alpha|^2
+\end{bmatrix}
+\right)
+\\
+&=
+\frac{1}{4}
+\begin{bmatrix}
+2|\alpha|^2+2|\beta|^2 & 0 \\
+0 & 2|\alpha|^2+2|\beta|^2
+\end{bmatrix}
+\\
+&=
+\begin{bmatrix}
+\frac{1}{2}&0\\
+0&\frac{1}{2}
+\end{bmatrix}
+% =
+% \frac{1}{2}\matr{I}
+\end{aligned}
+\]
+where we used \autoref{def:mixed-state} \eqref{eq:mixed-state-density-matrix}.
+Since this (maximally) mixed state is independent of \(\ket{\psi}\),
+teleportation cannot be used for faster-than-light communication,
+saving us from trouble with relativity theory.
+% This is naturally expressed using reduced density matrices and the partial trace from \autoref{def:partial-trace}.
+
+An application is a \emph{quantum repeater}.
+Directly distributing entanglement over a large distance is difficult because interaction with the environment causes decoherence.
+Instead, intermediate stations can share shorter EPR pairs with their neighbours.
+An intermediate station performs a Bell measurement on its two local Qbits, thereby \emph{swapping} the entanglement so that the distant endpoints become entangled.
+Repeating this procedure extends entanglement across the network, although a repeater used in a cryptographic protocol may have to be trusted.
+
+\subsection{Superdense Coding}\label{sec:superdense-coding}
+
+{Superdense coding} reverses the resource trade of teleportation.
+Without shared entanglement, transmitting one Qbit can convey at most one classical bit.
+If Alice and Bob already share an EPR pair, Alice can instead communicate two classical bits \(b_1,b_2\) by sending only her half of the pair:
+% \[
+% \begin{quantikz}[column sep=0.50cm, row sep=0.34cm]
+% \lstick[wires=2]{$\ket{\Phi^+}$} & \gate{Z^{b_1}X^{b_2}} & \ctrl{1} & \gate{H} & \meter{} & \setwiretype{c}\cw & \cw \rstick{$b_1$} \\
+%                                   & \qw                    & \targ{}  & \qw      & \meter{} & \setwiretype{c}\cw & \cw \rstick{$b_2$}
+% \end{quantikz}
+% \]
+\[
+\begin{quantikz}[
+  column sep=0.48cm,
+  row sep=0.34cm,
+  wire types={n,n,q,n,q,q},
+  execute at end picture={
+    \begin{pgfonlayer}{background}
+      \draw[gray!35, semithick]
+        (\tikzcdmatrixname-4-1.center) --
+        ([xshift=0.0cm]\tikzcdmatrixname-4-13.east);
+    \end{pgfonlayer}
+    \draw[thickness]
+      (\tikzcdmatrixname-3-5.center) --
+      ([xshift=0.22cm]\tikzcdmatrixname-5-7.center) --
+      (\tikzcdmatrixname-5-9.center);
+    \node[anchor=south west, font=\footnotesize] at
+      ([xshift=0.0cm,yshift=0.0cm]\tikzcdmatrixname-4-1.east) {Alice};
+    \node[anchor=north west, font=\footnotesize] at
+      ([xshift=0.0cm,yshift=-0.0cm]\tikzcdmatrixname-4-1.east) {Bob};
+  }
+]
+  % & & \control{}\wireoverride{c}\wire[l][2]["b_1"{above}]{c}
+  %     & & & & & & & & & & & \\
+  % & & \control{}\wireoverride{c}\wire[l][2]["b_2"{above}]{c}
+  %     & & & & & & & & & & & \\
+  \lstick{$b_1$}
+  & \cw
+  & \control{}\wireoverride{c}
+  & & & & & & & & & & & \\
+\lstick{$b_2$}
+  & \cw
+  & \control{}\wireoverride{c}
+  & & & & & & & & & & & \\
+\lstick[wires=4]{$\ket{\Phi^+}$}
+  & \qw
+  & \gate{Z^{b_1}X^{b_2}}\wire[u][2]{c}
+  & \qw
+  & \qw
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n} \\%[0.34cm]
+  & & & & & & & & & & & & \\%[0.34cm]
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \wireoverride{n}
+  & \ctrl{1}\wireoverride{n}
+  & \gate{H}
+  & \meter{}
+  & \setwiretype{c}\cw
+  & \cw \rstick{$b_1$} \\
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \targ{}
+  & \qw
+  & \meter{}
+  & \setwiretype{c}\cw
+  & \cw \rstick{$b_2$}
+\end{quantikz}
+\]
+Alice encodes the pair \(b_1,b_2\) by applying \(Z^{b_1}X^{b_2}\) to her half of the EPR pair.
+The four possible encodings turn the shared pair into the four mutually orthogonal Bell states.
+Alice then sends her Qbit to Bob, who performs the Bell-basis measurement from \autoref{sec:cnot-gate} and thereby identifies both classical bits.
+
+Although entanglement alone carries no message, it changes what the later Qbit transmission can accomplish.
+This activation of one resource by another is the central surprise of superdense coding.
+The two protocols use the same gates in opposite order:
+teleportation consumes one EPR pair and two transmitted classical bits to communicate one Qbit, whereas superdense coding consumes one EPR pair and one transmitted Qbit to communicate two classical bits.
+
+
+\clearpage
+
+
+
+\section{Simple Algorithms}\label{sec:simple-algorithms}
+
+% The first quantum algorithms combine three recurring ideas:
+% \emph{quantum parallelism}, \emph{phase kickback}, and \emph{interference}.
+% Quantum parallelism evaluates an oracle on a superposition of inputs, but a measurement can reveal only one outcome.
+% The useful information therefore has to be moved into relative phases and made observable by interference.
+
+
+
+% For \(\vect{x},\vect{z}\in\{0,1\}^n\), their logical scalar product is
+% \[
+% \vect{x}\cdot\vect{z}
+% \coloneq
+% \bigoplus_{j=1}^n x_jz_j
+% \]
+% and the bitwise Hadamard transform satisfies
+% \begin{equation}\label{eq:nfold-hadamard-general}
+% \matr H^{\otimes n}\ket{\vect{x}}
+% =
+% \frac{1}{2^{n/2}}
+% \sum_{\vect{z}\in\{0,1\}^n}
+% (-1)^{\vect{x}\cdot\vect{z}}\ket{\vect{z}}
+% \end{equation}
+% In particular,
+% \[
+% \matr H^{\otimes n}\ket{\vect{0}}
+% =
+% \frac{1}{2^{n/2}}
+% \sum_{\vect{x}\in\{0,1\}^n}\ket{\vect{x}}
+% \]
+% is the equal superposition of all classical inputs, as already discussed before \autoref{sec:n-qubits}.
+We recall from \autoref{sec:n-qubits} that $\matr H^{\otimes n}\ket{\vect{0}}$ is the equal superposition of all classical inputs.
+
+
+\subsubsection{Reversible oracles and quantum parallelism}
+
+A classical function
+\(
+f:\{0,1\}^n\to\{0,1\}^m
+\)
+is embedded into the reversible oracle
+\begin{equation}\label{eq:reversible-boolean-oracle}
+U_f\ket{\vect{x}}\ket{\vect{y}}
+=
+\ket{\vect{x}}\ket{\vect{y}\oplus f(\vect{x})}
+\end{equation}
+where the XOR is applied bitwise.
+Since this is a permutation of the computational basis, it extends linearly to a unitary operation.
+The corresponding circuit is
+\[
+\begin{quantikz}[column sep=0.55cm, row sep=0.2cm]
+\lstick{$\ket{\vect{x}}$} & \qwbundle{n} & \gate[wires=2]{U_f} & \rstick{$\ket{\vect{x}}$} \\
+\lstick{$\ket{\vect{y}}$} & \qwbundle{m} &                     & \rstick{$\ket{\vect{y}\oplus f(\vect{x})}$}
+\end{quantikz}
+\]
+Applying \(U_f\) after preparing an equal superposition (see \autoref{sec:n-qubits}) yields
+\[
+\ket{\vect{0}_n}\ket{\vect{0}_m}
+\xmapsto{(H^{\otimes n}) \otimes (I^{\otimes m})}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}\ket{\vect{x}}\ket{\vect{0}_m}
+\xmapsto{U_f}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}\ket{\vect{x}}\ket{f(\vect{x})}
+\]
+which contains all function values at once.
+Nevertheless, a standard-basis measurement returns only one random pair
+\(
+(\vect{x},f(\vect{x}))
+\),
+so parallelism by itself gives no speedup.
+
+
+\subsubsection{Phase kickback}
+
+For a one-bit output, initialize the result Qbit in the diagonal state
+\(
+\ket{-}
+=
+\matr H\ket{1}
+=
+\frac{1}{\sqrt2}
+(\ket{0}-\ket{1})
+\).
+Then
+\begin{equation}\label{eq:phase-kickback-boolean-oracle}
+U_f\ket{\vect{x}}\ket{-}
+=
+\ket{\vect{x}}
+\frac{\ket{f(\vect{x})}-\ket{1\oplus f(\vect{x})}}{\sqrt2}
+=
+(-1)^{f(\vect{x})}\ket{\vect{x}}\ket{-}
+\end{equation}
+The output Qbit is unchanged, while the function value is kicked back as a phase on the input register:
+\[
+\begin{quantikz}[column sep=0.55cm, row sep=0.2cm]
+\lstick{$\ket{\vect{x}}$} & \qwbundle{n} & \qw & \gate[wires=2]{U_f} & \qw & \qw & \rstick{$(-1)^{f(\vect{x})}\ket{\vect{x}}$} \\
+\setwiretype{n} & & \lstick{$\ket{-}$} & \setwiretype{q} & \rstick{$\ket{-}$}
+\end{quantikz}
+\]
+By linearity, the same transformation applies simultaneously to every term of a superposition:
+\[
+\ket{\vect{0}_n}\ket{0}
+\xmapsto{(H^{\otimes n}) \otimes (H X)}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}\ket{\vect{x}}\ket{-}
+\xmapsto{U_f}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}(-1)^{f(\vect{x})}\ket{\vect{x}}\ket{-}
+\]
+
+More generally, phase kickback occurs whenever the target register is prepared in an eigenstate of the controlled operation.
+Let a controlled unitary $U_C$ act as
+\[
+U_C\ket0\ket u
+=
+\ket0\ket u,
+\qquad
+U_C\ket1\ket u
+=
+\ket1 U\ket u
+\]
+and assume that the target state $\ket u$ is an eigenvector of $U$ with eigenvalue $e^{i\phi}$:
+\[
+U\ket u
+=
+e^{i\phi}\ket u
+\]
+Then, by linearity,
+\[
+\begin{aligned}
+U_C
+\left(
+(\alpha\ket0+\beta\ket1)
+\otimes
+\ket u
+\right)
+&=
+\alpha U_C\ket0\ket u
++ 
+\beta U_C\ket1\ket u \\
+&=
+\alpha\ket0\ket u
++ 
+\beta\ket1 U\ket u \\
+&=
+\alpha\ket0\ket u
++ 
+\beta e^{i\phi}\ket1\ket u \\
+&=
+(\alpha\ket0+e^{i\phi}\beta\ket1)
+\otimes
+\ket u
+\end{aligned}
+\]
+Thus the target state remains unchanged, while the phase $e^{i\phi}$ is kicked back onto the control branch.
+Equation~\eqref{eq:phase-kickback-boolean-oracle} is the special case where $U=X$ and
+\[
+X\ket{-}=-\ket{-}
+\]
+so the eigenvalue is $e^{i\phi}=-1$.
+
+The following algorithms arrange a final Hadamard transform so that the relative phases interfere into measurable information.
+
+\subsection{Deutsch's algorithm}\label{sec:deutsch-algorithm}
+
+Deutsch's algorithm is the \(n=1\) case of the \nameref{sec:deutsch-jozsa-algorithm}.
+Given
+\[
+f:\{0,1\}\to\{0,1\}
+\]
+promised to be either \emph{constant} or \emph{balanced}, decide which case holds.
+Equivalently, determine the bit
+\[
+f(0)\oplus f(1)
+=
+\begin{cases}
+0 & f\text{ constant}\\
+1 & f\text{ balanced}
+\end{cases}
+\]
+A deterministic classical algorithm needs two oracle calls.
+Deutsch's quantum algorithm needs one:
+\[
+\begin{quantikz}[
+  column sep=0.55cm,
+  row sep=0.38cm,
+  execute at end picture={
+    \draw[gray, densely dotted, shorten <=3pt, semithick, -{Computer Modern Rightarrow[length=1.0mm]}]
+      (group\tikzcdmatrixname-1-5.east) -- ++(0.85cm,0.38cm)
+      node[right, black, font=\small] {$0$ if $f$ is constant};
+    \draw[gray, densely dotted, shorten <=3pt, semithick, -{Computer Modern Rightarrow[length=1.0mm]}]
+      (group\tikzcdmatrixname-1-5.east) -- ++(0.85cm,-0.38cm)
+      node[right, black, font=\small] {$1$ if $f$ is not constant};
+  }
+]
+  \lstick{$\ket{0}$} 
+  & 
+  \gate{H} 
+  \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_1}$}
+  & 
+  \gate[wires=2]{U_f} 
+  \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_2}$}
+  & 
+  \gate{H} 
+  \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_3}$}
+  & 
+  \meter{} 
+\\
+\lstick{$\ket{1}$} & \gate{H} &                     & \qw      & \qw
+\end{quantikz}
+\]
+The state after the first Hadamards is
+\[
+\ket{\psi_1}
+=
+\frac{\ket0+\ket1}{\sqrt2}
+\otimes
+\frac{\ket0-\ket1}{\sqrt2}
+\]
+Phase kickback from \eqref{eq:phase-kickback-boolean-oracle} gives
+\[
+\ket{\psi_2}
+=
+\frac{
+(-1)^{f(0)}\ket0
++
+(-1)^{f(1)}\ket1
+}{\sqrt2}
+\otimes\ket{-}
+\]
+Applying the final Hadamard to the first Qbit yields
+\[
+\begin{aligned}
+\ket{\psi_3}
+&=
+\frac{1}{2}
+\left(
+(-1)^{f(0)}(\ket{0}+\ket{1})
++
+(-1)^{f(1)}(\ket{0}-\ket{1})
+\right)
+\otimes\ket{-}
+\\
+&=
+\frac12
+\left(
+\left((-1)^{f(0)}+(-1)^{f(1)}\right)\ket0
++
+\left((-1)^{f(0)}-(-1)^{f(1)}\right)\ket1
+\right)
+\otimes\ket{-}
+\\
+&=
+\begin{cases}
+\pm\ket0\otimes\ket{-} & \text{if $f$ is constant}\\
+\pm\ket1\otimes\ket{-} & \text{if $f$ is balanced}
+\end{cases}
+\end{aligned}
+\]
+% If \(f\) is constant, the coefficient of \(\ket1\) vanishes and the measurement returns \(0\).
+% If \(f\) is balanced, the coefficient of \(\ket0\) vanishes and the measurement returns \(1\).
+and hence the measured bit is exactly \(f(0)\oplus f(1)\).
+
+\subsection{Deutsch--Jozsa algorithm}\label{sec:deutsch-jozsa-algorithm}
+
+Let
+\[
+f:\{0,1\}^n\to\{0,1\}
+\]
+with the promise that \(f\) is either constant or balanced, meaning
+\[
+\left|\{\vect{x}:f(\vect{x})=0\}\right|
+=
+\left|\{\vect{x}:f(\vect{x})=1\}\right|
+=
+2^{n-1}
+\]
+A deterministic classical algorithm needs \(2^{n-1}+1\) oracle calls in the worst case:
+after \(2^{n-1}\) identical values, the unseen inputs could still all have the opposite value.
+The Deutsch--Jozsa algorithm uses one oracle call:
+\[
+\begin{quantikz}[column sep=0.52cm, row sep=0.36cm]
+\lstick{$\ket{\vect{0}}$}
+  & \qwbundle{n}
+  & \gate{H^{\otimes n}}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_1}$}
+  & \gate[wires=2]{U_f}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_2}$}
+  & \gate{H^{\otimes n}}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\smash[t]{\psi_3^{\text{joint}}}}$}
+  & \meter{}
+\\
+\lstick{$\ket{1}$} & \qw & \gate{H} & & \qw & \qw
+\end{quantikz}
+\]
+After the first Hadamards, the joint state is
+\[
+% \begin{aligned}
+\ket{\psi_1}
+=
+\left(
+\matr H^{\otimes n}\ket{\vect0}
+\right)
+\otimes
+\left(
+\matr H\ket1
+\right)
+\overset{\text{\eqref{eq:nfold-hadamard-zero}}}{=}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+\ket{\vect{x}}
+\otimes\ket{-}
+% \end{aligned}
+\]
+Phase kickback from \eqref{eq:phase-kickback-boolean-oracle} gives
+\[
+\ket{\psi_2}
+=
+U_f\ket{\psi_1}
+=
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+U_f
+(\ket{\vect{x}}\otimes\ket{-})
+\overset{\text{\eqref{eq:phase-kickback-boolean-oracle}}}{=}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+(-1)^{f(\vect{x})}\ket{\vect{x}}
+\otimes\ket{-}
+\]
+We denote the state after the final Hadamards
+\(
+\ket{\smash[t]{\psi_3^{\text{joint}}}}
+=
+\ket{\psi_3}\otimes\ket{-}
+\)
+where \(\ket{\psi_3}\) is the state of the first \(n\) Qbits.
+We don't need the last Qbit anymore, so we ignore it for the sake of readability.
+Using \rlap{\eqref{eq:nfold-hadamard-general},}
+\[
+\begin{aligned}
+\ket{\psi_3}
+&=
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+(-1)^{f(\vect{x})} H^{\otimes n}\ket{\vect{x}} %\otimes\ket{-}
+\\
+&\overset{\text{\eqref{eq:nfold-hadamard-general}}}{=}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+(-1)^{f(\vect{x})}
+% \left(
+\frac{1}{2^{n/2}}
+\sum_{\vect{z}\in\{0,1\}^n}
+(-1)^{\vect{x}\cdot\vect{z}}\ket{\vect{z}}
+% \right)
+% \otimes\ket{-}
+\\
+&=
+\sum_{\vect{z}\in\{0,1\}^n}
+\left(
+\frac{1}{2^n}
+\sum_{\vect{x}\in\{0,1\}^n}
+(-1)^{f(\vect{x})+\vect{x}\cdot\vect{z}}
+\right)
+\ket{\vect{z}} %\otimes\ket{-}
+\end{aligned}
+\]
+Only the amplitude of \(\ket{\vect0}\) is needed:
+\[
+\braket{\vect0|\psi_3}
+=
+\frac{1}{2^n}
+\sum_{\vect{x}}(-1)^{f(\vect{x})}
+=
+\frac{
+\left|\{\vect{x}:f(\vect{x})=0\}\right|
+-
+\left|\{\vect{x}:f(\vect{x})=1\}\right|
+}{2^n}
+\]
+For a constant function this amplitude is \(1\) or \(-1\), so the outcome is certainly \(\vect0\).
+For a balanced function it is \(0\), so the outcome can never be \(\vect0\).
+Consequently,
+\[
+\text{measure }\vect0
+\quad\Longleftrightarrow\quad
+f\text{ is constant}
+\]
+The algorithm does not determine which constant value \(f\) assumes, because the two constant functions differ only by a global phase.
+
+\pagebreak[3]
+
+\subsection{The secret mask: Bernstein--Vazirani algorithm}\label{sec:bernstein-vazirani-algorithm}
+
+Let a secret string \(\vect{s}\in\{0,1\}^n\) define
+\[
+f_{\vect{s}}(\vect{x})
+=
+\vect{s}\cdot\vect{x}
+=
+\bigoplus_{j=1}^n \left(s_j \wedge x_j\right)
+\]
+Classically, querying the standard basis vectors reveals one bit of \(\vect{s}\) per call and therefore requires \(n\) calls:
+\[
+f_{\vect{s}}(\vect{e}_j)
+=
+s_j
+\]
+The quantum oracle has the reversible action
+\[
+U_{f_{\vect{s}}}
+\ket{\vect{x}}\ket b
+=
+\ket{\vect{x}}\ket{b\oplus\vect{s}\cdot\vect{x}}
+\]
+and the Bernstein--Vazirani circuit is
+\[
+\begin{quantikz}[column sep=0.52cm, row sep=0.36cm]
+\lstick{$\ket{\vect{0}}$}
+  & \qwbundle{n}
+  & \gate{H^{\otimes n}}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_1}$}
+  & \gate[wires=2]{U_{f_{\vect{s}}}}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_2}$}
+  & \gate{H^{\otimes n}}
+    \slice[style={densely dashed,gray, semithick},label style={pos=1, anchor=north,yshift=0.0cm}]{$\ket{\psi_3}$}
+  & \meter{}
+\\
+\lstick{$\ket{1}$} & \qw & \gate{H} & & \qw & \qw
+\end{quantikz}
+\]
+Immediately before the oracle, the state is
+\[
+\ket{\psi_1}
+=
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}\ket{\vect{x}}\otimes\ket{-}
+\]
+After phase kickback,
+\[
+\begin{aligned}
+\ket{\psi_2}
+&=
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}
+(-1)^{f_{\vect{s}}(\vect{x})}
+\ket{\vect{x}}\otimes\ket{-}
+\\
+&=
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}}
+(-1)^{\vect{s}\cdot\vect{x}}
+\ket{\vect{x}}\otimes\ket{-}
+\\
+&=
+\matr H^{\otimes n}\ket{\vect{s}}\otimes\ket{-}
+\end{aligned}
+\]
+Since \(\matr H^{-1}=\matr H\), the last Hadamard transform recovers
+\[
+\ket{\psi_3}
+=
+\ket{\vect{s}}\otimes\ket{-}
+\]
+and measuring the first register returns the complete secret string with certainty after one oracle call.
+
+
+
+
+\subsubsection*{Alternative interpretation}
+% The structure of the oracle also gives a circuit-level interpretation of the phase kickback.
+% For every position with \(s_j=1\), the oracle contains a CNOT from input Qbit \(j\) to the output Qbit.
+% From \autoref{sec:cnot-gate}, we know that
+% conjugating a CNOT by Hadamards on both wires reverses its direction.
+% % \[
+% % \begin{quantikz}[column sep=0.42cm, row sep=0.34cm]
+% % & \gate{H} & \ctrl{1} & \gate{H} & \qw \\
+% % & \gate{H} & \targ{}  & \gate{H} & \qw
+% % \end{quantikz}
+% % \quad\equiv\quad
+% % \begin{quantikz}[column sep=0.42cm, row sep=0.34cm]
+% % & \targ{}  & \qw \\
+% % & \ctrl{-1} & \qw
+% % \end{quantikz}
+% % \]
+% Thus the secret bits are effectively copied from the output wire back onto the input register in the diagonal basis.
+
+
+An illuminating view of the algorithm is the following. %was proposed by David Mermin~\cite{mermin}.
+
+From \autoref{sec:cnot-gate}, we recall that
+conjugating a CNOT by Hadamards on both wires reverses its direction.
+
+The oracle $U_{f_{\vect{s}}}$ for the function \(f_{\vect{s}}(\vect{x})=\vect{s}\cdot\vect{x}\) can be written as a sequence of CNOTs:
+for every position with \(s_j=1\), there is a CNOT from the \(j\)-th input Qbit to the output Qbit;
+for every position with \(s_j=0\), there is no such gate.
+
+Using the Hadamards at the beginning and at the end of the algorithm,
+and inserting cancelling pairs of Hadamards between consecutive CNOTs,
+one may equivalently view these CNOTs as pointing in the opposite direction:
+from the output Qbit back to the input Qbits.
+In this reversed-CNOT picture, the output wire carries the value \(\ket{1}\).
+Therefore, precisely those input wires for which \(s_j=1\) are flipped, while the others are left unchanged.
+Starting from \(\ket{\vect{0}}\), the input register is thus transformed into \(\ket{\vect{s}}\).
+
+% This is the circuit-level meaning of phase kickback in the Bernstein--Vazirani algorithm:
+% although the oracle is formally defined as writing \(f_s(x)\) into the output Qbit,
+% with the output Qbit prepared in the diagonal basis the observable effect appears on the input register.
+% The full secret string \(s\) is written onto the \(n\) input wires and can then be measured directly.
+
+\subsection{Simon's algorithm}\label{sec:simons-algorithm}
+
+Simon's problem is a collision-search problem with additional algebraic structure.
+Let
+\[
+f:\{0,1\}^n\to\{0,1\}^{n-1}
+\]
+and suppose there is a nonzero secret string
+\(
+\vect{s}\in\{0,1\}^n
+\)
+such that
+\begin{equation}\label{eq:simon-promise}
+f(\vect{x})=f(\vect{y})
+\quad\Longleftrightarrow\quad
+\vect{x}\oplus\vect{y}\in\{\vect0,\vect{s}\}
+\end{equation}
+% Equivalently,
+% \[
+% f(\vect{x})
+% =
+% f(\vect{x}\oplus\vect{s})
+% \]
+% and every function value has exactly two preimages.
+% The task is to determine \(\vect{s}\).
+Since \(\vect{x}\oplus\vect{y}=\vect{s}\) is equivalent to \(\vect{y}=\vect{x}\oplus\vect{s}\), 
+the promise can be restated as
+\[
+f(\vect{x})
+=
+f(\vect{x}\oplus\vect{s})
+\]
+for all \(\vect{x} \in\{0,1\}^n\) and every function value has exactly two preimages.
+Hence, $\vect{s}$ can be seen as the period of the function \(f\).
+The task is to determine \(\vect{s}\).
+% \[
+% \[
+% \begin{tikzpicture}[
+%   input/.style={draw,circle,minimum size=0.78cm,inner sep=1pt},
+%   output/.style={draw,rounded corners,minimum width=1.55cm,minimum height=0.78cm},
+%   every node/.style={font=\small},
+%   >=Stealth
+% ]
+%   \node[input] (x) at (-2.4,0.62) {$\vect{x}$};
+%   \node[input] (xs) at (-2.4,-0.62) {$\vect{x}\oplus\vect{s}$};
+%   \node[output] (fx) at (1.4,0) {$f(\vect{x})$};
+%   \draw[->] (x) -- (fx);
+%   \draw[->] (xs) -- (fx);
+%   \node[above=0.10cm of fx] {one collision pair};
+% \end{tikzpicture}
+% \]
+% \pagebreak[3]
+
+
+
+\subsubsection*{Classical query complexity}
+
+% {\textbf{Classical query complexity}}
+
+% Suppose a classical randomized algorithm makes \(T\) distinct queries.
+% The secret becomes known as soon as it finds a collision, because then
+% \(
+% \vect{s}=\vect{x}_i\oplus\vect{x}_j
+% \).
+% There are at most \(\binom T2\) tested differences among the \(2^n-1\) possible nonzero secrets, so
+% \[
+% \Prob[\text{collision after }T\text{ queries}]
+% \leq
+% \frac{\binom T2}{2^n-1}
+% \leq
+% \frac{T^2}{2^n}
+% \]
+% A constant success probability therefore requires
+% \[
+% T
+% =
+% \Omega\!\left(2^{n/2}\right)
+% \]
+% which is the birthday bound.
+
+
+Suppose a classical randomized algorithm makes \(T\) distinct queries.
+The secret becomes known as soon as it finds a collision, because then
+\(
+\vect{s}=\vect{x}_i\oplus\vect{x}_j
+\).
+There are at most \(\binom T2\) tested differences (pairwise XORs) among the \(2^n-1\) possible nonzero secrets, so
+\[
+\Prob(\text{collision after $T$ queries})
+\leq
+\frac{\binom T2}{2^n-1}
+=
+\mathcal{O}\biggl(
+\frac{T^2}{2^n}
+\biggr)
+\]
+A constant success probability therefore requires
+\[
+T
+=
+\Omega\!\left(2^{n/2}\right)
+\]
+which is the birthday bound.
+
+
+
+\subsubsection*{Quantum algorithm}
+
+The reversible oracle acts as
+\[
+U_f\ket{\vect{x}}\ket{\vect{y}}
+=
+\ket{\vect{x}}\ket{\vect{y}\oplus f(\vect{x})}
+\]
+One run of Simon's quantum subroutine is
+\[
+\begin{quantikz}[column sep=0.50cm, row sep=0.38cm]
+\lstick{$\ket{\vect0}$} 
+& \qwbundle{n}   
+& \gate{H^{\otimes n}}\slice[style={densely dashed,gray,semithick},label style={pos=1,anchor=north,yshift=0.0cm}]{$\ket{\psi_1}$} 
+& \gate[wires=2]{U_f}\slice[style={densely dashed,gray,semithick},label style={pos=1,anchor=north,yshift=0.0cm}]{$\ket{\psi_2}$} 
+& \qw\slice[style={densely dashed,gray,semithick},label style={pos=1,anchor=north,yshift=0.0cm}]{$\ket{\psi_{x_0}}$} 
+& 
+& \gate{H^{\otimes n}}\slice[style={densely dashed,gray,semithick},label style={pos=1,anchor=north,yshift=0.0cm}]{$\ket{\psi_{\text{final}}}$} 
+& \meter{} \\
+\lstick{$\ket{\vect0}$} & \qwbundle{n-1} & \qw                  &                     & \meter{}        & \setwiretype{c}   \rstick{$f(\vect{x}_0)$} & \setwiretype{n} & {}
+\end{quantikz}
+\]
+After the first Hadamard,
+\[
+\ket{\psi_1}
+\overset{\text{\eqref{eq:nfold-hadamard-zero}}}{=}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+\ket{\vect{x}}\ket{\vect0}
+\]
+After the oracle, 
+\[
+\ket{\psi_2}
+\overset{\text{\eqref{eq:reversible-boolean-oracle}}}{=}
+\frac{1}{2^{n/2}}
+\sum_{\vect{x}\in\{0,1\}^n}
+\ket{\vect{x}}\ket{f(\vect{x})}
+\]
+Let's say we measure the second register and obtain \(f(\vect{x}_0)\).
+Measuring the second register and obtaining \(f(\vect{x}_0)\) collapses the first register to
+\[
+\ket{\psi_{\vect{x}_0}}
+=
+\frac{\ket{\vect{x}_0}+\ket{\vect{x}_0\oplus\vect{s}}}{\sqrt2}
+\]
+Applying the final Hadamard,
+\[
+\begin{aligned}
+  \ket{\psi_{\text{final}}}
+=
+ H^{\otimes n}\ket{\psi_{\vect{x}_0}}
+&\overset{\text{\eqref{eq:nfold-hadamard-general}}}{=}
+\frac{1}{\sqrt2}
+\left(
+\frac{1}{2^{n/2}}
+\sum_{\vect{z}}
+(-1)^{\vect{x}_0\cdot\vect{z}}\ket{\vect{z}}
++
+\frac{1}{2^{n/2}}
+\sum_{\vect{z}}
+(-1)^{(\vect{x}_0\oplus\vect{s})\cdot\vect{z}}\ket{\vect{z}}
+\right)
+\\
+&=
+\frac{1}{2^{(n+1)/2}}
+\sum_{\vect{z}}
+\left(
+(-1)^{\vect{x}_0\cdot\vect{z}}
++
+(-1)^{(\vect{x}_0\oplus\vect{s})\cdot\vect{z}}
+\right)
+\ket{\vect{z}}
+\\
+&\overset{\text{\eqref{eq:logical-scalar-product-linear}}}{=}
+\frac{1}{2^{(n+1)/2}}
+\sum_{\vect{z}}
+(-1)^{\vect{x}_0\cdot\vect{z}}
+\left(
+1+(-1)^{\vect{s}\cdot\vect{z}}
+\right)
+\ket{\vect{z}}
+\\
+&=
+\frac{1}{2^{(n-1)/2}}
+\sum_{\vect{z}:\vect{s}\cdot\vect{z}=0}
+(-1)^{\vect{x}_0\cdot\vect{z}}\ket{\vect{z}}
+\end{aligned}
+\]
+
+Hence each run returns a uniformly random vector \(\vect{z}\) satisfying the linear equation
+\[
+\vect{s}\cdot\vect{z}
+=
+0
+\]
+over \(\F_2\).
+The \(2^{n-1}\) possible outcomes form the orthogonal subspace
+\[
+\vect{s}^{\perp}
+=
+\left\{\vect{z}\in\F_2^n:\vect{s}\cdot\vect{z}=0\right\}
+\]
+Collect outcomes until they span this \((n-1)\)-dimensional subspace $\vect{s}^\perp$, meaning that every vector $\vect{z} \in \vect{s}^\perp$ can be written as a componentwise XOR of some of the sampled vectors:
+\[
+\vect{z}
+=
+\bigoplus_{i = 1}^{n-1}
+c_i \vect{z}_i
+\]
+with $c_i \in \{0,1\}$.
+Then solve the homogeneous linear system 
+\[
+\left\{
+\begin{alignedat}{1}
+\vect{s}\cdot\vect{z}_1 &= 0\\
+&\vdots\\
+\vect{s}\cdot\vect{z}_{n-1} &= 0
+\end{alignedat}
+\right.
+\]
+over \(\F_2\).
+% The orthogonal complement of the sampled subspace is one-dimensional and equals
+% \(
+% \Span\{\vect{s}\}
+% \),
+% so the unique nonzero solution is the secret string.
+Once the sampled vectors span \(\vect{s}^\perp\), the orthogonal complement
+\[
+(\vect{s}^{\perp})^{\perp}
+=
+\Span\{\vect{s}\}
+\]
+is one-dimensional,
+so the unique nonzero solution is the secret string.
+
+If the current sampled vectors have rank \(k<n-1\), the probability that the next vector increases the rank is
+\[
+1-\frac{2^k}{2^{n-1}}
+\geq
+\frac12
+\]
+because the current span contains \(2^k\) vectors, whereas
+\(\vect{s}^{\perp}\) contains \(2^{n-1}\) vectors.
+
+
+% Thus the expected number of oracle calls needed to obtain \(n-1\) independent equations is at most \(2(n-1)\).
+Thus each missing independent equation takes expected at most \(2\) samples, and there are \(n-1\) such equations.
+Therefore the expected number of oracle calls is at most \(2(n-1)\).
+% More precisely, after \(n-1+t\) samples the probability that some nonzero candidate remains orthogonal to every sample is bounded by
+% \[
+% \Prob[\text{failure}]
+% <
+% 2^{-t}
+% \]
+% % because a wrong candidate survives only if it is orthogonal to all sampled vectors.  
+% % Each new sample rules out half of the remaining wrong candidates,
+% % so after \(t\) additional samples the probability that any wrong candidate survives is bounded by \(2^{-t}\).
+% because for any fixed wrong candidate, a uniformly random sample is orthogonal to it with probability \(1/2\).
+% Thus the probability that the candidate survives \(t\) additional samples is \(2^{-t}\).
+
+More precisely, after \(m\) samples, a fixed wrong candidate survives with probability \(2^{-m}\), since each sample is orthogonal to it with probability \(1/2\).
+Since there are fewer than \(2^n\) wrong candidates, %the union bound gives
+\[
+\begin{aligned}
+\Prob(\text{failure after $m$ samples})
+&=
+\Prob(\text{some wrong candidate survives})
+\\
+&=
+\Prob\Biggl(\bigcup_{\text{wrong $\vect{a}$}}\{\text{$\vect{a}$ survives}\}\Biggr)
+\\
+&\leq
+\sum_{\text{wrong $\vect{a}$}}
+\Prob(\text{$\vect{a}$ survives})
+\\
+&<
+2^n 2^{-m}
+\end{aligned}
+\]
+For \(m=n+t\), this gives
+\[
+\Prob(\text{failure})
+<
+2^{-t}
+\]
+
+Simon's algorithm is therefore probabilistic but in expectation uses only \(O(n)\) oracle calls, exponentially fewer than the classical birthday bound.
 
 
 
 
 
 \clearpage
+\section{Intermezzo: Pseudo-telepathy}\label{sec:pseudo-telepathy}
 
-\section{Algorithms}
+Pseudo-telepathy games expose nonlocal correlations as cooperative games.
+Several separated parties may agree on a strategy and share entanglement before the game, but after receiving their individual questions they may not communicate.
+A game exhibits pseudo-telepathy when entanglement permits a perfect strategy although no perfect classical strategy exists.
+As with the Bell experiments discussed in \autoref{sec:aspect-gisin-zeilinger-experiments}, entanglement correlates the answers but cannot transmit a message.
+
+\subsection{Mermin's three-party game}\label{sec:mermin-pseudo-telepathy}
+
+Alice, Bob, and Charlie receive input bits \(a,b,c\) and return output bits \(x,y,z\).
+% \[
+% \begin{tikzpicture}[
+%   player/.style={draw,rounded corners,minimum width=2.15cm,minimum height=1.05cm,align=center},
+%   resource/.style={draw,circle,minimum size=1.05cm,align=center},
+%   every node/.style={font=\small},
+%   >=Stealth
+% ]
+%   \node[resource] (psi) at (0,0) {$\ket{\Psi}$};
+%   \node[player] (alice) at (90:2.35) {Alice\\$a\mapsto x$};
+%   \node[player] (bob) at (210:2.35) {Bob\\$b\mapsto y$};
+%   \node[player] (charlie) at (330:2.35) {Charlie\\$c\mapsto z$};
+%   \draw[->] (psi) -- (alice);
+%   \draw[->] (psi) -- (bob);
+%   \draw[->] (psi) -- (charlie);
+% \end{tikzpicture}
+% \]
+The inputs satisfy the promise
+\[
+a\oplus b\oplus c
+=
+1
+\]
+and the players win if
+\[
+x\oplus y\oplus z
+=
+a\wedge b\wedge c
+\]
+
+\subsubsection*{Classical limit}
+
+Shared randomness cannot improve the best success probability beyond the best deterministic strategy, because it merely produces a convex mixture of deterministic strategies.
+A deterministic strategy fixes six bits
+\(
+x_0,x_1,y_0,y_1,z_0,z_1
+\).
+Perfect success would require
+\[
+\begin{aligned}
+x_0\oplus y_0\oplus z_1 &= 0\\
+x_0\oplus y_1\oplus z_0 &= 0\\
+x_1\oplus y_0\oplus z_0 &= 0\\
+x_1\oplus y_1\oplus z_1 &= 1
+\end{aligned}
+\]
+XORing the four left-hand sides cancels every variable twice and gives \(0\), while XORing the right-hand sides gives \(1\).
+Therefore no perfect classical strategy exists.
+For uniformly distributed promised inputs, any classical strategy wins at most three of the four cases:
+\[
+p_{\mathrm{win}}^{\mathrm{classical}}
+\leq
+\frac34
+\]
+
+\subsubsection*{Quantum strategy}
+
+The players share one Qbit each of the symmetric entangled state
+\begin{equation}\label{eq:mermin-game-state}
+\begin{aligned}
+\ket{\Psi}
+&=
+\frac{1}{2\sqrt2}
+\sum_{i,j,k\in\{0,1\}}
+(-1)^{\operatorname{maj}(i,j,k)}
+\ket{ijk}
+\\
+&=
+\frac{1}{2\sqrt2}
+\left(
+\ket{000}+\ket{001}+\ket{010}-\ket{011}
++\ket{100}-\ket{101}-\ket{110}-\ket{111}
+\right)
+\end{aligned}
+\end{equation}
+On input \(0\), a player measures directly in the standard basis.
+On input \(1\), the player first applies a Hadamard \rlap{and then measures:}
+\[
+\begin{quantikz}[column sep=0.52cm, row sep=0.38cm]
+\lstick[wires=3]{$\ket{\Psi}$} & \gate{H^a} \slice[style={densely dashed,gray,semithick},label style={pos=0,anchor=south,yshift=0.0cm}]{$\ket{\Psi_{abc}}$} & \meter{} \rstick{$x$} \\
+                               & \gate{H^b} & \meter{} \rstick{$y$} \\
+                               & \gate{H^c} & \meter{} \rstick{$z$}
+\end{quantikz}
+\]
+For an input with exactly one \(1\), 
+% symmetry makes it enough to consider \(a=1\) and \(b=c=0\):
+% \[
+% \begin{aligned}
+% (\matr H\otimes\matr I\otimes\matr I)\ket{\Psi}
+% &=
+% \frac{1}{\sqrt2}
+% \left(
+% \ket0\otimes\frac{\ket{00}-\ket{11}}{\sqrt2}
+% +
+% \ket1\otimes\frac{\ket{01}+\ket{10}}{\sqrt2}
+% \right)
+% \\
+% &=
+% \frac12
+% \left(
+% \ket{000}+\ket{101}+\ket{110}-\ket{011}
+% \right)
+% \end{aligned}
+% \]
+every basis vector in the superposition $\ket{\Psi_{abc}}$ has even parity, so
+\(
+x\oplus y\oplus z=0
+\),
+as required because \(a\wedge b\wedge c=0\).
+
+For \(a=b=c=1\), all players apply Hadamards:
+% The remaining two Hadamards exchange the Bell-state factors:
+% \[
+% \matr H^{\otimes2}
+% \frac{\ket{00}-\ket{11}}{\sqrt2}
+% =
+% \frac{\ket{01}+\ket{10}}{\sqrt2}
+% \qquad
+% \matr H^{\otimes2}
+% \frac{\ket{01}+\ket{10}}{\sqrt2}
+% =
+% \frac{\ket{00}-\ket{11}}{\sqrt2}
+% \]
+% Therefore,
+\[
+\ket{\Psi_{abc}}
+=
+H^{\otimes3}\ket{\Psi}
+=
+\frac12
+\left(
+\ket{001}+\ket{010}+\ket{100}-\ket{111}
+\right)
+\]
+Every possible outcome now has odd parity, so
+\(
+x\oplus y\oplus z=1
+\),
+as required because \(a\wedge b\wedge c=1\).
+The quantum strategy therefore wins with certainty.
+
+\subsection{The Deutsch--Jozsa game}\label{sec:deutsch-jozsa-game}
+
+% The lecture notes also formulate the interference behind the Deutsch--Jozsa algorithm as a two-party pseudo-telepathy game.
+Let
+\(
+N=2^n
+\).
+Alice receives \(\vect{a}\in\{0,1\}^N\), Bob receives \(\vect{b}\in\{0,1\}^N\), and they are promised that
+\[
+d_{\text{Ham}}(\vect{a},\vect{b})
+\in
+\{0, N/2\}
+\]
+where $d_{\text{Ham}}(\vect{a},\vect{b})
+\coloneq
+\left|\{i \in \{1, \ldots, N\}: a_i \neq b_i\}\right|
+$ denotes the Hamming distance.
+
+They must output \(\vect{x},\vect{y}\in\{0,1\}^n\) satisfying
+\[
+\vect{x}=\vect{y}
+\quad\Longleftrightarrow\quad
+\vect{a}=\vect{b}
+\]
+% The setting is
+% \[
+% \begin{tikzpicture}[
+%   player/.style={draw,rounded corners,minimum width=2.45cm,minimum height=1.15cm,align=center},
+%   every node/.style={font=\small},
+%   >=Stealth
+% ]
+%   \node[player] (alice) at (-3.0,0) {Alice\\$\vect{a}\mapsto\vect{x}$};
+%   \node[player] (bob) at (3.0,0) {Bob\\$\vect{b}\mapsto\vect{y}$};
+%   \draw[very thick,gray!60] (0,-1.2) -- (0,1.2);
+%   \draw[<->,semithick,bend left=22] (alice.north east) to node[above] {shared entanglement} (bob.north west);
+%   \node[below=0.20cm of alice] {no communication};
+%   \node[below=0.20cm of bob] {no communication};
+% \end{tikzpicture}
+% \]
+
+A deterministic classical perfect strategy would be a map
+\[
+g:\{0,1\}^N\to\{0,1\}^n
+\]
+that assigns equal outputs to equal inputs and different outputs to every pair at Hamming distance \(N/2\).
+Equivalently, it would color the corresponding Hadamard graph with only \(N\) colors.
+Such a coloring does not exist in the pseudo-telepathy instances, including \(N=16\), so no perfect classical strategy exists.
+
+\subsubsection*{Quantum strategy}
+
+Alice and Bob share the maximally entangled state of two \(n\)-Qbit registers
+\[
+\ket{\Phi_N}
+=
+\frac{1}{\sqrt N}
+\sum_{\vect{i}\in\{0,1\}^n}
+\ket{\vect{i}}\ket{\vect{i}}
+\]
+Each player first applies an input-dependent phase, then a bitwise Hadamard, and finally measures:
+\[
+\begin{quantikz}[column sep=0.50cm, row sep=0.38cm]
+\lstick[wires=2]{$\ket{\Phi_N}$}
+  & \qwbundle{n} & \gate{P_{\vect a}} & \gate{H^{\otimes n}} & \meter{} \rstick{$\vect{x}$} \\
+  & \qwbundle{n} & \gate{P_{\vect b}} & \gate{H^{\otimes n}} & \meter{} \rstick{$\vect{y}$}
+\end{quantikz}
+\]
+where
+\[
+P_{\vect a}\ket{\vect{i}}
+=
+(-1)^{a_{\vect{i}}}\ket{\vect{i}}
+\qquad
+P_{\vect b}\ket{\vect{i}}
+=
+(-1)^{b_{\vect{i}}}\ket{\vect{i}}
+\]
+After the phase gates, the joint state is
+\[
+\frac{1}{\sqrt N}
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+\ket{\vect{i}}\ket{\vect{i}}
+\]
+% After both Hadamard transforms, the amplitude of the outcome
+% \(
+% (\vect{j},\vect{k})
+% \)
+% is
+% \begin{equation}\label{eq:deutsch-jozsa-game-amplitude}
+% A_{\vect{j},\vect{k}}
+% =
+% \frac{1}{N^{3/2}}
+% \sum_{\vect{i}\in\{0,1\}^n}
+% (-1)^{
+% a_{\vect{i}}\oplus b_{\vect{i}}
+% \oplus
+% \vect{i}\cdot(\vect{j}\oplus\vect{k})
+% }
+% \end{equation}
+% If \(\vect{a}=\vect{b}\), then
+% \[
+% A_{\vect{j},\vect{k}}
+% =
+% \frac{1}{N^{3/2}}
+% \sum_{\vect{i}}
+% (-1)^{\vect{i}\cdot(\vect{j}\oplus\vect{k})}
+% =
+% \begin{cases}
+% \dfrac{1}{\sqrt N} & \vect{j}=\vect{k}\\
+% 0 & \vect{j}\neq\vect{k}
+% \end{cases}
+% \]
+% so the outputs are always equal.
+% If
+% \(
+% d_{\text{Ham}}(\vect{a},\vect{b})=N/2
+% \),
+% then for equal outputs \(\vect{j}=\vect{k}\),
+% \[
+% A_{\vect{j},\vect{j}}
+% =
+% \frac{1}{N^{3/2}}
+% \sum_{\vect{i}}
+% (-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+% =
+% 0
+% \]
+% because exactly half of the phases are positive and half are negative.
+% Thus equal outputs are impossible in the second promised case, and the entangled strategy wins with certainty.
+After both Hadamard transforms, using \eqref{eq:nfold-hadamard-general} on both registers, the state becomes
+\[
+\begin{aligned}
+&\frac{1}{\sqrt N}
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+\left(
+H^{\otimes n}\ket{\vect{i}}
+\right)
+\left(
+H^{\otimes n}\ket{\vect{i}}
+\right)
+\\
+&\quad=
+\frac{1}{\sqrt N}
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+\left(
+\frac{1}{\sqrt N}
+\sum_{\vect{x}\in\{0,1\}^n}
+(-1)^{\vect{i}\cdot\vect{x}}
+\ket{\vect{x}}
+\right)
+\left(
+\frac{1}{\sqrt N}
+\sum_{\vect{y}\in\{0,1\}^n}
+(-1)^{\vect{i}\cdot\vect{y}}
+\ket{\vect{y}}
+\right)
+\\
+&\quad=
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{i}}
+\sum_{\vect{x}}
+\sum_{\vect{y}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+(-1)^{\vect{i}\cdot\vect{x}}
+(-1)^{\vect{i}\cdot\vect{y}}
+\ket{\vect{x}}\ket{\vect{y}}
+\\
+&\quad=
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{x}}
+\sum_{\vect{y}}
+\left(
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+(-1)^{\vect{i}\cdot(\vect{x}\oplus\vect{y})}
+\right)
+\ket{\vect{x}}\ket{\vect{y}}
+\end{aligned}
+\]
+If \(\vect{a}=\vect{b}\), then \(a_{\vect{i}}\oplus b_{\vect{i}}=0\) for every \(\vect{i}\), so the state is
+\[
+\begin{aligned}
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{x}}
+\sum_{\vect{y}}
+\left(
+\sum_{\vect{i}}
+(-1)^{\vect{i}\cdot(\vect{x}\oplus\vect{y})}
+\right)
+\ket{\vect{x}}\ket{\vect{y}}
+&=
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{x}}
+\sum_{\vect{y}}
+% \begin{cases}
+% N & \text{if }\vect{x}=\vect{y}\\
+% 0 & \text{if }\vect{x}\neq\vect{y}
+% \end{cases}
+N \delta_{\vect{x},\vect{y}}
+\ket{\vect{x}}\ket{\vect{y}}
+\\
+&=
+\frac{1}{\sqrt N}
+\sum_{\vect{x}}
+\ket{\vect{x}}\ket{\vect{x}}
+\end{aligned}
+\]
+Thus the outputs are always equal.
+
+If \(d_{\text{Ham}}(\vect{a},\vect{b})=N/2\), then exactly half of the values
+\(
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+\)
+are \(+1\), and exactly half are \(-1\).
+For equal outputs \(\vect{x}=\vect{y}\), the corresponding part of the state has coefficient
+\[
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+(-1)^{\vect{i}\cdot(\vect{x}\oplus\vect{x})}
+=
+\frac{1}{\sqrt{N^3}}
+\sum_{\vect{i}}
+(-1)^{a_{\vect{i}}\oplus b_{\vect{i}}}
+=
+0
+\]
+because \(\vect{x}\oplus\vect{x}=\vect0\).
+Thus equal outputs are impossible in the second promised case, and the entangled strategy wins with certainty.
 
 
-\subsection{Grover}
+
+
+
+
+
+% \subsection{Ernst Specker and the Kochen--Specker theorem}\label{sec:ernst-specker}
+
+% Ernst Specker argued that classical logic is inadequate for describing quantum mechanics.
+% Like Bell's theorem, discussed in \autoref{sec:aspect-gisin-zeilinger-experiments}, his argument rules out a classical deterministic explanation.
+% The distinction is that Bell separates measurements in space, whereas Specker asks whether outcomes can be assigned consistently to all possible measurements of one quantum system.
+
+% \subsubsection*{The parable of the overprotective seer}
+
+% Specker's 1960 article begins with a parable.
+% A seer presents three boxes to each suitor of his daughter.
+% The suitor may choose and open any two boxes, and exactly one of those two contains a jewel, but the remaining box can never be opened:
+% \[
+% \begin{tikzpicture}[
+%   box/.style={draw,rounded corners=1.5pt,minimum width=1.42cm,minimum height=1.18cm,very thick},
+%   pair/.style={draw,rounded corners,inner xsep=0.55em,inner ysep=0.28em},
+%   every node/.style={font=\small},
+%   >=Stealth
+% ]
+%   \node[box] (b1) at (-2.1,0) {$?$};
+%   \node[box] (b2) at (0,0) {$?$};
+%   \node[box] (b3) at (2.1,0) {$?$};
+%   \node[above=0.10cm of b1] {box \(1\)};
+%   \node[above=0.10cm of b2] {box \(2\)};
+%   \node[above=0.10cm of b3] {box \(3\)};
+
+%   \node[pair] (p12) at (-2.1,-1.55) {\(\{1,2\}\)};
+%   \node[pair] (p23) at (0,-1.55) {\(\{2,3\}\)};
+%   \node[pair] (p13) at (2.1,-1.55) {\(\{1,3\}\)};
+%   \draw[->] (p12) -- (b1.south);
+%   \draw[->] (p12) -- (b2.south west);
+%   \draw[->] (p23) -- (b2.south);
+%   \draw[->] (p23) -- (b3.south west);
+%   \draw[->] (p13) -- (b1.south east);
+%   \draw[->] (p13) -- (b3.south);
+
+%   \node[align=left,anchor=west] at (4.0,0.42)
+%   {open one pair\\exactly one jewel};
+%   \node[align=left,anchor=west,text=gray!70!black] at (4.0,-0.72)
+%   {the third box\\remains inaccessible};
+% \end{tikzpicture}
+% \]
+% A classical preassignment \(x_i\in\{0,1\}\), where \(x_i=1\) means that box \(i\) contains a jewel, would have to satisfy
+% \[
+% x_1+x_2
+% =
+% x_2+x_3
+% =
+% x_1+x_3
+% =
+% 1
+% \]
+% Adding the three equations gives
+% \[
+% 2(x_1+x_2+x_3)
+% =
+% 3
+% \]
+% which is impossible.
+% The content of a box would therefore have to depend on which other box is opened: it would be \emph{contextual}.
+
+% This magic-box behaviour is even beyond ordinary quantum mechanics.
+% For sharp quantum measurements, if every pair of three questions can be answered jointly, then all three can be answered jointly.
+% The parable is instead a motivating foil for the genuinely quantum obstruction below.
+
+
+
+
+% \subsubsection*{Noncontextual predictions}
+
+% As explained in \autoref{sec:observables}, a projective measurement in an orthonormal basis
+% \[
+% B
+% =
+% \left\{\ket{v_1},\ldots,\ket{v_d}\right\}
+% \]
+% has exactly one outcome.
+% A deterministic classical explanation would preassign the outcome before the basis is measured.
+% Equivalently, it would color every relevant ray by a map
+% \[
+% c:\mathcal V\to\{0,1\}
+% \]
+% such that
+% \[
+% \begin{aligned}
+% \braket{v|w}=0
+% &\quad\Longrightarrow\quad
+% c(v)+c(w)\leq1
+% \\
+% \sum_{\ket v\in B}c(v)
+% &=
+% 1
+% \qquad
+% \text{for every orthonormal basis }B\subseteq\mathcal V
+% \end{aligned}
+% \]
+% The value \(c(v)\) must depend only on the ray \(\ket v\), not on the other vectors completing it to a measurement basis.
+% This basis-independence is the \emph{noncontextuality} assumption.
+
+% For a Qbit such a coloring is possible: orthogonal pure states are antipodal points of the Bloch sphere, and one may select exactly one point of each antipodal pair.
+% For a Qtrit
+% \(
+% \ket\psi=\alpha\ket0+\beta\ket1+\gamma\ket2
+% \),
+% it would be necessary to color real rays on the sphere so that every orthonormal tripod contains exactly one selected ray:
+% \[
+% \begin{tikzpicture}[
+%   scale=0.82,
+%   line cap=round,
+%   line join=round,
+%   every node/.style={font=\footnotesize},
+%   basis/.style={draw,rounded corners,minimum height=0.82cm,align=center},
+%   >=Stealth
+% ]
+%   \coordinate (o) at (-4.25,0.2);
+%   \draw[thick] (o) circle (1.42);
+%   \draw[thick] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=360,x radius=1.42,y radius=0.43];
+%   \draw[dashed,gray] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=0,x radius=1.42,y radius=0.43];
+%   \draw[->,very thick,overviewgreen] (o) -- ++(0.20,1.23)
+%     node[above] {\(\ket{v_1}\)};
+%   \draw[->,very thick,alizarincrimsonred] (o) -- ++(-1.06,-0.48)
+%     node[below left] {\(\ket{v_2}\)};
+%   \draw[->,very thick,alizarincrimsonred] (o) -- ++(1.11,-0.39)
+%     node[below right] {\(\ket{v_3}\)};
+%   \fill[overviewgreen] ($(o)+(0.20,1.23)$) circle (1.8pt);
+%   \fill[alizarincrimsonred] ($(o)+(-1.06,-0.48)$) circle (1.8pt);
+%   \fill[alizarincrimsonred] ($(o)+(1.11,-0.39)$) circle (1.8pt);
+%   \node at ($(o)+(0,-1.83)$) [align=center]
+%   {one selected ray\\per orthonormal tripod};
+
+%   \node[basis,minimum width=2.20cm] (basis) at (-0.5,0.65)
+%   {measurement basis\\\(B=\{\ket{v_1},\ket{v_2},\ket{v_3}\}\)};
+%   \node[basis,minimum width=1.35cm] (system) at (3,0.65)
+%   {Qtrit\\\(\ket\psi\)};
+%   \node[basis,minimum width=1.85cm] (outcome) at (6,0.65)
+%   {one outcome\\\(\ket{v_i}\in B\)};
+%   \draw[->,thick] (basis) -- (system);
+%   \draw[->,thick] (system) -- (outcome);
+%   \node at (2.05,-0.75) [align=center,text=gray!70!black]
+%   {the predicted outcome may not\\depend on the surrounding basis};
+% \end{tikzpicture}
+% \]
+
+% \begin{theorem}[Kochen--Specker theorem, 1967]\label{thm:kochen-specker}
+% There is a finite set of rays
+% \(
+% \mathcal V\subset\R^3
+% \)
+% that admits no noncontextual coloring satisfying the two conditions above.
+% \end{theorem}
+
+% Specker already announced the geometric obstruction in 1960.
+% Kochen and Specker gave an explicit finite construction in 1967 using more than one hundred rays.
+% Thus a Qtrit cannot carry context-independent predetermined answers for all projective measurements.
+
+% \subsubsection*{A Kochen--Specker pseudo-telepathy game}
+
+% Let \(\mathcal B\) be a finite family of real orthonormal bases witnessing \autoref{thm:kochen-specker}.
+% Alice receives \(B\in\mathcal B\), Bob receives \(C\in\mathcal B\), and each must output one vector from the received basis.
+% They win exactly when their vectors are not orthogonal:
+% \[
+% v\in B
+% \qquad
+% w\in C
+% \qquad
+% \braket{v|w}\neq0
+% \]
+% A perfect deterministic classical strategy would select one vector from every basis while never selecting two orthogonal vectors.
+% Coloring every selected vector by \(1\) and all others by \(0\) would give precisely the forbidden Kochen--Specker coloring.
+% Hence no perfect classical strategy exists.
+
+% For the quantum strategy, Alice and Bob share the maximally entangled pair of Qtrits
+% \begin{equation}\label{eq:maximally-entangled-qtrit-pair}
+% \ket{\Psi_3}
+% =
+% \frac{1}{\sqrt3}
+% \left(
+% \ket{00}+\ket{11}+\ket{22}
+% \right)
+% \end{equation}
+% If \(U_B\) and \(U_C\) map the standard basis to \(B\) and \(C\), each player measures in the received basis:
+% \[
+% \begin{quantikz}[column sep=0.62cm, row sep=0.42cm]
+% \lstick[wires=2]{$\ket{\Psi_3}$}
+%   & \gate{U_B^*} & \meter{} \rstick{$v\in B$} \\
+%   & \gate{U_C^*} & \meter{} \rstick{$w\in C$}
+% \end{quantikz}
+% \]
+% For real vectors
+% \(
+% \ket v,\ket w\in\R^3
+% \),
+% the probability amplitude of the joint outcome \((v,w)\) is
+% \begin{equation}\label{eq:qtrit-pair-measurement-amplitude}
+% \begin{aligned}
+% \braket{\Psi_3|v,w}
+% &=
+% \frac{1}{\sqrt3}
+% \left(
+% \braket{0|v}\braket{0|w}
+% +
+% \braket{1|v}\braket{1|w}
+% +
+% \braket{2|v}\braket{2|w}
+% \right)
+% \\
+% &=
+% \frac{1}{\sqrt3}
+% \braket{v|w}
+% \end{aligned}
+% \end{equation}
+% and therefore
+% \[
+% \Prob[v,w]
+% =
+% \left|\braket{\Psi_3|v,w}\right|^2
+% =
+% \frac13
+% \left|\braket{v|w}\right|^2
+% \]
+% In particular,
+% \[
+% \braket{v|w}
+% =
+% 0
+% \quad\Longrightarrow\quad
+% \Prob[v,w]
+% =
+% 0
+% \]
+% so Alice and Bob never output orthogonal vectors and win with certainty.
+% When \(B=C\), all distinct vectors in the common basis are orthogonal, so both players necessarily obtain the same vector.
+% The entangled pair therefore behaves like two consistent measurements of the same Qtrit without communication.
+
+% The game uses local dimension \(3\times3\).
+% This is minimal for two-player pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
+
+
+
+
+\clearpage
+
+
+
+
+\section{The Needle in the Haystack: Grover's algorithm}\label{sec:grover}
 
 Grover's algorithm solves the unstructured search problem: given a Boolean function
 \[
@@ -7883,8 +9802,7 @@ DO_f
 \]
 is called the \emph{Grover iterate}.
 
-\medskip
-{\textbf{Geometric picture}}
+\subsubsection*{Geometric picture}
 
 Let
 \[
@@ -7949,8 +9867,7 @@ k
 \]
 after which a measurement returns a solution with high probability.
 
-\medskip
-{\textbf{Circuit}}
+\subsubsection*{Circuit}
 
 \[
 \begin{quantikz}
