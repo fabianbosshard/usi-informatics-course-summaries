@@ -3,6 +3,43 @@
 \usepackage{iftex}
 \usepackage{csquotes}
 
+
+% float management ––––––––––––––––––––––––––––––––––––––––––––––––
+\usepackage{float}
+\usepackage{placeins} 
+
+
+% \makeatletter
+%   % single-column floats
+%   \def\fps@figure {htb} 
+%   \def\fps@table  {htb}
+
+%   % double-column floats
+%   \def\fps@figure*{htb} 
+%   \def\fps@table* {htb}
+% \makeatother
+
+\preto\section{\FloatBarrier}
+\preto\subsection{\FloatBarrier}
+\preto\subsubsection{\FloatBarrier} 
+
+\setcounter{topnumber}{8}
+\setcounter{bottomnumber}{8}
+\setcounter{totalnumber}{20}
+\renewcommand{\textfraction}{0.0}
+\renewcommand{\topfraction}{1.0}
+\renewcommand{\bottomfraction}{1.0}
+\renewcommand{\floatpagefraction}{1.0}
+\renewcommand{\dblfloatpagefraction}{1.0}
+
+% On a float‐only page, kill the default “centered” glue
+\makeatletter
+  \setlength{\@fptop}{0pt} % no extra space above
+  \setlength{\@fpsep}{\floatsep} % between floats: same as \floatsep
+  \setlength{\@fpbot}{0pt plus 1fil} % infinite stretch below, so floats are pushed up
+\makeatother
+% ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
 \newcommand{\eat}[1]{}
 
 \usepackage[T1]{fontenc}     % handle accented glyphs properly
@@ -389,6 +426,7 @@
 \makeatletter
 \patchcmd{\ALG@step}{\addtocounter{ALG@line}{1}}{\refstepcounter{ALG@line}}{}{}
 \newcommand{\ALG@lineautorefname}{Line}
+\providecommand{\theHALG@line}{\thealgorithm.\arabic{ALG@line}}
 \makeatother
 \newcommand{\algorithmautorefname}{Algorithm}
 \AtBeginDocument{\renewcommand{\sectionautorefname}{Section}\renewcommand{\subsectionautorefname}{Section}\renewcommand{\subsubsectionautorefname}{Section}}
@@ -7377,7 +7415,7 @@ If \(x=0\), the operation is the identity; if \(x=1\), the second Qbit is negate
 % \qquad
 \begin{quantikz}[column sep=0.45cm]
 \lstick{$\ket{1}$}       & \ctrl{1} & \rstick{$\ket{1}$} \\
-\lstick{$\ket{\varphi}$} & \targ{}  & \rstick{$N \ket{\varphi} = \alpha\ket{1}+\beta\ket{0}$}
+\lstick{$\alpha\ket{0}+\beta\ket{1} = \ket{\varphi}$} & \targ{}  & \rstick{$N \ket{\varphi} = \alpha\ket{1}+\beta\ket{0}$}
 \end{quantikz}
 \]
 with
@@ -7627,7 +7665,8 @@ Geometrically, the case $x=1$ corresponds to a reflection of the second Qbit aro
 
 In analogy to the CNOT, the Toffoli/CCNOT gate is drawn as
 \[
-\begin{quantikz}
+\begin{quantikz}[  column sep=0.52cm,
+  row sep={0.78cm,between origins}]
 \lstick{} & \ctrl{1} & \rstick{} \\
 \lstick{} & \ctrl{1} & \rstick{} \\
 \lstick{} & \targ{}  & \rstick{}
@@ -7649,6 +7688,26 @@ and the matrix in the computational basis is
 \end{bmatrix}
 \]
 
+We can also obtain a SWAP gate from CNOTs, which swaps two Qbits:
+\[
+\begin{array}{c@{\qquad = \qquad}c}
+\begin{quantikz}[
+  column sep=0.52cm,
+  row sep={0.78cm,between origins}
+]
+\qw & \targ{}   & \ctrl{1} & \targ{}   & \qw \\
+\qw & \ctrl{-1} & \targ{}  & \ctrl{-1} & \qw
+\end{quantikz}
+&
+\begin{quantikz}[
+  column sep=0.52cm,
+  row sep={0.78cm,between origins}
+]
+\qw & \swap{1} & \qw \\
+\qw & \targX{} & \qw
+\end{quantikz}
+\end{array}
+\]
 
 
 
@@ -7826,7 +7885,7 @@ $
 $.
 
 
-\begin{example}
+\begin{example}\label{ex:hadamard-n-qbits}
 Generalizing \autoref{ex:hadamard-two-qbits} to \(n\) Qbits
 % For $n$ Qbits 
 \[
@@ -7853,10 +7912,6 @@ In particular,
 \end{equation}
 will be the initial state for most quantum algorithms, and as a equal superposition of all classical inputs, the basis for ``Quantum parallelism''.
 \end{example}
-
-\begin{caution}
-
-\end{caution}
 
 
 
@@ -8362,7 +8417,7 @@ Nevertheless, a standard-basis measurement returns only one random pair
 so parallelism by itself gives no speedup.
 
 
-\subsubsection{Phase kickback}
+\subsubsection{Phase kickback} \label{sec:phase-kickback}
 
 For a one-bit output, initialize the result Qbit in the diagonal state
 \(
@@ -9740,7 +9795,7 @@ f:\{0,1\}^n\to\{0,1\}
 \]
 with a small number $M$ of marked inputs satisfying
 \(
-f(x)=1
+f(\vect{x})=1
 \),
 find such an input.
 Classically this requires
@@ -9752,45 +9807,75 @@ queries on average, where
 N=2^n
 \).
 Grover reduces this to
-\[
-\Theta\!\left(\sqrt{N/M}\right)
-\]
-queries.
-
-The algorithm begins in the computational basis state
 \(
-\ket{0}^{\otimes n}
+\Theta(\sqrt{N/M})
 \)
-and applies Hadamards:
-\[
-\ket{\Psi}
-=
-H^{\otimes n}\ket{0}^{\otimes n}
-=
-\frac{1}{\sqrt N}
-\sum_{x\in\{0,1\}^n}
-\ket{x}
-\]
-which is the equal superposition over all candidates.
+queries,
+which is a quadratic  
+% rather than exponential 
+speed-up.
+% For example, exhaustive key search against a block cipher with a \(2n\)-bit key takes only about as many quantum queries as classical search against an \(n\)-bit key.
+% The algorithm is nevertheless optimal in the black-box model: unstructured quantum search requires
+% \(
+% \Omega(\sqrt{N/M})
+% \)
+% oracle queries.
 
-The two ingredients are:
+% \begin{remark}[Why the classical cost is linear]\label{rem:grover-classical-lower-bound}
+% Suppose first that \(M=1\) and the marked input is chosen uniformly at random.
+% Any deterministic algorithm making \(t\) distinct queries finds it with probability at most
+% \[
+% \frac{t}{N}
+% \]
+% Consequently a randomized classical algorithm needs
+% \(
+% \Omega(N)
+% \)
+% queries for constant success probability.
+% For \(M\) marked inputs the same argument gives
+% \(
+% \Omega(N/M)
+% \).
+% \end{remark}
+
+% The algorithm begins in the computational basis state
+% \(
+% \ket{\vect{0}}
+% \)
+% and applies Hadamards:
+% \[
+% \ket{\Psi}
+% =
+% H^{\otimes n}\ket{\vect{0}}
+% =
+% \frac{1}{\sqrt N}
+% \sum_{\vect{x}\in\{0,1\}^n}
+% \ket{\vect{x}}
+% \]
+% which is the equal superposition over all candidates.
+
+Let $\ket{\Psi} = H^{\otimes n}\ket{\vect{0}}$ as always (see \autoref{ex:hadamard-n-qbits}, \autoref{eq:nfold-hadamard-zero}).
+The two ingredients of \autoref{alg:grover} are:
 \begin{enumerate}[label=(\roman*)]
-\item The \emph{oracle}
+\item 
+The \emph{oracle} $O_f$ that implements the function \(f\) in the usual way 
+(%reversible gate plus phase kickback,% 
+see \autoref{sec:phase-kickback}):
 \[
-O_f\ket{x}
+O_f\ket{\vect{x}}
 =
-(-1)^{f(x)}\ket{x}
+(-1)^{f(\vect{x})}\ket{\vect{x}}
 \]
-which flips the phase of marked states.
+and flips the phase of marked states.
 
-\item The \emph{diffusion operator}
+\item 
+The \emph{diffusion operator} 
 \[
-D
-=
-2\ket{\Psi}\bra{\Psi}-\id
-=
-H^{\otimes n}(2\ket{0}\bra{0}-\id)H^{\otimes n}
+D 
+= 
+H^{\otimes n}(2\ket{\vect{0}}\bra{\vect{0}}-\id)H^{\otimes n}
 \]
+% which is a reflection at the line $\Span(\ket{\Psi})$:
 which reflects amplitudes about their average.
 \end{enumerate}
 
@@ -9802,6 +9887,176 @@ DO_f
 \]
 is called the \emph{Grover iterate}.
 
+Both operators really are reflections.
+For any state
+\(
+\ket{\varphi}=a\ket{\alpha}+b\ket{\beta}
+\)
+in the plane introduced below,
+\[
+O_f\ket{\varphi}
+=
+a\ket{\alpha}-b\ket{\beta}
+\]
+so \(O_f\) reflects at the non-solution axis \(\Span(\ket{\alpha})\).
+Moreover, 
+if
+$\ket{\phi_\parallel}$ denotes the part of $\ket{\phi}$ parallel to $\ket{\Psi}$ (i.e., the projection of $\ket{\phi}$ onto $\ket{\Psi}$) and $\ket{\phi_\perp}$ denotes the part of $\ket{\phi}$ perpendicular to $\ket{\Psi}$% 
+%(i.e., the difference between $\ket{\phi}$ and its projection onto $\ket{\Psi}$)%
+, so that
+\(
+% \ket{\eta}\perp\ket{\Psi}
+\ket{\phi}=\ket{\phi_\parallel}+\ket{\phi_\perp}
+\),
+then
+% \[
+% \begin{aligned}
+% D\ket{\Psi}
+% &=
+% \left(2\ket{\Psi}\bra{\Psi}-\id\right)\ket{\Psi}
+% =
+% \ket{\Psi}
+% \\
+% D\ket{\eta}
+% &=
+% \left(2\ket{\Psi}\bra{\Psi}-\id\right)\ket{\eta}
+% =
+% -\ket{\eta}
+% \end{aligned}
+% \]
+% \[
+% \begin{aligned}
+% D \ket{\phi}
+% &=
+% \ket{\phi_\parallel} - \ket{\phi_\perp} 
+% \\
+% &=
+% \ket{\phi_\parallel} - (\ket{\phi} - \ket{\phi_\parallel})
+% \\
+% &=
+% 2\ket{\phi_\parallel} - \ket{\phi}
+% \\
+% &=
+% 2\frac{\braket{\Psi|\phi}}{\braket{\Psi|\Psi}}\ket{\Psi} - \ket{\phi}
+% \\
+% &=
+% 2\ket{\Psi}\bra{\Psi}\ket{\phi} - \ket{\phi}
+% \\
+% &=
+% (2\ket{\Psi}\bra{\Psi} - \id)\ket{\phi}
+% \\
+% &=
+% (2\ket{\Psi}\bra{\Psi}-\id)\ket{\phi}
+% \\
+% &=
+% (2(H^{\otimes n}\ket{\vect{0}})(\bra{\vect{0}}H^{\otimes n})- H^{\otimes n}H^{\otimes n})\ket{\phi}
+% \\
+% &=
+% (H^{\otimes n}(2\ket{\vect{0}}\bra{\vect{0}}-\id)H^{\otimes n})\ket{\phi}
+% \end{aligned}
+% \]
+\[
+\begin{aligned}
+% D \ket{\phi}
+\ket{\phi_{\text{reflected}}}
+&=
+\ket{\phi_\parallel} - \ket{\phi_\perp} 
+\\
+&=
+\ket{\phi_\parallel} - (\ket{\phi} - \ket{\phi_\parallel})
+\\
+&=
+2\ket{\phi_\parallel} - \ket{\phi}
+\\
+&=
+2\frac{\braket{\Psi|\phi}}{\braket{\Psi|\Psi}}\ket{\Psi} - \ket{\phi}
+\\
+&=
+2\ket{\Psi}\bra{\Psi}\ket{\phi} - \ket{\phi}
+\\
+&=
+(2\ket{\Psi}\bra{\Psi} - \id)\ket{\phi}
+\\
+&=
+(2(H^{\otimes n}\ket{\vect{0}})(\bra{\vect{0}}H^{\otimes n})- H^{\otimes n}H^{\otimes n})\ket{\phi}
+\\
+&=
+\underbrace{H^{\otimes n}(2\ket{\vect{0}}\bra{\vect{0}}-\id)H^{\otimes n}}_{D}\ket{\phi}
+\end{aligned}
+\]
+so \(D\) reflects at \(\Span(\ket{\Psi})\).
+
+The name \emph{diffusion operator} comes from its action on amplitudes.
+Writing
+\(
+\ket{\varphi}=\sum_{\vect{x}} a_{\vect{x}}\ket{\vect{x}}
+\)
+and
+\(
+\bar a=\frac1N\sum_{\vect{x}}a_{\vect{x}}
+\),
+we obtain
+\[
+\begin{aligned}
+D\ket{\varphi}
+&=
+\left(2\ket{\Psi}\bra{\Psi}-\id\right)\ket{\varphi}
+\\
+&=
+\left(
+2\left(\frac{1}{\sqrt N}\sum_{\vect{x}}\ket{\vect{x}}\right)\left(\frac{1}{\sqrt N}\sum_{\vect{y}}\bra{\vect{y}}\right)-\id
+\right)
+\sum_{\vect{z}} a_{\vect{z}}\ket{\vect{z}}
+\\
+&=
+2
+\left(\frac{1}{\sqrt N}
+\sum_{\vect{x}}\ket{\vect{x}}
+\right)
+\left(
+  \frac{1}{\sqrt N}\sum_{\vect{y}}
+  \sum_{\vect{z}} a_{\vect{z}}\braket{\vect{y}|\vect{z}}
+\right)
+-
+\sum_{\vect{z}} a_{\vect{z}}\ket{\vect{z}}
+\\
+&=
+\left(
+\sum_{\vect{x}}\ket{\vect{x}}
+\right)
+\left(
+  2\frac{1}{N}\sum_{\vect{y}} a_{\vect{y}}
+\right)
+-
+\sum_{\vect{z}} a_{\vect{z}}\ket{\vect{z}}
+\\
+&=
+\left(
+\sum_{\vect{x}}\ket{\vect{x}}
+\right)
+2
+\bar{a}
+-
+\sum_{\vect{z}} a_{\vect{z}}\ket{\vect{z}}
+\\
+% &=
+% \left(
+% \frac{2}{N}\sum_{\vect{x},\vect{y}}\ket{\vect{x}}\bra{\vect{y}}
+% -
+% \id
+% \right)
+% \sum_{\vect{z}} a_{\vect{z}}\ket{\vect{z}}
+% \\
+&=
+\sum_{\vect{x}}
+\left(
+2\bar a-a_{\vect{x}}
+\right)
+\ket{\vect{x}}
+\end{aligned}
+\]
+Thus every amplitude is reflected about the average amplitude.
+
 \subsubsection*{Geometric picture}
 
 Let
@@ -9809,12 +10064,12 @@ Let
 \ket{\alpha}
 =
 \frac{1}{\sqrt{N-M}}
-\sum_{f(x)=0}\ket{x}
+\sum_{f(\vect{x})=0}\ket{\vect{x}}
 \qquad
 \ket{\beta}
 =
 \frac{1}{\sqrt M}
-\sum_{f(x)=1}\ket{x}
+\sum_{f(\vect{x})=1}\ket{\vect{x}}
 \]
 be the normalized superpositions of non-solutions and solutions.
 Then
@@ -9829,6 +10084,111 @@ so all dynamics take place in the two-dimensional plane
 \(
 \Span\{\ket{\alpha},\ket{\beta}\}
 \).
+Define
+\begin{equation}\label{eq:grover-angle}
+\sin\theta
+=
+\sqrt{\frac{M}{N}}
+\qquad
+\cos\theta
+=
+\sqrt{\frac{N-M}{N}}
+\end{equation}
+Then
+\begin{equation}\label{eq:grover-initial-state-angle}
+\ket{\Psi}
+=
+\cos\theta\ket{\alpha}
++
+\sin\theta\ket{\beta}
+\end{equation}
+
+% \[
+% \begin{tikzpicture}[
+%   scale=0.95,
+%   >=Stealth,
+%   line cap=round,
+%   line join=round,
+%   every node/.style={font=\footnotesize}
+% ]
+%   \def\thetaplot{15}
+%   \def\veclen{3.45}
+%   \coordinate (o) at (0,0);
+
+%   \draw[->,thick] (o) -- (4.4,0) node[right] {\(\ket{\alpha}\)};
+%   \draw[->,thick] (o) -- (0,4.0) node[above] {\(\ket{\beta}\)};
+
+%   \draw[->,very thick,funblue]
+%     (o) -- ++(\thetaplot:\veclen)
+%     node[pos=0.72,above] {\(\ket{\Psi}\)};
+
+%   \draw[->,very thick,alizarincrimsonred]
+%     (o) -- ++(-\thetaplot:\veclen)
+%     node[right] {\(O_f\ket{\Psi}\)};
+
+%   \draw[->,very thick,overviewgreen]
+%     (o) -- ++({3*\thetaplot}:\veclen)
+%     node[above] {\(G\ket{\Psi}\)};
+
+%   \coordinate (oracle) at (-\thetaplot:\veclen);
+%   \coordinate (psi) at (\thetaplot:\veclen);
+%   \coordinate (grover) at ({3*\thetaplot}:\veclen);
+
+%   \draw[densely dashed,alizarincrimsonred] (oracle) -- (grover);
+%   \draw[densely dashed,overviewgreen] (grover) -- (psi);
+
+%   \draw[->] (1.25,0) arc[start angle=0,end angle=\thetaplot,radius=1.25]
+%     node[pos=0.55,right] {\(\theta\)};
+%   \draw[->] (\thetaplot:1.68) arc[start angle=\thetaplot,end angle={3*\thetaplot},radius=1.68]
+%     node[pos=0.58,right] {\(2\theta\)};
+
+%   \node[align=left,anchor=west] at (4.85,2.15)
+%   {\(O_f\): reflection at \(\ket{\alpha}\)\\
+%    \(D\): reflection at \(\ket{\Psi}\)\\
+%    \(G=DO_f\): rotation by \(2\theta\)};
+% \end{tikzpicture}
+% \]
+
+\[
+\begin{tikzpicture}[
+  scale=0.95,
+  >=Stealth,
+  line cap=round,
+  line join=round,
+  every node/.style={font=\footnotesize}
+]
+  \def\thetaplot{15}
+  \def\veclen{3.45}
+  \coordinate (o) at (0,0);
+
+  \draw[thin] (o) circle[radius=\veclen];
+
+  \draw[] (-4.0,0) -- (4.0,0) node[right] {\(\ket{\alpha}\)-axis};
+  \draw[] (0,-4.0) -- (0,4.0) node[above] {\(\ket{\beta}\)-axis};
+
+  \draw[->,thick] (o) -- (0:\veclen); %node[pos=0.72,below] {\(\ket{\alpha}\)};
+  \draw[->,thick] (o) -- (90:\veclen); %node[pos=0.72,left] {\(\ket{\beta}\)};
+
+  \draw[->,very thick,black] (o) -- (\thetaplot:\veclen) node[pos=1.0,above right] {\(\ket{\Psi}\)};
+  \draw[->,very thick,black] (o) -- (-\thetaplot:\veclen) node[below right] {\(O_f\ket{\Psi}\)};
+  \draw[->,very thick,black] (o) -- ({3*\thetaplot}:\veclen) node[above right] {\(D O_f \ket{\Psi}\)};
+
+  \coordinate (oracle) at (-\thetaplot:\veclen);
+  \coordinate (psi) at (\thetaplot:\veclen);
+  \coordinate (grover) at ({3*\thetaplot}:\veclen);
+
+  \draw[densely dashed,black] (oracle) -- (grover);
+  \draw[densely dashed,black] (grover) -- (psi);
+
+  \draw[->] (1.68,0) arc[start angle=0,end angle=\thetaplot,radius=1.68] node[pos=0.58,right] {\(\theta\)};
+  \draw[->] (\thetaplot:1.68) arc[start angle=\thetaplot,end angle={3*\thetaplot},radius=1.68] node[pos=0.58,right] {\(2\theta\)};
+
+  % \node[align=left,anchor=west] at (4.85,2.15)
+  % {\(O_f\): reflection at \(\ket{\alpha}\)\\
+  %  \(D\): reflection at \(\ket{\Psi}\)\\
+  %  \(G=DO_f\): rotation by \(2\theta\)};
+\end{tikzpicture}
+\]
 
 The oracle reflects at
 \(
@@ -9844,72 +10204,194 @@ Two reflections compose to a rotation, hence each Grover iteration rotates the s
 \),
 thereby amplifying the probability of observing a marked state.
 
-If
-\(
-\Theta
-\)
-denotes the rotation angle, then for
-\(
-M\ll N
-\)
-we have
+After \(k\) iterations the exact state is
+\begin{equation}\label{eq:grover-state-after-k}
+G^k\ket{\Psi}
+=
+\cos\!\left((2k+1)\theta\right)\ket{\alpha}
++
+\sin\!\left((2k+1)\theta\right)\ket{\beta}
+\end{equation}
+and hence the success probability is
+\begin{equation}\label{eq:grover-success-probability}
+\Prob[\text{marked after \(k\) iterations}]
+=
+\sin^2\!\left((2k+1)\theta\right)
+\end{equation}
+The optimal integer number of iterations is therefore
+\begin{equation}\label{eq:grover-optimal-iterations}
+k_{\mathrm{opt}}
+=
+\left\lfloor
+\frac{\pi}{4\theta}
+-
+\frac12
+\right\rfloor
+\end{equation}
+For \(M\ll N\), %\autoref{eq:grover-angle} gives
 \[
-\Theta
+\theta
+\overset{\text{\eqref{eq:grover-angle}}}{=}
+\arcsin\sqrt{\frac{M}{N}}
 \approx
-2\sqrt{\frac{M}{N}}
+\sqrt{\frac{M}{N}}
 \]
-and therefore the optimal number of Grover iterations is approximately
+and therefore
 \[
-k
+k_{\mathrm{opt}}
 \approx
 \frac{\pi}{4}
 \sqrt{\frac{N}{M}}
 \]
-after which a measurement returns a solution with high probability.
+After this many iterations a measurement returns a solution with high probability.  
+% at least
+% \(
+% 1-O(M/N)
+% \).
+Continuing past this point rotates the state away from the solution axis again, which is known as the \emph{souffl\'e problem}:
+If you do not take it out of the oven in time, it collapses again. 
+% However, the situation is not all that bad, since it then increases again.
+
+
+
+
+If \(M\) is unknown, choose the number \(T\) of iterations uniformly from
+\(
+\{0,\ldots,m-1\}
+\).
+% Using \autoref{eq:grover-success-probability},
+% \[
+% \Exp_T
+% \left[
+% \sin^2\!\left((2T+1)\theta\right)
+% \right]
+% =
+% \frac1m
+% \sum_{j=0}^{m-1}
+% \sin^2\!\left((2j+1)\theta\right)
+% =
+% \frac12
+% -
+% \frac{\sin(4m\theta)}{4m\sin(2\theta)}
+% \]
+% implying that the success probability is at least \(1/4\) once
+% \(
+% m\geq1/\sin(2\theta)
+% \).
+Trying geometrically increasing values
+\(
+m%=1,2,4,\ldots
+\)
+retains the expected query complexity
+\(
+O(\sqrt{N/M})
+\)
+without knowing \(M\).
+
+
 
 \subsubsection*{Circuit}
 
 \[
-\begin{quantikz}
-\lstick{$\ket{0}$} & \gate{H} & \qw & \gate[wires=3]{O_f} & \gate[wires=3]{D} & \qw & \gate[wires=3]{\cdots} & \meter{} \\
-\lstick{$\vdots$} & \gate{H} & \qw & & & \qw & & \meter{} \\
-\lstick{$\ket{0}$} & \gate{H} & \qw & & & \qw & & \meter{}
+\begin{quantikz}[
+  column sep=0.50cm,
+  wire types={b},
+  classical gap=0.07cm
+]
+\lstick{$\ket{\vect{0}}$}
+  & \qwbundle{n}
+  & \gate{H^{\otimes n}}
+  & \gate{O_f}
+    \gategroup[
+      1,
+      steps=4,
+      style={dashed,rounded corners,inner xsep=3pt,inner ysep=5pt},
+      label style={label position=below,anchor=north,yshift=-0.13cm}
+    ]{repeated $k_{\mathrm{opt}}$ times}
+  & \gate{H^{\otimes n}}
+  & \gate{2\ket{\vect{0}}\bra{\vect{0}}-\id}
+  & \gate{H^{\otimes n}}
+  & \meter{}
+  & \setwiretype{c}\rstick{$\vect{x}$}
 \end{quantikz}
 \]
 
-The block
+The dashed block consists of
 \(
 O_f
 \)
-followed by
+and the three gates implementing
 \(
-D
+D=H^{\otimes n}(2\ket{\vect{0}}\bra{\vect{0}}-\id)H^{\otimes n}
 \)
+and it
 is repeated
 \(
-k\approx \frac{\pi}{4}\sqrt{N/M}
+k_{\mathrm{opt}}
 \)
 times.
+
+
+% \subsubsection*{Amplitude amplification}
+
+% Grover search is the special case of a more general amplification principle.
+% Suppose a unitary \(A\) prepares
+% \begin{equation}\label{eq:amplitude-amplification-preparation}
+% A\ket{\vect{0}}
+% =
+% \sqrt p\ket{\mathrm{good}}
+% +
+% \sqrt{1-p}\ket{\mathrm{bad}}
+% \end{equation}
+% where the two states are orthogonal and an oracle \(O_{\mathrm{good}}\) flips precisely the good component.
+% The reflection at \(A\ket{\vect{0}}\) is
+% \[
+% R_A
+% =
+% A
+% \left(
+% 2\ket{\vect{0}}\bra{\vect{0}}-\id
+% \right)
+% A^\dagger
+% \]
+% and
+% \(
+% R_AO_{\mathrm{good}}
+% \)
+% rotates the two-dimensional good--bad plane by
+% \(
+% 2\arcsin\sqrt p
+% \).
+% Consequently
+% \(
+% O(1/\sqrt p)
+% \)
+% uses of \(A\), \(A^\dagger\), and \(O_{\mathrm{good}}\) amplify success close to one, whereas independent classical repetition needs
+% \(
+% O(1/p)
+% \)
+% trials.
 
 \tikzexternaldisable
 \begin{algorithm}[h]
 \caption{Grover algorithm}\label{alg:grover}
 \begin{algorithmic}[1]
-\Require Oracle $O_f\ket{x}=(-1)^{f(x)}\ket{x}$, number of solutions $M$, search space size $N=2^n$
-\State $\ket{\psi}\gets\ket{0}^{\otimes n}$
+\Require Oracle $O_f\ket{\vect{x}}=(-1)^{f(\vect{x})}\ket{\vect{x}}$, number of solutions $M$, search space size $N=2^n$
+\State $\ket{\psi}\gets\ket{\vect{0}}$
 \State $\ket{\psi}\gets H^{\otimes n}\ket{\psi}$ \Comment{equal superposition over all candidates}
-\State $k\gets \left\lfloor \frac{\pi}{4}\sqrt{\frac{N}{M}}\right\rfloor$
+\State $\theta\gets\arcsin\sqrt{M/N}$
+\State $k\gets \left\lfloor \frac{\pi}{4\theta}-\frac12\right\rfloor$
 \For{$j=1,\ldots,k$}
   \State $\ket{\psi}\gets O_f\ket{\psi}$ \Comment{flip the phase of marked states}
   \State $\ket{\psi}\gets D\ket{\psi}$ \Comment{diffusion / reflection about the average}
 \EndFor
 \State Measure $\ket{\psi}$ in the computational basis
-\State \Return measured bit string $x$
+\State \Return measured bit string $\vect{x}$
 \end{algorithmic}
 \end{algorithm}
 \tikzexternalenable
 
-The algorithm amplifies the amplitudes of marked states while suppressing the others. Unlike Shor's algorithm, the speedup is quadratic rather than exponential, but it applies to essentially any unstructured search problem.
+% The algorithm amplifies the amplitudes of marked states while suppressing the others. Unlike Shor's algorithm, the speedup is quadratic rather than exponential, but it applies to essentially any unstructured search problem.
 
 
 
@@ -9917,32 +10399,670 @@ The algorithm amplifies the amplitudes of marked states while suppressing the ot
 
 
 \clearpage
-\section{Shor}
+\section{Integer Factoring: Shor's algorithm}\label{sec:shor}
 
-\subsection{Quantum Fourier transform}
-
-
+\subsection{Quantum Fourier transform}\label{sec:quantum-fourier-transform}
+Let $N = 2^n$.
 The quantum Fourier transform (QFT) maps
-$\ket{\vect{j}} = \ket{j_1 \cdots j_n}$ to
 \[
-\frac{1}{2^{n/2}} 
-\bigotimes_{k=n}^{1}
-\left(
-\ket{0}
-+
-\eu^{2\pi\iu\,\phi_k(j)}
-\ket{1}
-\right)
+\sum_{\vect{j}\in\{0,1\}^n} f_\vect{j}\ket{\vect{j}}
+\quad
+\xmapsto{\text{QFT}}
+\quad
+\sum_{\vect{j}\in\{0,1\}^n} \hat{f}_\vect{j}\ket{\vect{j}}
 \]
 where
+$\hat{\vect{f}} = [{\hat{f}}_0, \ldots, {\hat{f}}_{N-1}]$ is the discrete Fourier transform of $\vect{f} = [f_0, \ldots, f_{N-1}]$,
+i.e.
 \[
-\phi_k(j)
-\coloneqq
-\sum_{\ell=k}^n \frac{j_\ell}{2^{\ell-k+1}}
+  \hat{\vect{f}} = \matr{F}_N \vect{f}
 \]
-is the binary fraction corresponding to 
-% the bits $j_k\cdots j_n$, also written as 
-$0.j_k\cdots j_n$ in binary notation.
+where $\matr{F}_N$ is the $N\times N$ Fourier matrix with entries
+\(
+[\matr{F}_N]_{k l}
+=
+\frac{1}{\sqrt N}\omega^{kl}
+\)
+where $\omega \coloneq \eu^{2\pi\iu/N}$ is the $N$-th root of unity.
+
+Let
+\(
+\vect{x}=x_1\cdots x_n
+\)
+be an \(n\)-bit string and let
+\(
+x=[\vect{x}]_2
+\)
+denote the integer represented by that string.
+The QFT acts on a computational basis state as
+\begin{equation}\label{eq:qft-computational-basis}
+\operatorname{QFT} \ket{\vect{x}}
+=
+\frac{1}{\sqrt N}
+\sum_{y = 0}^{N-1}
+\omega^{xy}
+\ket{\vect{y}}
+=
+\frac{1}{2^{n/2}}
+\sum_{y=0}^{2^n-1}
+\eu^{2\pi\iu\,xy/2^n}
+\ket{\vect{y}}
+\end{equation}
+where \(\vect{y}\in\{0,1\}^n\) is the binary representation of \(y\).
+% where we used
+% \(
+% \omega^{xy}
+% =
+% \eu^{2\pi\iu\,xy/2^n}
+% \).
+
+% The QFT is unitary because
+% \begin{equation}\label{eq:qft-unitarity-computation}
+% \bra{k}\text{QFT}_N^\dagger\text{QFT}_N\ket{\ell}
+% =
+% \frac1N
+% \sum_{y=0}^{N-1}
+% \omega^{y(\ell-k)}
+% =
+% \begin{cases}
+% 1 & k=\ell\\
+% 0 & k\neq\ell
+% \end{cases}
+% \end{equation}
+% Indeed, for \(k\neq\ell\), the geometric sum vanishes:
+% \[
+% \sum_{y=0}^{N-1}q^y
+% =
+% \frac{q^N-1}{q-1}
+% =
+% 0
+% \qquad
+% q=\omega^{\ell-k}\neq1
+% \]
+
+
+% % This can be written as a product state
+% The quantum Fourier transform (QFT) maps
+% $\ket{\vect{j}} = \ket{j_1 \cdots j_n}$ to
+% \[
+% \frac{1}{2^{n/2}}
+% \bigotimes_{k=n}^{1}
+% \left(
+% \ket{0}
+% +
+% \eu^{2\pi\iu\,\phi_k(j)}
+% \ket{1}
+% \right)
+% \]
+% where
+% \[
+% \phi_k(j)
+% \coloneqq
+% \sum_{\ell=k}^n \frac{j_\ell}{2^{\ell-k+1}}
+% \]
+% is the binary fraction corresponding to
+% % the bits $j_k\cdots j_n$, also written as
+% $0.j_k\cdots j_n$ in binary notation.
+
+
+% Writing the output state in tensor-product form.
+Writing
+\[
+% \vect{y}=y_1\cdots y_n
+% \qquad
+y=[\vect{y}]_2
+=
+\sum_{k=1}^n y_k 2^{n-k}
+% \qquad
+%  y_k\in\{0,1\},
+\]
+we obtain
+\[
+\begin{aligned}
+\operatorname{QFT}\ket{\vect{x}}
+&=
+\frac{1}{2^{n/2}}
+\sum_{y=0}^{2^n-1}
+\eu^{2\pi\iu\,xy/2^n}
+\ket{\vect{y}}
+\\
+&=
+\frac{1}{2^{n/2}}
+\sum_{y=0}^{2^n-1}
+\eu^{2\pi\iu\,x\left(\sum_{k=1}^n y_k 2^{n-k}\right)/2^n}
+\ket{\vect{y}}
+\\
+&=
+\frac{1}{2^{n/2}}
+\sum_{y=0}^{2^n-1}
+\prod_{k=1}^n
+\left(
+\eu^{2\pi\iu\,x/2^k}
+\right)^{y_k}
+\ket{\vect{y}}
+\\
+% &=
+% \frac{1}{2^{n/2}}
+% \sum_{y=0}^{2^n-1}
+% \prod_{k=1}^n
+% \left(
+% \eu^{2\pi\iu\,x/2^k}
+% \right)^{y_k}
+% \bigotimes_{k=1}^n\ket{y_k}
+% \\
+&=
+\frac{1}{2^{n/2}}
+\sum_{y=0}^{2^n-1}
+\bigotimes_{k=1}^n
+\left(
+\left(
+\eu^{2\pi\iu\,x/2^k}
+\right)^{y_k}
+\ket{y_k}
+\right)
+\\
+&=
+\frac{1}{2^{n/2}}
+\sum_{\vect{y} \in\{0,1\}^n}
+\bigotimes_{k=1}^n
+\left(
+\left(
+\eu^{2\pi\iu\,x/2^k}
+\right)^{y_k}
+\ket{y_k}
+\right)
+\\
+&= % this step is not clear yet
+\frac{1}{2^{n/2}}
+\bigotimes_{k=1}^n
+\left(
+\sum_{y_k\in\{0,1\}}
+\left(
+\eu^{2\pi\iu\,x/2^k}
+\right)^{y_k}
+\ket{y_k}
+\right)
+\\
+&=
+\frac{1}{2^{n/2}}
+\bigotimes_{k=1}^n
+\left(
+\ket0
++
+\eu^{2\pi\iu\,x/2^k}\ket1
+\right)
+\end{aligned}
+\]
+% where we use the distributive law for tensor products:
+% \[
+% \sum_{\vect{y}\in\{0,1\}^n}
+% \bigotimes_{k=1}^n a_k(y_k)
+% =
+% \bigotimes_{k=1}^n
+% \left(
+% \sum_{y_k\in\{0,1\}} a_k(y_k)
+% \right),
+% \]
+% where the sum over \(\vect{y}\) means an independent sum over all bits
+% \(y_1,\ldots,y_n\).
+% In our case,
+% \[
+% a_k(y_k)
+% =
+% \left(
+% \eu^{2\pi\iu x/2^k}
+% \right)^{y_k}
+% \ket{y_k}.
+% \]
+Since
+\[
+\frac{x}{2^k}
+=
+\text{integer}
++
+0.x_{n-k+1}\cdots x_n
+\]
+in binary notation, the integer part contributes no phase because
+\(
+\eu^{2\pi\iu m}=1
+\)
+for every integer \(m\).
+Hence
+\[
+\operatorname{QFT}\ket{\vect{x}}
+=
+\frac{1}{2^{n/2}}
+\bigotimes_{k=1}^n
+\left(
+\ket0
++
+\eu^{2\pi\iu\,0.x_{n-k+1}\cdots x_n}
+\ket1
+\right)
+\]
+This is the QFT output in the standard computational-basis order.
+In circuit implementations, the tensor factors are often produced in the opposite wire order; 
+one then adds final SWAP gates to reverse the order of the output bits.
+
+\subsubsection*{Circuit}
+
+Define the phase gates
+\begin{equation}\label{eq:qft-phase-gates}
+R_k
+\coloneqq
+\begin{bmatrix}
+1&0\\
+0&\eu^{2\pi\iu/2^k}
+\end{bmatrix}
+\end{equation}
+A Hadamard on a Qbit followed by controlled phase gates from all less significant Qbits prepares the corresponding factor in the product representation above.
+The general \(n\)-Qbit circuit is
+\[
+\resizebox{\textwidth}{!}{%
+\begin{quantikz}[
+  % font=\tiny,
+  column sep=0.42cm,
+  row sep=0.30cm,
+  wire types={q,q,n,q,q}
+]
+\lstick{$\ket{x_1}$}
+  & \gate{H}
+  & \gate{R_2}
+  & \ \ldots \
+  & \gate{R_{n-1}}
+  & \gate{R_n}
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \swap{4}
+  & \qw \\
+\lstick{$\ket{x_2}$}
+  & \qw
+  & \ctrl{-1}
+  & \ \ldots \
+  & \qw
+  & \qw
+  & \gate{H}
+  & \ \ldots \
+  & \gate{R_{n-2}}
+  & \gate{R_{n-1}}
+  & \qw
+  & \qw
+  & \qw
+  & \qw
+  & \swap{2}
+  & \qw \\
+  \lstick{\makebox[\widthof{$\ket{x_{n}}$}][c]{$\vdots$}}
+  & \vdots
+  & 
+  & \ddots
+  & 
+  & 
+  &
+  & \ddots
+  & 
+  & 
+  & \ddots
+  & 
+  &
+  & \vdots
+  &
+  & \\
+\lstick{$\ket{x_{n-1}}$}
+  & \qw
+  & \qw
+  & \ \ldots \
+  & \ctrl{-3}
+  & \qw
+  & \qw
+  & \ \ldots \
+  & \ctrl{-2}
+  & \qw
+  & \ \ldots \
+  & \gate{H}
+  & \gate{R_2}
+  & \qw
+  & \targX{}
+  & \qw \\
+\lstick{$\ket{x_n}$}
+  & \qw
+  & \qw
+  & \ \ldots \
+  & \qw
+  & \ctrl{-4}
+  & \qw
+  & \ \ldots \
+  & \qw
+  & \ctrl{-3}
+  & \ \ldots \
+  & \qw
+  & \ctrl{-1}
+  & \gate{H}
+  & \targX{}
+  & \qw
+\end{quantikz}
+}
+\]
+% The final bit reversal is
+% \[
+% \operatorname{REV}_n
+% =
+% \underbrace{
+% \prod_{j=1}^{\lfloor n/2\rfloor}
+% \operatorname{SWAP}(j,n+1-j)
+% }_{\lfloor n/2\rfloor\text{ swaps}}
+% \]
+There are
+\(
+n(n-1)/2
+\)
+controlled rotations, \(n\) Hadamards, and
+\(
+\lfloor n/2\rfloor
+\)
+swaps, hence the exact QFT uses
+\(
+O(n^2)
+\)
+gates.
+% Discarding rotations \(R_k\) with large \(k\), whose phases are close to \(1\), gives an approximate QFT using
+% \(
+% O(n\log n)
+% \)
+% gates with inverse-polynomial error.
+
+\subsection{Phase estimation}\label{sec:phase-estimation}
+
+Let \(U\) be unitary and suppose an eigenstate \(\ket u\) is available with
+\begin{equation}\label{eq:phase-estimation-eigenvalue}
+U\ket u
+=
+\eu^{2\pi\iu\varphi}\ket u
+\qquad
+\varphi\in[0,1)
+\end{equation}
+The goal is to determine the first \(t\) binary digits of \(\varphi\).
+Controlled powers of \(U\) transfer the phase to a \(t\)-Qbit control register by phase kickback:
+\begin{equation}\label{eq:phase-estimation-kickback}
+\ket j\ket u
+\xmapsto{C_U}
+\ket jU^j\ket u
+=
+\eu^{2\pi\iu j\varphi}\ket j\ket u
+\end{equation}
+Let \(n_u\) denote the number of Qbits in the register containing \(\ket u\).
+In compact register-level notation, phase estimation is
+\[
+\begin{quantikz}[
+  column sep=0.58cm,
+  row sep=0.38cm,
+  wire types={b,b},
+  classical gap=0.07cm
+]
+\lstick{$\ket{\vect{0}}$}
+  & \qwbundle{t}
+  & \gate{H^{\otimes t}}
+    \slice[
+      style={densely dashed,gray,semithick},
+      label style={pos=1,anchor=north,yshift=0.0cm}
+    ]{$\ket{\psi_1}$}
+  & &
+    \ctrl{1}
+    \gategroup[
+      2,
+      steps=1,
+      style={ densely dotted,rounded corners,inner xsep=6pt,inner ysep=4pt},
+      label style={label position=above,anchor=south,yshift=-0.13cm}
+    ]{$C_U$}
+    &
+    \slice[
+      style={densely dashed,gray,semithick},
+      label style={pos=1,anchor=north,yshift=0.0cm}
+    ]{$\ket{\psi_2}$}
+  & \gate{\text{QFT}_{2^t}^{-1}}
+    \slice[
+      style={densely dashed,gray,semithick},
+      label style={pos=1,anchor=north,yshift=0.0cm}
+    ]{$\ket{\psi_3}$}
+  & \meter{}
+  & \setwiretype{c}\rstick{$\vect{\widetilde{\ell}}$} \\
+\lstick{$\ket u$}
+  & \qwbundle{n_u}
+  & \qw
+  &
+  & \gate{U^{2^{\kappa}}}
+  &
+  & \qw
+  & \qw
+  & \rstick{$\ket u$}
+\end{quantikz}
+\]
+% The corresponding expanded circuit is
+% \[
+% \begin{quantikz}[
+%   column sep=0.38cm,
+%   row sep=0.28cm,
+%   wire types={q,q,n,q,q}
+% ]
+% \lstick{$\ket0$}
+%   & \gate{H}
+%   & \ctrl{4}
+%     \gategroup[
+%       5,
+%       steps=4,
+%       style={dashed,rounded corners,inner xsep=3pt,inner ysep=4pt},
+%       label style={label position=below,anchor=north,yshift=-0.15cm}
+%     ]{\(t\) controlled powers \(U^{2^j}\), \(0\leq j<t\)}
+%   & \qw
+%   & \ \ldots \
+%   & \qw
+%   & \gate[wires=4]{\text{QFT}_{2^t}^{\dagger}}
+%   & \meter{}
+%   & \rstick[wires=4]{$\vect{\widetilde{\ell}}$} \\
+% \lstick{$\ket0$}
+%   & \gate{H}
+%   & \qw
+%   & \ctrl{3}
+%   & \ \ldots \
+%   & \qw
+%   &
+%   & \meter{}
+%   & \\
+% \vdots
+%   &
+%   & \vdots
+%   & \vdots
+%   & \ddots
+%   & \vdots
+%   &
+%   & \vdots
+%   & \\
+% \lstick{$\ket0$}
+%   & \gate{H}
+%   & \qw
+%   & \qw
+%   & \ \ldots \
+%   & \ctrl{1}
+%   &
+%   & \meter{}
+%   & \\
+% \lstick{$\ket u$}
+%   & \qw
+%   & \gate{U}
+%   & \gate{U^2}
+%   & \ \ldots \
+%   & \gate{U^{2^{t-1}}}
+%   & \qw
+%   & \qw
+%   & \rstick{$\ket u$}
+% \end{quantikz}
+% \]
+The slices in the circuit mark the following joint states.
+Initially,
+\begin{equation}\label{eq:phase-estimation-state-zero}
+\ket{\psi_0}
+=
+\ket{\vect{0}}\ket u
+\end{equation}
+After the Hadamards, the control register is the usual equal superposition:
+\begin{equation}\label{eq:phase-estimation-state-one}
+\ket{\psi_1}
+=
+\left(
+H^{\otimes t}\otimes\id
+\right)
+\ket{\psi_0}
+=
+\frac{1}{\sqrt{2^t}}
+\sum_{j=0}^{2^t-1}
+\ket j\ket u
+\end{equation}
+% Here the bundled controlled operation $\operatorname{c}\text{-}U^{2^{\kappa}}$ represents the \(t\) gates
+% \[
+% \underbrace{
+% \operatorname{c}\text{-}U,\,
+% \operatorname{c}\text{-}U^2,\,
+% \ldots,\,
+% \operatorname{c}\text{-}U^{2^{t-1}}
+% }_{t\text{ controlled powers }U^{2^{\kappa}},\ 0\leq \kappa<t}
+% \]
+The compact controlled block represents the unitary
+\begin{equation}\label{eq:phase-estimation-controlled-block}
+C_U
+\coloneqq
+\sum_{j=0}^{2^t-1}
+\ket j\bra j
+\otimes
+U^j
+\end{equation}
+Indeed, the binary expansion
+\(
+j=\sum_{k=0}^{t-1}j_k2^k
+\)
+selects precisely the powers
+\(
+U^{2^k}
+\)
+whose control bits satisfy \(j_k=1\), and their product is
+\[
+\prod_{k=0}^{t-1}
+\left(
+U^{2^k}
+\right)^{j_k}
+=
+U^{\sum_{k=0}^{t-1}j_k2^k}
+=
+U^j
+\]
+Applying this block to \(\ket{\psi_1}\) and using
+\(
+U^j\ket u=\eu^{2\pi\iu j\varphi}\ket u
+\)
+gives
+\begin{equation}\label{eq:phase-estimation-state-two}
+\ket{\psi_2}
+=
+C_U\ket{\psi_1}
+=
+\frac{1}{\sqrt{2^t}}
+\sum_{j=0}^{2^t-1}
+\ket jU^j\ket u
+=
+\frac{1}{\sqrt{2^t}}
+\sum_{j=0}^{2^t-1}
+\eu^{2\pi\iu j\varphi}
+\ket j\ket u
+\end{equation}
+
+Suppose first that the phase has an exact \(t\)-bit representation
+\(
+\varphi
+=
+\frac{\ell}{2^t}
+\), \(
+\ell\in\{0,\ldots,2^t-1\}
+\) (ideal case).
+Substitution into \autoref{eq:phase-estimation-state-two} gives
+\begin{equation}\label{eq:phase-estimation-fourier-state}
+\ket{\psi_2}
+=
+\frac{1}{\sqrt{2^t}}
+\sum_{j=0}^{2^t-1}
+\eu^{2\pi\iu j\ell/2^t}
+\ket j\ket u
+\overset{\text{\eqref{eq:qft-computational-basis}}}{=}
+\left(
+\text{QFT}_{2^t}\ket\ell
+\right)
+\ket u
+\end{equation}
+where the second equality is exactly the definition of the QFT from
+\autoref{sec:quantum-fourier-transform}.
+Consequently, the inverse QFT \rlap{produces}
+\begin{equation}\label{eq:phase-estimation-state-three}
+\ket{\psi_3}
+=
+\left(
+\text{QFT}_{2^t}^{-1}\otimes\id
+\right)
+\ket{\psi_2}
+=
+\ket\ell\ket u
+\end{equation}
+and measurement returns \(\ell\) with certainty.
+% In general, the measured string
+% \(
+% \vect{\widetilde{\ell}}\in\{0,1\}^t
+% \)
+% encodes the phase estimate
+% \(
+% [\vect{\widetilde{\ell}}]_2/2^t
+% \).
+
+
+% For a general phase, write
+% \(
+% 2^t\varphi=\ell+\delta
+% \)
+% with
+% \(
+% |\delta|\leq1/2
+% \).
+% The amplitude of measuring the nearest integer \(\ell\) is
+% \begin{equation}\label{eq:phase-estimation-approximate-amplitude}
+% \braket{\ell|\psi}
+% =
+% \frac1{2^t}
+% \sum_{j=0}^{2^t-1}
+% \eu^{2\pi\iu j\delta/2^t}
+% =
+% \frac1{2^t}
+% \frac{\eu^{2\pi\iu\delta}-1}
+% {\eu^{2\pi\iu\delta/2^t}-1}
+% \end{equation}
+% and hence
+% \begin{equation}\label{eq:phase-estimation-approximate-probability}
+% \Prob[\ell]
+% =
+% \frac{1}{2^{2t}}
+% \frac{\sin^2(\pi\delta)}
+% {\sin^2(\pi\delta/2^t)}
+% \geq
+% \frac{4}{\pi^2}
+% >
+% 0.4
+% \end{equation}
+In the non-ideal case, we can extend the circuit:
+Adding \(s\) extra Qbits and discarding their measured bits gives the desired \(t\)-bit approximation with probability at least
+\(
+1-2^{-s}
+\).
+
 
 
 
@@ -9991,7 +11111,7 @@ such that:
 \end{enumerate}
 \end{definition}
 \begin{remark}
-Uniqueness of the identity and uniqueness of inverse elements are not part of the axioms; 
+Uniqueness of the identity and uniqueness of inverse elements are not part of the axioms;
 they are consequences of the three axioms.
 \end{remark}
 
@@ -10014,5 +11134,922 @@ G = \langle g\rangle
 
 
 
+
+\begin{definition}[Residue classes and units]\label{def:residue-classes-units}
+The integers modulo \(N\) form
+\[
+\Z_N
+\coloneqq
+\{0,\ldots,N-1\}
+\]
+with addition and multiplication modulo \(N\).
+Their multiplicative group of units is
+\[
+\Z_N^*
+\coloneqq
+\left\{
+x\in\Z_N:\gcd(x,N)=1
+\right\}
+\]
+which contains the numbers coprime to \(N\).
+% The inverse of
+% \(
+% x\in\Z_N^*
+% \)
+% is computed efficiently from B\'ezout's identity
+% \[
+% sx+tN
+% =
+% \gcd(x,N)
+% =
+% 1
+% \]
+% because reduction modulo \(N\) gives
+% \(
+% sx\equiv1\pmod N
+% \) and hence
+% \(
+% x^{-1}\equiv s\pmod N
+% \).
+\end{definition}
+
+\begin{definition}[Order]\label{def:multiplicative-order}
+The order of an element \(a\) in a finite group is
+\[
+\operatorname{ord}(a)
+\coloneqq
+\min
+\left\{
+r>0:a^r=e
+\right\}
+\]
+For
+\(
+a\in\Z_N^*
+\),
+this means
+\(
+\operatorname{ord}_N(a)
+\coloneqq
+\min
+\left\{
+r>0:a^r\equiv1\pmod N
+\right\}
+\).
+\end{definition}
+
+\begin{remark}
+If
+\(
+N=pq
+\)
+for distinct primes, then
+\(
+\Z_N^*
+\)
+consists of the residue classes modulo \(N\) that are not divisible by \(p\) or by \(q\):
+\[
+\Z_N^*
+=
+\{x\in\{0,\ldots,N-1\}:p\nmid x\text{ and }q\nmid x\}
+\]
+% Thus, it is not enough to remove only the two numbers \(p\) and \(q\);
+Thus, to obtain $\Z_N^*$ from $\Z_N$, one has to remove all multiples of \(p\) and all multiples of \(q\).
+There are \(q\) multiples of \(p\) modulo \(N\)
+% ,namely
+% \(
+% 0,p,2p,\ldots,(q-1)p
+% \),
+and \(p\) multiples of \(q\).
+% namely
+% \(
+% 0,q,2q,\ldots,(p-1)q
+% \).
+The residue \(0\) is counted twice, so the number of non-units is
+\(
+p+q-1
+\).
+Therefore
+\[
+|\Z_N^*|
+=
+pq-(p+q-1)
+=
+(p-1)(q-1)
+\qedhere
+\]
+% The Chinese remainder theorem identifies
+% \(
+% \Z_N^*
+% \)
+% with
+% \(
+% \Z_p^*\times\Z_q^*
+% \),
+% so computations modulo \(N\) can be understood componentwise modulo its prime factors.
+\end{remark}
+
+% \subsubsection*{Continued fractions and the Euclidean algorithm}
+
+% Continued fractions recover a rational number from a sufficiently accurate approximation.
+% For
+% \(
+% x\in\R_{>0}
+% \),
+% repeatedly write
+% \[
+% x_k
+% =
+% a_k
+% +
+% \frac{1}{x_{k+1}}
+% \qquad
+% a_k=\lfloor x_k\rfloor
+% \]
+% to obtain
+% \[
+% x
+% =
+% [a_0;a_1,a_2,\ldots]
+% \coloneqq
+% a_0
+% +
+% \cfrac{1}{a_1+\cfrac{1}{a_2+\cdots}}
+% \]
+% The truncations
+% \(
+% p_k/q_k=[a_0;\ldots,a_k]
+% \)
+% are called the \emph{convergents}.
+% They are computed without floating-point arithmetic from
+% \begin{equation}\label{eq:continued-fraction-convergent-recurrence}
+% \begin{aligned}
+% p_k
+% &=
+% a_kp_{k-1}+p_{k-2}
+% &
+% p_{-2}
+% &=
+% 0
+% &
+% p_{-1}
+% &=
+% 1
+% \\
+% q_k
+% &=
+% a_kq_{k-1}+q_{k-2}
+% &
+% q_{-2}
+% &=
+% 1
+% &
+% q_{-1}
+% &=
+% 0
+% \end{aligned}
+% \end{equation}
+
+% % \begin{example}\label{ex:continued-fraction-415-93}
+% % The Euclidean algorithm gives
+% % \[
+% % \begin{aligned}
+% % 415
+% % &=
+% % 4\cdot93+43
+% % \\
+% % 93
+% % &=
+% % 2\cdot43+7
+% % \\
+% % 43
+% % &=
+% % 6\cdot7+1
+% % \\
+% % 7
+% % &=
+% % 7\cdot1
+% % \end{aligned}
+% % \]
+% % and hence
+% % \[
+% % \frac{415}{93}
+% % =
+% % [4;2,6,7]
+% % \]
+% % \end{example}
+
+% \begin{theorem}[Legendre's convergent theorem]\label{thm:legendre-convergent}
+% If
+% \[
+% \left|
+% x-\frac{s}{r}
+% \right|
+% <
+% \frac{1}{2r^2}
+% \]
+% then
+% \(
+% s/r
+% \)
+% in lowest terms is a convergent of \(x\).
+% \end{theorem}
+
+% This theorem is the classical bridge from the approximate phase returned by \autoref{sec:phase-estimation} to the exact period used by Shor's algorithm.
+
+% \subsection{Period finding}\label{sec:period-finding}
+
+% Let
+% \(
+% f:\Z\to S
+% \)
+% have smallest positive period \(r\), so
+% \[
+% f(x+r)
+% =
+% f(x)
+% \]
+% and assume it is injective within each period.
+% Choose a power of two
+% \(
+% M=2^m
+% \)
+% and let \(\ell_f\) Qbits suffice to encode an output of \(f\).
+% Query \(f\) in superposition:
+% \[
+% \begin{quantikz}[
+%   column sep=0.58cm,
+%   wire types={b,b},
+%   classical gap=0.07cm
+% ]
+% \lstick{$\ket{\vect{0}}$}
+%   & \qwbundle{m}
+%   & \gate{H^{\otimes m}}
+%   & \gate[wires=2]{O_f}
+%   & \gate{\text{QFT}_M^\dagger}
+%   & \meter{}
+%   & \setwiretype{c}\rstick{$y$} \\
+% \lstick{$\ket{\vect{0}}$}
+%   & \qwbundle{\ell_f}
+%   & \qw
+%   &
+%   & \qw
+%   & \qw
+%   &
+% \end{quantikz}
+% \]
+% Immediately after the oracle the state is
+% \begin{equation}\label{eq:period-finding-after-oracle}
+% \frac1{\sqrt M}
+% \sum_{x=0}^{M-1}
+% \ket x\ket{f(x)}
+% \end{equation}
+% If the second register were measured as \(f(x_0)\), the first register would collapse approximately to
+% \begin{equation}\label{eq:periodic-coset-state}
+% \frac1{\sqrt L}
+% \sum_{j=0}^{L-1}
+% \ket{x_0+jr}
+% \qquad
+% L\approx\frac Mr
+% \end{equation}
+% The inverse QFT gives the amplitude
+% \begin{equation}\label{eq:period-finding-amplitude}
+% \begin{aligned}
+% \bra y\text{QFT}_M^\dagger
+% \frac1{\sqrt L}
+% \sum_{j=0}^{L-1}\ket{x_0+jr}
+% &=
+% \frac{\eu^{-2\pi\iu yx_0/M}}{\sqrt{LM}}
+% \sum_{j=0}^{L-1}
+% \eu^{-2\pi\iu yjr/M}
+% \end{aligned}
+% \end{equation}
+% The geometric sum is largest when
+% \(
+% yr/M
+% \)
+% is close to an integer.
+% Thus the measurement yields an integer \(y\) for which
+% \[
+% \frac yM
+% \approx
+% \frac sr
+% \]
+% for a nearly uniform
+% \(
+% s\in\{0,\ldots,r-1\}
+% \).
+% \[
+% \begin{tikzpicture}[
+%   x=0.35cm,
+%   y=0.42cm,
+%   >=Stealth,
+%   line cap=round,
+%   every node/.style={font=\footnotesize}
+% ]
+%   \draw[->] (0,0) -- (11.2,0) node[right] {\(x\)};
+%   \draw[->] (0,0) -- (0,3.1) node[above] {\(f(x)\)};
+%   \foreach \x/\h in {0.5/1.0,1.5/2.4,2.5/1.6,3.5/1.0,4.5/2.4,5.5/1.6,6.5/1.0,7.5/2.4,8.5/1.6,9.5/1.0,10.5/2.4}
+%     \draw[very thick,funblue] (\x,0) -- (\x,\h);
+%   \draw[<->,overviewgreen,thick] (0.5,2.85) -- (3.5,2.85)
+%     node[midway,above] {\(r\)};
+%   \node[align=center] at (5.5,-0.82)
+%     {periodic samples in the input register};
+
+%   \begin{scope}[xshift=5.5cm,x=0.32cm,y=0.48cm]
+%     \draw[->] (0,0) -- (12.5,0) node[right] {\(y\)};
+%     \draw[->] (0,0) -- (0,3.2) node[above] {\(\Prob[y]\)};
+%     \foreach \x/\h in {0/2.8,1/0.12,2/0.18,3/2.45,4/0.16,5/0.11,6/2.65,7/0.11,8/0.16,9/2.45,10/0.18,11/0.12,12/2.8}
+%       \draw[very thick,alizarincrimsonred] (\x,0) -- (\x,\h);
+%     \node[align=center] at (6,-0.90)
+%       {QFT peaks near multiples of \(M/r\)};
+%   \end{scope}
+% \end{tikzpicture}
+% \]
+
+% The same computation can be viewed as phase estimation.
+% Define the shift
+% \[
+% S_f\ket{f(k)}
+% =
+% \ket{f(k+1)}
+% \]
+% and the Fourier states
+% \begin{equation}\label{eq:period-shift-eigenstates}
+% \ket{u_s}
+% \coloneqq
+% \frac1{\sqrt r}
+% \sum_{k=0}^{r-1}
+% \eu^{-2\pi\iu sk/r}
+% \ket{f(k)}
+% \end{equation}
+% Then
+% \[
+% S_f\ket{u_s}
+% =
+% \frac1{\sqrt r}
+% \sum_{k=0}^{r-1}
+% \eu^{-2\pi\iu sk/r}
+% \ket{f(k+1)}
+% =
+% \eu^{2\pi\iu s/r}
+% \frac1{\sqrt r}
+% \sum_{k=0}^{r-1}
+% \eu^{-2\pi\iu sk/r}
+% \ket{f(k)}
+% =
+% \eu^{2\pi\iu s/r}\ket{u_s}
+% \]
+% Moreover,
+% \begin{equation}\label{eq:period-shift-initial-superposition}
+% \frac1{\sqrt r}
+% \sum_{s=0}^{r-1}
+% \ket{u_s}
+% =
+% \frac1r
+% \sum_{k=0}^{r-1}
+% \left(
+% \sum_{s=0}^{r-1}
+% \eu^{-2\pi\iu sk/r}
+% \right)
+% \ket{f(k)}
+% =
+% \ket{f(0)}
+% \end{equation}
+% Hence phase estimation started with \(\ket{f(0)}\) returns an approximation of
+% \(
+% s/r
+% \)
+% for a uniform \(s\).
+% Choose
+% \(
+% M\geq N^2
+% \)
+% when \(r<N\).
+% Then a successful phase-estimation outcome satisfies
+% \begin{equation}\label{eq:period-finding-legendre-bound}
+% \left|
+% \frac yM-\frac sr
+% \right|
+% \leq
+% \frac1{2M}
+% \leq
+% \frac1{2N^2}
+% \leq
+% \frac1{2r^2}
+% \end{equation}
+% so \autoref{thm:legendre-convergent} recovers
+% \(
+% s/r
+% \)
+% as a convergent of \(y/M\).
+% If
+% \(
+% \gcd(s,r)=1
+% \),
+% its denominator is exactly \(r\); otherwise it is
+% \(
+% r/\gcd(s,r)
+% \).
+% Repeating and taking the least common multiple recovers \(r\) with constant probability.
+
+\subsection{Order finding}\label{sec:order-finding}
+
+For
+\(
+a\in\Z_N^*
+\),
+define the modular multiplication unitary
+\begin{equation}\label{eq:modular-multiplication-unitary}
+{\color{red}\boxed{\color{black}
+U_a\ket y
+=
+\ket{ay\bmod N}
+}}
+\end{equation}
+on basis states \(0\leq y<N\), extending it as the identity on unused computational-basis states.
+It is unitary because multiplication by \(a\) is a permutation of \(\Z_N^*\).
+
+% A controlled $U^{2^\kappa}$ can be implemented efficiently by translating the classical ``repeated squaring'' method in time \(O(\log N)^3\), which is the asymptotic running time of \autoref{alg:shor-factoring}.
+% (This can be improved to essentially \(O(\log N)^2\) by using an asymptotically faster multiplication algorithm --- based also on the discrete Fourier transform.)
+
+
+
+If
+\(
+r=\operatorname{ord}_N(a)
+\),
+then for
+\(
+0\leq s<r
+\)
+define
+\begin{equation}\label{eq:order-finding-eigenstates}
+\ket{u_s}
+\coloneqq
+\frac1{\sqrt r}
+\sum_{k=0}^{r-1}
+\eu^{-2\pi\iu sk/r}
+\ket{a^k\bmod N}
+\end{equation}
+The eigenvalue computation is
+\[
+U_a\ket{u_s}
+=
+\frac1{\sqrt r}
+\sum_{k=0}^{r-1}
+\eu^{-2\pi\iu sk/r}
+\ket{a^{k+1}\bmod N}
+=
+\eu^{2\pi\iu s/r}
+\frac1{\sqrt r}
+\sum_{k=0}^{r-1}
+\eu^{-2\pi\iu sk/r}
+\ket{a^k\bmod N}
+=
+\eu^{2\pi\iu s/r}\ket{u_s}
+\]
+where we used the $r$-periodicity of both functions. 
+We conclude that phase estimation yields digits of the phase
+$
+\varphi=\frac{s}{r}
+$, and
+given that we know sufficiently many, i.e., $O(\log N)$, digits, we can determine the period and, hence, the rational number, in particular $r$, which is the unknown.
+
+But how do we obtain one of the $\ket{u_s}$? 
+We cannot: 
+The definition of $\ket{u_s}$ depends on $r$. 
+But luckily, 
+% we do not have to;
+% As in \autoref{eq:period-shift-initial-superposition},
+% Consider the equal superposition of all eigenstates,
+\[
+\begin{aligned}
+\frac1{\sqrt r}
+\sum_{s=0}^{r-1}
+\ket{u_s}
+&=
+\frac{1}{r}
+\sum_{s=0}^{r-1}
+\sum_{k=0}^{r-1}
+\eu^{-\frac{2\pi\iu sk}{r}}
+\ket{a^k\bmod N}
+\\
+&=
+\frac{1}{r}
+\sum_{k=0}^{r-1}
+% \underbrace{
+% \underbrace{
+\left(
+\sum_{s=0}^{r-1}
+\eu^{-\frac{2\pi\iu sk}{r}}
+\right)
+% }_{r \ \delta_{k,0}}
+% }_{\begin{cases}r&\text{if }k=0\\0&\text{otherwise}\end{cases}}
+\ket{a^k\bmod N}
+\\
+&=
+\frac{1}{r}
+\sum_{k=0}^{r-1}
+r \ \delta_{k,0}
+\ket{a^k\bmod N}
+\\
+&=
+\ket{1}
+\end{aligned}
+\]
+so an eigenstate does not need to be prepared explicitly.
+Let
+\(
+n=\lceil\log_2N\rceil
+\)
+and define the coherent modular-exponentiation block
+\begin{equation}\label{eq:order-finding-modular-exponentiation}
+U_{\mathrm{modexp}}
+\ket j\ket y
+=
+\ket j\ket{a^jy\bmod N}
+\end{equation}
+It comprises \(t\) controlled modular multiplications, one for every bit of \(j\).
+The order-finding circuit is phase estimation for \(U_a\), written at register level as
+\[
+\begin{quantikz}[
+  column sep=0.58cm,
+  wire types={b,b},
+  classical gap=0.07cm
+]
+\lstick{$\ket{\vect{0}}$}
+  & \qwbundle{t}
+  & \gate{H^{\otimes t}}
+  & \gate[wires=2]{U_{\mathrm{modexp}}}
+    % \gategroup[
+    %   2,
+    %   steps=1,
+    %   style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
+    %   label style={label position=below,anchor=north,yshift=-0.16cm}
+    % ]{\(t\) controlled modular multiplications}
+  & \gate{\text{QFT}_{2^t}^{-1}}
+  & \meter{}
+  & \setwiretype{c}\rstick{$\vect{z}$} \\
+\lstick{$\ket{\vect{1}}$}
+  & \qwbundle{n}
+  & \qw
+  &
+  & \qw
+  & \qw
+  & \rstick{$\ket{u_s}$}
+\end{quantikz}
+\]
+The measured bit string
+\(
+\vect{z}
+\)
+encodes an approximation
+\(
+[\vect{z}]_2/2^t\approx s/r
+\).
+Repeated squaring makes every controlled power \rlap{efficient:}
+\[
+U_a^{2^j}\ket y
+=
+\ket{a^{2^j}y\bmod N}
+\]
+and the constants
+\(
+a^{2^j}\bmod N
+\)
+are precomputed classically.
+Phase estimation returns
+\(
+s/r
+\)
+approximately, and continued fractions recover \(r\).
+
+\subsection{Factoring}\label{sec:shor-factoring}
+
+Shor's factoring algorithm combines the quantum order-finding subroutine from \autoref{sec:order-finding} with a classical reduction.
+Let \(N\) be an odd composite integer that is not a prime power and choose
+\(
+a\in\{2,\ldots,N-1\}
+\)
+uniformly.
+If
+\(
+\gcd(a,N)>1
+\),
+a factor has already been found.
+Otherwise compute
+\(
+r=\operatorname{ord}_N(a)
+\).
+
+If \(r\) is even, then
+\begin{equation}\label{eq:shor-difference-of-squares}
+\begin{aligned}
+a^r
+&\equiv
+1
+\pmod N
+\\
+a^r-1
+&\equiv
+0
+\pmod N
+\\
+(a^{r/2}-1)
+(a^{r/2}+1)
+&\equiv
+0
+\pmod N
+\end{aligned}
+\end{equation}
+Minimality of \(r\) guarantees
+\(
+a^{r/2}\not\equiv1\pmod N
+\).
+If also
+\(
+a^{r/2}\not\equiv-1\pmod N
+\),
+then neither factor in \autoref{eq:shor-difference-of-squares} is divisible by all of \(N\), while their product is.
+Therefore
+\begin{equation}\label{eq:shor-factor-gcds}
+\gcd(a^{r/2}-1,N)
+\qquad
+\gcd(a^{r/2}+1,N)
+\end{equation}
+yield non-trivial factors.
+For an admissible \(N\), a random
+\(
+a\in\Z_N^*
+\)
+has even order and avoids
+\(
+a^{r/2}\equiv-1\pmod N
+\)
+with probability at least \(1/2\).
+
+% \begin{example}[Factoring \(15\)]\label{ex:shor-factor-15}
+% Choose
+% \(
+% a=2
+% \).
+% Then
+% \[
+% 2^1
+% \equiv
+% 2
+% \qquad
+% 2^2
+% \equiv
+% 4
+% \qquad
+% 2^3
+% \equiv
+% 8
+% \qquad
+% 2^4
+% \equiv
+% 1
+% \pmod{15}
+% \]
+% so
+% \(
+% r=4
+% \).
+% The classical post-processing gives
+% \[
+% \gcd(2^{4/2}-1,15)
+% =
+% \gcd(3,15)
+% =
+% 3
+% \]
+% and
+% \[
+% \gcd(2^{4/2}+1,15)
+% =
+% \gcd(5,15)
+% =
+% 5
+% \]
+% \end{example}
+
+\tikzexternaldisable
+\begin{algorithm}[ht]
+\caption{Shor's factoring algorithm}\label{alg:shor-factoring}
+\begin{algorithmic}[1]
+\Require Composite integer $N$
+\If{$N$ is even}
+  \State \Return $2$ %\Comment{The even case is trivial}
+\EndIf
+\State Check classically whether $N$ is a prime power \Comment{This case is excluded in \autoref{sec:shor-factoring}}
+\State Choose $a$ uniformly from $\{2,\ldots,N-1\}$ \Comment{Random base for the reduction to order finding}
+\State $d\gets\gcd(a,N)$ \Comment{Check whether $a$ is already not coprime to $N$}
+\If{$d>1$} \Comment{$a\notin\Z_N^*$}
+  \State \Return $d$ \Comment{The gcd already gives a non-trivial factor}
+\EndIf
+% \If{$d>1$} \Comment{$a$ is coprime to $N$ iff $d=1$}
+%   \State \Return $d$ \Comment{Non-trivial factor found (i.e. $a$ is not coprime to $N$)}
+% \EndIf
+\State $r\gets\operatorname{ord}_N(a)$ using quantum order finding \Comment{See \autoref{def:multiplicative-order} and \autoref{sec:order-finding}}
+\If{$r$ is odd or $a^{r/2}\equiv-1\pmod N$} \Comment{Then \eqref{eq:shor-difference-of-squares} does not yield useful gcds}
+  \State Restart \Comment{For a random $a\in\Z_N^*$, success has constant probability}
+\EndIf
+\State \Return $\gcd(a^{r/2}-1,N)$ \Comment{A non-trivial factor from \eqref{eq:shor-factor-gcds}}
+\end{algorithmic}
+\end{algorithm}
+\tikzexternalenable
+
+
+For an \(n\)-bit integer, order finding uses polynomially many gates in \(n=\lceil\log_2N\rceil\).
+The asymptotically dominant quantum task is coherent modular exponentiation.
+Using elementary reversible arithmetic gives a gate count of order
+\(
+O(n^3)
+\),
+already exponentially faster than the best known classical factoring algorithms.
+
+
+\FloatBarrier
+
+
+% \subsection{Discrete logarithms}\label{sec:shor-discrete-logarithm}
+
+% \begin{problem}[Discrete logarithm]\label{problem:discrete-logarithm}
+% Let
+% \[
+% G
+% =
+% \langle g\rangle
+% =
+% \left\{
+% 1,g,g^2,\ldots,g^{q-1}
+% \right\}
+% \]
+% be a cyclic group of known order \(q\).
+% Given
+% \(
+% h=g^\ell
+% \),
+% determine
+% \(
+% \ell\in\Z_q
+% \).
+% \end{problem}
+
+% Assume group multiplication and inversion are efficiently computable.
+% Define two multiplication unitaries
+% \begin{equation}\label{eq:discrete-log-multiplication-unitaries}
+% U\ket x
+% =
+% \ket{gx}
+% \qquad
+% V\ket x
+% =
+% \ket{hx}
+% \end{equation}
+% Since
+% \(
+% h=g^\ell
+% \),
+% we have
+% \(
+% V=U^\ell
+% \).
+% The common eigenstates are
+% \begin{equation}\label{eq:discrete-log-eigenstates}
+% \ket{u_s}
+% \coloneqq
+% \frac1{\sqrt q}
+% \sum_{k=0}^{q-1}
+% \eu^{-2\pi\iu sk/q}
+% \ket{g^k}
+% \end{equation}
+% and satisfy
+% \begin{equation}\label{eq:discrete-log-eigenvalues}
+% U\ket{u_s}
+% =
+% \eu^{2\pi\iu s/q}\ket{u_s}
+% \qquad
+% V\ket{u_s}
+% =
+% \eu^{2\pi\iu s\ell/q}\ket{u_s}
+% \end{equation}
+% The second equality follows directly from
+% \[
+% V\ket{u_s}
+% =
+% U^\ell\ket{u_s}
+% =
+% \left(
+% \eu^{2\pi\iu s/q}
+% \right)^\ell
+% \ket{u_s}
+% \]
+% As before, orthogonality of roots of unity gives
+% \begin{equation}\label{eq:discrete-log-initial-state}
+% \ket1
+% =
+% \frac1{\sqrt q}
+% \sum_{s=0}^{q-1}
+% \ket{u_s}
+% \end{equation}
+% Let
+% \(
+% m=\lceil\log_2q\rceil
+% \)
+% and let \(n_G\) Qbits suffice to encode a group element.
+% The combined controlled group-exponentiation block acts as
+% \begin{equation}\label{eq:discrete-log-controlled-group-exponentiation}
+% U_{\mathrm{dlog}}
+% \ket j\ket k\ket z
+% =
+% \ket j\ket k\ket{g^jh^kz}
+% \end{equation}
+% It comprises \(m\) controlled multiplications by powers of \(g\) and \(m\) controlled multiplications by powers of \(h\).
+% Run phase estimation for \(U\) and \(V\) on the same lower register:
+% \[
+% \begin{quantikz}[
+%   column sep=0.56cm,
+%   row sep=0.37cm,
+%   wire types={b,b,b},
+%   classical gap=0.07cm
+% ]
+% \lstick{$\displaystyle\frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j$}
+%   & \qwbundle{m}
+%   & \gate[wires=3]{U_{\mathrm{dlog}}}
+%     \gategroup[
+%       3,
+%       steps=1,
+%       style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
+%       label style={label position=below,anchor=north,yshift=-0.16cm}
+%     ]{\(2m\) controlled group multiplications}
+%   & \gate{\text{QFT}_q^\dagger}
+%   & \meter{}
+%   & \setwiretype{c}\rstick{$s$} \\
+% \lstick{$\displaystyle\frac1{\sqrt q}\sum_{k=0}^{q-1}\ket k$}
+%   & \qwbundle{m}
+%   &
+%   & \gate{\text{QFT}_q^\dagger}
+%   & \meter{}
+%   & \setwiretype{c}\rstick{$s\ell$} \\
+% \lstick{$\ket1$}
+%   & \qwbundle{n_G}
+%   &
+%   & \qw
+%   & \qw
+%   & \rstick{$\ket{u_s}$}
+% \end{quantikz}
+% \]
+% The coherent computation is
+% \begin{equation}\label{eq:discrete-log-phase-estimation-computation}
+% \ket0\ket0\ket{u_s}
+% \xmapsto{\mathrm{QPE}(U),\,\mathrm{QPE}(V)}
+% \ket s\ket{s\ell\bmod q}\ket{u_s}
+% \end{equation}
+% Thus measurement gives
+% \(
+% (x,y)=(s,s\ell)\in\Z_q^2
+% \).
+% Whenever
+% \(
+% s\in\Z_q^*
+% \),
+% the extended Euclidean algorithm computes \(s^{-1}\), and
+% \begin{equation}\label{eq:discrete-log-classical-postprocessing}
+% \ell
+% \equiv
+% ys^{-1}
+% \pmod q
+% \end{equation}
+% If the second phase estimation uses \(V^\dagger\), as in the equivalent two-dimensional period-finding formulation
+% \(
+% f(x,y)=g^xh^{-y}
+% \),
+% the output is
+% \(
+% (s,-s\ell)
+% \)
+% and the post-processing becomes
+% \(
+% \ell\equiv-x^{-1}y\pmod q
+% \).
+
+% The probability that a uniform \(s\in\Z_q\) is invertible is
+% \[
+% \frac{|\Z_q^*|}{q}
+% =
+% \frac{\varphi(q)}q
+% =
+% \Omega\!\left(\frac1{\log\log q}\right)
+% \]
+% so a small number of repetitions suffices.
+% If \(q\) is not a power of two, the exact \(\text{QFT}_q\) in the diagram can be replaced by an approximate QFT on a sufficiently large power-of-two register, followed by the same continued-fraction post-processing as in \autoref{sec:period-finding}.
+% The algorithm is group-agnostic: it applies to
+% \(
+% \Z_p^*
+% \),
+% elliptic-curve groups, and any efficiently represented cyclic group with efficient group operations.
 
 \end{document}
