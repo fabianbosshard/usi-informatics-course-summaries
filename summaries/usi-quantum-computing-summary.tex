@@ -8437,7 +8437,7 @@ U_f\ket{\vect{x}}\ket{-}
 =
 (-1)^{f(\vect{x})}\ket{\vect{x}}\ket{-}
 \end{equation}
-The output Qbit is unchanged, while the function value is kicked back as a phase on the input register:
+The output Qbit is unchanged, while the function value is ``kicked back'' as a phase on the input register:
 \[
 \begin{quantikz}[column sep=0.55cm, row sep=0.2cm]
 \lstick{$\ket{\vect{x}}$} & \qwbundle{n} & \qw & \gate[wires=2]{U_f} & \qw & \qw & \rstick{$(-1)^{f(\vect{x})}\ket{\vect{x}}$} \\
@@ -10655,7 +10655,11 @@ R_k
 0&\eu^{2\pi\iu/2^k}
 \end{bmatrix}
 \end{equation}
-A Hadamard on a Qbit followed by controlled phase gates from all less significant Qbits prepares the corresponding factor in the product representation above.
+A Hadamard on the $j$-th Qbit, followed by controlled phase gates from the less significant Qbits, prepares the factor with phase
+\(
+0.x_jx_{j+1}\cdots x_n
+\).
+Thus the circuit produces the tensor factors in the opposite order compared with the product representation above; the final SWAP gates restore the standard computational-basis order.
 The general \(n\)-Qbit circuit is
 \[
 \resizebox{\textwidth}{!}{%
@@ -11264,10 +11268,10 @@ U_a\ket y
 }}
 \end{equation}
 on basis states \(0\leq y<N\), extending it as the identity on unused computational-basis states.
-It is unitary because multiplication by \(a\) is a permutation of \(\Z_N^*\).
+It is unitary because \(a\in\Z_N^*\), so multiplication by \(a\) is a permutation of \(\Z_N\).
 
-% A controlled $U^{2^\kappa}$ can be implemented efficiently by translating the classical ``repeated squaring'' method in time \(O(\log N)^3\), which is the asymptotic running time of \autoref{alg:shor-factoring}.
-% (This can be improved to essentially \(O(\log N)^2\) by using an asymptotically faster multiplication algorithm --- based also on the discrete Fourier transform.)
+A controlled $U^{2^\kappa}$ can be implemented efficiently by translating the classical ``repeated squaring'' method in time \(O(\log N)^3 = O(n^3)\), which is the asymptotic running time of \autoref{alg:shor-factoring}.
+(This can be improved to essentially \(O(\log N)^2\) by using an asymptotically faster multiplication algorithm --- based also on the discrete Fourier transform.)
 
 
 
@@ -11278,8 +11282,8 @@ r=\operatorname{ord}_N(a)
 then for
 \(
 0\leq s<r
-\)
-define
+\),
+% define
 \begin{equation}\label{eq:order-finding-eigenstates}
 \ket{u_s}
 \coloneqq
@@ -11288,22 +11292,27 @@ define
 \eu^{-2\pi\iu sk/r}
 \ket{a^k\bmod N}
 \end{equation}
-The eigenvalue computation is
+% The eigenvalue computation is
+is an eigenstate of \(U_a\) with eigenvalue \(\eu^{2\pi\iu s/r}\), because
 \[
+\begin{aligned}
 U_a\ket{u_s}
-=
+&=
 \frac1{\sqrt r}
 \sum_{k=0}^{r-1}
 \eu^{-2\pi\iu sk/r}
 \ket{a^{k+1}\bmod N}
-=
+\\
+&=
 \eu^{2\pi\iu s/r}
 \frac1{\sqrt r}
 \sum_{k=0}^{r-1}
 \eu^{-2\pi\iu sk/r}
 \ket{a^k\bmod N}
-=
+\\
+&=
 \eu^{2\pi\iu s/r}\ket{u_s}
+\end{aligned}
 \]
 where we used the $r$-periodicity of both functions. 
 We conclude that phase estimation yields digits of the phase
@@ -11358,44 +11367,68 @@ so an eigenstate does not need to be prepared explicitly.
 Let
 \(
 n=\lceil\log_2N\rceil
-\)
-and define the coherent modular-exponentiation block
-\begin{equation}\label{eq:order-finding-modular-exponentiation}
-U_{\mathrm{modexp}}
-\ket j\ket y
-=
-\ket j\ket{a^jy\bmod N}
-\end{equation}
-It comprises \(t\) controlled modular multiplications, one for every bit of \(j\).
-The order-finding circuit is phase estimation for \(U_a\), written at register level as
+\).
+The order-finding circuit is phase estimation for \(U_a\), written at register level with the same controlled-unitary convention as in \autoref{sec:phase-estimation}:
 \[
 \begin{quantikz}[
   column sep=0.58cm,
+  row sep=0.38cm,
   wire types={b,b},
   classical gap=0.07cm
 ]
 \lstick{$\ket{\vect{0}}$}
   & \qwbundle{t}
   & \gate{H^{\otimes t}}
-  & \gate[wires=2]{U_{\mathrm{modexp}}}
-    % \gategroup[
-    %   2,
-    %   steps=1,
-    %   style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
-    %   label style={label position=below,anchor=north,yshift=-0.16cm}
-    % ]{\(t\) controlled modular multiplications}
+  & &
+    \ctrl{1}
+    \gategroup[
+      2,
+      steps=1,
+      style={densely dotted,rounded corners,inner xsep=6pt,inner ysep=4pt},
+      label style={label position=above,anchor=south,yshift=-0.13cm}
+    ]{$C_{U_a}$}
+  &
   & \gate{\text{QFT}_{2^t}^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$\vect{z}$} \\
-\lstick{$\ket{\vect{1}}$}
+\lstick{$\ket{{1}}$}
   & \qwbundle{n}
   & \qw
+  &
+  & \gate{U_a^{2^{\kappa}}}
   &
   & \qw
   & \qw
   & \rstick{$\ket{u_s}$}
 \end{quantikz}
 \]
+
+% Conditioned on the measured value, the second register is projected onto the corresponding eigenstate \(\ket{u_s}\).
+
+Here the dotted block denotes the controlled operation
+\[
+C_{U_a}
+=
+\sum_{j=0}^{2^t-1}
+\ket j\bra j
+\otimes
+U_a^j
+\]
+from \eqref{eq:phase-estimation-controlled-block}.
+In the expanded circuit, this is implemented by the controlled powers
+\(
+U_a^{2^\kappa}
+\)
+for \(0\leq\kappa<t\).
+Equivalently, on basis states,
+\[
+C_{U_a}\ket j\ket y
+=
+\ket j\ket{a^jy\bmod N}
+\]
+which is the usual coherent modular exponentiation.
+\pagebreak[3]
+
 The measured bit string
 \(
 \vect{z}
@@ -11406,16 +11439,16 @@ encodes an approximation
 \).
 Repeated squaring makes every controlled power \rlap{efficient:}
 \[
-U_a^{2^j}\ket y
+U_a^{2^\kappa}\ket y
 =
-\ket{a^{2^j}y\bmod N}
+\ket{a^{2^\kappa}y\bmod N}
 \]
 and the constants
 \(
-a^{2^j}\bmod N
+a^{2^\kappa}\bmod N
 \)
 are precomputed classically.
-Phase estimation returns
+Phase estimation (\autoref{sec:phase-estimation}) returns
 \(
 s/r
 \)
@@ -11539,7 +11572,7 @@ with probability at least \(1/2\).
 \If{$N$ is even}
   \State \Return $2$ %\Comment{The even case is trivial}
 \EndIf
-\State Check classically whether $N$ is a prime power \Comment{This case is excluded in \autoref{sec:shor-factoring}}
+\State Check classically whether $N$ is a prime power %\Comment{This case is excluded in \autoref{sec:shor-factoring}}
 \State Choose $a$ uniformly from $\{2,\ldots,N-1\}$ \Comment{Random base for the reduction to order finding}
 \State $d\gets\gcd(a,N)$ \Comment{Check whether $a$ is already not coprime to $N$}
 \If{$d>1$} \Comment{$a\notin\Z_N^*$}
@@ -11558,13 +11591,13 @@ with probability at least \(1/2\).
 \tikzexternalenable
 
 
-For an \(n\)-bit integer, order finding uses polynomially many gates in \(n=\lceil\log_2N\rceil\).
-The asymptotically dominant quantum task is coherent modular exponentiation.
-Using elementary reversible arithmetic gives a gate count of order
-\(
-O(n^3)
-\),
-already exponentially faster than the best known classical factoring algorithms.
+% For an \(n\)-bit integer, order finding uses polynomially many gates in \(n=\lceil\log_2N\rceil\).
+% The asymptotically dominant quantum task is coherent modular exponentiation.
+% Using elementary reversible arithmetic gives a gate count of order
+% \(
+% O(n^3)
+% \),
+% already exponentially faster than the best known classical factoring algorithms.
 
 
 \FloatBarrier
