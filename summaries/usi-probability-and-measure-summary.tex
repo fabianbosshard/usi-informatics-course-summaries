@@ -10,21 +10,31 @@
 \usepackage[final,babel=true,protrusion=false,expansion=true]{microtype}
 \usepackage[htt]{hyphenat}
 
-\pretolerance=50
-\tolerance=200
-\emergencystretch=0pt
-\hfuzz=0.1pt
-\vfuzz=0.1pt
-\hbadness=100
-\hyphenpenalty=25
-\exhyphenpenalty=25
-\doublehyphendemerits=10000
-\finalhyphendemerits=5000
-\adjdemerits=10000
+% \pretolerance=50
+% \tolerance=200
+% \emergencystretch=0pt
+% \hfuzz=0.1pt
+% \vfuzz=0.1pt
+% \hbadness=100
+% \hyphenpenalty=25
+% \exhyphenpenalty=25
+% \doublehyphendemerits=10000
+% \finalhyphendemerits=5000
+% \adjdemerits=10000
 
-\spaceskip=0.3333em plus 0.06em minus 0.04em
-\xspaceskip=0.5em plus 0.08em minus 0.05em
-\frenchspacing
+% \spaceskip=0.3333em plus 0.06em minus 0.04em
+% \xspaceskip=0.5em plus 0.08em minus 0.05em
+% \frenchspacing
+
+\pretolerance=1 % very strict first pass without hyphenation; quickly allows hyphenation
+\tolerance=10 % tolerance after hyphenation is allowed; lower means less ugly spacing
+% \emergencystretch=3em % fallback extra stretch to avoid overfull lines
+\hyphenpenalty=1 % low penalty for ordinary hyphenation, e.g. den-si-ty
+\exhyphenpenalty=1 % low penalty for breaks at explicit hyphens, e.g. two-dimensional
+\doublehyphendemerits=0 % no extra punishment for two hyphenated lines in a row
+\finalhyphendemerits=0 % no extra punishment if the penultimate line ends with a hyphen
+% \usepackage[shortcuts]{extdash} % provides breakable compound hyphen shortcuts
+
 
 \newcommand{\eat}[1]{} % can be used to eat the next character, useful for VS code color picker, e.g. \definecolor{mycolor}{HTML}{\eat #20a61e}
 
@@ -399,9 +409,13 @@ line width=0.16pt}}%
 \newcommand{\K}{\mathbb{K}}
 \newcommand{\F}{\mathbb{F}}
 
-\newcommand{\Var}{\operatorname{Var}}
-\newcommand{\Cov}{\operatorname{Cov}}
-\newcommand{\Exp}{\operatorname{E}}
+% \newcommand{\Var}{\operatorname{Var}}
+% \newcommand{\Cov}{\operatorname{Cov}}
+% \newcommand{\Exp}{\operatorname{E}}
+\newcommand{\Var}{\operatorname{\mathbb{V}ar}}
+\newcommand{\Cov}{\operatorname{\mathbb{C}ov}}
+\newcommand{\Exp}{\operatorname{\mathbb{E}}}
+% \newcommand{\P}{\operatorname{P}} % this is already defined in amsmath/amsopn
 % \newcommand{\Prob}{\operatorname{\mathbb{P}}} % leads to incorrect spacing e.g. in \dif\Prob
 \newcommand{\Prob}{\mathbb{P}}
 \newcommand{\numof}{\ensuremath{\#\,}}
@@ -3516,12 +3530,10 @@ If all measures $\mu_i$ are $\sigma$-finite \ref{def:set-function-sigma-finite},
 \mu = \bigotimes_{i=1}^n \mu_i %: \mathcal{F} \to [0,\infty]
 \)
 called the \emph{product measure} such that
-\[
-\begin{verticalhack}
+\begin{equation}\label{eq:product-measure}
 \mu\left(\bigtimes_{i=1}^n A_i\right) = \prod_{i=1}^n \mu_i(A_i)
-\end{verticalhack}
 \qedhere
-\]
+\end{equation}
 \end{example}
 
 Using \autoref{thm:caratheodory-extension}, we are now able to prove the following result:
@@ -4098,7 +4110,7 @@ and satisfies $\tilde{\mu}_F(\varnothing) = 0$.
 By \autoref{thm:caratheodory-extension}, we can uniquely extend $\tilde{\mu}_F$ to a $\sigma$-finite measure $\mu_F$ on $\mathcal{B}(\R)$, called the \emph{Lebesgue-Stieltjes measure} with \emph{distribution function} $F$.
 \end{example}
 
-\begin{definition}
+\begin{definition}\label{def:distribution-function}
 A right continuous monotonically increasing function $F : \R \to [0, 1]$ with
 \[
 F(-\infty) \coloneq \lim_{x \to -\infty} F(x) = 0
@@ -5197,7 +5209,7 @@ defined by
 \end{equation}
 for all $A \in \mathcal{F}'$.
 
-If $X : \Omega \to \R$ is a random variable on a probability space $(\Omega,\mathcal{F},\Prob)$, then the image measure $\Prob_X$ is called the \emph{distribution} of $X$.
+If $X : \Omega \to \R$ is a random variable on a probability space $(\Omega,\mathcal{F},\Prob)$, then the image measure $\Prob_X$ is called the \hl[5]{\emph{distribution} of $X$}.
 \end{definition}
 
 
@@ -8466,7 +8478,7 @@ $f \le g$ $\mu$-almost everywhere implies
 \le
 \int g\,\dif\mu
 \)
-\item
+\item \label{lem:elementary-properties-integral-integrable-functions:almost-everywhere-equality}
 $f = g$ $\mu$-almost everywhere implies
 \(
 \int f\,\dif\mu
@@ -8533,12 +8545,12 @@ If $\Omega$ is countable, $\mathcal{F}=2^\Omega$ and $\mu = \sum_{\omega \in \Om
 \end{equation}
 \end{enumerate}
 \end{example}
+\pagebreak[3]
 
 \begin{definition}\label{def:L1-space}
-We denote the set of all real-valued $\mu$-integrable functions by
 \(
 \mathcal{L}^1(\Omega,\mathcal{F},\mu)
-\).
+\) denotes the set of all real-valued $\mu$-integrable functions.
 \end{definition}
 
 \begin{lemma}\label{lem:L1-vector-space}
@@ -8579,58 +8591,98 @@ Set
 \(
 \Omega \coloneq D^{\N}
 \)
-and for each $n \in \N$ define the coordinate maps
+and for each $i \in \N$ define the coordinate maps
 \(
-X_n : \Omega \to D
+X_i : \Omega \to D
 \),
-\(
-X_n(\omega) \coloneq \omega_n
-\).
+% \(
+% X_n(\omega) \coloneq \omega_n
+% \).
+\[
+\omega \mapsto X_i(\omega) \coloneq \omega_i = \sum_{k \in D} k \ \ind_{X_i^{-1}(\{k\})}(\omega)
+\]
 We define the $\sigma$-algebra
 \[
 \mathcal{F}
 \coloneq
-\sigma\left(X_n^{-1}(A) : n \in \N,\ A \in 2^D\right)
+\sigma\left(X_i^{-1}(A) : i \in \N,\ A \in 2^D\right)
 \]
-which is the smallest $\sigma$-algebra on $\Omega$ which makes all coordinate maps $X_n$ measurable.
+which is the smallest $\sigma$-algebra on $\Omega$ which makes all coordinate maps $X_i$ measurable.
 On the algebra of cylinder sets
 \[
 \mathcal{C}
 \coloneq
-% \left\{\pi_1^{-1}(A_1) \cap \cdots \cap \pi_n^{-1}(A_n) : n \in \N,\ A_i \in 2^D\right\}
-\left\{\bigcap_{i=1}^n X_i^{-1}(A_i) : n \in \N,\ A_i \in 2^D\right\}
-\]
+% \left\{\pi_1^{-1}(A_1) \cap \cdots \cap \pi_r^{-1}(A_n) : r \in \N,\ A_i \in 2^D\right\}
+\left\{\bigcap_{i=1}^r X_i^{-1}(A_i) \tikzmark{cylinder} : r \in \N,\ A_i \in 2^D\tikzmark{cylinder-end}\right\}
+\]%
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (beginarrow) at ($(pic cs:cylinder) + (0,1em)$);
+\coordinate (midarrow) at ($(pic cs:cylinder-end) + (0.5em,2.3em)$);
+\coordinate (textboxanchor) at ($(beginarrow -| current page text area.east) + (0,-2.2em)$);
+\node[anchor=north east, Green, rectangle, draw=none, font=\tiny, text width=29em,align=flush right] (textbox) at (textboxanchor) {%
+$
+% \bigcap_{i=1}^r X_i^{-1}(A_i) = 
+\bigtimes_{i=1}^r A_i \times \bigtimes_{i=r+1}^{\infty} D
+=
+\{\omega\in\Omega : X_1(\omega)\in A_1,\ldots,X_r(\omega)\in A_r\}
+$ is a cylinder%
+};
+\draw[Green,->] plot[smooth, tension=0.9] coordinates {(beginarrow) (midarrow) ($(textbox.north)!0.2!(textbox.east)$)};
+\end{tikzpicture}%
+\tikzexternalenable
 we define $\Prob$ by
-\[
+\begin{equation}\label{eq:infinite-product-measure}
 % \Prob(A_1 \times \cdots \times A_n \times D \times D \times \cdots)
-\Prob\left(\bigg(\bigtimes_{i=1}^n A_i  \bigg) \times \bigg(\bigtimes_{i=n+1}^\infty D \bigg) \right)
+\Prob\Biggl(\biggl(\bigtimes_{i=1}^r A_i  \biggr) \times \biggl(\bigtimes_{i=r+1}^\infty D \biggr) \Biggr)
 \coloneq
-\prod_{i=1}^n \Prob_D(A_i)
-\]
+\prod_{i=1}^r \Prob_D(A_i)
+\end{equation}
+for $r \in \N$ and $A_1,\ldots,A_r \in 2^D$.
 Then, by \autoref{thm:caratheodory-extension}, $\Prob$ extends uniquely to a probability measure on $\mathcal{F}$, which we call the \emph{infinite product measure} and write
 \(
 \mathcal{F}
 =
-\bigotimes_{n \in \N} 2^D
+\bigotimes_{i \in \N} 2^D
 \),
 \(
 \Prob
 =
 \Prob_D^{\otimes \N}
-\).
+\).%
 
-Now, we note that each $X_n$ has the same distribution $\Prob_D$, and
+Now, we note that each $X_m$ has the same distribution $\Prob_D$, and
 \[
-\Exp[X_n]
+\Exp[X_m]
 \overset{\text{\eqref{eq:expectation}}}{=}
-\int X_n\,\dif\Prob
-\overset{\text{\eqref{eq:integral-of-nonnegative-simple-function}}}{=}
+\int X_m\,\dif\Prob
+% =
+% \int \sum_{k\in D} k \ \ind_{X_m^{-1}(\{k\})}\,\dif\Prob
+\overset{\text{\eqref{eq:integral-of-nonnegative-simple-function}}}{=} 
+\sum_{k \in D} k \, \Prob(X_m^{-1}\tikzmark{preimage}(\{k\}))
+\overset{\text{\eqref{eq:infinite-product-measure}}}{=}
 \sum_{k \in D} k \, \Prob_D(\{k\})
 =
 \frac{1}{6}\sum_{k=1}^6 k
 =
 3.5
 \]
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (beginarrow) at ($(pic cs:preimage) + (0,1em)$);
+\coordinate (midarrow) at ($(beginarrow) +(1em,0.5em)$);
+\coordinate (endarrow) at ($(midarrow) +(2em,0.4em)$);
+% \coordinate (textboxanchor) at ($(beginarrow -| current page text area.east) + (0,-2.2em)$);
+\node[anchor=west, Green, rectangle, draw=none, font=\tiny, text width=24em,align=flush left] (textbox) at (endarrow) {%
+$
+\bigtimes_{i=1}^{m-1} D \times \{k\} \times \bigtimes_{i=m+1}^{\infty} D
+\in
+\mathcal{C}
+$ (also a cylinder)%
+};
+\draw[Green,->] plot[smooth, tension=0.9] coordinates {(beginarrow) (midarrow) (textbox.west)};
+\end{tikzpicture}%
+\tikzexternalenable%
 which is the expected value of a single die roll.
 Now consider
 \(
@@ -8644,7 +8696,7 @@ By linearity of expectation, there holds
 \begin{verticalhack}
 \Exp[S_n]
 =
-\Exp\left[\frac{1}{n}\sum_{i=1}^n X_i\right]
+\Exp\biggl[\frac{1}{n}\sum_{i=1}^n X_i\biggr]
 \overset{\text{\autoref{lem:L1-vector-space}}}{=}
 \frac{1}{n}\sum_{i=1}^n \Exp[X_i]
 =
@@ -8661,7 +8713,7 @@ By linearity of expectation, there holds
 
 \begin{example}[Expected waiting time for the first $6$]
 \label{ex:expected-waiting-time-first-six}
-Consider a general die with $\Prob_D(6) = p \allowbreak >\allowbreak 0$.
+Consider a general die with $\Prob_D(\{6\}) = p \allowbreak >\allowbreak 0$.
 Let
 \[
 T(\omega)
@@ -8727,6 +8779,7 @@ Due to $T|_{B_k}=k$, we arrive at
 \qedhere
 \]
 \end{example}
+\pagebreak[3]
 
 
 
@@ -8743,11 +8796,11 @@ Further let $T : \Omega \to \Omega'$ be measurable.
 Then, there holds for every measurable mapping $f : \Omega' \to \overline{\R}$ that
 \begin{enumerate}[label=(\roman*)]
 \item \label{item:change-of-variables:positive-negative-parts}
-\[
+\begin{equation}\label{eq:change-of-variables}
 \int_{\Omega'} f^{\pm}\,\dif\mu_T
 =
 \int_{\Omega} f^{\pm} \circ T\,\dif\mu
-\]
+\end{equation}
 \item \label{item:change-of-variables:integrability}
 $f$ is $\mu_T$-integrable if and only if $f \circ T$ is $\mu$-integrable.
 \qedhere
@@ -8787,14 +8840,14 @@ Finally, approximating $f \geq 0$ by a monotone increasing sequence and taking l
 Let $(\Omega,\mathcal{F},\Prob)$ be a probability space and $X : \Omega \to \R$ be a random variable.
 Further, let $f : \R \to \overline{\R}$ be measurable, such that either $f(X)$ is integrable or non-negative.
 Then, there holds
-\[
+\begin{equation}\label{eq:expectation-image-measure}
 \Exp[f(X)]
 =
 \int_{\R} 
 % f(t)
 f
 \,\dif\Prob_X
-\]
+\end{equation}
 Especially, there holds
 % \[
 % \Exp[X]
@@ -8909,7 +8962,7 @@ and
 The usual formulas for expectations in the discrete and continuous settings are recovered directly from
 \autoref{cor:expectation-image-measure}.
 
-If $\Prob_X$ admits a density with respect to Lebesgue measure, i.e.
+If $\Prob_X$ \hl[2]{admits a density} with respect to Lebesgue measure, i.e.
 there exists a measurable function $f : \R \to [0,\infty]$ such that
 \begin{equation}\label{eq:distribution-density}
 \Prob_X(A)
@@ -8918,18 +8971,21 @@ there exists a measurable function $f : \R \to [0,\infty]$ such that
 \overset{\text{\eqref{eq:lebesgue-integral-over-set}}}{=}
 \int_A f(x)\,\dif x
 \end{equation}
-for all $A \in \mathcal{B}(\R)$, then we say that $\Prob_X$ admits the density $f$ with respect to Lebesgue measure.
+for all $A \in \mathcal{B}(\R)$.
+% then we say that $\Prob_X$ admits the density $f$ with respect to Lebesgue measure.
 In this case, by \autoref{thm:density-defines-measure}, applied with
-\[
+\(
 (\Omega,\mathcal{F},\mu)
 =
-(\R,\mathcal{B}(\R),\lambda^1),
-\qquad
-\nu=\Prob_X,
-\qquad
+(\R,\mathcal{B}(\R),\lambda^1)
+\),
+\(
+\nu=\Prob_X
+\),
+\(
 f=f
-\]
-then, 
+\),
+we have, 
 % applying \autoref{cor:expectation-image-measure} with
 % \[
 % g=\id_{\R}
@@ -8950,7 +9006,8 @@ then,
 \int_{\Omega} X\,\dif\Prob \\
 &=
 \int_{\Omega} \id_{\R}\circ X\,\dif\Prob \\
-&\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+% &\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+&\overset{\text{\eqref{eq:change-of-variables}}}{=}
 \int_{\R} \id_{\R}\,\dif\Prob_X \\
 &\overset{\text{\eqref{eq:density-integral-identity}}}{=}
 \int_{\R} \id_{\R}\cdot f\,\dif\lambda^1 \\
@@ -8961,32 +9018,117 @@ then,
 \end{aligned}
 \]
 where the second-last equality is just the notation from
-\autoref{ex:lebesgue-integral}.
+\autoref{ex:integral-recovering-Riemann-notation}.
 \pagebreak[3]
 
 
-If $X : \Omega \to \N$, then
+% If $X : \Omega \to \N$, then
+% \[
+% \begin{aligned}
+% \Exp[X]
+% &\overset{\text{\eqref{eq:expectation}}}{=}
+% \int_{\Omega} X\,\dif\Prob \\
+% &\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+% \int_{\R} \id_{\R}\,\dif\Prob_X \\
+% &= % why??
+% \int_{\N} \id_{\N}\,\dif\Prob_X \\
+% &=
+% \int_{\N}
+% \sum_{k\in\N} k \ind_{\{k\}}
+% \,\dif\Prob_X \\
+% &\overset{\text{\eqref{eq:integral-nonnegative-function}}}{=}
+% \sum_{k\in\N}
+% \int_{\N} k \ind_{\{k\}}\,\dif\Prob_X \\
+% &=
+% \sum_{k\in\N}
+% k \int_{\N} \ind_{\{k\}}\,\dif\Prob_X \\
+% &\overset{\text{\eqref{eq:integral-indicator-function}}}{=}
+% \sum_{k\in\N} k\,\Prob_X(\{k\}) \\
+% &=
+% \sum_{k\in\N} k\,\Prob(X=k)
+% \end{aligned}
+% \]
+There are two equivalent conventions for treating an $\N$-valued random variable.
+
+First, one may regard $X$ as a real-valued random variable
+\(
+X : \Omega \to \R
+\)
+whose image is contained in $\N$.
+Then $\Prob_X$ is a probability measure on $(\R,\mathcal{B}(\R))$ and satisfies
+\(
+\Prob_X(\N)=1
+\).
+Thus $\Prob_X$ is concentrated on $\N$, and therefore
+\(
+\id_{\R}
+=
+\sum_{k\in\N} k \ind_{\{k\}}
+\)
+$\Prob_X$-almost everywhere, i.e. the RHS is the function $x \mapsto x \ind_{\N}(x)$ from $\R$ to $\R$.
+Hence
 \[
 \begin{aligned}
 \Exp[X]
-&\overset{\text{\eqref{eq:expectation}}}{=}
+&\overset{\text{\autoref{def:expectation}}}{=}
 \int_{\Omega} X\,\dif\Prob \\
-&\overset{\text{\autoref{cor:expectation-image-measure}}}{=}
+% &=
+% \int_{\Omega} \id_{\R}\circ X\,\dif\Prob \\
+&\overset{\text{\autoref{thm:change-of-variables}}}{=}
 \int_{\R} \id_{\R}\,\dif\Prob_X \\
-&= % why??
+&\overset{\text{\autoref{lem:elementary-properties-integral-integrable-functions} \ref{lem:elementary-properties-integral-integrable-functions:almost-everywhere-equality}}}{=}
+\int_{\R}
+\sum_{k\in\N} k \ind_{\{k\}}
+\,\dif\Prob_X \\
+&\overset{\text{\autoref{cor:integral-infinite-sum}}}{=}
+\sum_{k\in\N}
+\int_{\R} k \ind_{\{k\}}\,\dif\Prob_X \\
+&\overset{\text{\autoref{lem:elementary-properties-integral-nonnegative-measurable-functions} \ref{lem:elementary-properties-integral-nonnegative-measurable-functions:homogeneity}}}{=}
+\sum_{k\in\N}
+k \int_{\R} \ind_{\{k\}}\,\dif\Prob_X \\
+&\overset{\text{\autoref{def:integral-of-indicator-function}}}{=}
+\sum_{k\in\N} k\,\Prob_X(\{k\}) \\
+&\overset{\text{\autoref{def:image-measure}}}{=}
+\sum_{k\in\N} k\,\Prob(X^{-1}(\{k\})) \\
+&=
+\sum_{k\in\N} k\,\Prob(\{\omega\in\Omega : X(\omega)=k\}) \\
+&=
+\sum_{k\in\N} k\,\Prob(X=k)
+\end{aligned}
+\]
+
+Equivalently, one may regard $X$ directly as a random variable
+\(
+X : \Omega \to \N
+\).
+Then $\Prob_X$ is a probability measure on $(\N,2^\N)$.
+In this convention, $\id_{\N} = \sum_{k\in\N} k \ind_{\{k\}}$ holds pointwise, and therefore
+the same computation is written as
+\[
+\begin{aligned}
+\Exp[X]
+&\overset{\text{\autoref{def:expectation}}}{=}
+\int_{\Omega} X\,\dif\Prob \\
+% &=
+% \int_{\Omega} \id_{\N}\circ X\,\dif\Prob \\
+&\overset{\text{\autoref{thm:change-of-variables}}}{=}
 \int_{\N} \id_{\N}\,\dif\Prob_X \\
 &=
 \int_{\N}
 \sum_{k\in\N} k \ind_{\{k\}}
 \,\dif\Prob_X \\
-&\overset{\text{\eqref{eq:integral-nonnegative-function}}}{=}
+&\overset{\text{\autoref{cor:integral-infinite-sum}}}{=}
 \sum_{k\in\N}
 \int_{\N} k \ind_{\{k\}}\,\dif\Prob_X \\
-&=
+&\overset{\text{\autoref{lem:elementary-properties-integral-nonnegative-measurable-functions} \ref{lem:elementary-properties-integral-nonnegative-measurable-functions:homogeneity}}}{=}
 \sum_{k\in\N}
 k \int_{\N} \ind_{\{k\}}\,\dif\Prob_X \\
-&\overset{\text{\eqref{eq:integral-indicator-function}}}{=}
+&\overset{\text{\autoref{def:integral-of-indicator-function}}}{=}
 \sum_{k\in\N} k\,\Prob_X(\{k\}) \\
+&\overset{\text{\autoref{def:image-measure}}}{=}
+\sum_{k\in\N} k\,\Prob(X^{-1}(\{k\})) \\
+&=
+\sum_{k\in\N} k\,\Prob(\{\omega\in\Omega : X(\omega)=k\}) \\
 &=
 \sum_{k\in\N} k\,\Prob(X=k)
 \end{aligned}
@@ -9401,12 +9543,14 @@ Let $\phi : \R \to \R$ be convex, i.e.
 \]
 for all $x,y \in \R$ and all $\lambda \in [0,1]$.
 If $X : \Omega \to \R$ is a random variable such that $X$ and $\phi(X)$ are integrable, then there holds
-\[
+\begin{equation}\label{eq:jensen}
+{\color{red}\boxed{\color{black}
 \phi(\Exp[X])
 \leq
 \Exp[\phi(X)]
+}}
 \qedhere
-\]
+\end{equation}
 \end{theorem}
 \begin{proof}
 Since $\phi$ is convex, there exists for each $x_0 \in \R$ a line $x \mapsto \ell(x) = ax+b$ such that $\ell(x) \leq \phi(x)$ and $\ell(x_0)=\phi(x_0)$.
@@ -9479,14 +9623,14 @@ In analogy to the variance, we can also consider higher order moments of random 
 
 \begin{definition}\label{def:Lp-norm}
 We define the $L^p$-norm according to
-\[
+\begin{equation}\label{eq:Lp-norm}
 \|X\|_p
 \coloneq
 \begin{cases}
 \Exp[|X|^p]^{1/p} & 1 \leq p < \infty \\
 \inf\{s \in [0,\infty] : |X| \leq s \ \Prob\text{-almost surely}\} & p = \infty
 \end{cases}
-\]
+\end{equation}
 Corresponding to the $L^p$-norm, we introduce the sets
 \[
 \mathcal{L}^p(\Omega,\mathcal{F},\Prob)
@@ -9569,11 +9713,13 @@ An immediate consequence is Chebyshev's inequality.
 \begin{corollary}[Chebyshev's inequality]\label{cor:chebyshev}
 Let $X : \Omega \to \R$ be a random variable.
 Then, there holds
-\[
+\begin{equation}\label{eq:chebyshev}
+{\color{red}\boxed{\color{black}
 \Prob(|X-\Exp[X]| \geq a)
 \leq
 \frac{1}{a^2}\Var[X]
-\]
+}}
+\end{equation}
 for all $a > 0$.
 \end{corollary}
 \begin{proof}
@@ -9623,15 +9769,27 @@ We say $(X_n)_{n \in \N}$ converges to $X$ $\Prob$-almost surely, denoted by $X_
 % exists and almost surely coincides with $X$, i.e.
 \[
 % \Prob(\{\omega \in \Omega : \lim_{n \to \infty}X_n(\omega) = X(\omega)\})
-\Prob\left(\lim_{n \to \infty}X_n = X\right)
+\Prob(\lim_{n \to \infty}X_n \tikzmark{shorthand-rv-limit-event}= X)
 =
 1
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (beginarrow) at ($(pic cs:shorthand-rv-limit-event) + (0.0em,-0.2em)$);
+\coordinate (midarrow) at ($(beginarrow) +(0.6em,-0.8em)$);
+\coordinate (endarrow) at ($(midarrow) +(1.4em,-0.2em)$);
+% \coordinate (textboxanchor) at ($(beginarrow -| current page text area.east) + (0,-2.2em)$);
+\node[anchor=west, Green, rectangle, draw=none, font=\tiny, text width=29em,align=flush left] (textbox) at (endarrow) {%
+shorthand for $\{\omega \in \Omega : \lim_{n \to \infty}X_n(\omega) = X(\omega)\}$%
+};
+\draw[Green,->] plot[smooth, tension=0.9] coordinates {(beginarrow) (midarrow) (textbox.west)};
+\end{tikzpicture}%
+\tikzexternalenable%
 \]
 \item \label{item:convergence-random-variables:probability}
 We say $(X_n)_{n \in \N}$ converges to $X$ in probability, denoted by $X_n \xlongrightarrow{\text{i.p.}} X$%
 , if
 \[
-\Prob\left(|X_n-X| \geq a\right)
+\Prob(|X_n-X| \geq a)
 \xrightarrow{n \to \infty}
 0
 \]
@@ -9657,7 +9815,9 @@ We say $(X_n)_{n \in \N}$ converges to $X$ in $L^p$, denoted by $X_n \xlongright
 \end{enumerate}
 \end{definition}
 
-\begin{remark}
+\pagebreak[3]
+
+\begin{remark}\label{rem:convergence-random-variables}
 The following diagram summarizes the implications between the different types of convergence.
 \tikzexternaldisable%
 \[
@@ -9682,6 +9842,8 @@ The following diagram summarizes the implications between the different types of
 % \qedhere
 \]
 \tikzexternalenable%
+
+
 
 There holds \ref{item:convergence-random-variables:almost-surely} $\Rightarrow$ \ref{item:convergence-random-variables:probability}.
 The reverse implication \ref{item:convergence-random-variables:probability} $\Rightarrow$ \ref{item:convergence-random-variables:almost-surely} holds along a subsequence.
@@ -9942,6 +10104,586 @@ since $Z_n \geq 0$.
 
 
 \pagebreak
+
+\section{Laws of Large Numbers}
+
+Let $(\Omega,\mathcal{F},\Prob)$ be a probability space (\autoref{def:probability-space}).
+
+\subsection{Weak Law of Large Numbers}
+
+\begin{theorem}[Weak Law of Large Numbers]\label{thm:weak-law-of-large-numbers}
+Let $(X_n)_{n \in \N}$ with $X_n \in \mathcal{L}^2(\Omega,\mathcal{F},\Prob)$, $\Exp[X_n]=\mu$ for all $n \in \N$.
+Assume they are pairwise uncorrelated, i.e. $\Exp[(X_j-\mu)(X_k-\mu)]=0$ for all $j \neq k$.
+Assume that $\Var[X_n] \leq C$ for all $n \in \N$ and some $C > 0$.
+Then, for $S_n \coloneq \sum_{k=1}^n X_k$, there holds
+\[
+\frac{S_n}{n}
+\xrightarrow{n \to \infty}
+\mu
+\]
+in $L^2$ and %, consequently, also 
+in probability, see \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:Lp} and \ref{item:convergence-random-variables:probability}.
+\end{theorem}
+\begin{proof}
+% Since
+% \[
+% \frac{S_n}{n}-\mu
+% =
+% \frac{1}{n}\sum_{k=1}^n X_k-\frac{1}{n}\sum_{k=1}^n \,\mu
+% =
+% \frac{1}{n}\sum_{k=1}^n (X_k-\mu),
+% \]
+% we obtain
+\[
+% \begin{verticalhack}
+\begin{aligned}
+\left\|\frac{S_n}{n}-\mu\right\|_2
+&\overset{\text{\eqref{eq:Lp-norm}}}{=}
+\sqrt{
+\Exp\Biggl[\biggl(\frac{S_n}{n}-\mu\biggr)^2\Biggr]
+} \\
+&=
+\sqrt{
+\Exp\Biggl[\biggl(\frac{1}{n}\sum_{k=1}^n (X_k-\mu)\biggr)^2\Biggr]
+} \\
+&=
+\sqrt{
+\frac{1}{n^2}
+\Exp\Biggl[\sum_{j=1}^n\sum_{k=1}^n (X_j-\mu)(X_k-\mu)\Biggr]
+} \\
+% &\overset{\text{\eqref{eq:integral-infinite-sum}}}{=}
+&=
+\sqrt{
+\frac{1}{n^2}
+\sum_{j=1}^n\sum_{k=1}^n
+\Exp[(X_j-\mu)(X_k-\mu)]
+}
+\\
+&=
+\sqrt{
+\frac{1}{n^2}
+\sum_{k=1}^n \underbrace{\Exp[(X_k-\mu)^2]}_{\smash{=\Var[X_k] \leq C}}
+}
+\\
+&\leq
+\sqrt{\frac{C}{n}}
+\xrightarrow{n\to\infty}
+0
+\end{aligned}
+% \end{verticalhack}
+% \qedhere
+\]
+and hence $S_n/n \xlongrightarrow{L^2} \mu$. % by \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:Lp}.
+According to \autoref{rem:convergence-random-variables}, this implies $S_n/n \xlongrightarrow{\text{i.p.}} \mu$.
+\end{proof}
+
+\begin{remark}
+Instead of $\Var[X_n] \leq C$, it is sufficient that $\sum_{k=1}^n \Var[X_k] = o(n^2)$.
+
+In case that $\Exp[X_n]$ is not constant, we have $\frac{1}{n}\sum_{k=1}^n (X_k - \Exp[X_k]) \xlongrightarrow{{L^2}} 0$.
+\end{remark}
+
+
+A consequence of \autoref{thm:weak-law-of-large-numbers} is the approximation theorem of Weierstraß, \autoref{thm:weierstrass-approximation}, which states that polynomials are dense in the space of continuous functions on $[0,1]$ with respect to the supremum norm.
+
+\begin{theorem}[Weierstraß approximation]\label{thm:weierstrass-approximation}
+Let $f \in C([0,1])$.
+Then for every $\varepsilon > 0$, there exists a polynomial $p$ on $[0,1]$ such that
+$
+|f(x)-p(x)|
+<
+\varepsilon
+$
+for all $x \in [0,1]$.
+\end{theorem}
+
+
+\begin{proof}
+Define the Bernstein polynomials according to
+\[
+B_{k,n}(t)
+\coloneq
+\binom{n}{k}t^k(1-t)^{n-k}
+\]
+for $n \in \N$, $k=0,\ldots,n$ and $t \in [0,1]$.
+\[
+f_n(t)
+\coloneq
+\sum_{k=0}^n f(k/n) B_{k,n}(t)
+=
+\sum_{k=0}^n f(k/n) \binom{n}{k}t^k(1-t)^{n-k}
+\]
+For fixed $t \in [0,1]$, let $\Prob_{t,j}$ be the probability measure on $\{0,1\}$ given by
+\[
+\Prob_{t,j}(\{x_j\})
+\coloneq
+ t^{x_j}(1-t)^{1-x_j}
+\]
+for $x_j\in\{0,1\}$ and $j=1,\ldots,n$.
+We equip $\{0,1\}^n$ with the product measure 
+$\smash{\Prob_t = \bigotimes_{j=1}^n \Prob_{t,j}}$ (\autoref{ex:product-measure}), 
+given by
+\[
+\Prob_t\biggl(\bigtimes_{j=1}^n \{x_j\}\biggr)
+\overset{\text{\eqref{eq:product-measure}}}{=}
+\prod_{j=1}^n \Prob_{t,j}(\{x_j\})
+=
+\prod_{j=1}^n t^{x_j}(1-t)^{1-x_j}
+\]
+for $(x_1,\ldots,x_n)\in\{0,1\}^n$.
+Let $X_1,\ldots,X_n$ be the coordinate maps on $\{0,1\}^n$ and set
+\(
+S_n
+\coloneq
+\sum_{j=1}^n X_j
+\).
+$\Exp_t$ then denotes expectation with respect to $\Prob_t$, i.e.
+\[
+\Exp_t[g]
+\overset{\text{\eqref{eq:expectation}}}{=}
+% \int_{\{0,1\}^n} g(\omega)\,\dif\Prob(\omega)
+\int_{\{0,1\}^n} g \,\dif\Prob_t
+% \overset{\text{\eqref{eq:integral-of-integrable-function}}}{=}
+=
+% \sum_{i = 1}^{2^n} \alpha_i \Prob_t(\{\omega_i\})
+\sum_{\omega \in \{0,1\}^n} g(\omega)\Prob_t(\{\omega\})
+=
+\sum_{\omega \in \{0,1\}^n} g(\omega)\prod_{j=1}^n t^{X_j(\omega)}(1-t)^{1-X_j(\omega)}
+\]
+for every $g : \{0,1\}^n \to \R$.
+Setting $g = f(S_n / n)$, we have
+\[
+\begin{aligned}
+\Exp_t[f(S_n / n)]
+&=
+\sum_{\omega \in \{0,1\}^n} f(S_n(\omega)/n) \prod_{j=1}^n t^{X_j(\omega)}(1-t)^{1-X_j(\omega)} 
+\\
+&=
+\sum_{k=0}^n \sum_{\substack{\omega \in \{0,1\}^n \\ S_n(\omega)=k}} f(S_n(\omega)/n) \prod_{j=1}^n t^{X_j(\omega)}(1-t)^{1-X_j(\omega)}
+\\
+&=
+\sum_{k=0}^n \sum_{\substack{\omega \in \{0,1\}^n \\ S_n(\omega)=k}} f(k/n) \  t^k (1-t)^{n-k}
+\\
+&=
+\sum_{k=0}^n \binom{n}{k} f(k/n) \  t^k (1-t)^{n-k}
+\\
+&=
+f_n(t)
+\end{aligned}
+\]
+% Thus
+% \[
+% f_n(t)
+% =
+% \Exp_t\biggl[f\biggl(\frac{1}{n}S_n\biggr)\biggr]
+% \]
+
+
+We have
+\[
+|f_n(t)-f(t)|
+=
+\biggl|\Exp_t \biggl[f\biggl(\frac{1}{n} S_n \biggr) - f(t)\biggr]\biggr|
+\overset{\text{\eqref{eq:jensen}}}{\leq}
+\Exp_t \biggl[\biggl|f\biggl(\frac{1}{n} S_n \biggr) - f(t)\biggr|\biggr]
+\]
+
+Now let $\varepsilon > 0$.
+Since $f$ is continuous on the compact interval $[0,1]$, it is uniformly continuous by the Heine--Cantor theorem.
+Hence, there exists $\delta > 0$ such that $|f(t)-f(s)| < \varepsilon/2$ whenever $|t-s| < \delta$.
+Splitting the expectation according to whether $|S_n/n - t| < \delta$ (``good'' event) or $|S_n/n - t| \geq \delta$ (``bad'' event) and employing the $\triangle$-inequality, we have
+\[
+\begin{aligned}
+\Exp_t \biggl[\biggl|f\biggl(\frac{1}{n} S_n \biggr) - f(t)\biggr|\biggr]
+&\leq
+\frac{\varepsilon}{2} \Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| < \delta\biggr)
++
+\max_{s \in [0,1]}(|f(s)-f(t)|) \Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| \geq \delta\biggr)
+\\
+&\leq
+\frac{\varepsilon}{2} 
++
+\max_{s \in [0,1]}(|f(s)|+|f(t)|) \Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| \geq \delta\biggr)
+\\
+% &\leq
+% \frac{\varepsilon}{2}
+% +
+% 2\max_{s \in [0,1]}|f(s)| \Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| \geq \delta\biggr)
+% \\
+&\leq
+\frac{\varepsilon}{2} 
++
+2 \|f\|_{\infty} \Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| \geq \delta\biggr)
+\end{aligned}
+\]
+
+Since $X_1,\ldots,X_n$ are independent under $\Prob_t$ and
+\(
+\Exp_t[X_j]=t
+\),
+\(
+\Var_t[X_j]=t(1-t)
+\)
+we have
+\(
+\Exp_t[\frac{1}{n}S_n]=t
+\)
+and
+\[
+\Var_t\biggl[\frac{1}{n}S_n\biggr]
+=
+\frac{1}{n^2}\sum_{j=1}^n \Var_t[X_j]
+=
+\frac{t(1-t)}{n}
+\]
+and applying \nameref{cor:chebyshev} (\autoref{cor:chebyshev}), we obtain
+\[
+\Prob_t\biggl(\biggl|\frac{1}{n} S_n - t\biggr| \geq \delta\biggr)
+\leq
+\frac{1}{\delta^2}\Var_t\biggl[\frac{1}{n} S_n\biggr]
+=
+\frac{1}{\delta^2}\frac{t(1-t)}{n}
+\leq
+\frac{1}{4\delta^2 n}
+\xrightarrow{n \to \infty}
+0
+\]
+% and hence
+% we may
+Choose $N \in \N$ such that
+\(
+\frac{2\|f\|_{\infty}}{4\delta^2 N}
+\leq
+\frac{\varepsilon}{2}
+\).
+Then, for all $n\geq N$ and all $t\in[0,1]$,
+\[
+|f_n(t)-f(t)|
+\leq
+\frac{\varepsilon}{2}
++
+\frac{2 \|f\|_{\infty}}{4\delta^2 n}
+\leq
+\varepsilon
+\]
+Thus $f_n \to f$ uniformly on $[0,1]$.
+\end{proof} 
+
+
+A practical application of the \nameref{thm:weak-law-of-large-numbers} (\autoref{thm:weak-law-of-large-numbers}) is the \nameref{thm:monte-carlo}.
+\begin{theorem}[Monte Carlo method]\label{thm:monte-carlo}
+Let $f \in \mathcal{L}^2([0,1],\mathcal{B}([0,1]),\lambda)$ and let $(X_n)_{n \in \N}$ be a sequence of independent and uniformly $[0,1]$-distributed random variables.
+Then
+\begin{equation}\label{eq:monte-carlo}
+\frac{1}{n}\sum_{k=1}^n f(X_k)
+\xlongrightarrow{L^2}
+\int_0^1 f(x)\,\dif x
+\qedhere
+\end{equation}
+\end{theorem}
+\begin{proof}
+% The random variables
+% \(
+% (f(X_n))_{n\in\N}
+% \)
+% are independent and identically distributed.
+Since 
+% the random variables \(X_n\) are independent and 
+\(f\) is measurable, the random variables
+\((f(X_n))_{n\in\N}\) are pairwise independent by \autoref{thm:independence-under-measurable-transformations}.
+As mentioned in \autoref{ex:gaussian-random-variables}, this implies pairwise uncorrelatedness.
+They are also identically distributed.
+Moreover, by \autoref{cor:expectation-image-measure} and since
+\(
+\Prob_{X_n} \allowbreak = \allowbreak \lambda|_{[0,1]}
+\),
+\[
+\Exp[f(X_n)]
+\overset{\text{\eqref{eq:expectation}}}{=}
+\int_\Omega f(X_n)\,\dif\Prob
+\overset{\text{\eqref{eq:change-of-variables}}}{=}
+\int_{[0,1]} f\,\dif\lambda
+\overset{\text{\eqref{eq:lebesgue-integral-over-set}}}{=}
+\int_0^1 f(x)\,\dif x
+\eqqcolon
+\mu
+\]
+as well \rlap{as}
+\[
+\Exp[f(X_n)^2]
+\overset{\text{\eqref{eq:expectation}}}{=}
+\int_\Omega f(X_n)^2\,\dif\Prob
+\overset{\text{\eqref{eq:change-of-variables}}}{=}
+\int_{[0,1]} f^2\,\dif\lambda
+\overset{\text{\eqref{eq:lebesgue-integral-over-set}}}{=}
+\int_0^1 f(x)^2\,\dif x
+<
+\infty
+\]
+because \(f \in \mathcal{L}^2([0,1],\mathcal{B}([0,1]),\lambda)\).
+Hence
+% \[
+% \mu
+% \coloneq
+% \int_0^1 f(x)\,\dif x
+% \]
+% is the common expectation and
+\[
+\Var[f(X_n)]
+=
+\Exp[f(X_n)^2]-(\Exp[f(X_n)])^2
+\leq
+\Exp[f(X_n)^2]
+% =
+% \int_0^1 f(x)^2\,\dif x
+\eqqcolon
+C
+<\infty
+\]
+is uniformly bounded (i.e. bounded by the constant $C$ independent of $n$).
+Thus the assumptions of \autoref{thm:weak-law-of-large-numbers} are satisfied and we obtain \eqref{eq:monte-carlo}.
+\end{proof}
+
+\begin{remark}
+The proof works in arbitrary dimensions and with general distributions, as long as $f$ is bounded in $L^2$.
+The \nameref{thm:monte-carlo} is therefore applied as a dimnsion-robust quadratur method, with dimension independent rate of convergence $\mathcal{O}(1/\sqrt{n})$.
+\end{remark}
+
+
+\subsection{Strong Law of Large Numbers}
+
+\begin{theorem}[Strong Law of Large Numbers]\label{thm:strong-law-of-large-numbers}
+Let $(X_n)_{n \in \N}$ be pairwise independent and identically distributed with $\mu = \Exp[X_n]$ and $\Exp[|X_n|] < \infty$.
+Then, for $S_n \coloneq \sum_{k=1}^n X_k$, there holds
+\[
+\frac{S_n}{n}
+\xrightarrow{n \to \infty}
+\mu
+\]
+$\Prob$-almost surely, see \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:almost-surely}.
+\end{theorem}
+
+An important consequence of the \nameref{thm:strong-law-of-large-numbers} is the convergence of empirical distributions, known as the \nameref{thm:glivenko-cantelli} theorem (\autoref{thm:glivenko-cantelli}).
+
+
+\begin{definition}
+% [Weak convergence of probability measures]
+\label{def:weak-convergence-probability-measures}
+Let \((\mu_n)_{n\in\N}\) and \(\mu\) be probability measures on \((\R,\mathcal{B}(\R))\).
+We say that \(\mu_n\) converges weakly to \(\mu\), denoted by
+\[
+\mu_n
+\xrightarrow{\text{weakly}}
+\mu
+\]
+if
+\[
+\int_{\R} f\,\dif\mu_n
+\xrightarrow{n\to\infty}
+\int_{\R} f\,\dif\mu
+\]
+for all bounded $f \in C(\R)$.
+\end{definition}
+\begin{remark}
+Weak convergence of probability measures (\autoref{def:weak-convergence-probability-measures}) is the measure-theoretic formulation of convergence in distribution of random variables (\autoref{def:convergence-random-variables}).
+% Indeed, for random variables $(Y_n)_{n \in \N}$ and $Y$, there holds
+Indeed, by \ref{item:convergence-random-variables:distribution} and \autoref{cor:expectation-image-measure}, there holds
+\[
+Y_n
+\xlongrightarrow{\text{i.d.}}
+Y
+\]
+if and only if we have
+\[
+\Prob_{Y_n}
+\xrightarrow{\text{weakly}}
+\Prob_Y
+\]
+for the image measures.
+% as probability measures on $(\R,\mathcal{B}(\R))$.
+\end{remark}
+
+The corresponding formulation of \autoref{fact:convergence-in-distribution-distribution-functions} is
+\begin{fact}\label{fact:weak-convergence-distribution-functions}
+Let \((\mu_n)_{n\in\N}\) and \(\mu\) be probability measures on \((\R,\mathcal{B}(\R))\).
+% , and let
+% \[
+% F_n(x)
+% \coloneq
+% \mu_n((-\infty,x]),
+% \qquad
+% F(x)
+% \coloneq
+% \mu((-\infty,x]).
+% \]
+Let \(F_{\mu_n}\) and \(F_{\mu}\) be the distribution functions (\autoref{def:distribution-function}) of \(\mu_n\) and \(\mu\), respectively.
+Then
+\[
+\mu_n
+\xrightarrow{\text{weakly}}
+\mu
+\]
+if and only if
+\[
+F_{\mu_n}(x)
+\xrightarrow{n\to\infty}
+F_{\mu}(x)
+\]
+for every \(x\in\R\) at which \(F_{\mu}\) is continuous.
+\end{fact}
+
+
+\begin{theorem}[Glivenko--Cantelli]\label{thm:glivenko-cantelli}
+Let $(X_n)_{n \in \N}$ be independent and identically distributed random variables.
+Define the empirical distribution via
+\[
+\rho_n(\omega, A) 
+\coloneq
+\frac{1}{n}\sum_{k=1}^n \delta_{X_k(\omega)}(A)
+=
+\frac{1}{n} |\{k \in \{1,\ldots,n\} : X_k(\omega) \in A\}|
+\]
+which is the relative frequency with which the first $n$ observations fall into $A$, where $A \in \mathcal{B}(\R)$.
+
+Then, we have
+\[
+\rho_n(\omega, \cdot)
+\xrightarrow{n \to \infty}
+\Prob_{X_1}(\cdot)
+\]
+weakly for $\Prob$-almost every $\omega \in \Omega$.
+This means that the empirical distribution $\rho_n(\omega,\cdot)$ converges weakly to the common distribution of the random variables $(X_n)_{n \in \N}$.
+\end{theorem}
+
+\begin{proof}
+We prove the pointwise convergence of the sequence of \emph{empirical distribution functions}
+\[
+\tikzmark{empirical-CDF}%
+F_n(\omega,x)
+=
+\rho_n(\omega,(-\infty,x])
+=
+\frac{1}{n}\sum_{k=1}^n
+\underbrace{\ind_{(-\infty,x]}(X_k(\omega))}_{\eqqcolon Y_k(\omega)}
+\]
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (beginarrow) at ($(pic cs:empirical-CDF) + (0.5em,-0.6em)$);
+\coordinate (midarrow) at ($(beginarrow) +(0.6em,-1.2em)$);
+\coordinate (endarrow) at ($(midarrow) +(1.4em,-0.4em)$);
+% \coordinate (textboxanchor) at ($(beginarrow -| current page text area.east) + (0,-2.2em)$);
+\node[anchor=west, Green, rectangle, draw=none, font=\tiny, text width=29em,align=flush left] (textbox) at (endarrow) {%
+for fixed \(x\in\R\), this is a random variable%
+};
+\draw[Green,->] plot[smooth, tension=0.9] coordinates {(beginarrow) (midarrow) (textbox.west)};
+\end{tikzpicture}%
+\tikzexternalenable%
+towards
+\[
+F(x)
+=
+\Prob_{X_1}((-\infty,x])
+=
+\Prob(\{X_1\leq x\})
+\]
+for every \(x\in\R\) where \(F\) is continuous and then apply \autoref{fact:weak-convergence-distribution-functions}.
+
+% Since \(
+% \Exp[|Y_n|]<\infty
+% \) for each fixed \(x\in\R\), we may apply the
+% \nameref{thm:strong-law-of-large-numbers} (\autoref{thm:strong-law-of-large-numbers}) and obtain
+For fixed \(x\in\R\), the random variables \(Y_n\) are independent and identically distributed.
+Since \(0 \allowbreak \leq \allowbreak Y_n \allowbreak \leq \allowbreak 1\), we have \(\Exp[|Y_n|] = \Exp[Y_n] \leq \Exp[1] = 1 < \infty\).
+Thus, we may apply the \nameref{thm:strong-law-of-large-numbers} and obtain
+\begin{equation}\label{eq:glivenko-cantelli-slln}
+F_n(\omega,x)
+\xrightarrow{n\to\infty}
+\Exp[Y_1]
+=
+F(x)
+\end{equation}
+$\Prob$-almost surely, see \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:almost-surely}.
+% Indeed, 
+% \(0\leq Y_n\leq 1\) implies 
+% \[
+% \Exp[|Y_n|] = \Exp[Y_n] \leq \Exp[1] = 1 < \infty
+% \] 
+The equality on the RHS of \eqref{eq:glivenko-cantelli-slln} holds since
+\[
+\Exp[Y_1]
+=
+\Exp[\ind_{(-\infty,x]}(X_1)]
+\overset{\text{\eqref{eq:expectation}}}{=}
+\int_\Omega \ind_{(-\infty,x]}(X_1)\,\dif\Prob
+=
+\int_\Omega \ind_{\{X_1 \leq x\}}\,\dif\Prob
+\overset{\text{\eqref{eq:integral-of-indicator-function}}}{=} 
+\Prob(\{X_1\leq x\})
+=
+F(x)
+\]
+for each fixed \(x\in\R\).
+
+In particular, we find for each \(x\in\R\) a set \(N_x\in\mathcal{F}\) with
+\(\Prob(N_x)=0\) such that \eqref{eq:glivenko-cantelli-slln} holds for all
+\(\omega\in\Omega\setminus N_x\). 
+The problem is that the exceptional set \(N_x\) may depend on \(x\).
+
+Now letting
+\(
+N
+\coloneq
+\bigcup_{x\in\Q}N_x 
+\),
+there holds \(\Prob(N) \leq \sum_{x\in\Q}\Prob(N_x)=0\), since \(\Q\) is countable.
+Therefore, for every \(\omega \in \Omega\setminus N\), the convergence in \eqref{eq:glivenko-cantelli-slln} holds simultaneously for all \(x\in\Q\) (not just at continuity points of \(F\)).
+We find for all \(\omega\in\Omega\setminus N\) by the monotonicity of probability distribution functions that
+\[
+F(s)
+=
+\lim_{n\to\infty}F_n(\omega,s)
+\leq
+\liminf_{n\to\infty}F_n(\omega,x)
+\leq
+\limsup_{n\to\infty}F_n(\omega,x)
+\leq
+\lim_{n\to\infty}F_n(\omega,t)
+=
+F(t)
+\]
+for all \(x\in\R\) and all \(s,t\in\Q\) with \(s\leq x\leq t\).
+Therefore, if \(F\) is continuous at \(x\), we have
+\[
+\lim_{s\nearrow x}F(s)
+=
+F(x)
+=
+\lim_{t\searrow x}F(t)
+\]
+and, consequently, by the previous inequality,
+\(
+\lim_{n\to\infty}F_n(\omega,x)
+=
+F(x)
+\) for every \(\omega\in\Omega\setminus N\).
+
+Thus, for every \(\omega\in\Omega\setminus N\), the distribution functions of
+\(\rho_n(\omega,\cdot)\) converge to the distribution function of \(\Prob_{X_1}\)
+at every continuity point of \(F\).
+By \autoref{fact:weak-convergence-distribution-functions}, this is equivalent to
+\[
+\rho_n(\omega,\cdot)
+% \xrightarrow{n\to\infty}
+% \xrightarrow[n\to\infty]{\text{weakly}}
+\xrightarrow{\text{weakly}}
+\Prob_{X_1}
+\]
+for every \(\omega\in\Omega\setminus N\).
+Since \(\Prob(N)=0\), the convergence holds for \(\Prob\)-almost every \(\omega\in\Omega\) and hence
+the claim follows. 
+\end{proof}
+
+
 
 % \[
 %   2 \Omega
