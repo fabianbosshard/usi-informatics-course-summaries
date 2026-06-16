@@ -6729,10 +6729,10 @@ This density can be factorized into the product of two Gaussian densities
 f_{X,Y}(x,y)
 =
 \left(
-\frac{1}{\sqrt{2\pi}\sigma_x}e^{-x^2/(2\sigma_x^2)}
+\frac{1}{\sqrt{2\pi}\sigma_x}\eu^{-x^2/(2\sigma_x^2)}
 \right)
 \left(
-\frac{1}{\sqrt{2\pi}\sigma_y}e^{-y^2/(2\sigma_y^2)}
+\frac{1}{\sqrt{2\pi}\sigma_y}\eu^{-y^2/(2\sigma_y^2)}
 \right)
 \eqcolon
 f_X(x)f_Y(y)
@@ -8786,7 +8786,7 @@ Due to $T|_{B_k}=k$, we arrive at
 
 \subsection{Properties of the Integral}
 
-We start by proving the change of variables formula for measure integrals.
+% We start by proving the change of variables formula for measure integrals.
 
 \begin{theorem}
 [Change of variables]
@@ -8958,12 +8958,26 @@ and
 % \end{remark}
 % % --- END --- 
 
-\begin{remark}
-The usual formulas for expectations in the discrete and continuous settings are recovered directly from
-\autoref{cor:expectation-image-measure}.
+% \begin{definition}\label{def:density-of-distribution}
+% Let $X : \Omega \to \R$ be a random variable.
+% We say that $X$ (or $\Prob_X$) \hl[2]{admits a density} with respect to Lebesgue measure if there exists a measurable function $f : \R \to [0,\infty]$ such that
+% \begin{equation}\label{eq:distribution-density}
+% \Prob_X(A)
+% =
+% \int_A f\,\dif\lambda^1
+% \overset{\text{\eqref{eq:lebesgue-integral-over-set}}}{=}
+% \int_A f(x)\,\dif x
+% \end{equation}
+% for all $A \in \mathcal{B}(\R)$.
+% % In this case, we say that $f$ is a density of $\Prob_X$ (or simply $X$) w.r.t. the Lebesgue measure.
+% In this case, we say that $f$ is a density of $X$ (or $\Prob_X$) with respect to Lebesgue measure.
+% % Equivalently, we also say that $X$ has density $f$ with respect to Lebesgue measure.
+% Such a density is unique only up to $\lambda^1$-almost everywhere equality.
+% \end{definition}
 
-If $\Prob_X$ \hl[2]{admits a density} with respect to Lebesgue measure, i.e.
-there exists a measurable function $f : \R \to [0,\infty]$ such that
+\begin{definition}\label{def:density-of-distribution}
+Let $X : \Omega \to \R$ be a random variable.
+We say that $X$ \hl[2]{admits a Lebesgue density} if its distribution $\Prob_X$ admits a density with respect to Lebesgue measure in the sense of \autoref{def:density-with-respect-to-measure}, i.e. if there exists a measurable function $f : \R \to [0,\infty]$ such that
 \begin{equation}\label{eq:distribution-density}
 \Prob_X(A)
 =
@@ -8972,8 +8986,15 @@ there exists a measurable function $f : \R \to [0,\infty]$ such that
 \int_A f(x)\,\dif x
 \end{equation}
 for all $A \in \mathcal{B}(\R)$.
-% then we say that $\Prob_X$ admits the density $f$ with respect to Lebesgue measure.
-In this case, by \autoref{thm:density-defines-measure}, applied with
+In this case, we say that $f$ is a Lebesgue density of $X$.
+Such a density is unique only up to $\lambda^1$-almost everywhere equality.
+\end{definition}
+
+\begin{remark}
+The usual formulas for expectations in the discrete and continuous settings are recovered directly from
+\autoref{cor:expectation-image-measure}.
+
+If $\Prob_X$ admits a density $f$ with respect to Lebesgue measure, then by \autoref{thm:density-defines-measure}, applied with
 \(
 (\Omega,\mathcal{F},\mu)
 =
@@ -9170,16 +9191,14 @@ is $(\mathcal{F}_2,\mathcal{B}(\overline{\R}))$-measurable.
 If $f \in \mathcal{L}^1(\mu_1 \otimes \mu_2)$, then $f(x,\cdot) \in \mathcal{L}^1(\mu_2)$ $\mu_1$-almost everywhere and $f(\cdot,y) \in \mathcal{L}^1(\mu_1)$ $\mu_2$-\allowbreak{}almost  everywhere.
 \item \label{item:tonelli-fubini:integral-identity}
 If $f \geq 0$ or $f \in \mathcal{L}^1(\mu_1 \otimes \mu_2)$, then there holds
-\[
-\begin{verticalhack}
+\begin{equation}\label{eq:tonelli-fubini-integral-identity}
 \int_{\Omega_1}\int_{\Omega_2} f\,\dif\mu_2\,\dif\mu_1
 =
 \int_{\Omega_1\times\Omega_2} f\,\dif(\mu_1 \otimes \mu_2)
 =
 \int_{\Omega_2}\int_{\Omega_1} f\,\dif\mu_1\,\dif\mu_2
-\end{verticalhack}
 \qedhere
-\]
+\end{equation}
 \end{enumerate}
 \end{fact}
 
@@ -9358,7 +9377,19 @@ Then, there holds
 Follows from \autoref{cor:integral-infinite-sum} and the definition of expectation \eqref{eq:expectation}.
 \end{proof}
 
-For the remainder of this section, we introduce measures that exhibit a density.
+For the remainder of this section, we introduce measures that admit a density.
+
+\begin{definition}\label{def:density-with-respect-to-measure}
+Let $\mu$ and $\nu$ be measures on the measurable space $(\Omega,\mathcal{F})$.
+We say that $\nu$ \hl[2]{admits a density} with respect to $\mu$ if there exists a measurable function $f : \Omega \to [0,\infty]$ such that
+\[
+\nu(A)
+=
+\int_A f\,\dif\mu
+\]
+for all $A \in \mathcal{F}$.
+In this case, we say that $f$ is a density of $\nu$ with respect to $\mu$.
+\end{definition}
 
 \begin{theorem}\label{thm:density-defines-measure}
 Let $(\Omega,\mathcal{F},\mu)$ be a measure space and let $f : \Omega \to \overline{\R}$ be measurable and non-negative.
@@ -9373,6 +9404,7 @@ A &\longmapsto \nu(A) \coloneq \smash[t]{\int_A f\,\dif\mu}
 \end{aligned}
 \]
 defines a measure (\autoref{def:measure}).
+In particular, $f$ is a density of $\nu$ with respect to $\mu$ in the sense of \autoref{def:density-with-respect-to-measure}.
 For any measurable and non-negative function $g : \Omega \to \overline{\R}$, there holds
 \begin{equation}\label{eq:density-integral-identity}
 % \begin{verticalhack}
@@ -9509,6 +9541,7 @@ Hence, the integral identity~%
 \eqref{eq:density-integral-identity} holds for all non-negative measurable $g$.
 \end{proof}
 
+
 \begin{definition}\label{def:absolute-continuity}
 Let $\mu,\nu$ be measures on the measurable space $(\Omega,\mathcal{F})$.
 The measure $\nu$ is called \emph{absolutely continuous} with respect to $\mu$, we write $\nu \ll \mu$, if
@@ -9524,8 +9557,11 @@ We close this section by the following statement known as Radon--Nikodym theorem
 
 \begin{fact}[Radon--Nikodym theorem]\label{fact:radon-nikodym}
 Let $(\Omega,\mathcal{F},\mu)$ be a $\sigma$-finite measure space and let $\nu : \mathcal{F} \to [0,\infty]$ be a measure.
-Then $\nu$ is absolutely continuous with respect to $\mu$ if and only if there exists a non-negative measurable function $f : \Omega \to \overline{\R}$ such that $\nu = f\mu$.
-Especially, the density $f$ is $\mu$-almost everywhere uniquely determined, i.e.
+% Then $\nu$ is absolutely continuous with respect to $\mu$ if and only if there exists a non-negative measurable function $f : \Omega \to \overline{\R}$ such that $\nu = f\mu$.
+% Especially, the density $f$ is $\mu$-almost everywhere uniquely determined, i.e.
+% $\nu = f_1\mu = f_2\mu \implies \mu(\{f_1 \neq f_2\})=0$.
+Then $\nu$ is absolutely continuous with respect to $\mu$ in the sense of \autoref{def:absolute-continuity} if and only if $\nu$ admits a density $f$ with respect to $\mu$ in the sense of \autoref{def:density-with-respect-to-measure}.
+Especially, this density $f$ is $\mu$-almost everywhere uniquely determined, i.e.
 $\nu = f_1\mu = f_2\mu \implies \mu(\{f_1 \neq f_2\})=0$.
 \end{fact}
 
@@ -9608,7 +9644,7 @@ The corresponding \emph{standard deviation} is given by
 \).
 \end{definition}
 
-\begin{remark}
+\begin{remark}\label{rem:variance-affine-transformation}
 There holds $\Var[X]=0$ if $X=\Exp[X]$ $\Prob$-almost surely.
 Moreover, it is easy to see that
 \[
@@ -9815,7 +9851,7 @@ We say $(X_n)_{n \in \N}$ converges to $X$ in $L^p$, denoted by $X_n \xlongright
 \end{enumerate}
 \end{definition}
 
-\pagebreak[3]
+
 
 \begin{remark}\label{rem:convergence-random-variables}
 The following diagram summarizes the implications between the different types of convergence.
@@ -10010,7 +10046,7 @@ by \autoref{lem:elementary-properties-integral-nonnegative-measurable-functions}
 $\Exp[Y_n] \leq \Exp[X_k]$ for all $k \geq n$.
 \end{proof}
 
-The final theorem, we are going to show is the famous Dominated Convergence Theorem.
+% The final theorem, we are going to show is the famous Dominated Convergence Theorem.
 
 \begin{theorem}[Dominated Convergence Theorem]\label{thm:dominated-convergence}
 Let $p \in [1,\infty)$ and let
@@ -10682,6 +10718,522 @@ for every \(\omega\in\Omega\setminus N\).
 Since \(\Prob(N)=0\), the convergence holds for \(\Prob\)-almost every \(\omega\in\Omega\) and hence
 the claim follows. 
 \end{proof}
+
+
+
+\clearpage
+
+\section{Central Limit Theorem}\label{sec:central-limit-theorem}
+Let $(\Omega,\mathcal{F},\Prob)$ be a probability space (\autoref{def:probability-space}).
+
+% \begin{definition}\label{def:characteristic-function}
+% Let $X$ be a real-valued random variable on $(\Omega,\mathcal{F},\Prob)$.
+% The characteristic function of $X$ is \rlap{defined by}
+% \[
+% \varphi_X(t)
+% \coloneq
+% \Exp\bigl[\eu^{\iu t X}\bigr]
+% % =
+% % \int_\Omega \eu^{\iu t X}\,\dif\Prob
+% =
+% \Exp[\cos(tX)]
+% +
+% \iu \Exp[\sin(tX)]
+% \]
+% for $t \in \R$.
+% \end{definition}
+
+\begin{definition}\label{def:moment-generating-function}
+Let $X$ be a real-valued random variable on $(\Omega,\mathcal{F},\Prob)$.
+The moment generating function of $X$ is \rlap{defined by}
+\begin{equation}\label{eq:moment-generating-function}
+M_X(t)
+\coloneq
+\Exp\bigl[\eu^{tX}\bigr]
+=
+\int_\Omega \eu^{tX}\,\dif\Prob
+\end{equation}
+for all $t \in \R$ such that $\Exp\bigl[\eu^{tX}\bigr] < \infty$.
+Its domain is
+\(
+D_X
+\coloneq
+\{t \in \R : \Exp\bigl[\eu^{tX}\bigr] < \infty\}
+\).
+\end{definition}
+\begin{example}
+If $|X| \leq M$ $\Prob$-almost surely, then the moment generating function exists on $\R$, since
+\[
+\Exp\bigl[\eu^{tX}\bigr]
+\leq
+\Exp\bigl[\eu^{|tX|}\bigr]
+=
+\Exp\bigl[\eu^{|t||X|}\bigr]
+\leq
+\Exp\bigl[\eu^{|t|M}\bigr]
+=
+\eu^{|t|M}
+<\infty
+\]
+for all $t \in \R$.
+\end{example}
+
+% Strictly speaking, a random variable admits a density only through its distribution.
+% That is, $X$ admits a Lebesgue density precisely when $\Prob_X$ admits a density with respect to Lebesgue measure, see \autoref{def:density-of-distribution}.
+
+If $X$ admits a Lebesgue density $f$ in the sense of \autoref{def:density-of-distribution}
+and $t \in D_X$, then $\eu^{t\id_{\R}}$ is non-negative and $\Prob_X$-integrable.
+Therefore, by
+% \autoref{def:moment-generating-function},
+\autoref{cor:expectation-image-measure}\tikzmark{mgf-cov-autoref}, and \autoref{thm:density-defines-measure}\tikzmark{mgf-density-autoref}, applied with $\mu=\lambda^1$, $\nu=\Prob_X$ and $g=\eu^{t\id_{\R}}$, there holds
+\begin{equation}\label{eq:mgf-density}
+M_X(t)
+\overset{\text{\eqref{eq:moment-generating-function}}}{=}
+% \Exp\bigl[\eu^{tX}\bigr]
+\int_\Omega \eu^{tX}\,\dif\Prob
+\overset{\text{\eqref{eq:expectation-image-measure}\tikzmark{mgf-cov-eqref}}}{=}
+\int_\R \eu^{t\id_{\R}}\,\dif\Prob_X
+\overset{\text{\eqref{eq:density-integral-identity}\tikzmark{mgf-density-eqref}}}{=}
+\int_\R \eu^{t\id_{\R}} f\,\dif\lambda^1
+\overset{\text{\eqref{eq:lebesgue-integral-over-whole-space}}}{=}
+\int_\R \eu^{tx}f(x)\,\dif x
+\end{equation}
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (covstart) at ($(pic cs:mgf-cov-autoref) + (-4em,-0.25em)$);
+\coordinate (covdown) at ($(covstart) + (0,-1.0em)$);
+\coordinate (covleft) at ($(pic cs:mgf-cov-eqref) + (0.4em,1.2em)$);
+\coordinate (covend) at ($(pic cs:mgf-cov-eqref) + (0em,0.6em)$);
+\draw[Green,->,rounded corners=0.6em] (covstart) -- (covdown) -- (covleft) -- (covend);
+\coordinate (densitystart) at ($(pic cs:mgf-density-autoref) + (-4em,-0.25em)$);
+\coordinate (densitydown) at ($(densitystart) + (0,-1.0em)$);
+\coordinate (densityleft) at ($(pic cs:mgf-density-eqref) + (-1.0em,1.6em)$);
+\coordinate (densityend) at ($(pic cs:mgf-density-eqref) + (-1.0em,0.6em)$);
+\draw[Green,->,rounded corners=0.6em] (densitystart) -- (densitydown) -- (densityleft) -- (densityend);
+\end{tikzpicture}%
+\tikzexternalenable%
+
+% We further collect the following properties of the moment generating function.
+
+\begin{lemma}[Properties of moment generating functions]\label{lem:mgf-properties}
+Let $X : \Omega \to \R$ be a random variable with moment generating function $M_X$ defined in an open interval $D_X \subset \R$ containing $0$.
+\begin{enumerate}[label=(\roman*)]
+\item \label{item:mgf-properties-derivatives}
+The $k$-th derivative $\frac{\dif^k}{\dif t^k}M_X(t)$ exists on $D_X$ for all $k \in \N$ and
+\begin{equation}\label{eq:mgf-moments}
+\frac{\dif^k}{\dif t^k}M_X(0)
+=
+\Exp[X^k]
+\end{equation}
+\item \label{item:mgf-properties-sum}
+If $X,Y : \Omega \to \R$ are independent with moment generating functions $M_X,M_Y$ on $D$ and $Z \allowbreak \coloneq \allowbreak X \allowbreak + \allowbreak Y$, then there holds $M_Z(t)=M_X(t)M_Y(t)$ for all $t \in D$.
+\item \label{item:mgf-properties-affine}
+Let $a,b \in \R$ and set $Y \coloneq a+bX$.
+Then, %there holds
+\(
+M_Y(t)
+=
+\eu^{at}M_X(bt)
+\)
+for all $t$ such that $bt \in D_X$.
+\qedhere
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+\begin{itemize}
+\item[\ref{item:mgf-properties-derivatives}]
+% Fix $t \in D_X$ and choose $\delta > 0$ such that $[t-\delta,t+\delta] \subset D_X$.
+% For every $k \in \N$, there exists a constant $C_{k,\delta}>0$ such that
+% \(
+% |X|^k\eu^{sX}
+% \leq
+% C_{k,\delta}\bigl(\eu^{(t-\delta)X}+\eu^{(t+\delta)X}\bigr)
+% \)
+% for all $s \in [t-\delta/2,t+\delta/2]$.
+% Indeed, on $\{X\geq 0\}$ the polynomial factor $X^k$ can be absorbed by $\eu^{\delta X/2}$, while on $\{X<0\}$ it can be absorbed by $\eu^{-\delta X/2}$.
+% The right-hand side is integrable since $M_X(t-\delta),M_X(t+\delta)<\infty$.
+% Thus, the mean value theorem and repeated applications of the \nameref{thm:dominated-convergence} yield
+% \[
+% \frac{\dif^k}{\dif t^k}M_X(t)
+% =
+% \Exp\biggl[\frac{\partial^k}{\partial t^k}\eu^{tX}\biggr]
+% =
+% \Exp\bigl[X^k\eu^{tX}\bigr]
+% \]
+% for all $t \in D_X$.
+% Evaluation at $t=0$ yields \eqref{eq:mgf-moments}.
+Since $M_X$ is finite on an open interval around $t$, the terms $|X|^k\eu^{sX}$ are dominated for $s$ near $t$ by an integrable exponential bound.
+Hence, the mean value theorem applied to the difference quotients, together with repeated applications of \autoref{thm:dominated-convergence}, yields
+\[
+\frac{\dif^k}{\dif t^k}M_X(t)
+=
+\Exp\biggl[\frac{\partial^k}{\partial t^k}\eu^{tX}\biggr]
+=
+\Exp\bigl[X^k\eu^{tX}\bigr]
+\]
+for all $t \in D_X$.
+Evaluation at $t=0$ yields \eqref{eq:mgf-moments}.
+
+
+
+% \item[\ref{item:mgf-properties-sum}]
+% Set $T\coloneq (X,Y)$.
+% For $A,B\in\mathcal{B}(\R)$, the independence of $X$ and $Y$ gives
+% \[
+% \begin{aligned}
+% \Prob_T(A\times B)
+% &\overset{\text{\eqref{eq:image-measure}}}{=}
+% \Prob\bigl(T^{-1}(A\times B)\bigr)
+% \\
+% &=
+% \Prob(X\in A,Y\in B)
+% \\
+% &\overset{\text{\autoref{def:independence-of-random-variables}}}{=}
+% \Prob(X\in A)\Prob(Y\in B)
+% \\
+% &\overset{\text{\eqref{eq:image-measure}}}{=}
+% \Prob_X(A)\Prob_Y(B)
+% \\
+% &\overset{\text{\eqref{eq:product-measure}}}{=}
+% (\Prob_X\otimes\Prob_Y)(A\times B)
+% \end{aligned}
+% \]
+% Since the rectangles $A\times B$ generate
+% \(\mathcal{B}(\R)\otimes\mathcal{B}(\R)=\mathcal{B}(\R^2)\), uniqueness in the product measure construction (\autoref{ex:product-measure}) yields
+% \begin{equation}\label{eq:independent-joint-distribution-product}
+% \Prob_T
+% =
+% \Prob_X\otimes\Prob_Y
+% \end{equation}
+% Now let $h_t : \R^2\to[0,\infty)$ be defined by $h_t(x,y)\coloneq \eu^{tx}\eu^{ty}$.
+% Then
+% \[
+% \begin{aligned}
+% \Exp\bigl[\eu^{tX}\eu^{tY}\bigr]
+% &\overset{\text{\eqref{eq:expectation}}}{=}
+% \int_\Omega h_t(T)\,\dif\Prob
+% \\
+% &\overset{\text{\autoref{thm:change-of-variables}}}{=}
+% \int_{\R^2} h_t\,\dif\Prob_T
+% \\
+% &\overset{\text{\eqref{eq:independent-joint-distribution-product}}}{=}
+% \int_{\R^2} h_t\,\dif(\Prob_X\otimes\Prob_Y)
+% \\
+% &\overset{\text{\autoref{fact:tonelli-fubini}}}{=}
+% \int_\R \int_\R \eu^{tx}\eu^{ty}\,\dif\Prob_Y(y)\,\dif\Prob_X(x)
+% \\
+% &=
+% \int_\R \eu^{tx}
+% \biggl(\int_\R \eu^{ty}\,\dif\Prob_Y(y)\biggr)
+% \,\dif\Prob_X(x)
+% \\
+% &=
+% \biggl(\int_\R \eu^{tx}\,\dif\Prob_X(x)\biggr)
+% \biggl(\int_\R \eu^{ty}\,\dif\Prob_Y(y)\biggr)
+% \\
+% &\overset{\text{\eqref{eq:expectation-image-measure}}}{=}
+% \Exp\bigl[\eu^{tX}\bigr]\Exp\bigl[\eu^{tY}\bigr]
+% \end{aligned}
+% \]
+% Consequently,
+% \[
+% M_Z(t)
+% =
+% \Exp\bigl[\eu^{tZ}\bigr]
+% =
+% \Exp\bigl[\eu^{tX+tY}\bigr]
+% =
+% \Exp\bigl[\eu^{tX}\eu^{tY}\bigr]
+% =
+% \Exp\bigl[\eu^{tX}\bigr]\Exp\bigl[\eu^{tY}\bigr]
+% =
+% M_X(t)M_Y(t)
+% \]
+\item[\ref{item:mgf-properties-sum}]
+The independence of $X$ and $Y$ yields
+\[
+M_Z(t)
+=
+\Exp\bigl[\eu^{tZ}\bigr]
+=
+\Exp\bigl[\eu^{tX+tY}\bigr]
+=
+\Exp\bigl[\eu^{tX}\eu^{tY}\bigr]
+\overset{\text{\eqref{eq:tonelli-fubini-integral-identity}}}{=}
+\Exp\bigl[\eu^{tX}\bigr]\Exp\bigl[\eu^{tY}\bigr]
+=
+M_X(t)M_Y(t)
+\]
+where the fourth equality is the factorization of expectations of non-negative measurable functions of independent random variables, which follows from \autoref{def:independence-of-random-variables} and \autoref{fact:tonelli-fubini}.
+
+
+\item[\ref{item:mgf-properties-affine}]
+By direct computation, we infer
+\[
+M_Y(t)
+=
+\Exp\bigl[\eu^{tY}\bigr]
+=
+\Exp\bigl[\eu^{t(a+bX)}\bigr]
+=
+\Exp\bigl[\eu^{at}\eu^{btX}\bigr]
+=
+\eu^{at}\Exp\bigl[\eu^{btX}\bigr]
+=
+\eu^{at}M_X(bt)
+\qedhere
+\]
+\end{itemize}
+\end{proof}
+
+\begin{remark}\label{rem:mgf-moment-uniqueness}
+If $M_X(t)$ exists and is finite on some open interval containing $0$, then the distribution $\Prob_X$ is uniquely determined by the moments $\Exp[X^k]$, $k \in \N$.
+\end{remark}
+
+\begin{example}[Normal distribution]\label{ex:normal-mgf}
+Let $X \sim \mathcal{N}(\mu,\sigma^2)$ with $\mu \in \R$ and $\sigma>0$, i.e. let $X$ admit the Lebesgue density
+\(
+f(x)
+=
+\frac{1}{\sqrt{2\pi}\sigma}
+\eu^{-(x-\mu)^2/(2\sigma^2)}
+\).
+Then there holds
+\begin{equation}\label{eq:normal-mgf}
+M_X(t)
+=
+\eu^{\mu t+\frac{\sigma^2t^2}{2}}
+\end{equation}
+for all $t \in \R$.
+% Indeed, completing the square gives
+% \[
+% tx-\frac{(x-\mu)^2}{2\sigma^2}
+% =
+% -\frac{\bigl(x-(\mu+\sigma^2t)\bigr)^2}{2\sigma^2}
+% +\mu t
+% +\frac{\sigma^2t^2}{2}
+% \]
+% and hence
+% \[
+% \begin{aligned}
+% M_X(t)
+% &\overset{\text{\eqref{eq:mgf-density}}}{=}
+% \frac{1}{\sqrt{2\pi}\sigma}
+% \int_\R
+% \eu^{tx-\frac{(x-\mu)^2}{2\sigma^2}}
+% \,\dif x
+% \\
+% &=
+% \eu^{\mu t+\frac{\sigma^2t^2}{2}}
+% \frac{1}{\sqrt{2\pi}\sigma}
+% \int_\R
+% \eu^{-\frac{\bigl(x-(\mu+\sigma^2t)\bigr)^2}{2\sigma^2}}
+% \,\dif x
+% \\
+% &=
+% \eu^{\mu t+\frac{\sigma^2t^2}{2}}
+% \end{aligned}
+% \]
+% since the remaining integrand, including the factor $1/(\sqrt{2\pi}\sigma)$, is the density of $\mathcal{N}(\mu+\sigma^2t,\sigma^2)$.
+Hence $X$ has moments of all orders by \autoref{lem:mgf-properties} \ref{item:mgf-properties-derivatives}, and its distribution is uniquely determined by those moments by \autoref{rem:mgf-moment-uniqueness}.
+\end{example}
+
+% We have the following fact, which is, for example, proven in ``Probability and Measure'' by P.~Billingsley.
+
+\begin{fact}\label{fact:mgf-convergence}
+Let $(X_n)_{n\in\N}$ be a sequence of random variables with moment generating functions $(M_n)_{n\in\N}$, which all are finite on some open interval $D_X \subset \R$ containing $0$.
+Suppose there exists a random variable $X$ with moment generating function $M_X$, also defined on $D_X$, such that
+\[
+\lim_{n\to\infty}M_n(t)
+=
+M_X(t)
+\]
+for all $t \in D_X$.
+Then $X_n \xlongrightarrow{\text{i.d.}} X$ in the sense of \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:distribution}.
+\end{fact}
+
+We now prove a version of the central limit theorem for i.i.d. random variables whose moment generating function exists in an open interval around zero.
+
+\begin{theorem}[Central Limit Theorem]\label{thm:central-limit-theorem}
+Let $(X_n)_{n\in\N}$ be a sequence of i.i.d. random variables with mean $\mu \in \R$ and variance $\sigma^2>0$.
+Assume that the moment generating function
+\(
+M(t)
+\coloneq
+\Exp\bigl[\eu^{tX_1}\bigr]
+\)
+exists and is finite on an open interval containing $0$.
+Define
+\[
+S_n
+\coloneq
+\sum_{k=1}^n X_k
+\qquad\text{and}\qquad
+Z_n
+\coloneq
+\frac{S_n-n\mu}{\sigma\sqrt{n}}
+\]
+Then $(Z_n)_{n\in\N}$ converges in distribution to the standard normal distribution.
+\end{theorem}
+\begin{proof}
+% Set $Y_k \coloneq X_k-\mu$ and $T_n \coloneq \sum_{k=1}^nY_k$.
+% The random variables $(Y_k)_{k\in\N}$ are again i.i.d., where independence follows from \autoref{thm:independence-under-measurable-transformations}.
+% Moreover, by linearity of expectation (\autoref{lem:L1-vector-space}), \autoref{rem:variance-affine-transformation}, and \autoref{lem:mgf-properties} \ref{item:mgf-properties-affine}, there holds
+% \[
+% \Exp[Y_k]
+% =
+% 0
+% \qquad
+% \Var[Y_k]
+% =
+% \sigma^2
+% \qquad
+% M_{Y_k}(t)
+% =
+% \eu^{-\mu t}M(t)
+% \]
+% for every $k\in\N$ and every $t$ in the domain of $M$.
+% Finally,
+% \[
+% \frac{T_n}{\sigma\sqrt{n}}
+% =
+% \frac{\sum_{k=1}^n(X_k-\mu)}{\sigma\sqrt{n}}
+% =
+% \frac{S_n-n\mu}{\sigma\sqrt{n}}
+% =
+% Z_n
+% \]
+% Thus, 
+Without loss of generality, we assume $\mu=0$ and set $Z_n\coloneq S_n/(\sigma\sqrt{n})$.
+
+By \autoref{lem:mgf-properties} \ref{item:mgf-properties-sum}, the independence of $(X_n)_{n\in\N}$, and the fact that the random variables are identically distributed, there holds
+\[
+M_{S_n}(t)
+=
+\prod_{k=1}^n M_{X_k}(t)
+=
+[M(t)]^n
+\]
+Using \autoref{lem:mgf-properties} \ref{item:mgf-properties-affine}, we further infer
+\begin{equation}\label{eq:clt-mgf-standardized-sum}
+M_{Z_n}(t)
+=
+M_{S_n}\biggl(\frac{t}{\sigma\sqrt{n}}\biggr)
+=
+\biggl(M\biggl(\frac{t}{\sigma\sqrt{n}}\biggr)\biggr)^n
+\end{equation}
+Choose $a>0$ such that $(-a,a)$ is contained in the domain of $M$ and set $J\coloneq(-\sigma a,\sigma a)$.
+Then the moment generating functions $M_{Z_n}$ are finite on the common open interval $J$ for all $n\in\N$,
+since $t/(\sigma\sqrt{n}) \in (-a,a)$ for all $t \in J$ and all $n\in\N$.
+
+Since $M$ is finite in a neighbourhood of $0$, its derivatives at $0$ exist and by \autoref{lem:mgf-properties} \ref{item:mgf-properties-derivatives}, we have
+\[
+M(0)
+=
+\Exp\bigl[\eu^{0\cdot X_1}\bigr]
+=
+1
+\qquad
+M'(0)
+=
+\Exp[X_1]
+=
+0
+\qquad
+M''(0)
+=
+\Exp[X_1^2]
+\overset{\text{\eqref{eq:variance}}}{=}
+\sigma^2
+\]
+and the second-order Taylor expansion of $M$ around $0$ therefore takes the form
+\begin{equation}\label{eq:clt-mgf-taylor}
+M(s)
+=
+1
++\frac{\sigma^2}{2}s^2
++r(s)
+\end{equation}
+where $r(s)=o(s^2)$ as $s\to0$.
+In particular, for fixed $t\in J$,
+\[
+M\biggl(\frac{t}{\sigma\sqrt{n}}\biggr)
+\overset{\text{\eqref{eq:clt-mgf-taylor}}}{=}
+1
++\frac{\sigma^2}{2}\frac{t^2}{\sigma^2n}
++r\biggl(\frac{t}{\sigma\sqrt{n}}\biggr)
+=
+1
++\frac{t^2}{2n}
++r_n(t)
+\]
+where
+\(
+r_n(t)
+\coloneq
+r\bigl(t/(\sigma\sqrt{n})\bigr)
+\)
+satisfies $nr_n(t)\to0$ as $n\to\infty$, i.e. $r_n(t)=o(1/n)$.
+Indeed, this is immediate for $t=0$, while for $t\neq0$, setting $s_n\coloneq t/(\sigma\sqrt{n})$ gives
+\[
+nr_n(t)
+=
+\frac{t^2}{\sigma^2}
+\frac{r(s_n)}{s_n^2}
+\xrightarrow{n\to\infty}
+0
+\]
+
+Inserting this into \eqref{eq:clt-mgf-standardized-sum} and taking the logarithm (which is well-defined since the MGF is strictly positive) gives
+\[
+\log M_{Z_n}(t)
+=
+n\log\biggl(1+\frac{t^2}{2n}+r_n(t)\biggr)
+\]
+% This logarithm is well defined since a moment generating function is strictly positive.
+Since $\log(1+u)=u+o(u)$ as $u\to0$, letting
+\(
+u_n(t)
+\coloneq
+t^2/(2n)+r_n(t)
+\)
+and observing that $u_n(t)=O(1/n)$, we obtain
+\[
+% \begin{aligned}
+\log M_{Z_n}(t)
+=
+n\biggl(\frac{t^2}{2n}+r_n(t)+o\biggl(\frac{1}{n}\biggr)\biggr)
+=
+\frac{t^2}{2}
++nr_n(t)
++o(1)
+\xrightarrow{n\to\infty}
+\frac{t^2}{2}
+% \end{aligned}
+\]
+
+Therefore, by the continuity of the exponential function, we arrive at
+\[
+\lim_{n\to\infty}M_{Z_n}(t)
+=
+\lim_{n\to\infty}\eu^{\log M_{Z_n}(t)}
+=
+\eu^{\lim_{n\to\infty}\log M_{Z_n}(t)}
+=
+\eu^{t^2/2}
+\]
+for every $t\in J$.
+By \autoref{ex:normal-mgf} \eqref{eq:normal-mgf}, 
+% the function $t\mapsto\eu^{t^2/2}$ 
+this
+is the MGF of a standard normal random variable $Z \allowbreak \sim \allowbreak \mathcal{N}(0,1)$.
+By \autoref{fact:mgf-convergence}, we conclude that $(Z_n)_{n\in\N}$ converges to $Z$ in distribution.
+\end{proof}
+
+
+
+
+
 
 
 
