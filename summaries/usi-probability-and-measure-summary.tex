@@ -955,7 +955,7 @@ x\in \left(\bigcup_{i\in I} A_i\right)^\complement
 
 
 % --- Limit Inferior and Limit Superior ---
-\subsection*{Limit Inferior and Limit Superior}
+\subsubsection*{Limit Inferior and Limit Superior}
 
 Let $(A_n)_{n\in\N}$ be a sequence of subsets of $\Omega$ and let $N\in\N$ be fixed.
 
@@ -1000,7 +1000,73 @@ because removing finitely many initial conditions does not change the set of ele
 \end{minipage}
 
 
-\pagebreak
+\subsection*{Convergence of Functions}
+
+Let \(E\) be a set and let \(f,(f_n)_{n\in\N}\) be functions \(E\to\R\).
+
+\begin{definition}[pointwise convergence]\label{def:function-pointwise-convergence}
+We say that \(f_n\) converges to \(f\) pointwise on \(E\), denoted by
+\(
+f_n \xlongrightarrow{\mathrm{p.w.}} f
+\),
+if
+\[
+\lim_{n\to\infty} f_n(x)=f(x)
+\]
+for every \(x\in E\).
+
+Equivalently, for every \(x\in E\) and every \(\varepsilon>0\), there exists \(N=N(x,\varepsilon)\in\N\) such that
+\[
+n\geq N
+\quad\Longrightarrow\quad
+|f_n(x)-f(x)|<\varepsilon
+\qedhere
+\]
+\end{definition}
+
+\begin{definition}[uniform convergence]\label{def:function-uniform-convergence}
+We say that \(f_n\) converges to \(f\) uniformly on \(E\), denoted by
+\(
+f_n \xlongrightarrow{\mathrm{unif.}} f
+\),
+if
+\[
+\sup_{x\in E}|f_n(x)-f(x)|
+\xrightarrow{n\to\infty}
+0
+\]
+
+Equivalently, for every \(\varepsilon>0\), there exists \(N=N(\varepsilon)\in\N\) such that
+\[
+n\geq N
+\quad\Longrightarrow\quad
+|f_n(x)-f(x)|<\varepsilon
+\]
+for every \(x\in E\).
+\end{definition}
+
+In particular,
+\nameref{def:function-uniform-convergence}
+implies 
+\nameref{def:function-pointwise-convergence},
+but the converse is false in general.
+
+\begin{example}
+Let \(f_n:[0,1]\to\R\) be given by \(f_n(x)=x^n\). Then
+\(
+f_n \xlongrightarrow{\mathrm{p.w.}} \ind_{\{1\}}
+\)
+on \([0,1]\), but the convergence is not uniform, since
+\(
+\sup_{x\in[0,1]}|f_n(x)-\ind_{\{1\}}(x)|
+=
+1
+\)
+for every \(n\in\N\).
+\end{example}
+
+
+\pagebreak[3]
 
 \section{Probability Spaces}
 
@@ -10182,9 +10248,11 @@ In particular, $f$ is a density of $\nu$ with respect to $\mu$ in the sense of \
 For any measurable and non-negative function $g : \Omega \to \overline{\R}$, there holds
 \begin{equation}\label{eq:density-integral-identity}
 % \begin{verticalhack}
+{\color{red}\boxed{\color{black}
 \int_{\Omega} g\,\dif\nu
 =
 \int_{\Omega} g \, f\,\dif\mu
+}}
 % \end{verticalhack}
 \qedhere
 \end{equation}
@@ -11836,7 +11904,7 @@ Suppose there exists a random variable $X$ with moment generating function $M_X$
 =
 M_X(t)
 \]
-for all $t \in D_X$.
+for all $t \in D_X$ (see \autoref{def:function-pointwise-convergence}).
 Then $X_n \xlongrightarrow{\text{i.d.}} X$ in the sense of \autoref{def:convergence-random-variables} \ref{item:convergence-random-variables:distribution}.
 \end{fact}
 
