@@ -1,5 +1,60 @@
 % author: Fabian Bosshard % © CC BY 4.0
-\documentclass[9pt,headings=standardclasses,parskip=half]{scrartcl}
+
+\begin{filecontents}[overwrite]{\jobname.bib}
+@book{halmosMeasureTheory,
+  author    = {Paul R. Halmos},
+  title     = {Measure Theory},
+  publisher = {Springer-Verlag},
+  year      = {1974},
+  edition   = {1},
+  address   = {New York},
+  url       = {https://reperio.usi.ch/permalink/41SLSP_USI/17vpo4o/alma991170317226105501},
+}
+@book{shumMeasureTheoreticProbability,
+  author    = {Kenneth Shum},
+  title     = {Measure-Theoretic Probability: With Applications to Statistics, Finance, and Engineering},
+  publisher = {Birkh{\"a}user},
+  year      = {2023},
+  address   = {Cham, Switzerland},
+  url       = {https://reperio.usi.ch/permalink/41SLSP_USI/17vpo4o/alma991171870308905501},
+}
+@online{mathSESeparateMeasurable,
+  title        = {A Counterexample Showing That Separate Measurability Need Not Imply Joint Measurability},
+  organization = {Math Stack Exchange},
+  url          = {https://math.stackexchange.com/a/647242/1692832},
+  urldate      = {2026-06-26},
+}
+@online{texSETopologicalContinuity,
+  author       = {{user121799}},
+  title        = {A TikZ Visualization of a Preimage},
+  organization = {TeX Stack Exchange},
+  url          = {https://tex.stackexchange.com/a/457595},
+  urldate      = {2026-06-26},
+}
+@online{texSEEpsilonDeltaLimit,
+  author       = {{user121799}},
+  title        = {An Epsilon-Delta Diagram in TikZ},
+  organization = {TeX Stack Exchange},
+  url          = {https://tex.stackexchange.com/a/485692},
+  urldate      = {2026-06-26},
+}
+@online{texSEEpsilonDeltaGraph,
+  author       = {Evion and {Stack Exchange Community}},
+  title        = {An Epsilon-Delta Plot in TikZ},
+  organization = {TeX Stack Exchange},
+  url          = {https://tex.stackexchange.com/a/563373},
+  urldate      = {2026-06-26},
+}
+@online{texSEMonkeyIcon,
+  author       = {Mark Wibrow and {Stack Exchange Community}},
+  title        = {A Monkey Icon in TikZ},
+  organization = {TeX Stack Exchange},
+  url          = {https://tex.stackexchange.com/a/414059},
+  urldate      = {2026-06-26},
+}
+\end{filecontents}
+
+\documentclass[9pt,headings=standardclasses,parskip=half, titlepage]{scrartcl}
 
 % ===================== basics =====================
 \usepackage{ifthen,iftex,csquotes}
@@ -106,8 +161,12 @@
 \renewcommand{\labelitemiv}{\raisebox{0.3ex}{\scalebox{0.4}{\textbullet}}}
 
 % ===================== bibliography =====================
-\usepackage[backend=biber,style=numeric]{biblatex}
-\addbibresource{\jobname.bib}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\IfFileExists{build/\jobname.bib}{%
+  \addbibresource{build/\jobname.bib}%
+}{%
+  \addbibresource{\jobname.bib}%
+}
 
 % ===================== symbols =====================
 \usepackage{pifont}
@@ -155,12 +214,27 @@
 \let\SOULhl\hl
 \renewcommand{\hl}[1]{\SOULhl{#1}}
 
-\definecolor{HLgreen}{HTML}{77DD77}
-\definecolor{HLyellow}{HTML}{FFFF66}
-\definecolor{HLorange}{HTML}{FFB347}
-\definecolor{HLred}{HTML}{FF6961}
-\definecolor{HLpink}{HTML}{FFB6C1}
-\definecolor{HLturquoise}{HTML}{40E0D0}
+
+
+\definecolor{HLgreen}{HTML}{\eat #77DD77}
+\definecolor{HLyellow}{HTML}{\eat #FFFF66}
+\definecolor{HLorange}{HTML}{\eat #FFB347}
+\definecolor{HLred}{HTML}{\eat #FF6961}
+\definecolor{HLpink}{HTML}{\eat #FFB6C1}
+\definecolor{HLturquoise}{HTML}{\eat #40E0D0}
+
+\RenewDocumentCommand{\hl}{O{1} m}{% % master highlight macro: \hl[level]{text}, default = green
+  \begingroup
+  \IfEqCase{#1}{%
+    {1}{\sethlcolor{HLgreen}\SOULhl{#2}}%
+    {2}{\sethlcolor{HLyellow}\SOULhl{#2}}%
+    {3}{\sethlcolor{HLorange}\SOULhl{#2}}%
+    {4}{\sethlcolor{HLred}\SOULhl{#2}}%
+    {5}{\sethlcolor{red}\SOULhl{#2}}%
+    {6}{\sethlcolor{HLturquoise}\SOULhl{#2}}%
+  }[\PackageError{hl}{Undefined highlight level: #1}{}]%
+  \endgroup
+}
 
 \RenewDocumentCommand{\hl}{O{1} m}{%
   \begingroup
@@ -239,6 +313,7 @@
 \definecolor{amethyst}{rgb}{0.6,0.4,0.8}
 \definecolor{mypurple}{rgb}{0.5,0,0.5}
 \definecolor{highlightpurple}{rgb}{0.6,0,0.6}
+\definecolor{AccentGray}{HTML}{\eat #666666}
 \definecolor{fancycol}{HTML}{\eat #ff00ae}
 \renewcommand{\emph}[1]{\textcolor{black}{\textsl{#1}}}
 \definecolor{interludecolor}{HTML}{\eat #7f7f7f}
@@ -425,15 +500,15 @@ line width=0.16pt}}%
 \newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}}
 
 % ===================== metadata / hyperlinks =====================
-\title{Fourier Analysis}
+\title{Probability and Measure}
 \author{Fabian Bosshard}
 \date{\today}
 
 \usepackage[
   linktoc=none,
   pdfauthor={Fabian Bosshard},
-  pdftitle={USI - Fourier Analysis - Course Notes},
-  pdfkeywords={USI, Fourier analysis, course notes, informatics},
+  pdftitle={USI - Probability and Measure - Course Notes},
+  pdfkeywords={USI, probability, measure theory, course notes, informatics},
   colorlinks=false,
   pdfborder={0 0 0},
   linkbordercolor={0 0.6 1},
@@ -567,17 +642,71 @@ line width=0.16pt}}%
 
 \begin{document}
 
-\begin{center}
-{\Large \textbf{Probability and Measure}}\\[1ex]
-Fabian Bosshard
-\end{center}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
 
-\vspace{1em}
+\vspace*{5cm}
+{\Huge\bfseries \href{https://search.usi.ch/en/courses/35275987/probability-measure}{Probability \& Measure}\par}
+\vspace{0.5cm}
+{\large\color{AccentGray}\href{https://www.usi.ch/}{\textsc{Universit{\`a} della Svizzera italiana}}\par}
+\vspace{1.5cm}
+
+{\Large \href{https://fabianbosshard.github.io/}{Fabian Bosshard}\par}
+\vfill
+{\today\par}
+
+\end{titlepage}
+
+% \thispagestyle{empty}
+% \vspace*{\fill}
+% \begin{center}\slshape
+% This page is intentionally left blank.
+% \end{center}
+% \vspace*{\fill}
+% \clearpage
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
 
 \tableofcontents
 
-\pagebreak
+\clearpage
 
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
+
+This document contains unofficial student-made notes for the course
+\href{https://search.usi.ch/en/courses/35275987/probability-measure}{Probability \& Measure}
+taught by
+\href{https://muchip.github.io}{Michael Multerer}
+with the assistance of
+\href{https://search.usi.ch/en/people/41cc6fa578d8e9a32c12472007ae5ee9/quizi-jacopo}{Jacopo Quizi}
+in Spring 2026 at the
+\href{https://www.usi.ch/it}{Universit{\`a} della Svizzera italiana}.
+These notes are mostly based on the course materials, but they also include additional explanations, examples, and intermediate steps to aid understanding. 
+The textbooks listed for the course are \cite{halmosMeasureTheory,shumMeasureTheoreticProbability}.
+The counterexample in \autoref{ex:separately-measurable-not-jointly-measurable}
+is adapted from \cite{mathSESeparateMeasurable}.
+The visualization in \autoref{def:topological-continuity} is adapted from
+\cite{texSETopologicalContinuity}; the sketches in
+\autoref{prop:topological-continuity-epsilon-delta-equivalence} are inspired by
+\cite{texSEEpsilonDeltaLimit,texSEEpsilonDeltaGraph}; and the monkey illustration
+in \autoref{ex:monkey-typing-shakespeare} is adapted from \cite{texSEMonkeyIcon}.
+If you spot an error, please report it to
+\href{mailto:fabianlucasbosshard@gmail.com}{\nolinkurl{fabianlucasbosshard@gmail.com}}.
+The \LaTeX{} source is available at
+\url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
+
+\doclicenseThis
+
+\printbibliography[heading=bibintoc,title={References}]
+
+
+\clearpage
+
+\pagenumbering{arabic}
 
 % set back section counter to 0, since the first section is not part of the actual course content
 \setcounter{section}{-1}
@@ -1796,7 +1925,7 @@ Let $(\Omega,\mathcal{F},\mu)$ be a measure space and let
 A_1 \supset A_2 \supset \dots \in \mathcal{F}
 \]
 be a decreasing sequence of sets.
-Further assume that $\mu(A_{i_0}) < \infty$ for some $i_0 \in \N$.
+Further assume that \hl[2]{$\mu(A_{i_0}) < \infty$} for some $i_0 \in \N$.
 Then,
 \begin{equation}
 {\color{red}\boxed{\color{black}
@@ -2818,7 +2947,7 @@ A function is called \emph{continuous} if it is continuous at every point in its
 % It is called \emph{$\varepsilon$-$\delta$-continuous} if it is $\varepsilon$-$\delta$-continuous at every $x_0 \in \R$.
 \end{definition}
 
-\begin{proposition}
+\begin{proposition}\label{prop:topological-continuity-epsilon-delta-equivalence}
 For a function $f : \R \to \R$ topological continuity is equivalent to the usual $\varepsilon$-$\delta$-continuity.
 \end{proposition}
 \begin{proof} % assignment 3, problem 4
@@ -3611,7 +3740,7 @@ There exists a uniquely determined measure $\lambda^d$ on $(\R^d, \mathcal{B}(\R
 \prod_{i=1}^d (b_i - a_i)
 \]
 for all $\vect{a},\vect{b} \in \R^d$ with $\vect{a} < \vect{b}$.
-The measure $\lambda^d$ is called the \emph{Lebesgue-Borel measure}.
+The measure $\lambda^d$ is called the \hl[2]{\emph{Lebesgue-Borel measure}}.
 \end{theorem}
 
 \begin{definition}
@@ -4191,7 +4320,7 @@ F_{\Prob} : \R &\longrightarrow [0,1] \\
 x &\longmapsto F_{\Prob}(x) = \Prob((-\infty,x])
 \end{aligned}
 \]
-is called the \emph{distribution function} of $\Prob$.
+is called the \hl[6]{\emph{distribution function} of $\Prob$}.
 \end{definition}
 
 
@@ -4466,7 +4595,7 @@ Hence $F$ is monotonically increasing.
 
 \item \label{solitem:lebesgue-stieltjes-step-function:1.2}
 Each function $\ind_{[x_k,\infty)}$ is right continuous. 
-Indeed, if $y_m \searrow x$, then:
+Indeed, if $\tikzmark{ls-step-searrow-start}y_m \searrow x\tikzmark{ls-step-searrow-end}$, then:
 if $x < x_k$, eventually $y_m < x_k$, so $
 \ind_{[x_k,\infty)}(y_m)
 =
@@ -4483,7 +4612,29 @@ if $x \ge x_k$, then $y_m \ge x_k$ for all $m$, so $
 \rlap{Thus}
 \[
 \lim_{m\to\infty} \ind_{[x_k,\infty)}(y_m)=\ind_{[x_k,\infty)}(x)
-\]
+\]%
+\tikzexternaldisable%
+\begin{tikzpicture}[overlay,remember picture]%
+\coordinate (searrowstart) at (pic cs:ls-step-searrow-start);
+\coordinate (searrowend) at (pic cs:ls-step-searrow-end);
+\coordinate (searrowmid) at ($(searrowstart)!0.5!(searrowend)+(0.05em,0.2em)$);
+\draw[Green] (searrowmid) ellipse [x radius=2.0em, y radius=0.8em];
+\coordinate (definitionboxanchor) at ($(searrowstart)+(-6.5em,0.6em)$);
+% \node[anchor=south west, Green, rectangle, draw=Green, rounded corners=0.5em, inner xsep=0.35em, inner ysep=0.25em, font=\scriptsize, align=flush left] (definitionbox) at (definitionboxanchor) {%
+\node[anchor=south west, Green, font=\tiny, align=flush left] (definitionbox) at (definitionboxanchor) {%
+\(y_1 \ge y_2 \ge y_3 \ge \cdots\),\\[-0.15em]
+% and\\[-0.15em]
+\(\lim_{n\to\infty} y_n = x\)%
+};
+\node[anchor=west, Green, rectangle, draw=none, font=\tiny, inner sep=0pt, align=flush left] (equivlabel) at ($(definitionbox.east)+(0.3em,-0.0em)$) {i.e.}; % {$\Leftrightarrow$};
+\node[anchor=west, Green, rectangle, draw=none, font=\tiny, inner sep=0pt, align=flush left] (equivbox) at ($(equivlabel.west)+(1.7em,-0.0em)$) {%
+\(\forall n\in\N:\ y_{n+1}\le y_n\),\\[-0.1em]
+\(\forall \varepsilon>0\ \exists N\in\N\ \forall n\ge N:\ |y_n-x|<\varepsilon\)%
+};
+% \draw[Green,->] plot[smooth, tension=0.85] coordinates {($(searrowstart)+(-0.35em,1.05em)$) ($(searrowstart)+(-3.9em,4.9em)$) ($(definitionbox.north west)+(-1.25em,-0.75em)$) ($(definitionbox.north west)+(-0.05em,-0.75em)$)};
+% \draw[Green,->] plot[smooth, tension=0.85] coordinates {($(definitionbox.east)+(0.1em,-0.8em)$) ($(equivlabel.west)+(-0.8em,-0.7em)$) ($(equivbox.north west)+(1.65em,0.25em)$)};
+\end{tikzpicture}%
+\tikzexternalenable%
 A finite sum of right continuous functions is right continuous, so $F$ is right continuous.
 
 \item \label{solitem:lebesgue-stieltjes-step-function:1.3}
@@ -7383,7 +7534,7 @@ for all $k \in \N$.
 \end{proof}
 
 \tikzexternaldisable
-\begin{example}[Monkey typing Shakespeare]
+\begin{example}[Monkey typing Shakespeare]\label{ex:monkey-typing-shakespeare}
 Let $\mathcal{A}$ be a finite alphabet and $w = a_1 \cdots a_n$ a fixed word of length $n$ with $a_i \in \mathcal{A}$ for all $i$.
 Consider an infinite random string $(X_i)_{i \in \N}$ where the $X_i$ are independent and uniformly distributed on $\mathcal{A}$.
 % Then, with probability $1$, the word $w$ appears infinitely often in the infinite string in $n$ consecutive positions.
@@ -7568,7 +7719,7 @@ X_n(\omega) \le n
 \]
 for all $n \ge N(\omega)$.
 \item \label{exitem:borel-cantelli-maxima:3}
-Show that, almost surely,
+Show that, $\Prob$-almost surely,
 \[
 \frac{M_n}{n} \le 1
 \]
@@ -7710,7 +7861,7 @@ Since \(\Prob(A^{\complement})=1\), we conclude that
 \[
 \frac{M_n}{n} \le 1
 \]
-eventually almost surely.
+eventually $\Prob$-almost surely.
 
 \item \label{solitem:borel-cantelli-maxima:4}
 The running maximum \(M_n\) grows no faster than linearly, almost surely.
@@ -11968,7 +12119,7 @@ M_{S_n}(t)
 =
 \prod_{k=1}^n M_{X_k}(t)
 =
-[M(t)]^n
+(M(t))^n
 \]
 Using \autoref{lem:mgf-properties} \ref{item:mgf-properties-affine}, we further infer
 \begin{equation}\label{eq:clt-mgf-standardized-sum}
