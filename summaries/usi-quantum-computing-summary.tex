@@ -209,6 +209,8 @@
 \declaretheorem[style=examplestyle, name=Example, sibling=remark]{example}
 \declaretheoremstyle[headfont=\bfseries\color{overvieworange}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{overvieworange}\blacktriangleleft}, postheadspace=1em]{overviewstyle}
 \declaretheorem[style=overviewstyle, name=Overview, sibling=remark]{overview}
+\declaretheoremstyle[headfont=\bfseries\color{overviewgreen}, bodyfont=\normalfont\normalsize, spaceabove=\thmspace, spacebelow=\thmspace, qed=\ensuremath{\color{overviewgreen}\blacktriangleleft}, postheadspace=1em]{applicationstyle}
+\declaretheorem[style=applicationstyle, name=Application, sibling=remark]{application}
 
 \declaretheorem[style=remarkstyle,name=Convention, sibling=remark]{convention}
 \declaretheorem[style=remarkstyle,name=Convention, numbered=no]{convention*} % unnumbered convention
@@ -1010,43 +1012,101 @@ They can proceed as follows.
 
 
 
+
 \subsection{Mach Zehnder Interferometer}\label{sec:mach-zehnder-interferometer}
 can be considered a variant of double-slit experiment.
 
 
 
+\newcommand{\SetBeamSplitterGeometry}[3]{%
+  % #1: coordinate unit length, #2: optic half-size, #3: slit offset.
+  \pgfmathsetlengthmacro{\beamSplitterTriangleLineWidth}{(#1)*0.005pt}%
+  \pgfmathsetlengthmacro{\beamSplitterSlitWidth}{sqrt(2)*(#3)*(#1)}%
+  \pgfmathsetmacro{\beamSplitterSlitEndInset}{0.5*(#3)}%
+}
+\newcommand{\DrawDiagonalSlitStroke}[3]{%
+  \SetBeamSplitterGeometry{#1}{#2}{#3}%
+  \draw[
+    bsedge,
+    line cap=butt,
+    line width=\beamSplitterSlitWidth
+  ] ($(-#2,-#2)+(\beamSplitterSlitEndInset,\beamSplitterSlitEndInset)$) --
+    ($(#2,#2)+(-\beamSplitterSlitEndInset,-\beamSplitterSlitEndInset)$);
+}
+\newcommand{\DrawBeamSplitterBody}[3]{%
+  % #1: coordinate unit length, #2: optic half-size, #3: slit offset.
+  % The diagonal material fills the gap between y=x-#3 and y=x+#3.
+  \SetBeamSplitterGeometry{#1}{#2}{#3}%
+  \draw[
+    bsplate,
+    line cap=round,
+    line width=\beamSplitterTriangleLineWidth
+  ] ($(-#2,-#2)+(#3,0)$) -- (#2,-#2) -- ($(#2,#2)+(0,-#3)$) -- cycle;
+  \draw[
+    bsplate,
+    line cap=round,
+    line width=\beamSplitterTriangleLineWidth
+  ] ($(-#2,-#2)+(0,#3)$) -- (-#2,#2) -- ($(#2,#2)+(-#3,0)$) -- cycle;
+  \DrawDiagonalSlitStroke{#1}{#2}{#3}
+}
+
 
 
 \[
+\def\coordUnit{0.8cm}
 \begin{tikzpicture}[
   % line join=round,
   % line cap=round,
   font=\footnotesize,
-  x=0.8cm, y=0.8cm,
-  bsplate/.style={line width=0.6pt, draw=blue!70, fill=cyan!20!white, opacity=0.8},
-  bsedge/.style={line width=1.2pt, draw=cyan!80!green, opacity=0.6, outer sep=0.2em, inner sep=0em},
-  mirror/.style={line width=1.2pt, draw=blue!70, opacity=0.9, outer sep=0.4em, inner sep=0em},
+  x=\coordUnit, y=\coordUnit,
+  bsplate/.style={draw=blue!70, fill=cyan!20!white, opacity=0.8},
+  bsedge/.style={draw=cyan!80!green, opacity=0.6, outer sep=0.2em, inner sep=0em},
+  mirror/.style={line width=\mirrorStrokeWidth, draw=blue!70, opacity=0.9, outer sep=0.4em, inner sep=0em},
   ray/.style={line width=1.0pt, draw=black!70, densely dotted},
-  arr/.style={-{Stealth[length=4mm,width=2.2mm]}, line width=1.1pt, draw=black!90}
+  arr/.style={-{Stealth[length=100mm,width=10.2mm]}, line width=1.1pt, draw=black!90}
 ]
   % dimensions
-  \def\W{7.0}      % arm width
-  \def\H{4.0}      % arm height
-  \def\L{2.0}      % extension
-  \def\D{0.50}     % half-length of diagonal optics (45 deg)
-  \def\d{0.05}     % for the split
-  \def\R{0.45}     % detector radius
+  \def\armWidth{7.0}
+  \def\armHeight{4.0}
+  \def\extension{2.0}
+  \def\bsHalfSize{0.50}
+  \def\bsSlitOffset{0.05}
+  \def\mirrorStrokeWidth{1.2pt}
+  \def\detectorRadius{0.45}
+
+  \newcommand{\DrawUpperLeftMirror}[2]{%
+    \begin{scope}[shift={(#1)}]
+      \SetBeamSplitterGeometry{\coordUnit}{\bsHalfSize}{\bsSlitOffset}%
+      \pgfmathsetmacro{\mirrorOuterShift}{0.5*\bsSlitOffset+\mirrorStrokeWidth/(2*sqrt(2)*\coordUnit)}%
+      \DrawDiagonalSlitStroke{\coordUnit}{\bsHalfSize}{\bsSlitOffset}
+      \draw[mirror, line cap=butt]
+        ($(-\bsHalfSize,-\bsHalfSize)+(\beamSplitterSlitEndInset,\beamSplitterSlitEndInset)+(-\mirrorOuterShift,\mirrorOuterShift)$) --
+        ($(\bsHalfSize,\bsHalfSize)+(-\beamSplitterSlitEndInset,-\beamSplitterSlitEndInset)+(-\mirrorOuterShift,\mirrorOuterShift)$)
+        node[pos=1.0, anchor=south west, xshift=-1mm] {#2};
+    \end{scope}%
+  }
+  \newcommand{\DrawLowerRightMirror}[2]{%
+    \begin{scope}[shift={(#1)}]
+      \SetBeamSplitterGeometry{\coordUnit}{\bsHalfSize}{\bsSlitOffset}%
+      \pgfmathsetmacro{\mirrorOuterShift}{0.5*\bsSlitOffset+\mirrorStrokeWidth/(2*sqrt(2)*\coordUnit)}%
+      \DrawDiagonalSlitStroke{\coordUnit}{\bsHalfSize}{\bsSlitOffset}
+      \draw[mirror, line cap=butt]
+        ($(-\bsHalfSize,-\bsHalfSize)+(\beamSplitterSlitEndInset,\beamSplitterSlitEndInset)+(\mirrorOuterShift,-\mirrorOuterShift)$) --
+        ($(\bsHalfSize,\bsHalfSize)+(-\beamSplitterSlitEndInset,-\beamSplitterSlitEndInset)+(\mirrorOuterShift,-\mirrorOuterShift)$)
+        node[pos=1.0, anchor=south west, xshift=-1mm] {#2};
+    \end{scope}%
+  }
 
 
   % key coordinates
   \coordinate (axislabels) at (-3, 2);
-  \coordinate (In)  at (-\L,0);
+  \coordinate (In)  at (-\extension,0);
   \coordinate (BS1) at (0,0);
-  \coordinate (BS2) at (\W,\H);
-  \coordinate (M1)  at (0,\H);
-  \coordinate (M2)  at (\W,0);
-  \coordinate (D1) at (\W+\L,\H);
-  \coordinate (D2) at (\W,\H+\L);
+  \coordinate (BS2) at (\armWidth,\armHeight);
+  \coordinate (M1)  at (0,\armHeight);
+  \coordinate (M2)  at (\armWidth,0);
+  \coordinate (D1) at (\armWidth+\extension,\armHeight);
+  \coordinate (D2) at (\armWidth,\armHeight+\extension);
   \path ($ (M1)!0.5!(BS2) $) coordinate (S);
 
 
@@ -1077,37 +1137,41 @@ can be considered a variant of double-slit experiment.
 
 
   % optical elements 
-  \draw[bsplate] ($(BS1)+(-\D,-\D)+(\d,0)$) -- ($(BS1)+(\D,-\D)$) -- ($(BS1)+(\D,\D)+(0,-\d)$) -- cycle;
-  \draw[bsplate] ($(BS1)+(-\D,-\D)+(0,\d)$) -- ($(BS1)+(-\D,\D)$) -- ($(BS1)+(\D,\D)+(-\d,0)$) -- cycle;
-  \draw[bsedge]  ($(BS1)+(-\D,-\D)$) -- ($(BS1)+(\D,\D)$) node[pos=1.0, anchor=south west, xshift=-0em, yshift=0mm, opacity=1.0] {BS1};
+  \begin{scope}[shift={(BS1)}]
+    \DrawBeamSplitterBody{\coordUnit}{\bsHalfSize}{\bsSlitOffset}
+    \node[anchor=south west] at (\bsHalfSize,\bsHalfSize) {BS$_1$};
+  \end{scope}
 
-  \draw[bsplate] ($(BS2)+(-\D,-\D)+(\d,0)$) -- ($(BS2)+(\D,-\D)$) -- ($(BS2)+(\D,\D)+(0,-\d)$) -- cycle;
-  \draw[bsplate] ($(BS2)+(-\D,-\D)+(0,\d)$) -- ($(BS2)+(-\D,\D)$) -- ($(BS2)+(\D,\D)+(-\d,0)$) -- cycle;
-  \draw[bsedge]  ($(BS2)+(-\D,-\D)$) -- ($(BS2)+(\D,\D)$) node[pos=1.0, anchor=south west, xshift=-0em, yshift=0mm, opacity=1.0] {BS2};
+  \begin{scope}[shift={(BS2)}]
+    \DrawBeamSplitterBody{\coordUnit}{\bsHalfSize}{\bsSlitOffset}
+    \node[anchor=south west] at (\bsHalfSize,\bsHalfSize) {BS$_2$};
+  \end{scope}
 
-  \draw[mirror] ($(M1)+(-\D,-\D)+(0,\d)$) -- ($(M1)+(\D,\D)+(-\d,0)$) node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
-  \draw[mirror] ($(M2)+(-\D,-\D)+(\d,0)$) -- ($(M2)+(\D,\D)+(0,-\d)$) node[pos=1.0, anchor=south west, xshift=-1mm] {Mirror};
+  \DrawUpperLeftMirror{M1}{Mirror}
+  \DrawLowerRightMirror{M2}{Mirror}
 
 
   % detectors
-  \draw[line width=1.2pt] ($(D1)+(0,\R)$) -- ($(D1)+(0,-\R)$) arc[start angle=-90, end angle=90, radius=\R] node[pos=0.5, anchor=west, rotate=0, xshift=0mm] {Detector 1} -- cycle;
-  \draw[line width=1.2pt] ($(D2)+(-\R,0)$) -- ($(D2)+(\R,0)$) arc[start angle=0, end angle=180, radius=\R] node[pos=0.5, anchor=south] {Detector 2} -- cycle;
+  \draw[line width=1.2pt] ($(D1)+(0,\detectorRadius)$) -- ($(D1)+(0,-\detectorRadius)$) arc[start angle=-90, end angle=90, radius=\detectorRadius] node[pos=0.5, anchor=west, rotate=0, xshift=0mm] {Detector 1} -- cycle;
+  \draw[line width=1.2pt] ($(D2)+(-\detectorRadius,0)$) -- ($(D2)+(\detectorRadius,0)$) arc[start angle=0, end angle=180, radius=\detectorRadius] node[pos=0.5, anchor=south] {Detector 2} -- cycle;
 \end{tikzpicture}
 \]
 
 
 A symmetric 50/50 beam splitter acts on the state of the photon with
 \[
-\ket{x} \mapsto \frac{1}{\sqrt{2}}\left(\ket{x} + \iu \ket{y}\right)
-\qquad
-\ket{y} \mapsto \frac{1}{\sqrt{2}}\left(\ket{y} + \iu \ket{x}\right)
+\begin{aligned}
+\ket{x} &\mapsto \tfrac{1}{\sqrt{2}} \ket{x} + \iu \tfrac{1}{\sqrt{2}} \ket{y} \\
+\ket{y} &\mapsto \tfrac{1}{\sqrt{2}} \ket{y} + \iu \tfrac{1}{\sqrt{2}} \ket{x}
+\end{aligned}
 \]
 where the $\iu$ accounts for the 90° phase shift ($\frac{\pi}{2}$) a reflected photon picks up compare to the transmitted one.
 The effect of the mirrors is
 \[
-\ket{x} \mapsto \eu^{\iu \phi_m} \ket{y} 
-\qquad
-\ket{y} \mapsto \eu^{\iu \phi_m} \ket{x} 
+\begin{aligned}
+\ket{x} &\mapsto \eu^{\iu \phi_m} \ket{y}  \\
+\ket{y} &\mapsto \eu^{\iu \phi_m} \ket{x} 
+\end{aligned}
 \]
 where $\phi_m$ is the phase shift the photon picks up at the mirror (e.g. $0$, $\frac{\pi}{2}$, $\pi$, depending on the physical implementation).
 
@@ -1124,13 +1188,310 @@ So as the photon moves through the device, its state evolves as follows
 \]
 and therefore it will be measured at Detector 1 with certainty.
 
-If, however, one \emph{measures} wether tha photon has gone through the upper or lower arm of the interferometer,
+If, however, one \emph{measures} wether the photon has gone through the upper or lower arm of the interferometer,
 then the state before the second beam splitter is either $\ket{x}$ or $\ket{y}$.
 In the second beam splitter the state of the photon is then mapped to either
 $\frac{1}{\sqrt{2}}\left(\ket{x} + \iu \ket{y}\right)$
 or
 $\frac{1}{\sqrt{2}}\left(\ket{y} + \iu \ket{x}\right)$.
 In both cases, the photon is detected in either of the detectors with equal probability.
+
+
+\begin{application}[Elitzur-Vaidman bomb tester] \label{ex:elitzur-vaidman-bomb-tester}
+A bomb in a box is very sensitive to light: 
+it will explode as soon as it is hit by a photon. 
+We would like to figure out whether the bomb is in the box without exploding.
+Towards this end, we repeat the process without measuring, so that the photon will pass through $n$ beam splitters, and through the box with the bomb $n - 1$ times. 
+Moreover, we change the opacity of the beam splitters such that they change the state as follows:
+% We use the same beam-splitter phase convention as above:
+% We change the opacity of the beam splitters such that they change the state as follows:
+\[
+\begin{aligned}
+U_\theta \ket{B}&=\cos(\theta)\ket{B}+\iu\sin(\theta)\ket{T}\\
+U_\theta \ket{T}&=\cos(\theta)\ket{T}+\iu\sin(\theta)\ket{B}
+\end{aligned}
+\]
+where $\ket{B}$ and $\ket{T}$ denote the photon in the bottom and top paths.
+The ordinary 50/50 splitter from above corresponds to $\theta=\frac{\pi}{4}$, while the improved test uses $n$ beam splitters with $\theta=\frac{\pi}{2n}$, arranged as follows:
+\[
+\def\coordUnit{0.8cm}
+\begin{tikzpicture}[
+  font=\footnotesize,
+  x=\coordUnit, y=\coordUnit,
+  bsplate/.style={draw=blue!70, fill=cyan!20!white, opacity=0.8},
+  bsedge/.style={draw=cyan!80!green, opacity=0.6, outer sep=0.2em, inner sep=0em},
+  ray/.style={line width=1.0pt, draw=black!70, densely dotted},
+  detector/.style={line width=1.1pt, draw=black!85},
+  % Bomb drawing from Izaak Neutelings, TikZ.net, CC BY-SA 4.0.
+  % Wrapped in a box for this interferometer figure, but the bomb itself keeps
+  % the original collision pic, fuse, shaded body, and red center.
+  pics/collision/.style={
+    code={
+      \draw[line width=0.3*#1, orange, fill=yellow] (0:0.20*#1) -- (30:0.06*#1) -- (50:0.25*#1) -- (80:0.10*#1) -- (105:0.32*#1) -- (140:0.08*#1) -- (170:0.25*#1) -- (190:0.08*#1) -- (220:0.25*#1) -- (250:0.08*#1) -- (270:0.24*#1) -- (300:0.08*#1) -- (320:0.25*#1) -- (340:0.09*#1) -- cycle;
+    }
+  },
+  pics/collision/.default=1,
+  pics/tikznetbomb/.style={
+    code={
+      \def\R{0.7}
+      \def\h{0.15}
+      \coordinate (O) at (0,0);
+      \draw[thin, preaction={draw=brown!80!black, fill=brown!50}, pattern color=brown!60!black, pattern=north west lines, draw=none, minimum width=0.1, minimum height=0.6] (0.05,\R+0.95*\h) --++ (0,0.3*\h) to[out=90,in=-160] ++ (0.2,0.3) --++ (110:0.1) node[midway] (F) {} to[out=-160,in=90] ++ ({-0.3+0.1*cos(70)},{-0.3-0.1*sin(70)}) --++ (0,-0.3*\h) -- cycle;
+      \pic[scale=0.3] at (F) {collision={0.8}};
+      \draw[thick, ball color=black] (O) circle(\R);
+      \fill[thick, black!90, opacity=0.3] (O) circle(\R);
+      \draw[thick, top color=black!80, bottom color=black, shading angle=75] (80:\R) |-++ ({-2*\R*sin(10)},\h) -- (100:\R) to[out=-20,in=-160] cycle;
+      % \fill[red!65!black!90] (O) circle(0.12);
+    }
+  },
+  pics/bombbox/.style={
+    code={
+      \draw[semithick, draw=black!75, fill=white] (-\bombBoxHalfSize,-\bombBoxHalfSize) rectangle (\bombBoxHalfSize,\bombBoxHalfSize);
+      \pic[scale=0.24] at (0,-0.10) {tikznetbomb};
+    }
+  }
+]
+  \def\bsSpacing{3.6}
+  \def\middleGap{1.70}
+  \def\bsHalfSize{0.34}
+  \def\bsSlitOffset{0.035}
+  \def\bsPortX{0.24}
+  \def\bsPortY{0.24}
+  \def\armOffset{1.0}
+  \pgfmathsetmacro{\diag}{\armOffset-\bsPortY}
+  \def\bombBoxHalfSize{0.36}
+  \def\detectorRadius{0.24}
+
+  \coordinate (BSone) at (0,0);
+  \coordinate (BStwo) at (\bsSpacing,0);
+  \coordinate (BSprev) at ({2*\bsSpacing+\middleGap},0);
+  \coordinate (BSn) at ({3*\bsSpacing+\middleGap},0);
+
+  \newcommand{\DrawBeamSplitter}[2]{%
+    \begin{scope}[shift={(#1)}, rotate=-45]
+      \DrawBeamSplitterBody{\coordUnit}{\bsHalfSize}{\bsSlitOffset}
+    \end{scope}%
+    \node[anchor=south] at ($(#1)+(0,\bsHalfSize+0.18)$) {#2};
+  }
+  \newcommand{\DrawDetector}[2]{%
+    \begin{scope}[shift={(#1)}, rotate=#2]
+      \draw[detector] (0,\detectorRadius) -- (0,-\detectorRadius) arc[start angle=-90, end angle=90, radius=\detectorRadius] -- cycle;
+    \end{scope}%
+  }
+
+  \foreach \name in {BSone,BStwo,BSprev,BSn}{
+    \path ($(\name)+(\bsPortX,\bsPortY)$) coordinate (\name-Rtop);
+    \path ($(\name)+(\bsPortX,-\bsPortY)$) coordinate (\name-Rbot);
+    \path ($(\name)+(-\bsPortX,\bsPortY)$) coordinate (\name-Ltop);
+    \path ($(\name)+(-\bsPortX,-\bsPortY)$) coordinate (\name-Lbot);
+  }
+
+  \path ($(BSone)+(-\armOffset,-\armOffset)$) coordinate (In);
+  \path ($(BSone-Rtop)+(\diag,\diag)$) coordinate (ATopL);
+  \path ($(BStwo-Ltop)+(-\diag,\diag)$) coordinate (ATopR);
+  \path ($(BSone-Rbot)+(\diag,-\diag)$) coordinate (ABotL);
+  \path ($(BStwo-Lbot)+(-\diag,-\diag)$) coordinate (ABotR);
+  \path ($(ATopL)!0.50!(ATopR)$) coordinate (BoxA);
+
+  \path ($(BStwo-Rtop)+(\diag,\diag)$) coordinate (GTopL);
+  \path ($(BStwo-Rbot)+(\diag,-\diag)$) coordinate (GBotL);
+  \path ($(BSprev-Ltop)+(-\diag,\diag)$) coordinate (GTopR);
+  \path ($(BSprev-Lbot)+(-\diag,-\diag)$) coordinate (GBotR);
+  \path ($(GTopL)!0.15!(GTopR)$) coordinate (DotTopL);
+  \path ($(GTopL)!0.85!(GTopR)$) coordinate (DotTopR);
+  \path ($(GBotL)!0.15!(GBotR)$) coordinate (DotBotL);
+  \path ($(GBotL)!0.85!(GBotR)$) coordinate (DotBotR);
+  
+  \path ($(DotTopL)!0.50!(DotTopR)$) coordinate (TopDots);
+  \path ($(DotTopL)!0.50!(DotBotR)$) coordinate (Dots);
+  \path ($(DotBotL)!0.50!(DotBotR)$) coordinate (BotDots);
+
+  \path ($(BSprev-Rtop)+(\diag,\diag)$) coordinate (BTopL);
+  \path ($(BSn-Ltop)+(-\diag,\diag)$) coordinate (BTopR);
+  \path ($(BSprev-Rbot)+(\diag,-\diag)$) coordinate (BBotL);
+  \path ($(BSn-Lbot)+(-\diag,-\diag)$) coordinate (BBotR);
+  \path ($(BTopL)!0.50!(BTopR)$) coordinate (BoxB);
+
+  \path ($(BSn-Rtop)+(\diag,\diag)$) coordinate (DetT);
+  \path ($(BSn-Rbot)+(\diag,-\diag)$) coordinate (DetB);
+
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (In) -- (BSone-Lbot);
+  % \node[anchor=east] at ($(In)+(-0.05,-0.05)$) {$\gamma$};
+
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (BSone-Rtop) -- (ATopL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.55 with {\arrow{stealth}}}] (ATopL) -- ($(BoxA)+(-\bombBoxHalfSize,0)$);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.55 with {\arrow{stealth}}}] ($(BoxA)+(\bombBoxHalfSize,0)$) -- (ATopR);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (ATopR) -- (BStwo-Ltop);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (BSone-Rbot) -- (ABotL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (ABotL) -- (ABotR);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (ABotR) -- (BStwo-Lbot);
+
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (BStwo-Rtop) -- (GTopL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (GTopL) -- (DotTopL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (DotTopR) -- (GTopR);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (GTopR) -- (BSprev-Ltop);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (BStwo-Rbot) -- (GBotL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (GBotL) -- (DotBotL);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (DotBotR) -- (GBotR);
+  % \draw[ray, postaction={decorate}, decoration={markings, mark=at position 0.50 with {\arrow{stealth}}}] (GBotR) -- (BSprev-Lbot);
+  
+  \draw[ray, -{stealth}] (In) -- (ATopL);
+  \node[anchor=east] at ($(In)+(-0.05,-0.05)$) {$\gamma$};
+
+  \draw[ray, -{stealth}] (ATopL) -- (ATopR);
+  \draw[ray, -{stealth}] (ATopR) -- (GBotL);
+  \draw[ray, -{stealth}] (BSone) -- (ABotL);
+  \draw[ray, -{stealth}] (ABotL) -- (ABotR);
+  \draw[ray, -{stealth}] (ABotR) -- (GTopL);
+  \draw[ray] (GTopL) -- (DotTopL);
+  \draw[ray] (GBotL) -- (DotBotL);
+
+  \node at (TopDots) {$\dots$};
+  \node at (Dots) {$\dots$};
+  \node at (BotDots) {$\dots$};
+
+  \draw[ray, -{stealth}] (DotTopR) -- (GTopR);
+  \draw[ray, -{stealth}] (GTopR) -- (BBotL);
+  \draw[ray, -{stealth}] (DotBotR) -- (GBotR);
+  \draw[ray, -{stealth}] (GBotR) -- (BTopL);
+
+  \draw[ray, -{stealth}] (BTopL) -- (BTopR);
+  \draw[ray, -{stealth}] (BTopR) -- (DetB);
+  \draw[ray, -{stealth}] (BBotL) -- (BBotR);
+  \draw[ray, -{stealth}] (BBotR) -- (DetT);
+
+
+  \pic at (BoxA) {bombbox};
+  \pic at (BoxB) {bombbox};
+  \DrawDetector{DetT}{45}
+  \DrawDetector{DetB}{-45}
+  \node[anchor=west] at ($(DetT)+(0.26,0.05)$) {$D_T$};
+  \node[anchor=west] at ($(DetB)+(0.26,-0.05)$) {$D_B$};
+
+  \foreach \name/\label in {
+    BSone/{BS$_1$},
+    BStwo/{BS$_2$},
+    BSprev/{BS$_{n-1}$},
+    BSn/{BS$_n$}
+  }{
+    \DrawBeamSplitter{\name}{\label}
+  }
+
+  \draw[decorate, decoration={brace, mirror, amplitude=6pt}, line width=0.9pt] ($(BSone)+(-0.52,-1.35)$) -- ($(BSn)+(0.52,-1.35)$) node[midway, below=7pt] {$n$ beam splitters};
+\end{tikzpicture}
+\]
+
+% \emph{Two beam splitters.}
+% For the ordinary Mach-Zehnder test, $\theta=\frac{\pi}{4}$.
+% After the first beam splitter,
+% \[
+% U_{\pi/4}\ket{B}
+% =\frac{1}{\sqrt{2}}\ket{B}
+%   +\frac{\iu}{\sqrt{2}}\ket{T}.
+% \]
+% If the bomb is present, it measures whether the photon is in the top path.
+% Thus the bomb explodes with probability
+% \[
+% \Prob(\text{explode})
+% =\left|\langle T|U_{\pi/4}\ket{B}\right|^2
+% =\frac{1}{2}.
+% \]
+% Conditioned on no explosion, the measurement outcome was ``bottom'', so the
+% state before the second beam splitter is $\ket{B}$. Therefore
+% \[
+% U_{\pi/4}\ket{B}
+% =\frac{1}{\sqrt{2}}\ket{B}
+%   +\frac{\iu}{\sqrt{2}}\ket{T},
+% \qquad
+% \Prob(D_B\mid \text{bomb present, no explosion})
+% =\frac{1}{2}.
+% \]
+% If the bomb is not present, there is no intermediate measurement and the two
+% beam splitters act coherently:
+% \[
+% U_{\pi/4}^2\ket{B}
+% =\cos\!\left(\frac{\pi}{2}\right)\ket{B}
+%   +\iu\sin\!\left(\frac{\pi}{2}\right)\ket{T}
+% =\iu\ket{T}.
+% \]
+% Hence
+% \[
+% \Prob(D_B\mid \text{no bomb})=0.
+% \]
+
+% \emph{Improved test.}
+% Now set $\theta=\frac{\pi}{2n}$.
+There are $n$ beam splitters and $n-1$ passages through the box.
+Assume first that the bomb is present.  Let $S_{k-1}$ be the event that no
+explosion occurred before the $k$-th passage through the box, and let $E_k$ be
+the event that the bomb explodes at the $k$-th passage, for
+$k=1,\dots,n-1$.
+Conditioned on $S_{k-1}$, the photon has just been projected back to $\ket{B}$;
+after the next beam splitter,
+\[
+\ket{B}
+\mapsto
+\cos\!\left(\frac{\pi}{2n}\right)\ket{B}
++\iu\sin\!\left(\frac{\pi}{2n}\right)\ket{T}
+\]
+Therefore
+\[
+\Prob(E_k\mid S_{k-1})
+=\sin^2\!\left(\frac{\pi}{2n}\right)
+\leq \left(\frac{\pi}{2n}\right)^2
+=\frac{\pi^2}{4n^2}
+\]
+where we used $\sin x\leq x$ for $x\geq0$.
+This gives a bound on the unconditional probability as well, because
+$E_k\subseteq S_{k-1}$, i.e. the bomb can explode at the $k$-th passage only if
+there was no explosion before that passage. Thus
+\[
+\Prob(E_k)
+=\Prob(S_{k-1})\Prob(E_k\mid S_{k-1})
+\leq \Prob(E_k\mid S_{k-1})
+\leq \frac{\pi^2}{4n^2}
+\]
+Hence, by the union bound,
+\[
+\begin{aligned}
+\Prob(\text{explode})
+&=\Prob\!\left(\bigcup_{k=1}^{n-1}E_k\right) \\
+&\leq \sum_{k=1}^{n-1}\Prob(E_k) \\
+&\leq \sum_{k=1}^{n-1}\frac{\pi^2}{4n^2}
+=\frac{(n-1)\pi^2}{4n^2}
+\leq \frac{\pi^2}{4n}
+=\mathcal{O}\!\left(\frac{1}{n}\right)
+\end{aligned}
+\]
+Conditioned on no explosion, each passage through the box projected the state
+back to $\ket{B}$. Thus before the final beam splitter the state is $\ket{B}$,
+and after the final beam splitter it is
+\[
+\cos\!\left(\frac{\pi}{2n}\right)\ket{B}
++\iu\sin\!\left(\frac{\pi}{2n}\right)\ket{T}
+\]
+Consequently
+\[
+\Prob(D_B\mid \text{bomb present, no explosion})
+=\cos^2\!\left(\frac{\pi}{2n}\right)
+=1-\sin^2\!\left(\frac{\pi}{2n}\right)
+\geq 1-\frac{\pi^2}{4n^2}
+\]
+If the bomb is not present, no intermediate measurement occurs and the $n$
+small rotations add coherently:
+\[
+U_\theta^n\ket{B}
+=\cos(n\theta)\ket{B}+\iu\sin(n\theta)\ket{T}
+=\cos\!\left(\frac{\pi}{2}\right)\ket{B}
+  +\iu\sin\!\left(\frac{\pi}{2}\right)\ket{T}
+=\iu\ket{T}
+\]
+Hence
+\(
+\Prob(D_B\mid \text{no bomb})=0
+\).
+\end{application}
+
 
 
 
@@ -1151,7 +1512,7 @@ Measuring $\ket{\psi}$ in the standard basis yields $0$ with probability $|\alph
 
 Quantum circuits are composed of quantum gates, i.e, \emph{unitary maps}.
 
-An important one is the \hl{Hadamard gate},
+An important one is the \hl[2]{Hadamard gate},
 \[
 \matr{H} 
 =
@@ -1171,6 +1532,7 @@ and when applied twice, yields the basis states again, i.e.,
 $\matr{H}^2 \ket{0} = \ket{0}$
 and
 $\matr{H}^2 \ket{1} = \ket{1}$.
+\pagebreak[2]
 
 Another interesting gate is 
 \[
@@ -5196,13 +5558,13 @@ Therefore
 \]
 which recovers exactly the usual formula.
 In particular,
-\[
+\begin{equation}\label{eq:projection-onto-eigenspace-born-rule}
 \Prob_{A}^\psi(\{\lambda_j\})
 =
 \|P_{M_j}\psi\|^2
 =
 \sum_{k=1}^{d_j} |\braket{\varphi_{j,k}|\psi}|^2
-\]
+\end{equation}
 
 If the measurement outcome is the eigenvalue $\lambda_j$, then the post-measurement state from \eqref{eq:post-measurement-state} becomes
 \[
@@ -6224,14 +6586,14 @@ A\,\Trace_B(\rho)
 
 We now consider finite-dimensional quantum systems.
 Since quantum theory is linear, restricting to such spaces does not alter the underlying physics. 
-The basic unit is the quantum bit, or qubit, corresponding to a $2$-dimensional Hilbert space. 
-Unlike classical bits, however, understanding a single qubit is not enough to understand systems of several qubits, 
+The basic unit is the quantum bit, or Qbit, corresponding to a $2$-dimensional Hilbert space. 
+Unlike classical bits, however, understanding a single Qbit is not enough to understand systems of several Qbits, 
 because qualitatively new phenomena arise there, most importantly entanglement, which lies at the heart of the power of quantum information processing.
 
 \subsection{One Qbit: $\mathcal{H} = \C^2$}
 
 
-A quantum bit, or qubit, or {Qbit} is a quantum system whose state space is
+A quantum bit, or Qbit, or {Qbit} is a quantum system whose state space is
 \[
 \mathcal H = \C^2
 \]
@@ -7869,7 +8231,7 @@ The process is then effectively irreversible, and the computation may fail.
 
 
 \subsection{$n$ Qbits: $\mathcal{H} = \C^{2^n}$}
-\label{sec:n-qubits}
+\label{sec:n-Qbits}
 
 The state space of \(n\) Qbits is
 \[
@@ -8374,8 +8736,8 @@ teleportation consumes one EPR pair and two transmitted classical bits to commun
 % \frac{1}{2^{n/2}}
 % \sum_{\vect{x}\in\{0,1\}^n}\ket{\vect{x}}
 % \]
-% is the equal superposition of all classical inputs, as already discussed before \autoref{sec:n-qubits}.
-We recall from \autoref{sec:n-qubits} that $\matr H^{\otimes n}\ket{\vect{0}}$ is the equal superposition of all classical inputs.
+% is the equal superposition of all classical inputs, as already discussed before \autoref{sec:n-Qbits}.
+We recall from \autoref{sec:n-Qbits} that $\matr H^{\otimes n}\ket{\vect{0}}$ is the equal superposition of all classical inputs.
 
 
 \subsubsection{Reversible oracles and quantum parallelism}
@@ -8399,7 +8761,7 @@ The corresponding circuit is
 \lstick{$\ket{\vect{y}}$} & \qwbundle{m} &                     & \rstick{$\ket{\vect{y}\oplus f(\vect{x})}$}
 \end{quantikz}
 \]
-Applying \(U_f\) after preparing an equal superposition (see \autoref{sec:n-qubits}) yields
+Applying \(U_f\) after preparing an equal superposition (see \autoref{sec:n-Qbits}) yields
 \[
 \ket{\vect{0}_n}\ket{\vect{0}_m}
 \xmapsto{(H^{\otimes n}) \otimes (I^{\otimes m})}
@@ -8801,7 +9163,7 @@ After phase kickback,
 \ket{\vect{x}}\otimes\ket{-}
 \\
 &=
-\matr H^{\otimes n}\ket{\vect{s}}\otimes\ket{-}
+\matr H^{\otimes n}\ket{\vect{s}}\otimes\ket{-} 
 \end{aligned}
 \]
 Since \(\matr H^{-1}=\matr H\), the last Hadamard transform recovers
@@ -9543,110 +9905,170 @@ Thus equal outputs are impossible in the second promised case, and the entangled
 
 
 
-% \subsection{Ernst Specker and the Kochen--Specker theorem}\label{sec:ernst-specker}
+\subsection{Kochen--Specker theorem}\label{sec:ernst-specker}
+% \[
+% \iu^{\iu} 
+% = 
+% \left(\eu^{\left(\frac{\pi}{2} + 2\pi \Z\right)\iu}\right)^{\iu} 
+% =
+% \eu^{-\frac{\pi}{2} - 2\pi \Z}
+% \]
 
-% Ernst Specker argued that classical logic is inadequate for describing quantum mechanics.
-% Like Bell's theorem, discussed in \autoref{sec:aspect-gisin-zeilinger-experiments}, his argument rules out a classical deterministic explanation.
+Ernst Specker argued that classical logic is inadequate for describing quantum mechanics.
+Like Bell's theorem (\autoref{claim:bell}), discussed in \autoref{sec:aspect-gisin-zeilinger-experiments}, his argument rules out a classical deterministic explanation.
 % The distinction is that Bell separates measurements in space, whereas Specker asks whether outcomes can be assigned consistently to all possible measurements of one quantum system.
+The common structure is that the result should not depend on a choice that, classically, seems irrelevant.
+In Bell's theorem, Alice's predetermined answer should not depend on Bob's distant measurement choice; this is the locality assumption.
+In the Kochen--Specker theorem, the predetermined value of a ray should not depend on which other orthogonal rays are measured with it; this is the noncontextuality assumption.
+Thus \autoref{claim:bell} rules out deterministic hidden variables plus \emph{locality}, whereas \autoref{thm:kochen-specker} rules out deterministic hidden variables plus \emph{noncontextuality}.
+In Specker's words, ``quantum mechanics is bad for seers'': 
+a prophet who claims to know all future measurement outcomes does not merely risk being contradicted by a later experiment; 
+the full table of predictions is already internally inconsistent.
 
-% \subsubsection*{The parable of the overprotective seer}
+\subsubsection*{The parable of the overprotective seer}
 
-% Specker's 1960 article begins with a parable.
-% A seer presents three boxes to each suitor of his daughter.
-% The suitor may choose and open any two boxes, and exactly one of those two contains a jewel, but the remaining box can never be opened:
-% \[
-% \begin{tikzpicture}[
-%   box/.style={draw,rounded corners=1.5pt,minimum width=1.42cm,minimum height=1.18cm,very thick},
-%   pair/.style={draw,rounded corners,inner xsep=0.55em,inner ysep=0.28em},
-%   every node/.style={font=\small},
-%   >=Stealth
-% ]
-%   \node[box] (b1) at (-2.1,0) {$?$};
-%   \node[box] (b2) at (0,0) {$?$};
-%   \node[box] (b3) at (2.1,0) {$?$};
-%   \node[above=0.10cm of b1] {box \(1\)};
-%   \node[above=0.10cm of b2] {box \(2\)};
-%   \node[above=0.10cm of b3] {box \(3\)};
+Specker's 1960 article begins with a parable.
+A seer presents three boxes to each suitor of his daughter.
+The suitor may choose and open any two boxes, and exactly one of those two contains a jewel, but the remaining box can never be opened:
+\[
+\begin{tikzpicture}[
+  box/.style={draw,rounded corners=1.5pt,minimum width=1.5cm,minimum height=1.5cm, thick},
+  pair/.style={draw,rounded corners,inner xsep=0.55em,inner ysep=0.28em},
+  every node/.style={font=\small},
+  >=Stealth
+]
+  \node[box] (b1) at (-2.1,0) {$?$};
+  \node[box] (b2) at (0,0) {$?$};
+  \node[box] (b3) at (2.1,0) {$?$};
+  \node[above=0.0cm of b1] {box \(1\)};
+  \node[above=0.0cm of b2] {box \(2\)};
+  \node[above=0.0cm of b3] {box \(3\)};
 
-%   \node[pair] (p12) at (-2.1,-1.55) {\(\{1,2\}\)};
-%   \node[pair] (p23) at (0,-1.55) {\(\{2,3\}\)};
-%   \node[pair] (p13) at (2.1,-1.55) {\(\{1,3\}\)};
-%   \draw[->] (p12) -- (b1.south);
-%   \draw[->] (p12) -- (b2.south west);
-%   \draw[->] (p23) -- (b2.south);
-%   \draw[->] (p23) -- (b3.south west);
-%   \draw[->] (p13) -- (b1.south east);
-%   \draw[->] (p13) -- (b3.south);
+  % \node[pair] (p12) at (-2.1,-1.55) {\(\{1,2\}\)};
+  % \node[pair] (p23) at (0,-1.55) {\(\{2,3\}\)};
+  % \node[pair] (p13) at (2.1,-1.55) {\(\{1,3\}\)};
+  % \draw[->] (p12) -- (b1.south);
+  % \draw[->] (p12) -- (b2.south west);
+  % \draw[->] (p23) -- (b2.south);
+  % \draw[->] (p23) -- (b3.south west);
+  % \draw[->] (p13) -- (b1.south east);
+  % \draw[->] (p13) -- (b3.south);
 
-%   \node[align=left,anchor=west] at (4.0,0.42)
-%   {open one pair\\exactly one jewel};
-%   \node[align=left,anchor=west,text=gray!70!black] at (4.0,-0.72)
-%   {the third box\\remains inaccessible};
-% \end{tikzpicture}
-% \]
-% A classical preassignment \(x_i\in\{0,1\}\), where \(x_i=1\) means that box \(i\) contains a jewel, would have to satisfy
-% \[
-% x_1+x_2
-% =
-% x_2+x_3
-% =
-% x_1+x_3
-% =
-% 1
-% \]
-% Adding the three equations gives
-% \[
-% 2(x_1+x_2+x_3)
-% =
-% 3
-% \]
-% which is impossible.
-% The content of a box would therefore have to depend on which other box is opened: it would be \emph{contextual}.
+  \node[align=left,anchor=west] at (4.0,0.5) {open one pair\\exactly one jewel, the other empty};
+  \node[align=left,anchor=west,text=gray!70!black] at (4.0,-0.3) {third box remains inaccessible};
+\end{tikzpicture}
+\]
+A classical preassignment \(x_i\in\{0,1\}\), where \(x_i=1\) means that box \(i\) contains a jewel, would have to satisfy
+\[
+x_1+x_2
+=
+x_2+x_3
+=
+x_1+x_3
+=
+1
+\]
+Adding the three equations \rlap{gives}
+\[
+2(x_1+x_2+x_3)
+=
+3
+\]
+which is impossible.
+The content of a box would therefore have to depend on which other box is opened: it would be \emph{contextual}.
 
-% This magic-box behaviour is even beyond ordinary quantum mechanics.
-% For sharp quantum measurements, if every pair of three questions can be answered jointly, then all three can be answered jointly.
-% The parable is instead a motivating foil for the genuinely quantum obstruction below.
+This magic-box behaviour is not itself an ordinary quantum-mechanical phenomenon.
+For sharp quantum yes/no measurements, pairwise joint measurability already implies joint measurability of all three questions.
+Equivalently, 
+if quantum mechanics lets us answer any two of three such questions jointly, 
+then those answers can be embedded into a joint answer for all three.
+The parable is therefore not the theorem itself, but a motivating foil for the genuinely quantum obstruction below.
+% The parable is therefore not the theorem itself, but a smaller logical model of the same obstruction: each equation alone is satisfiable, but the equations together are not.
+% The Kochen--Specker theorem is the qutrit version of this idea, using orthogonal triples of rays instead of pairs of boxes.
 
 
 
+\subsubsection*{Noncontextual predictions}
 
-% \subsubsection*{Noncontextual predictions}
+As explained in \autoref{sec:observables}, a 
+% projective
+ measurement in an orthonormal basis
+\[
+B
+=
+\left\{\ket{v_1}, \allowbreak \ldots, \allowbreak\ket{v_d}\right\}
+\]
+has exactly one outcome.
 
-% As explained in \autoref{sec:observables}, a projective measurement in an orthonormal basis
-% \[
-% B
-% =
-% \left\{\ket{v_1},\ldots,\ket{v_d}\right\}
-% \]
-% has exactly one outcome.
-% A deterministic classical explanation would preassign the outcome before the basis is measured.
-% Equivalently, it would color every relevant ray by a map
-% \[
-% c:\mathcal V\to\{0,1\}
-% \]
-% such that
-% \[
-% \begin{aligned}
-% \braket{v|w}=0
-% &\quad\Longrightarrow\quad
-% c(v)+c(w)\leq1
-% \\
-% \sum_{\ket v\in B}c(v)
-% &=
-% 1
-% \qquad
-% \text{for every orthonormal basis }B\subseteq\mathcal V
-% \end{aligned}
-% \]
-% The value \(c(v)\) must depend only on the ray \(\ket v\), not on the other vectors completing it to a measurement basis.
-% This basis-independence is the \emph{noncontextuality} assumption.
+Each ray in the basis also represents a yes/no property of the system.
+The ray \(\ket v\) corresponds to the projector
+\[
+P_v
+=
+\ket v\bra v
+\]
+and hence to the question whether the measurement outcome lies in that ray.
+In this sense, the proposition associated with \(P_v\) is:
+``if we test for the ray \(v\), do we get yes?''
+% A deterministic classical explanation would therefore preassign which ray in each basis will occur.
+% Equivalently, it would assign a value
+Quantum mechanics gives only the probabilities of these outcomes, but a hidden-variable explanation would say that the individual system carries an additional hidden state \(\lambda\).
+Many systems may have the same quantum state \(\ket\psi\), while having different hidden states \(\lambda\).
+The observed randomness would then be ignorance about \(\lambda\), and each hidden state would give definite answers.
+% The Kochen--Specker question is whether such a single deterministic hidden answer sheet \(\lambda\) is even logically possible.
+% Equivalently, for fixed \(\lambda\), one would assign a value
+The Kochen--Specker question is whether every possible yes/no quantum property \(P_v\) can have such a pre-existing truth value.
+Equivalently, it asks whether a single deterministic hidden answer sheet \(\lambda\) is even logically possible.
+Such a sheet would have to be prepared before the measurement context is known: it must answer all possible basis choices at once.
+For fixed \(\lambda\), one would assign a value
+\[
+c:\mathcal V\to\{0,1\} % mathcal V: set of rays/vectors that we are trying to color
+\]
+% to each relevant ray, where \(c(v)=1\) means that the outcome corresponding to \(\ket v\) occurs if a basis containing \(\ket v\) is measured.
+to each relevant ray, where \(c(v)=1\) means that the outcome corresponding to \(\ket v\) is the answer selected by the hidden state \(\lambda\) if a basis containing \(\ket v\) is measured.
 
-% For a Qbit such a coloring is possible: orthogonal pure states are antipodal points of the Bloch sphere, and one may select exactly one point of each antipodal pair.
-% For a Qtrit
-% \(
-% \ket\psi=\alpha\ket0+\beta\ket1+\gamma\ket2
-% \),
-% it would be necessary to color real rays on the sphere so that every orthonormal tripod contains exactly one selected ray:
+\pagebreak[2]
+
+The assignment must satisfy:
+\begin{enumerate}[label=(\roman*)]
+\item \label{item:kochen-specker-orthogonal}
+if \(\braket{v|w}=0\), then
+\(
+c(v)+c(w)\leq 1
+\),
+because two orthogonal rays can occur in the same measurement basis and cannot both be the unique outcome
+\item \label{item:kochen-specker-basis}
+for every orthonormal basis \(B\subseteq\mathcal V\),
+\(
+\sum_{\ket v\in B}c(v)=1
+\),
+% because exactly one outcome occurs
+because a complete basis measurement asks which one of the mutually exclusive alternatives occurs, and exactly one outcome occurs
+\end{enumerate}
+The value \(c(v)\) is required to depend only on the ray \(\ket v\), not on the choice of the other orthogonal rays used to complete it to a basis.
+Indeed, if these yes/no properties were ordinary classical properties, then the truth value of \(P_v\) should not depend on which other compatible properties are measured alongside it.
+This basis-independence is the \emph{noncontextuality} assumption.
+ 
+
+
+For a Qbit 
+\[
+\ket\psi=\alpha\ket0+\beta\ket1
+\]
+such a coloring is possible: orthogonal pure states are antipodal points of the Bloch sphere, and one may select exactly one point of each antipodal pair.
+For example, choose one half of the sphere, with an arbitrary boundary convention, and color every selected ray green and its antipodal ray red.
+This does not mean that the quantum state \(\ket\psi\) determines the outcome with certainty.
+It only means that there is no logical contradiction in imagining additional hidden variables \(\lambda\) that determine the outcome of each individual run.
+
+For a Qtrit
+\[
+\ket\psi=\alpha\ket0+\beta\ket1+\gamma\ket2
+\]
+% already the real rays inside the Hilbert space would have to be colorable so that every orthonormal tripod contains exactly one selected ray.
+even the real rays inside the Hilbert space cannot be colored so that every orthonormal tripod contains exactly one selected ray.
+The direct analogue of the Qbit coloring would be a coloring of the real sphere in which every orthogonal triple contains exactly one green ray.
+Kochen--Specker says that this apparently local requirement cannot be satisfied globally:
+% Thus the problem is not that the ray is itself the unknown state of the system; rather, the ray represents one possible yes/no measurement property, and the question is whether all such properties can be assigned classical truth values at once.
 % \[
 % \begin{tikzpicture}[
 %   scale=0.82,
@@ -9656,21 +10078,21 @@ Thus equal outputs are impossible in the second promised case, and the entangled
 %   basis/.style={draw,rounded corners,minimum height=0.82cm,align=center},
 %   >=Stealth
 % ]
-%   \coordinate (o) at (-4.25,0.2);
-%   \draw[thick] (o) circle (1.42);
-%   \draw[thick] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=360,x radius=1.42,y radius=0.43];
-%   \draw[dashed,gray] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=0,x radius=1.42,y radius=0.43];
-%   \draw[->,very thick,overviewgreen] (o) -- ++(0.20,1.23)
-%     node[above] {\(\ket{v_1}\)};
-%   \draw[->,very thick,alizarincrimsonred] (o) -- ++(-1.06,-0.48)
-%     node[below left] {\(\ket{v_2}\)};
-%   \draw[->,very thick,alizarincrimsonred] (o) -- ++(1.11,-0.39)
-%     node[below right] {\(\ket{v_3}\)};
-%   \fill[overviewgreen] ($(o)+(0.20,1.23)$) circle (1.8pt);
-%   \fill[alizarincrimsonred] ($(o)+(-1.06,-0.48)$) circle (1.8pt);
-%   \fill[alizarincrimsonred] ($(o)+(1.11,-0.39)$) circle (1.8pt);
-%   \node at ($(o)+(0,-1.83)$) [align=center]
-%   {one selected ray\\per orthonormal tripod};
+%   % \coordinate (o) at (-4.25,0.2);
+%   % \draw[thick] (o) circle (1.42);
+%   % \draw[thick] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=360,x radius=1.42,y radius=0.43];
+%   % \draw[dashed,gray] ($(o)+(-1.42,0)$) arc[start angle=180,end angle=0,x radius=1.42,y radius=0.43];
+%   % \draw[->,very thick,overviewgreen] (o) -- ++(0.20,1.23)
+%   %   node[above] {\(\ket{v_1}\)};
+%   % \draw[->,very thick,alizarincrimsonred] (o) -- ++(-1.06,-0.48)
+%   %   node[below left] {\(\ket{v_2}\)};
+%   % \draw[->,very thick,alizarincrimsonred] (o) -- ++(1.11,-0.39)
+%   %   node[below right] {\(\ket{v_3}\)};
+%   % \fill[overviewgreen] ($(o)+(0.20,1.23)$) circle (1.8pt);
+%   % \fill[alizarincrimsonred] ($(o)+(-1.06,-0.48)$) circle (1.8pt);
+%   % \fill[alizarincrimsonred] ($(o)+(1.11,-0.39)$) circle (1.8pt);
+%   % \node at ($(o)+(0,-1.83)$) [align=center]
+%   % {one selected ray\\per orthonormal tripod};
 
 %   \node[basis,minimum width=2.20cm] (basis) at (-0.5,0.65)
 %   {measurement basis\\\(B=\{\ket{v_1},\ket{v_2},\ket{v_3}\}\)};
@@ -9680,104 +10102,140 @@ Thus equal outputs are impossible in the second promised case, and the entangled
 %   {one outcome\\\(\ket{v_i}\in B\)};
 %   \draw[->,thick] (basis) -- (system);
 %   \draw[->,thick] (system) -- (outcome);
-%   \node at (2.05,-0.75) [align=center,text=gray!70!black]
-%   {the predicted outcome may not\\depend on the surrounding basis};
+%   \node at (2.5,-0.25) [align=center,text=gray!70!black]
+%   {the value of \(\ket v\) is fixed independently of the basis containing it};
 % \end{tikzpicture}
 % \]
 
-% \begin{theorem}[Kochen--Specker theorem, 1967]\label{thm:kochen-specker}
-% There is a finite set of rays
-% \(
-% \mathcal V\subset\R^3
-% \)
-% that admits no noncontextual coloring satisfying the two conditions above.
-% \end{theorem}
+\begin{theorem}[Kochen--Specker, 1967]\label{thm:kochen-specker}
+There is a finite set \(\mathcal V\) of rays in \(\R^3\) that admits no noncontextual coloring satisfying the two conditions \ref{item:kochen-specker-orthogonal} and \ref{item:kochen-specker-basis} above.
+\end{theorem}
 
-% Specker already announced the geometric obstruction in 1960.
-% Kochen and Specker gave an explicit finite construction in 1967 using more than one hundred rays.
+Specker already announced the geometric obstruction in 1960, claiming that a finite set of rays on the sphere already suffices, but did not include the construction in that article.
+Kochen and Specker gave an explicit finite construction in 1967 using more than one hundred rays.
 % Thus a Qtrit cannot carry context-independent predetermined answers for all projective measurements.
+Thus a Qtrit cannot carry context-independent predetermined answers for all projective measurements: 
+one may choose an outcome separately for each basis, but not by assigning fixed values to the rays themselves.
 
-% \subsubsection*{A Kochen--Specker pseudo-telepathy game}
+\autoref{thm:kochen-specker} is the precise sense in which quantum mechanics is ``bad for seers/prophets'': 
+even in principle, one cannot assign context-independent predetermined answers to all these yes/no questions.%
+\footnote{This is similar in spirit to \autoref{claim:bell}: 
+Alice and Bob cannot consistently prepare a table of answers for all possible measurement choices in advance. 
+Bell rules out such tables under locality assumptions, 
+while Kochen--Specker rules out context-independent value assignments already for a single system.}
+
+
+\subsubsection*{A Kochen--Specker pseudo-telepathy game}
+
+% Compared with the Deutsch--Jozsa game in \autoref{sec:deutsch-jozsa-game}, the Kochen--Specker construction needs only one maximally entangled pair of Qtrits.
 
 % Let \(\mathcal B\) be a finite family of real orthonormal bases witnessing \autoref{thm:kochen-specker}.
-% Alice receives \(B\in\mathcal B\), Bob receives \(C\in\mathcal B\), and each must output one vector from the received basis.
-% They win exactly when their vectors are not orthogonal:
-% \[
-% v\in B
-% \qquad
-% w\in C
-% \qquad
-% \braket{v|w}\neq0
-% \]
-% A perfect deterministic classical strategy would select one vector from every basis while never selecting two orthogonal vectors.
-% Coloring every selected vector by \(1\) and all others by \(0\) would give precisely the forbidden Kochen--Specker coloring.
-% Hence no perfect classical strategy exists.
-
-% For the quantum strategy, Alice and Bob share the maximally entangled pair of Qtrits
-% \begin{equation}\label{eq:maximally-entangled-qtrit-pair}
-% \ket{\Psi_3}
-% =
-% \frac{1}{\sqrt3}
-% \left(
-% \ket{00}+\ket{11}+\ket{22}
-% \right)
-% \end{equation}
-% If \(U_B\) and \(U_C\) map the standard basis to \(B\) and \(C\), each player measures in the received basis:
-% \[
-% \begin{quantikz}[column sep=0.62cm, row sep=0.42cm]
-% \lstick[wires=2]{$\ket{\Psi_3}$}
-%   & \gate{U_B^*} & \meter{} \rstick{$v\in B$} \\
-%   & \gate{U_C^*} & \meter{} \rstick{$w\in C$}
-% \end{quantikz}
-% \]
-% For real vectors
+Let \(\mathcal B\) be a finite family of real orthonormal bases whose union of rays is a Kochen--Specker set, i.e. it admits no noncontextual coloring as in \autoref{thm:kochen-specker}.
+Alice receives \(B_{\mathrm{A}}\in\mathcal B\), Bob receives \(B_{\mathrm{B}} \in\mathcal B\), and each must output one vector from the received basis.
+They win exactly when their vectors are not orthogonal:
 % \(
-% \ket v,\ket w\in\R^3
+% v_{\mathrm{A}}\in B_{\mathrm{A}}
 % \),
-% the probability amplitude of the joint outcome \((v,w)\) is
-% \begin{equation}\label{eq:qtrit-pair-measurement-amplitude}
-% \begin{aligned}
-% \braket{\Psi_3|v,w}
-% &=
-% \frac{1}{\sqrt3}
-% \left(
-% \braket{0|v}\braket{0|w}
-% +
-% \braket{1|v}\braket{1|w}
-% +
-% \braket{2|v}\braket{2|w}
-% \right)
-% \\
-% &=
-% \frac{1}{\sqrt3}
-% \braket{v|w}
-% \end{aligned}
-% \end{equation}
-% and therefore
-% \[
-% \Prob[v,w]
-% =
-% \left|\braket{\Psi_3|v,w}\right|^2
-% =
-% \frac13
-% \left|\braket{v|w}\right|^2
-% \]
-% In particular,
-% \[
-% \braket{v|w}
-% =
-% 0
-% \quad\Longrightarrow\quad
-% \Prob[v,w]
-% =
-% 0
-% \]
-% so Alice and Bob never output orthogonal vectors and win with certainty.
-% When \(B=C\), all distinct vectors in the common basis are orthogonal, so both players necessarily obtain the same vector.
-% The entangled pair therefore behaves like two consistent measurements of the same Qtrit without communication.
+% \(
+% v_{\mathrm{B}}\in B_{\mathrm{B}} 
+% \),
+% \(
+% \braket{v_{\mathrm{A}}|v_{\mathrm{B}}}\neq0
+% \).
+\[
+\braket{v_{\mathrm{A}}|v_{\mathrm{B}}}\neq0
+\]
+where $v_{\mathrm{A}}\in B_{\mathrm{A}}$
+and
+$v_{\mathrm{B}}\in B_{\mathrm{B}}$ are the outputs of Alice and Bob, respectively.
 
-% The game uses local dimension \(3\times3\).
-% This is minimal for two-player pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
+A perfect deterministic classical strategy would select one vector from every basis while never selecting two orthogonal vectors.
+% Coloring every selected vector by \(1\) and all others by \(0\) would give precisely the forbidden Kochen--Specker coloring.
+If the same ray occurs in two bases, the strategy must select it in both or in neither, because any different vector in the same basis is orthogonal to it.
+Thus coloring the selected rays by \(1\) and all other rays by \(0\) would give precisely the forbidden Kochen--Specker coloring.
+Hence no perfect classical strategy exists.
+
+For the quantum strategy, Alice and Bob share the maximally entangled pair of Qtrits
+\[
+\ket{\Psi}
+=
+\frac{1}{\sqrt3}
+\left(
+\ket{00}+\ket{11}+\ket{22}
+\right)
+\]
+If \(U_{\mathrm{A}}\) and \(U_{\mathrm{B}}\) are the unitaries mapping the standard basis to \(B_{\mathrm{A}}\) and \(B_{\mathrm{B}}\), each player measures in the received basis:
+\[
+\begin{quantikz}[column sep=0.62cm, row sep=0.22cm]
+\lstick[wires=2]{$\ket{\Psi}$}
+  & \gate{U_{\mathrm{A}}^*} & \meter{} \rstick{$v_{\mathrm{A}}\in B_{\mathrm{A}}$} \\
+  & \gate{U_{\mathrm{B}}^*} & \meter{} \rstick{$v_{\mathrm{B}}\in B_{\mathrm{B}}$}
+\end{quantikz}
+\]
+For real vectors
+\(
+\ket {v_{\mathrm{A}}},\ket {v_{\mathrm{B}}}\in\R^3
+\),
+the probability of the joint outcome \((v_{\mathrm{A}},v_{\mathrm{B}})\) is
+\[
+\begin{aligned}
+\Prob(v_{\mathrm{A}},v_{\mathrm{B}})
+&\overset{\text{\eqref{eq:projection-onto-eigenspace-born-rule}}}{=}
+\left\|P_{\Span\{\ket{v_{\mathrm{A}},v_{\mathrm{B}}}\}}\ket{\Psi}\right\|^2
+\overset{\text{\eqref{eq:projector-eigenspace}}}{=}
+\left\|\ket{v_{\mathrm{A}},v_{\mathrm{B}}}\bra{v_{\mathrm{A}},v_{\mathrm{B}}}\ket{\Psi}\right\|^2
+=
+\left\|\braket{v_{\mathrm{A}},v_{\mathrm{B}}|\Psi}\ket{v_{\mathrm{A}},v_{\mathrm{B}}}\right\|^2
+\\
+&=
+\left|\braket{v_{\mathrm{A}},v_{\mathrm{B}}|\Psi}\right|^2
+=
+\left|\braket{\Psi|v_{\mathrm{A}},v_{\mathrm{B}}}\right|^2
+\\
+&\overset{\text{\eqref{eq:inner-product-tensor-product}}}{=}
+\left|
+\frac{1}{\sqrt3}
+\left(
+\braket{0|v_{\mathrm{A}}}\braket{0|v_{\mathrm{B}}}
++ 
+\braket{1|v_{\mathrm{A}}}\braket{1|v_{\mathrm{B}}}
++ 
+\braket{2|v_{\mathrm{A}}}\braket{2|v_{\mathrm{B}}}
+\right)
+\right|^2
+\\
+&=
+\frac{1}{3}
+\left|
+(v_{\mathrm{A}})_0 (v_{\mathrm{B}})_0
++ 
+(v_{\mathrm{A}})_1 (v_{\mathrm{B}})_1
++ 
+(v_{\mathrm{A}})_2 (v_{\mathrm{B}})_2
+\right|^2
+\\
+&=
+\frac{1}{3}\left|\braket{v_{\mathrm{A}}|v_{\mathrm{B}}}\right|^2
+\end{aligned}
+\]
+In particular, if
+\(
+\braket{v_{\mathrm{A}}|v_{\mathrm{B}}}
+=
+0
+\) then \(
+\Prob(v_{\mathrm{A}},v_{\mathrm{B}})
+=
+0
+\),
+so Alice and Bob never output orthogonal vectors and win with certainty.
+When \(B_{\mathrm{A}} = B_{\mathrm{B}}\), all distinct vectors in the common basis are orthogonal, so both players necessarily obtain the same vector.
+The entangled pair therefore behaves like two consistent measurements of the same Qtrit without communication.
+
+The game uses local dimension \(3\times3\): Alice and Bob each hold one qtrit, so the shared state lives in \(\C^3\otimes\C^3\).
+This is minimal for two-player pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
+% A pair of Qbits can violate Bell inequalities, but this is weaker than pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
+% Thus the maximally entangled Qtrit pair is the minimal two-player quantum resource for pseudo-telepathy.
 
 
 
@@ -10399,7 +10857,7 @@ times.
 
 
 \clearpage
-\section{Integer Factoring: Shor's algorithm}\label{sec:shor}
+\section{Shor's algorithm}\label{sec:shor}
 
 \subsection{Quantum Fourier transform}\label{sec:quantum-fourier-transform}
 Let $N = 2^n$.
@@ -11454,7 +11912,7 @@ s/r
 \)
 approximately, and continued fractions recover \(r\).
 
-\subsection{Factoring}\label{sec:shor-factoring}
+\subsection{Integer Factoring}\label{sec:shor-factoring}
 
 Shor's factoring algorithm combines the quantum order-finding subroutine from \autoref{sec:order-finding} with a classical reduction.
 Let \(N\) be an odd composite integer that is not a prime power and choose
@@ -11603,182 +12061,274 @@ with probability at least \(1/2\).
 \FloatBarrier
 
 
-% \subsection{Discrete logarithms}\label{sec:shor-discrete-logarithm}
+\subsection{Discrete Logarithms}\label{sec:shor-discrete-logarithm}
 
-% \begin{problem}[Discrete logarithm]\label{problem:discrete-logarithm}
-% Let
-% \[
-% G
-% =
-% \langle g\rangle
-% =
-% \left\{
-% 1,g,g^2,\ldots,g^{q-1}
-% \right\}
-% \]
-% be a cyclic group of known order \(q\).
-% Given
-% \(
-% h=g^\ell
-% \),
-% determine
-% \(
-% \ell\in\Z_q
-% \).
-% \end{problem}
+Shor's algorithm also solves the discrete logarithm problem.
+The factoring algorithm above is slightly indirect: the quantum part solves order finding, and the classical part reduces factoring to order finding.
+Discrete logarithms are cleaner, because the relevant group order is part of the input, so the phase estimation can be made exact with a \(\text{QFT}_q\).
+This is also why the same idea applies not only to
+\(
+\Z_p^*
+\),
+but to any efficiently represented cyclic group, including elliptic-curve groups.
 
-% Assume group multiplication and inversion are efficiently computable.
-% Define two multiplication unitaries
-% \begin{equation}\label{eq:discrete-log-multiplication-unitaries}
-% U\ket x
-% =
-% \ket{gx}
-% \qquad
-% V\ket x
-% =
-% \ket{hx}
-% \end{equation}
-% Since
-% \(
-% h=g^\ell
-% \),
-% we have
-% \(
-% V=U^\ell
-% \).
-% The common eigenstates are
-% \begin{equation}\label{eq:discrete-log-eigenstates}
-% \ket{u_s}
-% \coloneqq
-% \frac1{\sqrt q}
+\begin{problem}[Discrete logarithm]\label{problem:discrete-logarithm}
+Let
+\[
+G
+=
+\langle g\rangle
+=
+\left\{
+1,g,g^2,\ldots,g^{q-1}
+\right\}
+\]
+be a finite cyclic group of known order \(q\).
+Given
+\(
+h=g^\ell
+\),
+determine
+\(
+\ell\in\Z_q
+\).
+\end{problem}
+
+Assume that group multiplication and inversion are efficiently computable.
+Define the shift unitaries
+\(
+U\ket x
+=
+\ket{gx}
+\),
+\(
+V\ket x
+=
+\ket{hx}
+\)
+on group-element basis states.
+They are unitary because multiplication by a fixed group element is a permutation of \(G\).
+Since
+\(
+h=g^\ell
+\),
+we have
+\(
+V
+=
+U^\ell
+\).
+Thus \(U\) and \(V\) have the same eigenvectors, and their eigenvalues differ by the unknown factor \(\ell\).
+
+For \(s\in\Z_q\) (\autoref{def:residue-classes-units}), define
+\[
+\ket{u_s}
+\coloneqq
+\frac1{\sqrt q}
+\sum_{k=0}^{q-1}
+\eu^{-2\pi\iu sk/q}
+\ket{g^k}
+\]
+Then
+\[
+\begin{aligned}
+U\ket{u_s}
+&=
+\frac1{\sqrt q}
+\sum_{k=0}^{q-1}
+\eu^{-2\pi\iu sk/q}
+\ket{g^{k+1}}
+\\
+&=
+\eu^{2\pi\iu s/q}
+\frac1{\sqrt q}
+\sum_{k=0}^{q-1}
+\eu^{-2\pi\iu sk/q}
+\ket{g^k}
+\\
+&=
+\eu^{2\pi\iu s/q}\ket{u_s}
+\end{aligned}
+\]
+and therefore
+\[
+V\ket{u_s}
+=
+U^\ell\ket{u_s}
+=
+\eu^{2\pi\iu s\ell/q}\ket{u_s}
+\]
+As in \autoref{sec:order-finding}, the eigenstates need not be prepared directly.
+Orthogonality of roots of unity gives
+\(
+% \begin{aligned}
+\frac1{\sqrt q}
+\sum_{s=0}^{q-1}
+\ket{u_s}
+% &=
+% \frac1q
+% \sum_{s=0}^{q-1}
 % \sum_{k=0}^{q-1}
 % \eu^{-2\pi\iu sk/q}
 % \ket{g^k}
-% \end{equation}
-% and satisfy
-% \begin{equation}\label{eq:discrete-log-eigenvalues}
-% U\ket{u_s}
+% \\
+% &=
+% \frac1q
+% \sum_{k=0}^{q-1}
+% q\delta_{k,0}
+% \ket{g^k}
+% \\
+% &=
+=
+\ket1
+% \end{aligned}
+\).
+
+For an eigenstate \(\ket{u_s}\), exact phase estimation (\autoref{sec:phase-estimation}) with \(\text{QFT}_q\) gives
+\[
+\ket0\ket0\ket{u_s}
+\xmapsto{\mathrm{PE}(U),\,\mathrm{PE}(V)}
+\ket s\ket{s\ell\bmod q}\ket{u_s}
+\]
+Starting the lower register in \(\ket1\) therefore gives a uniformly random \(s\):
+\[
+\ket0\ket0\ket1
+\mapsto
+\frac1{\sqrt q}
+\sum_{s=0}^{q-1}
+\ket s
+\ket{s\ell\bmod q}
+\ket{u_s}
+\]
+A register-level view of the two phase estimations is:
+\tikzexternaldisable
+\[
+\begin{quantikz}[
+  column sep=0.86cm,
+  row sep=0.34cm,
+  wire types={b,b,b},
+  classical gap=0.07cm
+]
+\lstick{$\displaystyle\frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j$}
+  & \qwbundle{m}
+  & \gate[wires=3]{C_{\mathrm{dlog}}}
+    \gategroup[
+      3,
+      steps=1,
+      style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
+      label style={label position=below,anchor=north,yshift=-0.16cm}
+    ]{\(g^j h^k\)}
+  & \gate{\text{QFT}_q^{-1}}
+  & \meter{}
+  & \setwiretype{c}\rstick{$s$} \\
+\lstick{$\displaystyle\frac1{\sqrt q}\sum_{k=0}^{q-1}\ket k$}
+  & \qwbundle{m}
+  &
+  & \gate{\text{QFT}_q^{-1}}
+  & \meter{}
+  & \setwiretype{c}\rstick{$s\ell\bmod q$} \\
+\lstick{$\ket1$}
+  & \qwbundle{n_G}
+  &
+  & \qw
+  & \qw
+  & \rstick{$\ket{u_s}$}
+\end{quantikz}
+\]
+\tikzexternalenable
+where
+\[
+C_{\mathrm{dlog}}\ket j\ket k\ket z
+=
+\ket j\ket k\ket{g^jh^kz}
+\]
+and \(m=\lceil\log_2 q\rceil\) only indicates the number of Qbits needed to encode \(q\) basis states.
+If \(q\) is not a power of two, one can either implement the exact \(\text{QFT}_q\) on the \(q\)-dimensional subspace or use the usual high-precision power-of-two phase estimation as in \autoref{sec:phase-estimation}.
+
+After measurement we get
+\[
+(x,y)
+=
+(s,s\ell\bmod q)
+\in
+\Z_q^2
+\]
+If $s \in \Z_q^*$, i.e. \(s\) is invertible modulo \(q\), i.e. $s$ is coprime to $q$, i.e. $\gcd(s,q)=1$, the extended Eu\-cli\-dean algorithm gives \(s^{-1}\), and
+\begin{equation}\label{eq:discrete-log-classical-postprocessing}
+\ell
+\equiv
+ys^{-1}
+\pmod q
+\end{equation}
+If \(s\notin\Z_q^*\), repeat.
+The success probability of one run is
+\[
+\Prob(s \perp q)
+=
+\Prob(s\in\Z_q^*)
+=
+\frac{|\Z_q^*|}{q}
 % =
-% \eu^{2\pi\iu s/q}\ket{u_s}
-% \qquad
-% V\ket{u_s}
-% =
-% \eu^{2\pi\iu s\ell/q}\ket{u_s}
-% \end{equation}
-% The second equality follows directly from
+% \frac{\psi(q)}{q}
+=
+\Omega\!\left(\frac1{\log\log q}\right)
+\]
+where the numerator is the so-called  Euler totient function, which counts the number of integers coprime to \(q\) and is known to grow with $\Omega(q/\log\log q)$.
+Thus the expected number of repetitions is \(O(\log\log q)\).
+
+% Equivalently, one may use \(V^\dagger\) and the two-dimensional period-finding function
 % \[
-% V\ket{u_s}
+% f(x,y)
 % =
-% U^\ell\ket{u_s}
-% =
-% \left(
-% \eu^{2\pi\iu s/q}
-% \right)^\ell
-% \ket{u_s}
+% g^x h^{-y}
 % \]
-% As before, orthogonality of roots of unity gives
-% \begin{equation}\label{eq:discrete-log-initial-state}
-% \ket1
-% =
-% \frac1{\sqrt q}
-% \sum_{s=0}^{q-1}
-% \ket{u_s}
-% \end{equation}
-% Let
+% whose hidden period direction is generated by
 % \(
-% m=\lceil\log_2q\rceil
-% \)
-% and let \(n_G\) Qbits suffice to encode a group element.
-% The combined controlled group-exponentiation block acts as
-% \begin{equation}\label{eq:discrete-log-controlled-group-exponentiation}
-% U_{\mathrm{dlog}}
-% \ket j\ket k\ket z
-% =
-% \ket j\ket k\ket{g^jh^kz}
-% \end{equation}
-% It comprises \(m\) controlled multiplications by powers of \(g\) and \(m\) controlled multiplications by powers of \(h\).
-% Run phase estimation for \(U\) and \(V\) on the same lower register:
-% \[
-% \begin{quantikz}[
-%   column sep=0.56cm,
-%   row sep=0.37cm,
-%   wire types={b,b,b},
-%   classical gap=0.07cm
-% ]
-% \lstick{$\displaystyle\frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j$}
-%   & \qwbundle{m}
-%   & \gate[wires=3]{U_{\mathrm{dlog}}}
-%     \gategroup[
-%       3,
-%       steps=1,
-%       style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
-%       label style={label position=below,anchor=north,yshift=-0.16cm}
-%     ]{\(2m\) controlled group multiplications}
-%   & \gate{\text{QFT}_q^\dagger}
-%   & \meter{}
-%   & \setwiretype{c}\rstick{$s$} \\
-% \lstick{$\displaystyle\frac1{\sqrt q}\sum_{k=0}^{q-1}\ket k$}
-%   & \qwbundle{m}
-%   &
-%   & \gate{\text{QFT}_q^\dagger}
-%   & \meter{}
-%   & \setwiretype{c}\rstick{$s\ell$} \\
-% \lstick{$\ket1$}
-%   & \qwbundle{n_G}
-%   &
-%   & \qw
-%   & \qw
-%   & \rstick{$\ket{u_s}$}
-% \end{quantikz}
-% \]
-% The coherent computation is
-% \begin{equation}\label{eq:discrete-log-phase-estimation-computation}
-% \ket0\ket0\ket{u_s}
-% \xmapsto{\mathrm{QPE}(U),\,\mathrm{QPE}(V)}
-% \ket s\ket{s\ell\bmod q}\ket{u_s}
-% \end{equation}
-% Thus measurement gives
-% \(
-% (x,y)=(s,s\ell)\in\Z_q^2
+% (\ell,1)
 % \).
-% Whenever
+% Then the measured pair is \((s,-s\ell)\), and the post-processing is
 % \(
-% s\in\Z_q^*
-% \),
-% the extended Euclidean algorithm computes \(s^{-1}\), and
-% \begin{equation}\label{eq:discrete-log-classical-postprocessing}
-% \ell
-% \equiv
-% ys^{-1}
-% \pmod q
-% \end{equation}
-% If the second phase estimation uses \(V^\dagger\), as in the equivalent two-dimensional period-finding formulation
-% \(
-% f(x,y)=g^xh^{-y}
-% \),
-% the output is
-% \(
-% (s,-s\ell)
-% \)
-% and the post-processing becomes
-% \(
-% \ell\equiv-x^{-1}y\pmod q
+% \ell\equiv -x^{-1}y\pmod q
 % \).
 
-% The probability that a uniform \(s\in\Z_q\) is invertible is
-% \[
-% \frac{|\Z_q^*|}{q}
-% =
-% \frac{\varphi(q)}q
-% =
-% \Omega\!\left(\frac1{\log\log q}\right)
-% \]
-% so a small number of repetitions suffices.
-% If \(q\) is not a power of two, the exact \(\text{QFT}_q\) in the diagram can be replaced by an approximate QFT on a sufficiently large power-of-two register, followed by the same continued-fraction post-processing as in \autoref{sec:period-finding}.
-% The algorithm is group-agnostic: it applies to
+
+% Let
 % \(
-% \Z_p^*
-% \),
-% elliptic-curve groups, and any efficiently represented cyclic group with efficient group operations.
+% n=\lceil\log_2 q\rceil
+% \)
+% be the input length of the group order.
+% One iteration uses two phase-estimation registers and controlled group exponentiation by precomputed powers of \(g\) and \(h\).
+% If one group operation costs \(T_G\), one quantum run costs for instance \(O(T_G\log q+\log^2q)\) in the abstract group-operation model, hence polynomially many operations in \(n\).
+% The repetition overhead above is only \(O(\log\log q)\), so the whole algorithm is still polynomial in \(n\).
+% By contrast, generic classical discrete logarithm algorithms require
+% \(
+% \Omega(\sqrt q)
+% =
+% \Omega(2^{n/2})
+% \)
+% group operations, and the best known attacks on general elliptic-curve groups have this square-root behavior.
+% This is the sense in which Shor's discrete logarithm algorithm gives an exponential speed-up in the generic-group setting.
+
+Let
+\(
+n=\lceil\log_2q\rceil
+\) be the input length of the group order and \(T_G\) denote the number of gates needed to implement one group operation coherently.
+For the repeat-until-\(s\in\Z_q^*\) version above,
+the expected gate count is
+\[
+O\!\left((T_G\log q+\log^2q)\log\log q\right)
+\]
+because one run uses \(O(T_G\log q+\log^2q)\) quantum gates and \(O(\log\log q)\) expected repetitions.
+% In the qalg notes this \(\log\log q\) overhead is removed by a constant-success two-sample post-processing.
+Generic classical algorithms, by contrast, need
+\[
+\Omega(\sqrt q)
+=
+\Omega(2^{n/2})
+\]
+group operations, which is exponential in the input length \(n\).
+
+
+\clearpage
 
 \end{document}
