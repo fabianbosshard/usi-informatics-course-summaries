@@ -1511,6 +1511,7 @@ with $\alpha, \beta \in \C$ and $|\alpha|^2 + |\beta|^2 = 1$.
 Measuring $\ket{\psi}$ in the standard basis yields $0$ with probability $|\alpha|^2$ and $1$ with probability $|\beta|^2$.
 
 Quantum circuits are composed of quantum gates, i.e, \emph{unitary maps}.
+% We use underlined bold symbols such as \(\matr{H}\) for concrete coordinate matrices, and the same letter without underline, such as \(H\), for the corresponding abstract gate or operator.
 
 An important one is the \hl[2]{Hadamard gate},
 \[
@@ -1524,17 +1525,17 @@ An important one is the \hl[2]{Hadamard gate},
 \]
 which maps the basis states to superpositions 
 \[
-\matr{H} \ket{0} = \frac{1}{\sqrt{2}}\left(\ket{0} + \ket{1}\right)
+H \ket{0} = \frac{1}{\sqrt{2}}\left(\ket{0} + \ket{1}\right)
 \qquad
-\matr{H} \ket{1} = \frac{1}{\sqrt{2}}\left(\ket{0} - \ket{1}\right)
+H \ket{1} = \frac{1}{\sqrt{2}}\left(\ket{0} - \ket{1}\right)
 \]
 and when applied twice, yields the basis states again, i.e.,
-$\matr{H}^2 \ket{0} = \ket{0}$
+\(H^2 \ket{0} = \ket{0}\)
 and
-$\matr{H}^2 \ket{1} = \ket{1}$.
+\(H^2 \ket{1} = \ket{1}\).
 \pagebreak[2]
 
-Another interesting gate is 
+Another interesting gate \(F\) has coordinate matrix
 \[
 \matr{F} 
 =
@@ -1546,14 +1547,14 @@ Another interesting gate is
 \]
 because applying it twice yields the NOT-gate,
 \[
-\matr{F}^2 
+\matr{F}^{2} 
 =
 \begin{bmatrix}
 0 & 1 \\
 1 & 0
 \end{bmatrix}
 \]
-which is why it is called ``square root of NOT'', $\matr{F} = \sqrt{\text{NOT}}$.
+which is why \(F\) is called ``square root of NOT'', \(F = \sqrt{\text{NOT}}\).
 There is no classical gate that yields the NOT-gate in this way.
 
 
@@ -5824,7 +5825,7 @@ are trace class, which is why the density-matrix formalism still works in infini
 
 
 
-\begin{interlude}[Change of Basis]
+\begin{interlude}[Change of Basis] % here matrix makes sense
 Fix an “old” orthonormal basis $B=(\vect{e}_1,\dots,\vect{e}_n)$ and a “new” orthonormal basis $\widetilde B=(\tilde{\vect{e}}_1,\dots,\tilde{\vect{e}}_n)$ of $\mathcal H$.
 Let $\vect{x}$ be the coordinate column of a vector $v \allowbreak \in \allowbreak \mathcal{H}$ with respect to $B$, and let $\tilde{\vect{x}}$ be the coordinate column of the same vector with respect to $\widetilde B$.
 If $\matr{U}$ denotes the change-of-basis matrix from $B$ to $\widetilde B$, then
@@ -7081,7 +7082,7 @@ this shows that the surface of the Bloch sphere represents precisely the pure st
 
 Operations on one Qbit are unitary \(2\times2\)-matrices.
 \begin{example}\label{ex:hadamard}
-A central example is the Hadamard gate
+A central example is the Hadamard gate \(H\). Its coordinate matrix in the computational basis is
 \(
 \matr{H}
 =
@@ -7099,13 +7100,13 @@ introduced in \autoref{sec:quantum-bit}.
 It
 satisfies
 \(
-\matr{H}^2=\matr{I}
+H^2=\id
 \),
 and, hence, is not only unitary but also an involution (and, therefore, by \autoref{thm:unitary-selfadjoint-involution}, also self-adjoint).
 For $b \in\{0,1\}$,
 \[
 % \matr{H}\ket{b}=\frac{\smash[t]{\ket{0}+(-1)^b\ket{1}}}{\smash[b]{\sqrt{2}}}
-\matr{H}\ket{b}=\frac{{\ket{0}+(-1)^b\ket{1}}}{{\sqrt{2}}}
+H\ket{b}=\frac{{\ket{0}+(-1)^b\ket{1}}}{{\sqrt{2}}}
 \]
 i.e. the Hadamard maps
 \(
@@ -7229,7 +7230,7 @@ and expanding this gives
 \). 
 Thus the coefficient matrix
 \[
-\matr{A} \coloneq
+\matr{A} \coloneq % matrix good
 \begin{bmatrix}
 \alpha & \beta\\
 \gamma & \delta
@@ -7444,7 +7445,7 @@ The matrix Hadamard on two Qbits can again be computed through the Kronecker pro
   }, 
 }
 \[
-\matr{H} \otimes \matr{H}
+\matr{H} \otimes \matr{H} % here matrix is good
 =
 \frac{1}{2}
 \begin{bNiceArray}{rIr}[cell-space-limits = 0.3em]
@@ -7485,7 +7486,7 @@ A better understanding can be obtained from the following formula (see also \aut
 For $b_1,b_2 \in\{0,1\}$,
 \[
 \begin{aligned}
-\matr{H}^{\otimes 2}\ket{b_1 b_2} & =\matr{H}\ket{b_1} \otimes \matr{H}\ket{b_2} \\
+H^{\otimes 2}\ket{b_1 b_2} & =H\ket{b_1} \otimes H\ket{b_2} \\
 & =\frac{1}{2}\left(\left(\ket{0}+(-1)^{b_1}\ket{1}\right) \otimes\left(\ket{0}+(-1)^{b_2}\ket{1}\right)\right) \\
 & =\frac{1}{2}\left(\ket{00}+(-1)^{b_2}\ket{01}+(-1)^{b_1}\ket{10}+(-1)^{b_1 \oplus b_2}\ket{11}\right)
 \end{aligned}
@@ -7603,9 +7604,9 @@ In the basis
 \(
 \{\ket{00},\ket{01},\ket{10},\ket{11}\}
 \),
-its matrix is
+the coordinate matrix of the CNOT gate is
 \[
-\matr{A}_{\text{CNOT}}
+\matr{U}_{\mathrm{CNOT}}
 =
 \begin{bmatrix}
 1&0&0&0\\
@@ -7743,9 +7744,9 @@ since this gives reversible implementations of arbitrary classical computations.
 % \lstick{$\ket{b}$} & \gate[1][0.42cm][0.34cm]{R} & \targ{}  & \gate[1][0.42cm][0.34cm]{R} & \targ{}  & \gate[1,style={}][0.42cm][0.34cm]{R^*}    & \targ{}  & \gate[1][0.42cm][0.34cm]{R^*}    & \rstick{$\ket{b \oplus xy}$}
 % \end{quantikz}
 % \]
-Let \(R\) be the rotation by \(22.5^\circ\),
+Let \(R\) be the rotation by \(22.5^\circ\). Its coordinate matrix is
 \[
-R
+\matr{R}
 =
 \begin{bmatrix}
 \cos 22.5^\circ & -\sin 22.5^\circ \\
@@ -7780,9 +7781,9 @@ If \(x=0\), the operation is the identity; if \(x=1\), the second Qbit is negate
 \lstick{$\alpha\ket{0}+\beta\ket{1} = \ket{\varphi}$} & \targ{}  & \rstick{$N \ket{\varphi} = \alpha\ket{1}+\beta\ket{0}$}
 \end{quantikz}
 \]
-with
+where the coordinate matrix of \(N\) is
 \(
-N
+\matr{N}
 =
 \left[
 \begin{smallmatrix}
@@ -8034,9 +8035,9 @@ In analogy to the CNOT, the Toffoli/CCNOT gate is drawn as
 \lstick{} & \targ{}  & \rstick{}
 \end{quantikz}
 \]
-and the matrix in the computational basis is
+and its coordinate matrix in the computational basis is
 \[
-\matr{A}_{\text{CCNOT}}
+\matr{U}_{\mathrm{CCNOT}}
 =
 \begin{bmatrix}
 1&0&0&0&0&0&0&0\\
@@ -8255,7 +8256,7 @@ Generalizing \autoref{ex:hadamard-two-qbits} to \(n\) Qbits
 \]
 we have
 \begin{equation}\label{eq:nfold-hadamard-general}
-\matr{H}^{\otimes n}\ket{\vect{b}}=\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n}(-1)^{\vect{b} \cdot \vect{x}}\ket{\vect{x}}
+H^{\otimes n}\ket{\vect{b}}=\frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n}(-1)^{\vect{b} \cdot \vect{x}}\ket{\vect{x}}
 \end{equation}
 where
 \begin{equation}\label{eq:logical-scalar-product}
@@ -8268,7 +8269,7 @@ denotes the XOR of the bitswise AND of $\vect{b}$ and $\vect{x}$.
 
 In particular,
 \begin{equation}\label{eq:nfold-hadamard-zero}
-\matr{H}^{\otimes n}\ket{\vect{0}}
+H^{\otimes n}\ket{\vect{0}}
 =
 \frac{1}{2^{n / 2}} \sum_{\vect{x} \in \{0,1\}^n} \ket{\vect{x}}
 \end{equation}
@@ -8472,9 +8473,9 @@ At position \(3\), after applying the Hadamard to the first Qbit, the joint stat
 \Bigr)
 \end{aligned}
 \]
-where
+where the coordinate matrices of \(X\) and \(Z\) are
 \(
-X
+\matr{X}
 =
 \left[
 \begin{smallmatrix}
@@ -8485,7 +8486,7 @@ X
 \) 
 and
 \(
-Z
+\matr{Z}
 =
 \left[
 \begin{smallmatrix}
@@ -8723,7 +8724,7 @@ teleportation consumes one EPR pair and two transmitted classical bits to commun
 % \]
 % and the bitwise Hadamard transform satisfies
 % \begin{equation}\label{eq:nfold-hadamard-general}
-% \matr H^{\otimes n}\ket{\vect{x}}
+% H^{\otimes n}\ket{\vect{x}}
 % =
 % \frac{1}{2^{n/2}}
 % \sum_{\vect{z}\in\{0,1\}^n}
@@ -8731,13 +8732,13 @@ teleportation consumes one EPR pair and two transmitted classical bits to commun
 % \end{equation}
 % In particular,
 % \[
-% \matr H^{\otimes n}\ket{\vect{0}}
+% H^{\otimes n}\ket{\vect{0}}
 % =
 % \frac{1}{2^{n/2}}
 % \sum_{\vect{x}\in\{0,1\}^n}\ket{\vect{x}}
 % \]
 % is the equal superposition of all classical inputs, as already discussed before \autoref{sec:n-Qbits}.
-We recall from \autoref{sec:n-Qbits} that $\matr H^{\otimes n}\ket{\vect{0}}$ is the equal superposition of all classical inputs.
+We recall from \autoref{sec:n-Qbits} that $H^{\otimes n}\ket{\vect{0}}$ is the equal superposition of all classical inputs.
 
 
 \subsubsection{Reversible oracles and quantum parallelism}
@@ -8764,7 +8765,7 @@ The corresponding circuit is
 Applying \(U_f\) after preparing an equal superposition (see \autoref{sec:n-Qbits}) yields
 \[
 \ket{\vect{0}_n}\ket{\vect{0}_m}
-\xmapsto{(H^{\otimes n}) \otimes (I^{\otimes m})}
+\xmapsto{(H^{\otimes n}) \otimes (\id^{\otimes m})}
 \frac{1}{2^{n/2}}
 \sum_{\vect{x}}\ket{\vect{x}}\ket{\vect{0}_m}
 \xmapsto{U_f}
@@ -8785,7 +8786,7 @@ For a one-bit output, initialize the result Qbit in the diagonal state
 \(
 \ket{-}
 =
-\matr H\ket{1}
+H\ket{1}
 =
 \frac{1}{\sqrt2}
 (\ket{0}-\ket{1})
@@ -9008,11 +9009,11 @@ After the first Hadamards, the joint state is
 \ket{\psi_1}
 =
 \left(
-\matr H^{\otimes n}\ket{\vect0}
+H^{\otimes n}\ket{\vect0}
 \right)
 \otimes
 \left(
-\matr H\ket1
+H\ket1
 \right)
 \overset{\text{\eqref{eq:nfold-hadamard-zero}}}{=}
 \frac{1}{2^{n/2}}
@@ -9163,10 +9164,10 @@ After phase kickback,
 \ket{\vect{x}}\otimes\ket{-}
 \\
 &=
-\matr H^{\otimes n}\ket{\vect{s}}\otimes\ket{-} 
+H^{\otimes n}\ket{\vect{s}}\otimes\ket{-}
 \end{aligned}
 \]
-Since \(\matr H^{-1}=\matr H\), the last Hadamard transform recovers
+Since \(H^{-1}=H\), the last Hadamard transform recovers
 \[
 \ket{\psi_3}
 =
@@ -9614,7 +9615,7 @@ For an input with exactly one \(1\),
 % symmetry makes it enough to consider \(a=1\) and \(b=c=0\):
 % \[
 % \begin{aligned}
-% (\matr H\otimes\matr I\otimes\matr I)\ket{\Psi}
+% (H\otimes\id\otimes\id)\ket{\Psi}
 % &=
 % \frac{1}{\sqrt2}
 % \left(
@@ -9639,12 +9640,12 @@ as required because \(a\wedge b\wedge c=0\).
 For \(a=b=c=1\), all players apply Hadamards:
 % The remaining two Hadamards exchange the Bell-state factors:
 % \[
-% \matr H^{\otimes2}
+% H^{\otimes2}
 % \frac{\ket{00}-\ket{11}}{\sqrt2}
 % =
 % \frac{\ket{01}+\ket{10}}{\sqrt2}
 % \qquad
-% \matr H^{\otimes2}
+% H^{\otimes2}
 % \frac{\ket{01}+\ket{10}}{\sqrt2}
 % =
 % \frac{\ket{00}-\ket{11}}{\sqrt2}
@@ -10865,7 +10866,7 @@ The quantum Fourier transform (QFT) maps
 \[
 \sum_{\vect{j}\in\{0,1\}^n} f_\vect{j}\ket{\vect{j}}
 \quad
-\xmapsto{\text{QFT}}
+\xmapsto{\operatorname{QFT}}
 \quad
 \sum_{\vect{j}\in\{0,1\}^n} \hat{f}_\vect{j}\ket{\vect{j}}
 \]
@@ -10894,7 +10895,7 @@ x=[\vect{x}]_2
 denote the integer represented by that string.
 The QFT acts on a computational basis state as
 \begin{equation}\label{eq:qft-computational-basis}
-\operatorname{QFT} \ket{\vect{x}}
+\operatorname{QFT}\ket{\vect{x}}
 =
 \frac{1}{\sqrt N}
 \sum_{y = 0}^{N-1}
@@ -10916,7 +10917,7 @@ where \(\vect{y}\in\{0,1\}^n\) is the binary representation of \(y\).
 
 % The QFT is unitary because
 % \begin{equation}\label{eq:qft-unitarity-computation}
-% \bra{k}\text{QFT}_N^\dagger\text{QFT}_N\ket{\ell}
+% \bra{k}\operatorname{QFT}_N^\dagger\operatorname{QFT}_N\ket{\ell}
 % =
 % \frac1N
 % \sum_{y=0}^{N-1}
@@ -11286,7 +11287,7 @@ In compact register-level notation, phase estimation is
       style={densely dashed,gray,semithick},
       label style={pos=1,anchor=north,yshift=0.0cm}
     ]{$\ket{\psi_2}$}
-  & \gate{\text{QFT}_{2^t}^{-1}}
+  & \gate{\operatorname{QFT}_{2^t}^{-1}}
     \slice[
       style={densely dashed,gray,semithick},
       label style={pos=1,anchor=north,yshift=0.0cm}
@@ -11323,7 +11324,7 @@ In compact register-level notation, phase estimation is
 %   & \qw
 %   & \ \ldots \
 %   & \qw
-%   & \gate[wires=4]{\text{QFT}_{2^t}^{\dagger}}
+%   & \gate[wires=4]{\operatorname{QFT}_{2^t}^{\dagger}}
 %   & \meter{}
 %   & \rstick[wires=4]{$\vect{\widetilde{\ell}}$} \\
 % \lstick{$\ket0$}
@@ -11459,7 +11460,7 @@ Substitution into \autoref{eq:phase-estimation-state-two} gives
 \ket j\ket u
 \overset{\text{\eqref{eq:qft-computational-basis}}}{=}
 \left(
-\text{QFT}_{2^t}\ket\ell
+\operatorname{QFT}_{2^t}\ket\ell
 \right)
 \ket u
 \end{equation}
@@ -11470,7 +11471,7 @@ Consequently, the inverse QFT \rlap{produces}
 \ket{\psi_3}
 =
 \left(
-\text{QFT}_{2^t}^{-1}\otimes\id
+\operatorname{QFT}_{2^t}^{-1}\otimes\id
 \right)
 \ket{\psi_2}
 =
@@ -11846,7 +11847,7 @@ The order-finding circuit is phase estimation for \(U_a\), written at register l
       label style={label position=above,anchor=south,yshift=-0.13cm}
     ]{$C_{U_a}$}
   &
-  & \gate{\text{QFT}_{2^t}^{-1}}
+  & \gate{\operatorname{QFT}_{2^t}^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$\vect{z}$} \\
 \lstick{$\ket{{1}}$}
@@ -12065,7 +12066,7 @@ with probability at least \(1/2\).
 
 Shor's algorithm also solves the discrete logarithm problem.
 The factoring algorithm above is slightly indirect: the quantum part solves order finding, and the classical part reduces factoring to order finding.
-Discrete logarithms are cleaner, because the relevant group order is part of the input, so the phase estimation can be made exact with a \(\text{QFT}_q\).
+Discrete logarithms are cleaner, because the relevant group order is part of the input, so the phase estimation can be made exact with a \(\operatorname{QFT}_q\).
 This is also why the same idea applies not only to
 \(
 \Z_p^*
@@ -12184,7 +12185,7 @@ Orthogonality of roots of unity gives
 % \end{aligned}
 \).
 
-For an eigenstate \(\ket{u_s}\), exact phase estimation (\autoref{sec:phase-estimation}) with \(\text{QFT}_q\) gives
+For an eigenstate \(\ket{u_s}\), exact phase estimation (\autoref{sec:phase-estimation}) with \(\operatorname{QFT}_q\) gives
 \[
 \ket0\ket0\ket{u_s}
 \xmapsto{\mathrm{PE}(U),\,\mathrm{PE}(V)}
@@ -12218,13 +12219,13 @@ A register-level view of the two phase estimations is:
       style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
       label style={label position=below,anchor=north,yshift=-0.16cm}
     ]{\(g^j h^k\)}
-  & \gate{\text{QFT}_q^{-1}}
+  & \gate{\operatorname{QFT}_q^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$s$} \\
 \lstick{$\displaystyle\frac1{\sqrt q}\sum_{k=0}^{q-1}\ket k$}
   & \qwbundle{m}
   &
-  & \gate{\text{QFT}_q^{-1}}
+  & \gate{\operatorname{QFT}_q^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$s\ell\bmod q$} \\
 \lstick{$\ket1$}
@@ -12243,7 +12244,7 @@ C_{\mathrm{dlog}}\ket j\ket k\ket z
 \ket j\ket k\ket{g^jh^kz}
 \]
 and \(m=\lceil\log_2 q\rceil\) only indicates the number of Qbits needed to encode \(q\) basis states.
-If \(q\) is not a power of two, one can either implement the exact \(\text{QFT}_q\) on the \(q\)-dimensional subspace or use the usual high-precision power-of-two phase estimation as in \autoref{sec:phase-estimation}.
+If \(q\) is not a power of two, one can either implement the exact \(\operatorname{QFT}_q\) on the \(q\)-dimensional subspace or use the usual high-precision power-of-two phase estimation as in \autoref{sec:phase-estimation}.
 
 After measurement we get
 \[
