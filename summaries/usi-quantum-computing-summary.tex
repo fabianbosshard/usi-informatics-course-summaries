@@ -1,4 +1,337 @@
-\documentclass[9pt, headings=standardclasses, parskip=half]{scrartcl}
+% author: Fabian Bosshard % © CC BY 4.0
+
+\begin{filecontents}[overwrite]{\jobname.bib}
+@book{nielsenChuangQCQI,
+  author    = {Michael A. Nielsen and Isaac L. Chuang},
+  title     = {Quantum Computation and Quantum Information},
+  publisher = {Cambridge University Press},
+  year      = {2010},
+  edition   = {10th anniversary},
+  url       = {https://doi.org/10.1017/CBO9780511976667},
+}
+@book{aeschbacherHansenWolfQuantumInformatics,
+  author    = {Ulla Aeschbacher and Arne Hansen and Stefan Wolf},
+  title     = {Invitation to Quantum Informatics},
+  publisher = {vdf Hochschulverlag AG an der ETH Z{\"u}rich},
+  year      = {2019},
+  isbn      = {978-3-7281-3988-7},
+  url       = {https://vdf.ch/invitation-to-quantum-informatics-e-book.html},
+}
+@misc{laneveQuantumAlgorithms,
+  author = {Lorenzo Laneve},
+  title  = {Quantum Algorithms},
+  year   = {2026},
+  note   = {Lecture notes},
+  url    = {https://www.llaneve.net/qalg-notes.html},
+}
+@misc{gharibianQuantumComplexityTheory,
+  author = {Sevag Gharibian},
+  title  = {Quantum Complexity Theory},
+  year   = {2024},
+  note   = {Lecture notes, Paderborn University},
+  url    = {https://groups.uni-paderborn.de/fg-qi/data/QCT_Masterfile.pdf},
+}
+@book{zettiliQuantumMechanics,
+  author    = {Nouredine Zettili},
+  title     = {Quantum Mechanics: Concepts and Applications},
+  publisher = {Wiley},
+  year      = {2009},
+  edition   = {2},
+  url       = {https://openlibrary.org/isbn/9780470026793},
+}
+@misc{delRioLaneveCarocariQuantumPhysics,
+  author = {L{\'i}dia del Rio and Lorenzo Laneve and Giulia Carocari},
+  title  = {Quantum Physics for Non-Physicists},
+  year   = {2020},
+  note   = {Lecture notes},
+  url    = {https://www.llaneve.net/files/qpnp-notes.pdf},
+}
+@article{elitzurVaidmanInteractionFree,
+  author       = {Avshalom C. Elitzur and Lev Vaidman},
+  title        = {Quantum Mechanical Interaction-Free Measurements},
+  journaltitle = {Foundations of Physics},
+  year         = {1993},
+  volume       = {23},
+  number       = {7},
+  pages        = {987--997},
+  doi          = {10.1007/BF00736012},
+  url          = {https://doi.org/10.1007/BF00736012},
+}
+@article{rennerWolfPseudoTelepathy,
+  author       = {Renato Renner and Stefan Wolf},
+  title        = {Quantum Pseudo-Telepathy and the {K}ochen-{S}pecker Theorem},
+  booktitle    = {IEEE International Symposium on Information Theory --- ISIT 2004},
+  pages        = {322},
+  year         = {2004},
+  month        = {6},
+  % note         = {This is the Proceedings version of \cite{RenWol04d}},
+  publisher    = {IEEE},
+  url    = {https://crypto.ethz.ch/publications/files/RenWol04d.pdf},
+}
+@article{rennerWolfSpeckerHiddenVariables,
+  author       = {Renato Renner and Stefan Wolf},
+  title        = {Ernst Specker and the Hidden Variables},
+  journaltitle = {Elemente der Mathematik},
+  year         = {2012},
+  volume       = {67},
+  number       = {3},
+  pages        = {122--133},
+  doi          = {10.4171/EM/201},
+  url          = {https://doi.org/10.4171/EM/201},
+}
+@article{shorAlgorithms,
+  author       = {Peter W. Shor},
+  title        = {Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer},
+  journaltitle = {SIAM Journal on Computing},
+  year         = {1997},
+  volume       = {26},
+  number       = {5},
+  pages        = {1484--1509},
+  doi          = {10.1137/S0097539795293172},
+  eprint       = {quant-ph/9508027},
+  eprinttype   = {arXiv},
+  url          = {https://arxiv.org/abs/quant-ph/9508027},
+}
+@inproceedings{shoupGenericDLP,
+  author    = {Victor Shoup},
+  title     = {Lower Bounds for Discrete Logarithms and Related Problems},
+  booktitle = {Advances in Cryptology -- EUROCRYPT '97},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {1233},
+  pages     = {256--266},
+  publisher = {Springer},
+  year      = {1997},
+  doi       = {10.1007/3-540-69053-0_18},
+  url       = {https://doi.org/10.1007/3-540-69053-0_18},
+}
+@online{tikzNetMalusLaw,
+  title        = {Malus' Law},
+  organization = {TikZ.net},
+  url          = {https://tikz.net/malus-law/},
+  urldate      = {2026-06-30},
+}
+@online{tikzNetGas,
+  author       = {Izaak Neutelings},
+  title        = {Gas Particles and Macrostates in TikZ},
+  organization = {TikZ.net},
+  url          = {https://tikz.net/gas/},
+  urldate      = {2026-06-30},
+}
+@online{texSECuboid,
+  author       = {cfr and {Stack Exchange Community}},
+  title        = {Drawing an Annotated Cuboid in TikZ},
+  organization = {TeX Stack Exchange},
+  url          = {https://tex.stackexchange.com/a/288101},
+  urldate      = {2026-03-25},
+}
+@online{tikzNetBlackbodyColor,
+  author       = {Izaak Neutelings},
+  title        = {Black-Body Radiation Colors in TikZ},
+  organization = {TikZ.net},
+  % url          = {https://tikz.net/blackbody_color/},
+  url          = {https://tikz.net/blackbody_plots/},
+  urldate      = {2026-06-30},
+}
+@online{wikipediaBlochSphere,
+  title        = {Bloch Sphere},
+  organization = {Wikipedia},
+  url          = {https://en.wikipedia.org/wiki/Bloch_sphere},
+  urldate      = {2026-06-30},
+}
+@book{rudinFunctionalAnalysis,
+  author    = {Walter Rudin},
+  title     = {Functional Analysis},
+  publisher = {McGraw-Hill},
+  year      = {1991},
+  edition   = {2},
+  isbn      = {0-07-054236-8},
+  url       = {https://openlibrary.org/isbn/9780070542365},
+}
+@article{deLaMadridRiggedHilbertSpace,
+  author       = {Rafael de la Madrid},
+  title        = {The Role of the Rigged Hilbert Space in Quantum Mechanics},
+  journaltitle = {European Journal of Physics},
+  year         = {2005},
+  volume       = {26},
+  number       = {2},
+  pages        = {287--312},
+  eprint       = {quant-ph/0502053},
+  eprinttype   = {arXiv},
+  url          = {https://arxiv.org/abs/quant-ph/0502053},
+}
+@misc{hhanYamakawaYunDiscreteLog,
+  author     = {Minki Hhan and Takashi Yamakawa and Aaram Yun},
+  title      = {Quantum Complexity for Discrete Logarithms and Related Problems},
+  year       = {2023},
+  doi        = {10.1007/978-3-031-68391-6_1},
+  eprint     = {2307.03065},
+  eprinttype = {arXiv},
+  url        = {https://arxiv.org/abs/2307.03065},
+}
+@online{wikipediaQFTGateCount,
+  title        = {Quantum Fourier Transform -- Circuit Implementation},
+  organization = {Wikipedia},
+  url          = {https://en.wikipedia.org/wiki/Quantum_Fourier_transform#Circuit_implementation},
+  urldate      = {2026-06-30},
+}
+@online{wikipediaTotientGrowth,
+  title        = {Euler's Totient Function -- Growth Rate},
+  organization = {Wikipedia},
+  url          = {https://en.wikipedia.org/wiki/Euler%27s_totient_function#Growth_rate},
+  urldate      = {2026-06-30},
+}
+@book{vonNeumannMathematicalFoundationsQM,
+  author    = {John von Neumann},
+  title     = {Mathematical Foundations of Quantum Mechanics},
+  publisher = {Princeton University Press},
+  year      = {1955},
+  doi       = {10.1515/9781400889921},
+  url       = {https://doi.org/10.1515/9781400889921},
+}
+@article{vonNeumannEigenwerttheorieHermitescher,
+  author       = {John von Neumann},
+  title        = {Allgemeine Eigenwerttheorie Hermitescher Funktionaloperatoren},
+  journaltitle = {Mathematische Annalen},
+  year         = {1930},
+  volume       = {102},
+  pages        = {49--131},
+  doi          = {10.1007/BF01782338},
+  url          = {https://doi.org/10.1007/BF01782338},
+}
+@book{schumacherWestmorelandQuantumProcesses,
+  author    = {Benjamin Schumacher and Michael Westmoreland},
+  title     = {Quantum Processes, Systems, and Information},
+  publisher = {Cambridge University Press},
+  year      = {2010},
+  isbn      = {978-0-521-87996-5},
+  url       = {https://search.worldcat.org/search?q=9780521879965},
+}
+@book{loudonQuantumTheoryLight,
+  author    = {Rodney Loudon},
+  title     = {The Quantum Theory of Light},
+  publisher = {Oxford University Press},
+  year      = {2000},
+  edition   = {3},
+  isbn      = {978-0-19-850177-0},
+  doi       = {10.1093/oso/9780198501770.001.0001},
+  url       = {https://doi.org/10.1093/oso/9780198501770.001.0001},
+}
+@proceedings{eurocrypt1997Proceedings,
+  editor    = {Walter Fumy},
+  title     = {Advances in Cryptology -- EUROCRYPT '97},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {1233},
+  publisher = {Springer},
+  year      = {1997},
+  doi       = {10.1007/3-540-69053-0},
+  url       = {https://doi.org/10.1007/3-540-69053-0},
+}
+@article{speckerLogikNichtGleichzeitigEntscheidbarerAussagen,
+  author       = {Ernst Specker},
+  title        = {Die Logik nicht gleichzeitig entscheidbarer Aussagen},
+  journaltitle = {Dialectica},
+  year         = {1960},
+  volume       = {14},
+  number       = {2--3},
+  pages        = {239--246},
+  doi          = {10.1111/j.1746-8361.1960.tb00422.x},
+  url          = {https://doi.org/10.1111/j.1746-8361.1960.tb00422.x},
+  addendum     = {English translation available at \url{https://arxiv.org/abs/1103.4537}},
+}
+@article{kochenSpeckerHiddenVariables,
+  author       = {Simon Kochen and Ernst P. Specker},
+  title        = {The Problem of Hidden Variables in Quantum Mechanics},
+  journaltitle = {Journal of Mathematics and Mechanics},
+  year         = {1967},
+  volume       = {17},
+  number       = {1},
+  pages        = {59--87},
+  doi          = {10.1512/iumj.1968.17.17004},
+  url          = {https://doi.org/10.1512/iumj.1968.17.17004},
+}
+@misc{moserInformationTheoryLectureNotes,
+  author  = {Stefan M. Moser},
+  title   = {Information Theory},
+  year    = {2018},
+  edition = {6},
+  note    = {Lecture notes, version 6.21, ETH Zurich and NYCU},
+  url     = {https://moser-isi.ethz.ch/scripts.html#it},
+  urldate = {2026-06-30},
+}
+@misc{moserAdvancedTopicsInformationTheory,
+  author  = {Stefan M. Moser},
+  title   = {Advanced Topics in Information Theory},
+  year    = {2025},
+  edition = {6},
+  note    = {Lecture notes, version 6.5, ETH Zurich and NYCU},
+  url     = {https://moser-isi.ethz.ch/scripts.html#atit},
+  urldate = {2026-06-30},
+}
+@misc{aliroBeamSplittersQuantumApplications,
+  author  = {{Aliro Quantum}},
+  title   = {Beam Splitters for Quantum Applications},
+  year    = {2025},
+  note    = {White paper},
+  url     = {https://www.aliroquantum.com/},
+  urldate = {2026-06-30},
+}
+@misc{kilminsterPhysicsI,
+  author  = {Ben Kilminster},
+  title   = {Physics I: Introduction to Physics},
+  year    = {2023},
+  note    = {Lecture notes, University of Zurich},
+  url     = {https://www.physik.uzh.ch/en/groups/kilminster.html},
+  urldate = {2026-06-30},
+}
+@misc{kilminsterPhysicsII,
+  author  = {Ben Kilminster},
+  title   = {Physics II: Introduction to Physics},
+  year    = {2023},
+  note    = {Lecture notes, University of Zurich},
+  url     = {https://www.physik.uzh.ch/en/groups/kilminster.html},
+  urldate = {2026-06-30},
+}
+@misc{aegerterHengsbergerPhysicsIIIIV,
+  author  = {Christof Aegerter and Matthias Hengsberger},
+  title   = {Skript zu den Vorlesungen Physik III und IV},
+  year    = {2020},
+  note    = {Lecture notes, University of Zurich},
+  url     = {https://www.physik.uzh.ch/en/groups/aegerter.html},
+  urldate = {2026-06-30},
+}
+@misc{pinkLineareAlgebraZusammenfassung,
+  author  = {Richard Pink},
+  title   = {Lineare Algebra I und II: Zusammenfassung},
+  year    = {2016},
+  note    = {ETH Zurich lecture summary},
+  url     = {https://people.math.ethz.ch/~pink/ftp/Lineare-Algebra-Zusammenfassung-20161006.pdf},
+  urldate = {2026-06-30},
+}
+@misc{grandinettiMagnetismAngularMomentumSpin,
+  author  = {P. J. Grandinetti},
+  title   = {Chapter 20: Magnetism, Angular Momentum, and Spin},
+  year    = {2023},
+  note    = {Chem. 4300 lecture slides},
+  url     = {https://www.grandinetti.org/},
+  urldate = {2026-06-30},
+}
+@misc{spectralTheoremPartOne,
+  author  = {{APM 421/MAT 1723}},
+  title   = {Spectral Theorem, Part 1},
+  year    = {2003},
+  note    = {Course notes},
+  url     = {https://search.usi.ch/courses/35275103/quantum-computing},
+  urldate = {2026-06-30},
+}
+@misc{spectralTheoryReview,
+  title   = {Review of Spectral Theory},
+  note    = {Undated course notes},
+  url     = {https://search.usi.ch/courses/35275103/quantum-computing},
+  urldate = {2026-06-30},
+}
+\end{filecontents}
+
+\documentclass[9pt, headings=standardclasses, parskip=half, titlepage]{scrartcl}
 \usepackage{ifthen}
 \usepackage{iftex}
 \usepackage{csquotes}
@@ -130,8 +463,12 @@
 
 \usepackage{caption, subcaption}
 
-\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
-\addbibresource{\jobname.bib}
+\usepackage[backend=biber,style=numeric,sorting=none,doi=false]{biblatex}
+\IfFileExists{build/\jobname.bib}{%
+  \addbibresource{build/\jobname.bib}%
+}{%
+  \addbibresource{\jobname.bib}%
+}
 
 \usepackage{pifont}
 
@@ -161,12 +498,18 @@
 \tikzexternalize[prefix=tikz-cache/]
 \usepackage{pgfplots}
 
+\newcommand{\EulerMascheroniConstant}{0.5772156649015329}
+\pgfmathdeclarefunction{totientomega}{1}{%
+  \pgfmathparse{exp(-\EulerMascheroniConstant)*#1/ln(ln(#1))}%
+}
+
 % define colors
 \definecolor{funblue}{rgb}{0.10, 0.35, 0.66}
 \definecolor{alizarincrimsonred}{rgb}{0.85, 0.17, 0.11}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{mypurple}{rgb}{128, 0, 128} 
 \definecolor{highlightpurple}{rgb}{0.4, 0.0, 0.4}
+\definecolor{AccentGray}{HTML}{666666}
 \definecolor{interludecolor}{HTML}{\eat #7f7f7f}
 \definecolor{overvieworange}{HTML}{\eat #f17e00}
 \definecolor{overviewgreen}{HTML}{\eat #01a765}
@@ -323,12 +666,13 @@
 \newcommand{\attrib}[2]{\ensuremath{#1\mathtt{.}\mathtt{#2}}} % object.field with field in math typewriter (like code)
 \newcommand{\attribnormal}[2]{\ensuremath{#1\mathtt{.}#2}} 
 
-\title{Quantum Computation}
+\title{Quantum Computing}
 \author{Fabian Bosshard}
 \date{}
 % \date{\today}
 
-\usepackage[linktoc=none, pdfauthor={Fabian Bosshard}, pdftitle={USI - Quantum Computation - Course Notes}, pdfkeywords={USI, quantum computation, course notes, informatics}, colorlinks=false, pdfborder={0.0 0.0 0.0}, linkbordercolor={0 0.6 1}, urlbordercolor={0 0.6 1}, citebordercolor={0 0.6 1}]{hyperref}
+\usepackage[linktoc=none, pdfauthor={Fabian Bosshard}, pdftitle={USI - Quantum Computing - Course Notes}, pdfkeywords={USI, quantum computing, course notes, informatics}, colorlinks=false, pdfborder={0.0 0.0 0.0}, linkbordercolor={0 0.6 1}, urlbordercolor={0 0.6 1}, citebordercolor={0 0.6 1}]{hyperref}
+\usepackage{xurl} 
 
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
 \DeclareTOCStyleEntry[linefill=\dotfill]{tocline}{section}
@@ -436,13 +780,94 @@
 % \setcounter{tocdepth}{1}
 
 \begin{document}
-\pagenumbering{roman}
-\maketitle
-\tableofcontents
-% \section*{Preface}
-% \addcontentsline{toc}{section}{Preface}
 
-% \doclicenseThis
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+
+\vspace*{5cm}
+{\Huge\bfseries \href{https://search.usi.ch/en/courses/35275103/quantum-computing}{Quantum Computing}\par}
+\vspace{0.5cm}
+{\large\color{AccentGray}\href{https://www.usi.ch/en}{\textsc{Universit{\`a} della Svizzera italiana}}\par}
+\vspace{1.5cm}
+
+{\Large \href{https://fabianbosshard.github.io/}{Fabian Bosshard}\par}
+\vfill
+{\today\par}
+
+\end{titlepage}
+
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}\slshape
+This page is intentionally left blank.
+\end{center}
+\vspace*{\fill}
+\clearpage
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
+
+\tableofcontents
+
+\clearpage
+
+\section*{Preface}
+\addcontentsline{toc}{section}{Preface}
+
+This document contains unofficial student-made notes for the course
+\href{https://search.usi.ch/en/courses/35275103/quantum-computing}{Quantum Computing}
+taught by
+\href{https://search.usi.ch/people/eefbe656c9dfacf0e1a1e15bf8893bcb/wolf-stefan}{Stefan Wolf}
+with the assistance of
+\href{https://search.usi.ch/people/d98cefbb295f351a00dc05084f131aef/laneve-lorenzo}{Lorenzo Laneve}
+in Spring 2026 (academic year 2025--2026) at the
+\href{https://www.usi.ch/en}{Universit{\`a} della Svizzera italiana}.
+
+These notes are mainly based on the course materials, especially 
+\cite{aeschbacherHansenWolfQuantumInformatics}, 
+exercise sessions, and handwritten notes taken during the lectures.
+
+Occasionally, additional references were consulted.
+\autoref{sec:mach-zehnder-interferometer} 
+uses \cite{elitzurVaidmanInteractionFree} 
+for interaction-free measurements.
+\autoref{sec:classical-to-quantum} and \autoref{sec:postulates-of-quantum-mechanics} 
+use
+\cite{delRioLaneveCarocariQuantumPhysics,zettiliQuantumMechanics} 
+for additional background on introductory quantum physics and standard quantum-mechanical postulates.  
+\autoref{dig:position-basis} uses \cite{deLaMadridRiggedHilbertSpace} for the rigged-Hilbert-space interpretation of position kets.
+The digression on operators in 
+\autoref{sec:operators} 
+closely follows the corresponding sections in the textbook
+\cite{rudinFunctionalAnalysis}. 
+\autoref{sec:one-qbit} uses \cite{wikipediaBlochSphere} for the Bloch-sphere mixed-state discussion.
+\autoref{sec:ernst-specker} 
+draws on 
+\cite{speckerLogikNichtGleichzeitigEntscheidbarerAussagen,kochenSpeckerHiddenVariables,rennerWolfPseudoTelepathy,rennerWolfSpeckerHiddenVariables}.
+\autoref{sec:shor} and \autoref{sec:shor-discrete-logarithm} 
+use
+\cite{wikipediaQFTGateCount,laneveQuantumAlgorithms,shorAlgorithms,shoupGenericDLP,hhanYamakawaYunDiscreteLog,wikipediaTotientGrowth}.
+\autoref{sec:quantum-complexity-theory} 
+uses
+\cite{nielsenChuangQCQI,gharibianQuantumComplexityTheory}.
+
+Some figures are based on TikZ code from external sources.
+\autoref{sec:stern-gerlach-superposition} uses \cite{tikzNetMalusLaw} for the Malus-law drawing.
+\autoref{sec:connection-to-thermodynamics} uses \cite{tikzNetGas} for the gas microstate and macrostate drawings.
+\autoref{sec:black-body-radiation} uses \cite{texSECuboid} for the cavity and \cite{tikzNetBlackbodyColor} for the black-body radiation figures.
+
+
+If you spot an error, please report it to
+\href{mailto:fabianlucasbosshard@gmail.com}{\nolinkurl{fabianlucasbosshard@gmail.com}}.
+The \LaTeX{} source is available at
+\url{https://github.com/fabianbosshard/usi-informatics-course-summaries}.
+
+\doclicenseThis
+
+
+\clearpage
 
 \let\emphoriginal\emph           % save original meaning
 \renewcommand{\emph}[1]{\textcolor{black}{#1}}
@@ -455,7 +880,7 @@
 \pagenumbering{arabic}
 
 
-\section{What is Quantum Informatics?}
+\section{What is Quantum Informatics?}\label{sec:what-is-quantum-informatics}
 
 % requires: \usetikzlibrary{positioning}
 \[
@@ -745,7 +1170,7 @@ A surprising outcome occurs when the measurements are cascaded as follows:
 
 This questions both the \emph{stability} and the \emph{independence} of the spin property.
 
-\subsubsection{Superposition}
+\subsubsection{Superposition}\label{sec:stern-gerlach-superposition}
 
 {%
 % Tikz Styles
@@ -1197,7 +1622,7 @@ $\frac{1}{\sqrt{2}}\left(\ket{y} + \iu \ket{x}\right)$.
 In both cases, the photon is detected in either of the detectors with equal probability.
 
 
-\begin{application}[Elitzur-Vaidman bomb tester] \label{ex:elitzur-vaidman-bomb-tester}
+\begin{application}[Elitzur-Vaidman bomb tester \cite{elitzurVaidmanInteractionFree}] \label{ex:elitzur-vaidman-bomb-tester}
 A bomb in a box is very sensitive to light: 
 it will explode as soon as it is hit by a photon. 
 We would like to figure out whether the bomb is in the box without exploding.
@@ -2450,7 +2875,7 @@ I(X;Y)
 In case of a uniform distribution, i.e. $p_X(x) = 1/|\mathcal{X}|$ for all $x \in \mathcal{X}$, the entropy of $X$ is the logarithm of the size of its range, i.e., $H(X) = \log_2 |\mathcal{X}|$.
 \end{example}
 
-\subsection{Connection to Thermodynamics}
+\subsection{Connection to Thermodynamics}\label{sec:connection-to-thermodynamics}
 
 
 \colorlet{myblue}{blue!20}
@@ -2911,6 +3336,7 @@ Any work gained through such knowledge must ultimately be paid for when the demo
 
 
 \subsection{Reversible Computing}
+\label{sec:reversible-computing}
 
 % Can computation be made locially reversible?
 If, in the course of a computation, information is lost about ``which branch the computation came from'', then free energy $\kB T \ln(2)$ must be invested, which is dissipated as heat to the environment.
@@ -3337,9 +3763,11 @@ On the other hand, a function for which the reversible circuit is necessarily in
 
 
 \clearpage
-\section{From Classical to Quantum Physics}
+\section{From Classical to Quantum Physics}\label{sec:classical-to-quantum}
 
-\subsection{Black-Body Radiation}
+% This section uses \cite{delRioLaneveCarocariQuantumPhysics,zettiliQuantumMechanics} for additional introductory physics background.
+
+\subsection{Black-Body Radiation}\label{sec:black-body-radiation}
 
 Consider an idealized cavity of side length \(l\) with perfectly absorbing walls, in thermal equilibrium with a heat bath at temperature \(T\):
 \[
@@ -4380,6 +4808,8 @@ Furthermore, we have the properties
 
 \section{Digression on Operators}\label{sec:operators}
 
+% This digression follows the corresponding functional-analysis material in \cite{rudinFunctionalAnalysis}.
+
 \subsection{Bounded Operators}
 
 \begin{definition}\label{def:compact-operator}
@@ -4963,6 +5393,8 @@ Moreover, $E(\omega) S = S E(\omega)$ for every Borel set $\omega \subseteq \sig
 
 \section{Postulates of Quantum Mechanics} \label{sec:postulates-of-quantum-mechanics}
 
+% The postulates in this section follow standard introductory quantum-mechanics references such as \cite{delRioLaneveCarocariQuantumPhysics,zettiliQuantumMechanics}.
+
 
 
 \subsection{The state}
@@ -5011,7 +5443,7 @@ Thus quantum states behave like waves: linear combinations of states are again s
 
 
 
-\begin{digression}[Position Basis]
+\begin{digression}[Position Basis]\label{dig:position-basis}
 Physicists often describe position by a family of kets
 \(
 \ket{\vect{x}}
@@ -5133,6 +5565,7 @@ The objects \(\ket{\vect{x}}\) are not even honest vectors of \(L^2(\R^3)\), sin
 \)
 is not a finite number.
 Rather, they are \emph{generalized eigenvectors} of the position operator, more precisely distribution-like objects in the sense of a \emph{rigged Hilbert space}
+\cite{deLaMadridRiggedHilbertSpace}
 \[
 \Phi \subset \mathcal H \subset \Phi'
 \]
@@ -5754,12 +6187,12 @@ Fix an orthonormal basis $\{\ket{\varphi_i}\}_{i=1}^n$ of $\mathcal{H}$.
 In the following, we abbreviate the basis vectors with their indices, i.e. $\ket{\varphi_{i}} \eqcolon \ket{i}$.
 
 A common trick when working with an orthonormal basis in braket notation is to insert the identity operator
-\[
+\begin{equation}\label{eq:orthonormal-basis-resolution-identity}
 % \matr{I} 
 \id
 = 
 \sum_{i=1}^n \ket{i}\bra{i}
-\]
+\end{equation}
 and then rearrange the terms.
 Note that this is a discrete instance of the resolution of the identity from \autoref{def:resolution-of-identity}. 
 For example, we can write a linear operator $A$ 
@@ -6592,6 +7025,7 @@ Unlike classical bits, however, understanding a single Qbit is not enough to und
 because qualitatively new phenomena arise there, most importantly entanglement, which lies at the heart of the power of quantum information processing.
 
 \subsection{One Qbit: $\mathcal{H} = \C^2$}
+\label{sec:one-qbit}
 
 
 A quantum bit, or Qbit, or {Qbit} is a quantum system whose state space is
@@ -6808,7 +7242,7 @@ Orientation on the Bloch sphere:
 
 % BEGIN: from Wikipedia; https://en.wikipedia.org/wiki/Bloch_sphere
 
-While the surface of the Bloch sphere represents pure states, the interior corresponds to mixed states.
+While the surface of the Bloch sphere represents pure states, the interior corresponds to mixed states \cite{wikipediaBlochSphere}.
 To see this, recall that a mixed state is represented by a density operator $\rho$.
 % For mixed states, one considers the density operator. 
 Any two-dimensional density operator $\rho$ can be expanded using the identity $\matr{I}$ and the Hermitian, traceless Pauli matrices 
@@ -7726,6 +8160,7 @@ Consequently, a \hl[4]{Bell-basis measurement} can be implemented by reversing t
 % This is a measurement in the Bell basis.
 
 \subsubsection*{Classical universality}
+\phantomsection\label{sec:cnot-classical-universality}
 
 The CNOT is universal together with one-Qbit gates.
 For classical universality, it is enough to obtain a Toffoli gate (\autoref{def:toffoli-gate}), 
@@ -8229,6 +8664,19 @@ if a quantum computation couples to even a single uncontrolled binary degree of 
 then, once that degree of freedom escapes, the reduced state of the computer becomes a mixture.
 The process is then effectively irreversible, and the computation may fail.
 
+\begin{fact}[Deferred measurement principle]\label{fact:deferred-measurement-principle}
+% Any quantum circuit with intermediate standard-basis measurements and later gates that are classically controlled by the measurement outcomes can be replaced by an equivalent circuit in which all measurements are performed at the end~\cite{nielsenChuangQCQI}.
+Measurements can always be moved from an intermediate stage of a quantum circuit to the end of the circuit; if the measurement results are used at any stage of the circuit then the classically controlled operations can be replaced by conditional quantum operations~\cite{nielsenChuangQCQI}.
+\end{fact}
+
+The idea is to keep the measurement outcome coherent.
+Instead of measuring a Qbit immediately, copy its computational-basis value into an ancilla by a CNOT and keep that ancilla as a control wire.
+Every later gate that would have been classically conditioned on the measurement result is replaced by the corresponding quantum-controlled gate.
+At the end, the ancilla and the output wires are measured.
+The joint probability distribution of the final classical outcomes is the same as in the original circuit.
+
+Thus, for complexity-theoretic purposes, a quantum circuit can usually be treated as a unitary computation followed by one final measurement. We will use this in \autoref{sec:quantum-complexity-theory}.
+
 
 
 \subsection{$n$ Qbits: $\mathcal{H} = \C^{2^n}$}
@@ -8246,6 +8694,12 @@ with computational basis
 $
 \left\{\ket{\vect{x}}:\vect{x}\in\{0,1\}^n\right\}
 $.
+Thus the finite-basis identity insertion from \eqref{eq:orthonormal-basis-resolution-identity} becomes
+\begin{equation}\label{eq:computational-basis-resolution-identity}
+\id_{\mathcal H_n}
+=
+\sum_{\vect{x}\in\{0,1\}^{n}}\ket{\vect{x}}\bra{\vect{x}} 
+\end{equation}
 
 
 \begin{example}\label{ex:hadamard-n-qbits}
@@ -9915,7 +10369,8 @@ Thus equal outputs are impossible in the second promised case, and the entangled
 % \eu^{-\frac{\pi}{2} - 2\pi \Z}
 % \]
 
-Ernst Specker argued that classical logic is inadequate for describing quantum mechanics.
+Ernst Specker argued that classical logic is inadequate for describing quantum mechanics
+\cite{speckerLogikNichtGleichzeitigEntscheidbarerAussagen}.
 Like Bell's theorem (\autoref{claim:bell}), discussed in \autoref{sec:aspect-gisin-zeilinger-experiments}, his argument rules out a classical deterministic explanation.
 % The distinction is that Bell separates measurements in space, whereas Specker asks whether outcomes can be assigned consistently to all possible measurements of one quantum system.
 The common structure is that the result should not depend on a choice that, classically, seems irrelevant.
@@ -9928,7 +10383,7 @@ the full table of predictions is already internally inconsistent.
 
 \subsubsection*{The parable of the overprotective seer}
 
-Specker's 1960 article begins with a parable.
+Specker's 1960 article \cite{speckerLogikNichtGleichzeitigEntscheidbarerAussagen} begins with a parable.
 A seer presents three boxes to each suitor of his daughter.
 The suitor may choose and open any two boxes, and exactly one of those two contains a jewel, but the remaining box can never be opened:
 \[
@@ -10068,7 +10523,8 @@ For a Qtrit
 % already the real rays inside the Hilbert space would have to be colorable so that every orthonormal tripod contains exactly one selected ray.
 even the real rays inside the Hilbert space cannot be colored so that every orthonormal tripod contains exactly one selected ray.
 The direct analogue of the Qbit coloring would be a coloring of the real sphere in which every orthogonal triple contains exactly one green ray.
-Kochen--Specker says that this apparently local requirement cannot be satisfied globally:
+Kochen--Specker says that this apparently local requirement cannot be satisfied globally
+\cite{kochenSpeckerHiddenVariables}:
 % Thus the problem is not that the ray is itself the unknown state of the system; rather, the ray represents one possible yes/no measurement property, and the question is whether all such properties can be assigned classical truth values at once.
 % \[
 % \begin{tikzpicture}[
@@ -10112,8 +10568,10 @@ Kochen--Specker says that this apparently local requirement cannot be satisfied 
 There is a finite set \(\mathcal V\) of rays in \(\R^3\) that admits no noncontextual coloring satisfying the two conditions \ref{item:kochen-specker-orthogonal} and \ref{item:kochen-specker-basis} above.
 \end{theorem}
 
-Specker already announced the geometric obstruction in 1960, claiming that a finite set of rays on the sphere already suffices, but did not include the construction in that article.
-Kochen and Specker gave an explicit finite construction in 1967 using more than one hundred rays.
+Specker already announced the geometric obstruction in 1960, claiming that a finite set of rays on the sphere already suffices, but did not include the construction in that article
+\cite{speckerLogikNichtGleichzeitigEntscheidbarerAussagen,rennerWolfSpeckerHiddenVariables}.
+Kochen and Specker gave an explicit finite construction in 1967 using more than one hundred rays
+\cite{kochenSpeckerHiddenVariables}.
 % Thus a Qtrit cannot carry context-independent predetermined answers for all projective measurements.
 Thus a Qtrit cannot carry context-independent predetermined answers for all projective measurements: 
 one may choose an outcome separately for each basis, but not by assigning fixed values to the rays themselves.
@@ -10131,7 +10589,8 @@ while Kochen--Specker rules out context-independent value assignments already fo
 % Compared with the Deutsch--Jozsa game in \autoref{sec:deutsch-jozsa-game}, the Kochen--Specker construction needs only one maximally entangled pair of Qtrits.
 
 % Let \(\mathcal B\) be a finite family of real orthonormal bases witnessing \autoref{thm:kochen-specker}.
-Let \(\mathcal B\) be a finite family of real orthonormal bases whose union of rays is a Kochen--Specker set, i.e. it admits no noncontextual coloring as in \autoref{thm:kochen-specker}.
+Following Renner and Wolf's Kochen--Specker pseudo-telepathy formulation
+\cite{rennerWolfPseudoTelepathy}, let \(\mathcal B\) be a finite family of real orthonormal bases whose union of rays is a Kochen--Specker set, i.e. it admits no noncontextual coloring as in \autoref{thm:kochen-specker}.
 Alice receives \(B_{\mathrm{A}}\in\mathcal B\), Bob receives \(B_{\mathrm{B}} \in\mathcal B\), and each must output one vector from the received basis.
 They win exactly when their vectors are not orthogonal:
 % \(
@@ -10234,7 +10693,7 @@ When \(B_{\mathrm{A}} = B_{\mathrm{B}}\), all distinct vectors in the common bas
 The entangled pair therefore behaves like two consistent measurements of the same Qtrit without communication.
 
 The game uses local dimension \(3\times3\): Alice and Bob each hold one qtrit, so the shared state lives in \(\C^3\otimes\C^3\).
-This is minimal for two-player pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
+This is minimal for two-player pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one \cite{rennerWolfPseudoTelepathy}.
 % A pair of Qbits can violate Bell inequalities, but this is weaker than pseudo-telepathy: local dimension \(2\times2\) cannot support a perfect quantum strategy without a perfect classical one.
 % Thus the maximally entangled Qtrit pair is the minimal two-player quantum resource for pseudo-telepathy.
 
@@ -10273,6 +10732,7 @@ queries,
 which is a quadratic  
 % rather than exponential 
 speed-up.
+% This is a query-complexity statement; the complexity-class viewpoint in \autoref{sec:quantum-complexity-theory} explains how such algorithmic speed-ups fit into classes such as \(\mathrm{BPP}\), \(\mathrm{BQP}\), and \(\mathrm{PSPACE}\).
 % For example, exhaustive key search against a block cipher with a \(2n\)-bit key takes only about as many quantum queries as classical search against an \(n\)-bit key.
 % The algorithm is nevertheless optimal in the black-box model: unstructured quantum search requires
 % \(
@@ -10862,7 +11322,8 @@ times.
 
 \subsection{Quantum Fourier transform}\label{sec:quantum-fourier-transform}
 Let $N = 2^n$.
-The quantum Fourier transform (QFT) maps
+The quantum Fourier transform (QFT) %, as presented for example in \cite{laneveQuantumAlgorithms},
+maps
 \[
 \sum_{\vect{j}\in\{0,1\}^n} f_\vect{j}\ket{\vect{j}}
 \quad
@@ -11128,8 +11589,9 @@ The general \(n\)-Qbit circuit is
   row sep=0.30cm,
   wire types={q,q,n,q,q}
 ]
-\lstick{$\ket{x_1}$}
-  & \gate{H}
+% \lstick{$\ket{x_1}$}
+  &
+   \gate{H}
   & \gate{R_2}
   & \ \ldots \
   & \gate{R_{n-1}}
@@ -11144,8 +11606,9 @@ The general \(n\)-Qbit circuit is
   & \qw
   & \swap{4}
   & \qw \\
-\lstick{$\ket{x_2}$}
-  & \qw
+% \lstick{$\ket{x_2}$}
+  &
+   \qw
   & \ctrl{-1}
   & \ \ldots \
   & \qw
@@ -11160,8 +11623,9 @@ The general \(n\)-Qbit circuit is
   & \qw
   & \swap{2}
   & \qw \\
-  \lstick{\makebox[\widthof{$\ket{x_{n}}$}][c]{$\vdots$}}
-  & \vdots
+  % \lstick{\makebox[\widthof{$\ket{x_{n}}$}][c]{$\vdots$}}
+  &
+   \vdots
   & 
   & \ddots
   & 
@@ -11176,8 +11640,9 @@ The general \(n\)-Qbit circuit is
   & \vdots
   &
   & \\
-\lstick{$\ket{x_{n-1}}$}
-  & \qw
+% \lstick{$\ket{x_{n-1}}$}
+  &
+   \qw
   & \qw
   & \ \ldots \
   & \ctrl{-3}
@@ -11192,8 +11657,9 @@ The general \(n\)-Qbit circuit is
   & \qw
   & \targX{}
   & \qw \\
-\lstick{$\ket{x_n}$}
-  & \qw
+% \lstick{$\ket{x_n}$}
+  &
+   \qw
   & \qw
   & \ \ldots \
   & \qw
@@ -11232,7 +11698,7 @@ swaps, hence the exact QFT uses
 \(
 O(n^2)
 \)
-gates.
+gates \cite{wikipediaQFTGateCount}.
 % Discarding rotations \(R_k\) with large \(k\), whose phases are close to \(1\), gives an approximate QFT using
 % \(
 % O(n\log n)
@@ -11280,7 +11746,7 @@ In compact register-level notation, phase estimation is
       2,
       steps=1,
       style={ densely dotted,rounded corners,inner xsep=6pt,inner ysep=4pt},
-      label style={label position=above,anchor=south,yshift=-0.13cm}
+      label style={label position=above,anchor=south,yshift=-0.2cm}
     ]{$C_U$}
     &
     \slice[
@@ -11714,6 +12180,8 @@ pq-(p+q-1)
 
 \subsection{Order finding}\label{sec:order-finding}
 
+The following order-finding routine is the quantum subroutine behind Shor's factoring algorithm \cite{shorAlgorithms,laneveQuantumAlgorithms}.
+
 For
 \(
 a\in\Z_N^*
@@ -11844,7 +12312,7 @@ The order-finding circuit is phase estimation for \(U_a\), written at register l
       2,
       steps=1,
       style={densely dotted,rounded corners,inner xsep=6pt,inner ysep=4pt},
-      label style={label position=above,anchor=south,yshift=-0.13cm}
+      label style={label position=above,anchor=south,yshift=-0.2cm}
     ]{$C_{U_a}$}
   &
   & \gate{\operatorname{QFT}_{2^t}^{-1}}
@@ -11915,7 +12383,9 @@ approximately, and continued fractions recover \(r\).
 
 \subsection{Integer Factoring}\label{sec:shor-factoring}
 
-Shor's factoring algorithm combines the quantum order-finding subroutine from \autoref{sec:order-finding} with a classical reduction.
+Shor's factoring algorithm combines the quantum order-finding subroutine from \autoref{sec:order-finding} with a classical reduction \cite{shorAlgorithms,laneveQuantumAlgorithms}.
+% In complexity-class language, 
+This puts factoring in the complexity class \(\mathrm{BQP}\), but as we will see in \autoref{sec:quantum-complexity-theory}, this by itself does not prove \(\mathrm{P}\subsetneq\mathrm{BQP}\).
 Let \(N\) be an odd composite integer that is not a prime power and choose
 \(
 a\in\{2,\ldots,N-1\}
@@ -12064,7 +12534,7 @@ with probability at least \(1/2\).
 
 \subsection{Discrete Logarithms}\label{sec:shor-discrete-logarithm}
 
-Shor's algorithm also solves the discrete logarithm problem.
+Shor's algorithm also solves the discrete logarithm problem \cite{shorAlgorithms,laneveQuantumAlgorithms}.
 The factoring algorithm above is slightly indirect: the quantum part solves order finding, and the classical part reduces factoring to order finding.
 Discrete logarithms are cleaner, because the relevant group order is part of the input, so the phase estimation can be made exact with a \(\operatorname{QFT}_q\).
 This is also why the same idea applies not only to
@@ -12095,7 +12565,7 @@ determine
 \).
 \end{problem}
 
-Assume that group multiplication and inversion are efficiently computable.
+Assume that group multiplication and inversion are efficiently computable (i.e. in polynomial time in \(\log q\)).
 Define the shift unitaries
 \(
 U\ket x
@@ -12191,7 +12661,7 @@ For an eigenstate \(\ket{u_s}\), exact phase estimation (\autoref{sec:phase-esti
 \xmapsto{\mathrm{PE}(U),\,\mathrm{PE}(V)}
 \ket s\ket{s\ell\bmod q}\ket{u_s}
 \]
-Starting the lower register in \(\ket1\) therefore gives a uniformly random \(s\):
+Starting the lower register in \(\ket1\) therefore gives a uniformly random \(s\) (one out of \(q = |\Z_q|\) possible values):
 \[
 \ket0\ket0\ket1
 \mapsto
@@ -12205,31 +12675,40 @@ A register-level view of the two phase estimations is:
 \tikzexternaldisable
 \[
 \begin{quantikz}[
-  column sep=0.86cm,
+  column sep=0.58cm,
   row sep=0.34cm,
   wire types={b,b,b},
   classical gap=0.07cm
 ]
 \lstick{$\displaystyle\frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j$}
   & \qwbundle{m}
-  & \gate[wires=3]{C_{\mathrm{dlog}}}
+  & 
+  & \ctrl{2}
     \gategroup[
       3,
-      steps=1,
-      style={dashed,rounded corners,inner xsep=5pt,inner ysep=5pt},
-      label style={label position=below,anchor=north,yshift=-0.16cm}
-    ]{\(g^j h^k\)}
+      steps=2,
+      style={densely dotted,rounded corners,inner xsep=6pt,inner ysep=4pt},
+      label style={label position=above,anchor=south,yshift=-0.2cm}
+    ]{\(C_{\mathrm{dlog}}\)}
+  & \qw
+  &
   & \gate{\operatorname{QFT}_q^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$s$} \\
-\lstick{$\displaystyle\frac1{\sqrt q}\sum_{k=0}^{q-1}\ket k$}
+\lstick{$\displaystyle\frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j$}
   & \qwbundle{m}
+  &
+  & 
+  & \ctrl{1}
   &
   & \gate{\operatorname{QFT}_q^{-1}}
   & \meter{}
   & \setwiretype{c}\rstick{$s\ell\bmod q$} \\
 \lstick{$\ket1$}
   & \qwbundle{n_G}
+  & 
+  & \gate{U^j}
+  & \gate{V^j}
   &
   & \qw
   & \qw
@@ -12239,12 +12718,29 @@ A register-level view of the two phase estimations is:
 \tikzexternalenable
 where
 \[
-C_{\mathrm{dlog}}\ket j\ket k\ket z
+C_{\mathrm{dlog}}\ket{j_1} \ket{j_2} \ket z
 =
-\ket j\ket k\ket{g^jh^kz}
+\ket{j_1} \ket{j_2} \ket{g^{j_1} h^{j_2} z}
 \]
 and \(m=\lceil\log_2 q\rceil\) only indicates the number of Qbits needed to encode \(q\) basis states.
 If \(q\) is not a power of two, one can either implement the exact \(\operatorname{QFT}_q\) on the \(q\)-dimensional subspace or use the usual high-precision power-of-two phase estimation as in \autoref{sec:phase-estimation}.
+% Here one should not confuse the number \(m=\lceil\log_2 q\rceil\) of Qbits with the dimension \(q\) of the Fourier transform.
+% If \(q\) is not a power of two, then an \(m\)-Qbit register has \(2^m\) computational basis states, not \(q\).
+% Thus the state
+% \[
+% \frac1{\sqrt q}\sum_{j=0}^{q-1}\ket j
+% \]
+% is not obtained simply by applying \(H^{\otimes m}\), since
+% \[
+% H^{\otimes m}\ket0^{\otimes m}
+% =
+% \frac1{\sqrt{2^m}}
+% \sum_{j=0}^{2^m-1}\ket j 
+% \]
+% One must either implement the exact \(\operatorname{QFT}_q\) on the \(q\)-dimensional subspace, 
+% or first create a power-of-two superposition and then prepare the uniform superposition over the valid labels \(0,\ldots,q-1\) by an additional step, 
+% for example by comparing with \(q\), measuring an ancilla, and postselecting on the outcome indicating \(j<q\). 
+% Equivalently, one can avoid this exact preparation issue by using the usual high-precision power-of-two phase estimation from \autoref{sec:phase-estimation}.
 
 After measurement we get
 \[
@@ -12254,14 +12750,35 @@ After measurement we get
 \in
 \Z_q^2
 \]
-If $s \in \Z_q^*$, i.e. \(s\) is invertible modulo \(q\), i.e. $s$ is coprime to $q$, i.e. $\gcd(s,q)=1$, the extended Eu\-cli\-dean algorithm gives \(s^{-1}\), and
-\begin{equation}\label{eq:discrete-log-classical-postprocessing}
+If $s \in \Z_q^*$, i.e. \(s\) is invertible\footnote{%
+If \(\gcd(s,q)=1\), then cancellation by \(s\) is valid modulo \(q\):
+\(
+sa\equiv sb\pmod q
+\implies
+a\equiv b\pmod q
+\).
+Hence multiplication by \(s\) modulo \(q\) is injective, and therefore, on the finite set \(\Z_q\), a permutation.%
+} modulo \(q\) i.e. $s$ is coprime to $q$ i.e. $\gcd(s,q)=1$, the extended Eu\-cli\-dean algorithm gives \(s^{-1}\), and
+\[
 \ell
 \equiv
 ys^{-1}
 \pmod q
-\end{equation}
-If \(s\notin\Z_q^*\), repeat.
+\]
+If \(s\notin\Z_q^*\), 
+then \(s\) is not invertible modulo \(q\), 
+so the congruence
+\(
+y\equiv s\ell \pmod q
+\)
+cannot be divided by \(s\), because it does not determine $\ell$ uniquely in that case. 
+In fact, if \(d=\gcd(s,q)>1\), 
+then this congruence determines \(\ell\) only modulo \(q/d\), 
+and hence leaves \(d\) possible residue classes modulo \(q\). 
+Thus this measurement gives only partial information about \(\ell\), 
+not the unique discrete logarithm.
+We therefore discard this run and repeat until \(s\in\Z_q^*\).
+% repeat.
 The success probability of one run is
 \[
 \Prob(s \perp q)
@@ -12271,11 +12788,139 @@ The success probability of one run is
 \frac{|\Z_q^*|}{q}
 % =
 % \frac{\psi(q)}{q}
-=
-\Omega\!\left(\frac1{\log\log q}\right)
+% =
+% \Omega\!\left(\frac1{\log\log q}\right)
 \]
-where the numerator is the so-called  Euler totient function, which counts the number of integers coprime to \(q\) and is known to grow with $\Omega(q/\log\log q)$.
+where the numerator is the so-called  Euler totient function, which counts the number of integers coprime to \(q\).
+It is known to grow with $\Omega(q/\log\log q)$, implying that the success probability is $\Omega(1/\log\log q)$ \cite{wikipediaTotientGrowth}.
+
 Thus the expected number of repetitions is \(O(\log\log q)\).
+
+% Hyperparameter for the plot below: change this to select how many integers are shown on the x-axis.
+% The values of \(\varphi(q)\) are computed by a sieve in TeX and written to a generated data file.
+\def\TotientPlotN{10000}
+\ExplSyntaxOn
+\intarray_new:Nn \g_qc_totient_phi_intarray { \TotientPlotN }
+\iow_new:N \g_qc_totient_data_iow
+\cs_new_protected:Npn \qc_totient_write_data:n #1
+  {
+    \int_step_inline:nn { #1 }
+      { \intarray_gset:Nnn \g_qc_totient_phi_intarray { ##1 } { ##1 } }
+    \int_step_inline:nnn { 2 } { #1 }
+      {
+        \int_compare:nNnT { \intarray_item:Nn \g_qc_totient_phi_intarray { ##1 } } = { ##1 }
+          {
+            \int_step_inline:nnnn { ##1 } { ##1 } { #1 }
+              {
+                \intarray_gset:Nnn \g_qc_totient_phi_intarray { ####1 }
+                  {
+                    \int_eval:n
+                      {
+                        \intarray_item:Nn \g_qc_totient_phi_intarray { ####1 }
+                        - \int_div_truncate:nn
+                            { \intarray_item:Nn \g_qc_totient_phi_intarray { ####1 } }
+                            { ##1 }
+                      }
+                  }
+              }
+          }
+      }
+    \iow_open:Nn \g_qc_totient_data_iow { totient-values-sieve.dat }
+    \iow_now:Nn \g_qc_totient_data_iow { q ~ phi }
+    \int_step_inline:nn { #1 }
+      {
+        \iow_now:Nx \g_qc_totient_data_iow
+          { ##1 ~ \intarray_item:Nn \g_qc_totient_phi_intarray { ##1 } }
+      }
+    \iow_close:N \g_qc_totient_data_iow
+  }
+\qc_totient_write_data:n { \TotientPlotN }
+\ExplSyntaxOff
+\tikzsetnextfilename{totient-plot-liminf-sieve}
+\[
+\begin{tikzpicture}[font=\footnotesize]
+  \begin{axis}[
+    scale only axis,
+    width=7.5cm,
+    height=7.5cm,
+    axis equal image,
+    xmin=0,
+    xmax=\TotientPlotN,
+    ymin=0,
+    ymax=\TotientPlotN,
+    axis lines=left,
+    axis line style={thick},
+    tick style={black,thick},
+    ticklabel style={font=\scriptsize},
+    scaled ticks=false,
+    xtick={0,1000,...,\TotientPlotN},
+    ytick={0,1000,...,\TotientPlotN},
+    xticklabel={\pgfmathprintnumber[fixed,precision=0]{\tick}},
+    yticklabel={\pgfmathprintnumber[fixed,precision=0]{\tick}},
+    xlabel={$q$},
+    ylabel={$|\Z_q^*|$},
+    xlabel style={font=\footnotesize},
+    ylabel style={font=\footnotesize},
+    legend style={
+      at={(0.03,0.97)},
+      anchor=north west,
+      draw=none,
+      fill=white,
+      fill opacity=0.86,
+      text opacity=1,
+      font=\scriptsize
+    },
+    legend cell align=left,
+    grid=both,
+    major grid style={black!12},
+    minor grid style={black!5},
+    minor tick num=1,
+    clip=true,
+    set layers=standard,
+    mark layer=like plot
+  ]
+    \addplot+[
+      only marks,
+      overviewgreen!75!black,
+      mark=square*,
+      mark size=0.28pt,
+      mark options={
+        draw=overviewgreen!75!black,
+        fill=overviewgreen!75!black,
+        line width=0pt
+      },
+      on layer=main,
+      forget plot
+    ] table[
+      x=q,
+      y=phi,
+      restrict x to domain=1:\TotientPlotN
+    ] {totient-values-sieve.dat};
+
+    \addplot[
+      alizarincrimsonred!85!black,
+      solid,
+      mark=none,
+      line width=0.75pt,
+      on layer=axis foreground,
+      domain=16:\TotientPlotN,
+      samples=160
+    ] {totientomega(x)};
+    \addlegendentry{$\eu^{-\gamma}q/\log\log q$}
+
+    \node[
+      anchor=south east,
+      font=\scriptsize,
+      fill=white,
+      fill opacity=0.86,
+      text opacity=1,
+      inner sep=2pt
+    ] at (rel axis cs:0.98,0.04) {$\gamma\simeq0.577$};
+  \end{axis}
+\end{tikzpicture}
+\]
+
+
 
 % Equivalently, one may use \(V^\dagger\) and the two-dimensional period-finding function
 % \[
@@ -12310,26 +12955,1191 @@ Thus the expected number of repetitions is \(O(\log\log q)\).
 % group operations, and the best known attacks on general elliptic-curve groups have this square-root behavior.
 % This is the sense in which Shor's discrete logarithm algorithm gives an exponential speed-up in the generic-group setting.
 
+% Sources for the estimates below:
+% - Local qalg notes, PDF p. 87 / printed p. 89, Theorem 6.27:
+%   \(O(T\log q+\log^2q)\) quantum gates, where \(T\) is the time for one group operation.
+% - Local qalg notes, PDF p. 87 / printed p. 89, paragraph before Theorem 6.27:
+%   \(O(\log\log q)\) trials if one repeats until the sampled \(s\) is invertible.
+% - Local qalg notes, PDF pp. 87--88 / printed pp. 89--90, Theorem 6.27 and Algorithm 6.5:
+%   the two-sample post-processing gives constant success probability without the \(O(\log\log q)\) overhead.
+% - Local qalg notes, PDF p. 61 / printed p. 63, Section 5.3, Theorem 5.15 and Algorithm 5.1:
+%   exact QFT over \(2^n\) has \(O(n^2)\) gates, giving the \(\log^2q\) contribution.
+% - Local qalg notes, PDF p. 75 / printed p. 77, totient paragraph and footnote 3:
+%   \(\varphi(r)/r=\Omega(1/\log\log r)\), hence \(O(\log\log q)\) expected repetitions.
+% - Shor original paper, arXiv PDF p. 1 abstract and Section 6, PDF pp. 19--24:
+%   polynomial-time quantum discrete logarithms, with the Section 6 construction in eqs. (6.1)--(6.20).
+%   https://arxiv.org/pdf/quant-ph/9508027
+% - Shor original paper, PDF p. 20, Section 6:
+%   the algorithm uses two modular exponentiations and two quantum Fourier transforms.
+%   https://arxiv.org/pdf/quant-ph/9508027
+% - QFT gate count web reference, section "Circuit implementation", final count \(n(n+1)/2=O(n^2)\):
+%   https://en.wikipedia.org/wiki/Quantum_Fourier_transform#Circuit_implementation
+% - Totient growth web reference, section "Growth rate":
+%   \(\liminf_{n\to\infty}\varphi(n)\log\log n/n=\eu^{-\gamma}\), motivating the plotted comparison \(\eu^{-\gamma}n/\log\log n\).
+%   https://en.wikipedia.org/wiki/Euler%27s_totient_function#Growth_rate
+% - Totient growth web reference, section "Growth rate", Rosser--Schoenfeld bound / Theorem 15:
+%   \(\varphi(n)>n/(e^\gamma\log\log n+3/\log\log n)\) for \(n>2\).
+%   https://en.wikipedia.org/wiki/Euler%27s_totient_function#Growth_rate
+% - Generic-group lower bound, Shoup original source, EUROCRYPT 1997, LNCS 1233, pp. 256--266:
+%   abstract on printed p. 256 and summary on printed p. 257 state the \(\Omega(\sqrt p)\) lower bound,
+%   where \(p\) is the largest prime divisor of the group order; Theorem 1 in Section 2 proves it.
+%   https://link.springer.com/chapter/10.1007/3-540-69053-0_18
+% - Generic-group lower bound, local qalg notes, PDF p. 88 / printed p. 90, Theorem 6.28 (Shoup):
+%   states the prime-order/simplified \(\Omega(\sqrt q)\) form used in the lecture notes.
+% - Modern generic discrete-log reference, arXiv PDF p. 14, Theorem 3.1:
+%   for prime-order cyclic \(G\), constant-advantage classical generic DL/CDH/DDH algorithms require
+%   \(\Omega(\sqrt{|G|})\) queries.
+%   https://arxiv.org/pdf/2307.03065
 Let
 \(
 n=\lceil\log_2q\rceil
-\) be the input length of the group order and \(T_G\) denote the number of gates needed to implement one group operation coherently.
+\) be the input length of the group order, and let \(p_{\max}\) be the largest prime divisor of \(q\).
+% Source: \(n=\lceil\log_2q\rceil\) is the input-length convention; Shoup, EUROCRYPT 1997, LNCS 1233, printed pp. 256--257, uses \(p\) for the largest prime divisor of the group order.
+Let \(T_G\) denote the number of gates needed to implement one group operation coherently.
+% Source: local qalg notes, PDF p. 87 / printed p. 89, Theorem 6.27, where \(T\) is the time for one group operation.
 For the repeat-until-\(s\in\Z_q^*\) version above,
 the expected gate count is
 \[
 O\!\left((T_G\log q+\log^2q)\log\log q\right)
 \]
-because one run uses \(O(T_G\log q+\log^2q)\) quantum gates and \(O(\log\log q)\) expected repetitions.
+because one run uses \(O(T_G\log q+\log^2q)\) quantum gates and \(O(\log\log q)\) expected repetitions
+\cite{laneveQuantumAlgorithms,wikipediaQFTGateCount,wikipediaTotientGrowth}.
+% Source: one-run gate count from local qalg notes, PDF p. 87 / printed p. 89, Theorem 6.27; repetition count from local qalg notes, PDF p. 75 / printed p. 77, totient paragraph and footnote 3, and PDF p. 87 / printed p. 89, paragraph before Theorem 6.27.
 % In the qalg notes this \(\log\log q\) overhead is removed by a constant-success two-sample post-processing.
+
+\pagebreak[2]
+
 Generic classical algorithms, by contrast, need
+\[
+\Omega(\sqrt{p_{\max}})
+\]
+group operations in Shoup's generic-group model \cite{shoupGenericDLP}.
+% Source: Shoup, EUROCRYPT 1997, LNCS 1233, printed p. 256 abstract and printed p. 257 summary of Theorem 1; \(p_{\max}\) is the largest prime divisor of the group order.
+In the prime-order case \(p_{\max}=q\), and this becomes
 \[
 \Omega(\sqrt q)
 =
 \Omega(2^{n/2})
 \]
-group operations, which is exponential in the input length \(n\).
+which is exponential in the input length \(n\) \cite{shoupGenericDLP,hhanYamakawaYunDiscreteLog}.
+% Source: prime-order specialization from Shoup's \(p_{\max}=q\) lower bound; \(q=2^{\Theta(n)}\) follows from \(n=\lceil\log_2q\rceil\).
+
 
 
 \clearpage
+
+
+
+\section{Quantum Complexity Theory}\label{sec:quantum-complexity-theory}
+
+% Main sources for this section:
+% - Nielsen and Chuang, Quantum Computation and Quantum Information, Section 3.2.4,
+%   local PDF pp. 184--187 / printed pp. 150--153: L, P, NP, PSPACE, EXP,
+%   hierarchy theorems, and the optimistic / pessimistic interpretations.
+% - Nielsen and Chuang, Quantum Computation and Quantum Information, Section 4.5.5,
+%   local PDF pp. 234--236 / printed pp. 200--202: BQP, uniform circuit families,
+%   BPP subset BQP subset PSPACE, and the polynomial-space simulation argument.
+% - Algorithms & Complexity summary, public source
+%   https://github.com/fabianbosshard/usi-informatics-course-summaries/tree/main/summaries/usi-algorithms-and-complexity,
+%   chapters/06_complexity.tex: decision-problem/language viewpoint and notation for P, NP, EXP.
+
+% The complexity-theory viewpoint is the same as in the Algorithms \& Complexity summary
+A decision problem is represented by a language
+\[
+L
+\subseteq
+\{0,1\}^{*} 
+\coloneq
+\bigcup_{n=0}^{\infty}\{0,1\}^{n}
+\]
+and solving the decision problem means deciding membership \(x\in L\).
+A complexity class is then a collection of languages that can be decided with a prescribed computational model and prescribed resource bounds.
+
+The three knobs are:
+\begin{itemize}
+\item
+resource: time, space, queries, circuit size
+\item
+kind of task: decision, search, optimization, approximation
+\item
+computational model: deterministic, randomized, quantum
+\end{itemize}
+
+% For comparing quantum computation with the classical theory learned last semester, we mostly stay with decision problems and polynomial resources.
+
+\subsection{Classical complexity classes}
+
+% Source: Nielsen--Chuang Section 3.2.4, PDF pp. 184--185 / printed pp. 150--151.
+\begin{definition}[Some classical complexity classes]\label{def:classical-complexity-reference-classes}
+Following \cite{nielsenChuangQCQI}, for languages \(L\subseteq\{0,1\}^{*}\):
+\begin{itemize}
+\item
+\(\mathrm{L}\) is the class decidable using \(O(\log n)\) working space.
+The input tape is read-only; the logarithmic bound applies to the work tape.
+\item
+\(\mathrm{P}\) is the class decidable in polynomial time.
+\item
+\(\mathrm{NP}\) is the class with polynomial-size certificates verifiable in polynomial time.
+\item
+\(\mathrm{PSPACE}\) is the class decidable using polynomial working space, with no polynomial bound on time.
+\item
+\(\mathrm{EXP}\) is the class decidable in exponential time \(O(2^{n^{k}})\) for some constant \(k\).
+\qedhere
+\end{itemize}
+\end{definition}
+
+
+\begin{claim}\label{claim:classical-complexity-chain}
+\leavevmode\setlength{\abovedisplayskip}{0pt}\vspace{-\baselineskip}
+\[
+\mathrm{L}
+\subseteq
+\mathrm{P}
+\subseteq
+\mathrm{NP}
+\subseteq
+\mathrm{PSPACE}
+\subseteq
+\mathrm{EXP}
+\qedhere
+\]
+\end{claim}
+
+
+\begin{proof}
+The inclusions have simple resource-counting proofs.
+
+\(\mathrm{L}\subseteq\mathrm{P}\):
+a deterministic \(O(\log n)\)-space machine has only polynomially many configurations:
+polynomially many input-head positions, polynomially many work-tape contents, polynomially many work-head positions, and constantly many internal states.
+A decider cannot visit the same configuration twice without looping, so it halts in polynomial time\footnote{%
+An L-machine is a decider, it is not allowed to loop. 
+Therefore it must halt before any repetition happens.%
+}.
+
+\(\mathrm{P}\subseteq\mathrm{NP}\):
+use the empty certificate and run the polynomial-time decision algorithm.
+
+\(\mathrm{NP}\subseteq\mathrm{PSPACE}\):
+if the certificate length is bounded by \(p(n)\), enumerate all \(2^{p(n)}\) certificates one after another.
+Each verification uses polynomial space, and the work tape can be erased between trials.
+
+\(\mathrm{PSPACE}\subseteq\mathrm{EXP}\):
+a polynomial-space machine has at most exponentially many configurations.
+If it is a decider, it must halt before repeating a configuration.
+\end{proof}
+
+The time hierarchy theorem implies
+\(
+\mathrm{P}
+\subsetneq
+\mathrm{EXP}
+\)
+and the space hierarchy theorem implies
+\(
+\mathrm{L}
+\subsetneq
+\mathrm{PSPACE}
+\).
+Thus at least one inclusion in the chain of \autoref{claim:classical-complexity-chain} must be strict,
+but it is not known which one(s).
+% However, none of the consecutive inclusions
+% \(
+% \mathrm{L}\subseteq\mathrm{P}
+% \), 
+% \(
+% \mathrm{P}\subseteq\mathrm{NP}
+% \), 
+% \(
+% \mathrm{NP}\subseteq\mathrm{PSPACE}
+% \), 
+% \(
+% \mathrm{PSPACE}\subseteq\mathrm{EXP}
+% \)
+% is known to be strict.
+
+\subsection{Bounded-error computation}\label{sec:bounded-error-computation}
+
+Randomized and quantum algorithms are usually allowed a small probability of error.
+The constant is not important as long as it is bounded away from \(1/2\),
+because independent repetitions and majority vote amplify the success probability\footnote{$1/2$ is the ``random guessing'' threshold for a yes/no answer.}.
+For example, success probability \(3/4\) can be amplified to \(1-\varepsilon\) with \(O(\log(1/\varepsilon))\) repetitions.
+
+
+% Source: Nielsen--Chuang Section 4.5.5, PDF p. 235 / printed p. 201.
+\begin{definition}[BPP]\label{def:bpp}
+\(\mathrm{BPP}\) (Bounded-error Probabilistic Polynomial-time) is the class of languages decidable by a randomized polynomial-time classical algorithm with bounded two-sided error \cite{nielsenChuangQCQI}.
+\end{definition}
+
+\pagebreak[3]
+
+\begin{definition}[BQP]\label{def:bqp}
+\(\mathrm{BQP}\) (Bounded-error Quantum Polynomial-time) is the quantum analogue of \autoref{def:bpp} \cite{nielsenChuangQCQI}.
+A language \(L\) is in \(\mathrm{BQP}\) if there exists a \emph{uniform} family of quantum circuits
+\[
+\{C_n\}_{n\in\N}
+\]
+such that:
+\begin{itemize}
+\item
+\(C_n\) has size polynomial in \(n\)
+\item
+on input \(x\in\{0,1\}^{n}\), the circuit \(C_n\) decides whether \(x\in L\) by measuring a designated output Qbit
+\item
+if \(x\in L\), the circuit accepts with probability at least \(3/4\)
+\item
+if \(x\notin L\), the circuit rejects with probability at least \(3/4\)
+\end{itemize}
+Uniform means that there is a classical Turing machine which, on input \(1^n\), outputs a description of \(C_n\) in time polynomial in \(n\).
+\end{definition}
+
+The family \(\{C_n\}\) is needed because one fixed circuit only has finitely many input wires.
+Uniformity rules out hiding an arbitrarily hard language in the choice of the circuits themselves:
+there must be an efficient classical recipe for constructing the circuit for length \(n\).
+
+% % Source: classification follows the decision/search distinction used in the Algorithms & Complexity summary,
+% % together with the algorithmic results proved in the earlier sections of this summary.
+% \begin{remark}[Where the algorithms above fit]\label{rem:algorithm-complexity-classes}
+% Strictly speaking, \(\mathrm{BQP}\) is a decision-problem class.
+% Several algorithms above are therefore better classified first as promise, oracle, search, or function problems.
+% The algorithms in \autoref{sec:simple-algorithms} are query algorithms:
+% \autoref{sec:deutsch-algorithm} and \autoref{sec:deutsch-jozsa-algorithm} are exact quantum algorithms for promise decision problems, while \autoref{sec:bernstein-vazirani-algorithm} and \autoref{sec:simons-algorithm} are naturally search problems in the oracle model.
+% The latter belong to the function analogue of \(\mathrm{BQP}\), often denoted \(\mathrm{FBQP}\), where the output is a string satisfying a relation rather than a single yes/no bit.
+% \autoref{sec:grover} is also a search/query algorithm: the OR decision version is solvable with \(O(\sqrt N)\) quantum queries, but for \(N=2^n\) this is still exponential in the input length \(n\), so Grover's algorithm does not put \(\mathrm{NP}\) inside \(\mathrm{BQP}\).
+% By contrast, Shor's algorithms in \autoref{sec:shor-factoring} and \autoref{sec:shor-discrete-logarithm} run in time polynomial in the input length.
+% Factoring and discrete logarithms are function problems, so the precise statement is
+% \[
+% \text{factoring},\ \text{discrete logarithm}
+% \in
+% \mathrm{FBQP}.
+% \]
+% Corresponding decision versions are in \(\mathrm{BQP}\).
+% \end{remark}
+
+\begin{fact}\label{fact:bpp-bqp-pspace}
+\leavevmode\setlength{\abovedisplayskip}{0pt}\vspace{-\baselineskip}
+\[
+\mathrm{P}
+\subseteq
+\mathrm{BPP}
+\subseteq
+\mathrm{BQP}
+\subseteq
+\mathrm{PSPACE}
+\qedhere
+\]
+\end{fact}
+
+\autoref{claim:classical-complexity-chain} and \autoref{fact:bpp-bqp-pspace} are summarized in the following diagram:
+\[
+\begin{tikzpicture}[
+  scale=0.82,
+  >=Stealth,
+  class/.style={
+    draw,
+    rounded corners=2pt,
+    minimum width=1.65cm,
+    minimum height=0.54cm,
+    align=center,
+    inner sep=2pt,
+    font=\footnotesize
+  },
+  inc/.style={-{Stealth[length=1.45mm]}, thick},
+  note/.style={font=\scriptsize, align=center}
+]
+  \node[class] (L) at (0,1.35) {$\mathrm{L}$};
+  \node[class] (P) at (3,1.35) {$\mathrm{P}$};
+  \node[class] (NP) at (6,1.35) {$\mathrm{NP}$};
+  \node[class] (PSPACE) at (9,1.35) {$\mathrm{PSPACE}$};
+  \node[class] (EXP) at (12,1.35) {$\mathrm{EXP}$};
+
+  \node[class] (BPP) at (4.5,0) {$\mathrm{BPP}$};
+  \node[class] (BQP) at (7.5,0) {$\mathrm{BQP}$};
+
+  \draw[inc] (L) -- (P);
+  \draw[inc] (P) -- (NP);
+  \draw[inc] (NP) -- (PSPACE);
+  \draw[inc] (PSPACE) -- (EXP);
+  \draw[inc] (P) -- (BPP);
+  \draw[inc] (BPP) -- (BQP);
+  \draw[inc] (BQP) -- (PSPACE);
+
+  % \node[note] at (4.55,-0.72)
+  %   {only proven inclusions are shown;\\no inclusion between \(\mathrm{NP}\) and \(\mathrm{BQP}\) is known};
+\end{tikzpicture}
+\]
+
+
+The inclusion \(\mathrm{BPP}\subseteq\mathrm{BQP}\) is the easy one:
+a quantum circuit can simulate a randomized classical polynomial-time computation.
+
+% Random bits are generated by preparing \(\ket0\), applying a Hadamard, and measuring in the computational basis.
+% Indeed, by \autoref{ex:hadamard},
+% \[
+% H\ket0
+% =
+% \frac{\ket0+\ket1}{\sqrt2},
+% \]
+% so the Born rule from \autoref{sec:observables} gives outcome \(0\) and outcome \(1\) with probability \(1/2\) each.
+% Equivalently, by \eqref{eq:nfold-hadamard-zero}, measuring
+% \(
+% H^{\otimes k}\ket{\vect0}
+% \)
+% gives a uniformly random \(k\)-bit string.
+Random bits are generated directly in parallel.
+To obtain \(k\) independent random bits, prepare
+\(
+\ket{\vect 0}
+=
+\ket{0}^{\otimes k}
+\),
+apply Hadamards to all \(k\) Qbits, and measure in the computational basis.
+% By \eqref{eq:nfold-hadamard-zero},
+% \[
+% H^{\otimes k}\ket{\vect 0}
+% =
+% \frac{1}{\sqrt{2^k}}
+% \sum_{r\in\{0,1\}^k}
+% \ket r
+% \]
+% so the Born rule from \autoref{sec:observables} says that the outcome
+% \(
+% r\in\{0,1\}^k
+% \)
+% is obtained with probability
+% \(
+% \left|
+% \frac{1}{\sqrt{2^k}}
+% \right|^2
+% =
+% \frac{1}{2^k}
+% \).
+% Thus the measurement produces a uniformly random \(k\)-bit string.
+As seen in \autoref{ex:hadamard-n-qbits},
+\[
+H^{\otimes k}\ket{\vect 0}
+\overset{\text{\eqref{eq:nfold-hadamard-zero}}}{=}
+\frac{1}{\sqrt{2^k}}
+\sum_{\vect r\in\{0,1\}^k}
+\ket{\vect r}
+\]
+so the Born rule from \autoref{sec:observables} gives every outcome \(\vect r\in\{0,1\}^k\) probability \(1/2^k\).
+Thus the measurement produces a uniformly random \(k\)-bit string.
+
+The deterministic part of the classical computation can then be embedded into a reversible computation as in \autoref{sec:reversible-computing}.
+At the gate level, \autoref{sec:toffoli-gate} explains why Toffoli gates are enough for reversible classical computation, and the \hyperref[sec:cnot-classical-universality]{classical-universality part of \autoref{sec:cnot-gate}} explains how CNOT plus one-Qbit gates gives Toffoli.
+
+\medskip
+
+
+
+The nontrivial and important inclusion is %\(\mathrm{BQP}\subseteq\mathrm{PSPACE}\).
+
+\subsection{\texorpdfstring{\(\mathrm{BQP}\subseteq\mathrm{PSPACE}\)}{BQP subset PSPACE}}\label{sec:bqp-subset-pspace}
+
+% Source: Nielsen--Chuang Section 4.5.5, PDF pp. 235--236 / printed pp. 201--202.
+The proof below follows the standard polynomial-space simulation argument in \cite{nielsenChuangQCQI}.
+% Let a polynomial-size quantum circuit on \(m=\operatorname{poly}(n)\) Qbits be % what is $n$?
+Let \(n\) be the input length.
+After adding polynomially many ancilla Qbits, the circuit acts on \(m(n)=\operatorname{poly}(n)\) Qbits and has \(T(n)=\operatorname{poly}(n)\) elementary gates.
+We assume a fixed finite universal gate set, or more generally elementary gates whose matrix entries can be computed to polynomially many bits using polynomial space.
+
+By \autoref{fact:deferred-measurement-principle}, we may assume that the computation is unitary until a final measurement of one designated output Qbit.
+Write the unitary part as
+\[
+C
+=
+% U_T U_{T-1} \cdots U_2 U_1
+% \prod_{t=T}^{1} U_t
+% =
+U_T \cdots U_1
+\]
+% where \(T=\operatorname{poly}(n)\), and the initial state is the computational-basis state \(\ket{\eta_x}\).
+% what is the meaning of $T$? what is the meaning of $U_t$? what is the dimension of $U_t$ (m times m)? what if the quantum algorithm is not of that simple form?
+where each \(U_t\) denotes the full \(2^m\times2^m\) unitary on
+\(
+\mathcal H_m=(\C^2)^{\otimes m}
+\)
+obtained by applying one elementary one- or two-Qbit gate to its wires and the identity to all other wires. % why only one or two qbits? because that allows to build any unitary on \(m\) Qbits? 
+
+The point is not that every \(m\)-Qbit unitary is counted as one allowed operation.
+Rather, the circuit model counts local elementary gates.
+One- and two-Qbit gate sets are universal in the sense discussed around \autoref{sec:cnot-gate}, but a generic \(m\)-Qbit unitary may require exponentially many local gates to implement.
+Allowing such a unitary as a single \(U_t\) would hide the exponential complexity inside one gate.
+
+\pagebreak[3]
+
+Let the initial computational-basis state be
+\[
+\ket{\eta_x}
+=
+\ket{x}\ket{0}^{\otimes a(n)}
+\]
+with $a(n)=m(n)-n$,
+where the second register contains the ancilla Qbits.
+
+
+First fix a final basis state \(\ket{\vect{y}}\).
+% To compute the amplitude of a final basis state 
+% \(\ket{\vect{y}}\),  % so we calculate the amplitudes of all possible $2^m$ final basis states \(\ket{\vect{y}}\)?
+To compute its amplitude, insert the computational-basis resolution of the identity from \eqref{eq:computational-basis-resolution-identity}, with \(n\) replaced by \(m\),
+\[
+\sum_{\vect{z}\in\{0,1\}^{m}}\ket{\vect{z}}\bra{\vect{z}}
+=
+\id_{\mathcal H_m}
+% \id % id of what space? what dimenison?
+\]
+between every pair of gates:
+\begin{equation}\label{eq:history-sum}
+\braket{\vect{y}|U_T\cdots U_1|\eta_x}
+=
+\sum_{\vect{z}_1,\ldots,\vect{z}_{T-1}}
+\braket{\vect{y}|U_T|\vect{z}_{T-1}}
+% \prod_{t=T-1}^{2} \braket{\vect{z}_t|U_t|\vect{z}_{t-1}}
+\braket{\vect{z}_{T-1}|U_{T-1}|\vect{z}_{T-2}}
+\cdots
+\braket{\vect{z}_2|U_2|\vect{z}_1}
+\braket{\vect{z}_1|U_1|\eta_x}
+\end{equation}
+% This is a sum over exponentially many computational histories.
+% It may take exponential time to evaluate, but it only needs polynomial space:
+% one stores the current tuple
+This is a sum over many computational histories:
+each intermediate \(\vect{z}_t\) ranges over \(2^m\) basis strings, and there are \(T-1\) such intermediate times.
+Thus the number of summands is
+\(
+2^{m(T-1)}
+=
+2^{\operatorname{poly}(n)}
+\),
+because \(m=\operatorname{poly}(n)\) and \(T=\operatorname{poly}(n)\).
+This may take exponential time, but only polynomial space:
+the classical simulator can run nested loops over
+\(
+\vect{z}_1,\ldots,\vect{z}_{T-1}
+\),
+% the current product, and the running sum, each to polynomial precision.
+% After a term has been added, its workspace can be reused.
+store the current \(m\)-bit strings, the current product, and the running sum, and then reuse this workspace after each summand has been added.
+Although exponentially many summands are added, accuracy \(2^{-\operatorname{poly}(n)}\) still requires only polynomially many bits, and is enough to make the final additive error smaller than any fixed constant.
+
+
+
+% The acceptance probability is obtained by summing \(|\alpha_{\vect{y}}|^2\) over accepting basis states \(\vect{y}\). % what? 
+Now use that \(\mathrm{BQP}\) is a decision class.
+The simulator does not need to find the most likely output string, nor sample from the whole final distribution.
+It only needs the probability that the designated output Qbit is \(1\).
+If
+\[
+A
+\coloneq
+\left\{
+\vect{y}\in\{0,1\}^{m}
+:
+y_{\mathrm{out}}=1
+\right\}
+\]
+is the set of accepting basis states, then
+\begin{equation}\label{eq:acceptance-probability}
+\Prob(\text{accept})
+=
+\sum_{\vect{y}\in A}
+\left|
+\braket{\vect{y}|U_T\cdots U_1|\eta_x}
+\right|^2
+\end{equation}
+% This outer sum is also exponential, % exponential in what? and why?
+% but it can again be evaluated term by term:
+% store the current \(\vect{y}\), 
+% compute its amplitude using the history sum above, 
+% add the squared modulus to a running total, and erase the temporary amplitude.
+% Because the \(\mathrm{BQP}\) promise gap is constant, % what is a promise gap?
+% it is enough to approximate \(\Prob(\text{accept})\) to error, say, \(1/10\), % why is it enough to be that inaccurate? where does the magic number 1/10 come from?
+% and then distinguish the cases \(\Prob(\text{accept})\ge 3/4\) and \(\Prob(\text{accept})\le 1/4\).
+This outer sum is exponential in the number \(m\) of Qbits:
+if one output Qbit is designated, then roughly half of the \(2^m\) basis states have \(y_{\mathrm{out}}=1\), so
+\[
+|A|
+=
+2^{m-1}
+=
+2^{\operatorname{poly}(n)} 
+\]
+Again this is allowed in \(\mathrm{PSPACE}\), because only space is restricted.
+The simulator enumerates the accepting \(\vect{y}\)'s one after another, 
+computes the amplitude for the current \(\vect{y}\) using the history sum \eqref{eq:history-sum}, 
+adds the squared modulus to a running total, and erases the temporary amplitude.
+
+Finally use the bounded-error gap in the definition of \(\mathrm{BQP}\).
+For every input \(x\), the circuit is guaranteed to be in one of the two separated cases
+\[
+x\in L
+\implies
+\Prob(\text{accept})\ge \frac34,
+\qquad
+x\notin L
+\implies
+\Prob(\text{accept})\le \frac14
+\]
+The gap between the two thresholds is \(1/2\).
+Hence the classical simulator does not need the exact acceptance probability.
+
+\begin{remark}
+Mathematically, the acceptance probability \eqref{eq:acceptance-probability} is exact.
+The error below is not quantum error; it is only numerical approximation error from storing amplitudes and partial sums with finite precision on the classical work tape.
+\end{remark}
+
+Any additive error strictly smaller than half of this gap is enough.
+Fix any constant
+\(
+0<\varepsilon<1/4
+\).
+If the simulator computes an estimate \(\widetilde p\) with
+\[
+\left|\widetilde p-\Prob(\text{accept})\right|
+\le
+\varepsilon
+\]
+then
+\[
+x\in L
+\implies
+\widetilde p\ge \frac34-\varepsilon>\frac12,
+\qquad
+x\notin L
+\implies
+\widetilde p\le \frac14+\varepsilon<\frac12
+\]
+Comparing \(\widetilde p\) with \(1/2\) therefore decides whether \(x\in L\).
+Thus a classical Turing machine can simulate the bounded-error quantum circuit using polynomial space, proving
+\(
+\mathrm{BQP}
+\subseteq
+\mathrm{PSPACE}
+\).
+
+
+\paragraph{Consequences}
+Quantum computers do not enlarge the class of computable functions:
+their computations can be simulated classically if no efficiency requirement is imposed.
+What is at stake is efficiency.
+
+\pagebreak[3]
+
+
+% \begin{remark}[Consequences]\label{rem:quantum-complexity-consequences}
+\subsection{Extended Church--Turing thesis}
+
+% Quantum computation challenges the strong Church--Turing thesis,
+%  which informally says that every physically reasonable computation can be simulated efficiently by a probabilistic classical machine.
+% The strong Church--Turing thesis informally says that every physically reasonable computing device can be simulated efficiently by a probabilistic classical machine.
+While the original Church--Turing thesis is about computability, the \emph{extended} (or \emph{strong}) Church--Turing thesis is about efficient computability.
+It says that every ``{reasonable}'' or ``{physically realizable}'' model of computation can be simulated by a probabilistic classical machine with at most polynomial overhead.
+It is less known and less widely accepted than the original Church--Turing thesis.
+
+% Quantum computation challenges this because there are natural problems, such as factoring and discrete logarithms in \autoref{sec:shor}, that have polynomial-time quantum algorithms, while no polynomial-time randomized classical algorithms are known for them.
+% Thus quantum computers are not believed to compute uncomputable functions; rather, they may compute some ordinary computable functions much more efficiently.
+% \end{remark}
+
+Thanks to Shor's \autoref{alg:shor-factoring} from \autoref{sec:shor}, we know that one of the following statements must be false \cite{gharibianQuantumComplexityTheory}:
+\begin{enumerate}
+  \item The extended Church--Turing thesis is true.
+  \item FACTOR cannot be solved efficiently by a classical randomized algorithm.\footnote{i.e., suitable decision versions of FACTOR are not in \(\mathrm{BPP}\)}
+  \item large-scale universal quantum computers can be built.
+\end{enumerate}
+
+
+Any two of the three statements together imply that the remaining one is false.\footnote{%
+This comparison needs some care: the first two claims are asymptotic complexity statements, while the third concerns finite physical circuits where one does not necessarily care about very large input sizes.%
+}
+
+
+
+
+\subsection{\texorpdfstring{The Sword in the Stone: Quantum Analogues of \(\mathrm{NP}\)}{The Sword in the Stone: Quantum Analogues of NP}}\label{sec:qma}
+
+% Sources:
+% - QCT_Masterfile.pdf, Section 5.1, PDF pp. 50--52 / printed pp. 47--49: QMA definition, promise-problem viewpoint, and pure quantum witnesses.
+% - QCT_Masterfile.pdf, Section 5.3.1, PDF pp. 58--59 / printed pp. 55--56: QCMA/QMA variants and basic containments.
+% - QCT_Masterfile.pdf, Section 6, PDF pp. 62--69 / printed pp. 59--66: Local Hamiltonian and the quantum Cook--Levin theorem.
+% Source for the NP-verification comparison: QCT_Masterfile.pdf, Section 5 introduction, PDF p. 50 / printed p. 47.
+% \autoref{def:classical-complexity-reference-classes} described
+% \(
+% \mathrm{NP}
+% \)
+% as polynomial-time verification with a polynomial-size classical certificate.
+% Source for the non-uniqueness of quantum analogues and the de facto role of QMA: QCT_Masterfile.pdf, Section 5 introduction, PDF p. 50 / printed p. 47.
+There is not a single unique quantum analogue of
+\(
+\mathrm{NP}
+\) (\autoref{def:classical-complexity-reference-classes}) \cite{gharibianQuantumComplexityTheory}.
+The verifier can be quantum, and the certificate can be classical or quantum.
+Merlin--Arthur terminology is usually used here:
+Merlin sends a witness, and Arthur verifies it.
+
+% % Source for the MA definition: QCT_Masterfile.pdf, Definition 5.1, PDF p. 50 / printed p. 47, defines PromiseMA with constants \(2/3\) and \(1/3\).
+% % Exercise 5.2 on the same page explicitly asks for the no-promise version, i.e. MA; the definition below is obtained by dropping the invalid-input case.
+% \begin{definition}[\(\mathrm{MA}\)]\label{def:ma}
+% A language
+% \(
+% L\subseteq\{0,1\}^*
+% \)
+% is in
+% \(
+% \mathrm{MA}
+% \)
+% if there is a deterministic Turing machine
+% \(
+% M
+% \)
+% and polynomials
+% \(
+% p,s,r
+% \)
+% such that, for every input
+% \(
+% x\in\{0,1\}^n
+% \),
+% proof
+% \(
+% y\in\{0,1\}^{p(n)}
+% \),
+% and random string
+% \(
+% z\in\{0,1\}^{s(n)}
+% \),
+% \(
+% M(x,y,z)
+% \)
+% halts in
+% \(
+% O(r(n))
+% \)
+% steps and:
+% \begin{itemize}
+% \item
+% if
+% \(
+% x\in L
+% \),
+% then there exists a proof
+% \(
+% y
+% \)
+% such that
+% \(
+% M(x,y,z)
+% \)
+% accepts for at least
+% \(
+% 2/3
+% \)
+% of all random strings
+% \(
+% z
+% \);
+% \item
+% if
+% \(
+% x\notin L
+% \),
+% then for every proof
+% \(
+% y
+% \),
+% \(
+% M(x,y,z)
+% \)
+% accepts for at most
+% \(
+% 1/3
+% \)
+% of all random strings
+% \(
+% z
+% \).
+% \end{itemize}
+% \end{definition}
+
+% Source for the promise-problem convention: QCT_Masterfile.pdf, Definition 5.1 and Definition 5.4, PDF pp. 50--51 / printed pp. 47--48.
+Strictly speaking, these classes are usually defined for \emph{promise problems} \cite{gharibianQuantumComplexityTheory}.
+This means that there are two disjoint sets
+\(
+L_{\mathrm{yes}}
+\)
+and
+\(
+L_{\mathrm{no}}
+\),
+and the verifier only has to behave correctly on inputs promised to lie in
+\(
+L_{\mathrm{yes}}\cup L_{\mathrm{no}}
+\).
+On inputs outside this promise set, no correctness requirement is imposed.
+% This is the same kind of gap as in the bounded-error definition of
+% \(
+% \mathrm{BQP}
+% \)
+% from \autoref{def:bqp}. 
+
+% Source for QMA definition: QCT_Masterfile.pdf, Definition 5.4, PDF p. 51 / printed p. 48.
+% The source writes the promise problem as \(A=(A_{\mathrm{yes}},A_{\mathrm{no}},A_{\mathrm{inv}})\), uses a P-uniform circuit family \(\{Q_n\}\), and uses thresholds \(2/3\) and \(1/3\).
+% The version below uses the equivalent two-set promise notation \(L=(L_{\mathrm{yes}},L_{\mathrm{no}})\), renames the verifier to \(V_n\), and uses the amplified constant gap \(3/4\) versus \(1/4\).
+% Source for changing constant completeness/soundness parameters: QCT_Masterfile.pdf, weak error reduction discussion after Definition 5.4, PDF p. 51 / printed p. 48, and strong error reduction in Section 5.2.
+\begin{definition}[\(\mathrm{QMA}\)]\label{def:qma}
+A promise problem
+\(
+L=(L_{\mathrm{yes}},L_{\mathrm{no}})
+\)
+is in
+\(
+\mathrm{QMA}
+\)
+if there is a polynomial-size uniform quantum circuit family
+\(
+\{V_n\}_{n\in\N}
+\)
+and polynomials
+\(
+p,q
+\)
+such that, on an input
+\(
+x\in\{0,1\}^n
+\),
+the verifier receives
+\(
+x
+\),
+a
+\(
+p(n)
+\)-Qbit witness
+\(
+\ket{\psi}
+\),
+and
+\(
+q(n)
+\)
+ancilla Qbits initialized to
+\(
+\ket{0}^{\otimes q(n)}
+\).
+After applying
+\(
+V_n
+\),
+one designated output Qbit is measured in the computational basis.
+The requirements are:
+\begin{itemize}
+\item
+if
+\(
+x\in L_{\mathrm{yes}}
+\),
+then there exists a quantum witness
+\(
+\ket{\psi}
+\)
+that makes the verifier accept with probability at least
+\(
+3/4
+\)
+\item
+if
+\(
+x\in L_{\mathrm{no}}
+\),
+then every quantum witness
+\(
+\ket{\psi}
+\)
+makes the verifier accept with probability at most
+\(
+1/4
+\)
+\qedhere
+\end{itemize}
+\end{definition}
+
+% Source for constant-gap robustness: QCT_Masterfile.pdf, Exercise 5.3 for PromiseMA and weak/strong error reduction for QMA after Definition 5.4, PDF pp. 51--60 / printed pp. 48--57.
+The constants
+\(
+3/4
+\)
+and
+\(
+1/4
+\)
+are not important.
+As in
+\(
+\mathrm{BPP}
+\) (\autoref{def:bpp})
+and
+\(
+\mathrm{BQP}
+\) (\autoref{def:bqp}),
+the precise constants are not part of the class definition.
+For \(\mathrm{QMA}\), this robustness follows from standard QMA error-reduction results.
+% Source for pure witnesses and the linear/eigenvalue formulation of the verifier acceptance probability: QCT_Masterfile.pdf, "Pure versus mixed proofs", PDF p. 52 / printed p. 49, especially Equations (5.1)--(5.3) and Exercise 5.9.
+It is also enough to quantify over pure witnesses:
+a mixed witness is a convex combination of pure states, and the verifier's acceptance probability is linear in the density matrix.
+Therefore the best mixed witness cannot do better than some pure witness.
+
+% Source for QCMA: QCT_Masterfile.pdf, Section 5.3.1, PDF p. 58 / printed p. 55.
+\begin{definition}[\(\mathrm{QCMA}\)]\label{def:qcma}
+\(
+\mathrm{QCMA}
+\)
+is defined like
+\(
+\mathrm{QMA}
+\),
+except that Merlin's witness is an ordinary polynomial-size classical bit string.
+Thus the verifier is quantum, but the certificate is classical.
+\end{definition}
+
+
+% Source for MA: QCT_Masterfile.pdf, Definition 5.1, PDF p. 50 / printed p. 47, defines PromiseMA; Exercise 5.2 asks for the no-promise MA version.
+% Source for NP subset MA: direct from the definition of MA, by ignoring randomness.
+% Source for MA subset QCMA: direct from \autoref{def:qcma}, because a quantum verifier can simulate the classical randomized verifier and generate random bits as in the proof of \(\mathrm{BPP}\subseteq\mathrm{BQP}\).
+\(
+\mathrm{MA}
+\)
+is the classical Merlin--Arthur class:
+Merlin sends a classical witness, and Arthur checks it using a randomized polynomial-time classical verifier.
+MA fits between
+\[
+\mathrm{NP}
+\subseteq
+\mathrm{MA}
+\subseteq
+\mathrm{QCMA}
+\]
+The first inclusion holds because an MA verifier is allowed but not forced to use randomness, so it can simply run the deterministic NP verifier.
+The second inclusion holds because a quantum verifier can simulate the classical randomized verifier and generate random bits (same story as in the proof of \(\mathrm{BPP}\subseteq\mathrm{BQP}\) in \autoref{sec:bounded-error-computation}).
+
+\pagebreak[3]
+
+
+% Source for BQP subset QCMA subset QMA: QCT_Masterfile.pdf, Section 5.3.1, PDF p. 58 / printed p. 55.
+% Source for P subset NP: Nielsen--Chuang Section 3.2.4 and \autoref{claim:classical-complexity-chain}.
+% Source for QMA subset PSPACE: QCT_Masterfile.pdf, Section 5.3.1--5.3.2, PDF pp. 59--60 / printed pp. 56--57, which states QMA subset PP and recalls PP subset PSPACE.
+% The inclusion NP subset QCMA follows directly from the definitions: a quantum verifier can run the deterministic NP verifier and check the classical certificate.
+We have \cite{gharibianQuantumComplexityTheory}
+% \begin{gather}
+% % \mathrm{P}
+% % \subseteq
+% \mathrm{NP}
+% \subseteq
+% \mathrm{QCMA}
+% % \subseteq
+% % \mathrm{QMA}
+% \label{eq:qma-containments-classical-witness-chain}
+% \\
+\[
+\mathrm{BQP}
+\subseteq
+\mathrm{QCMA}
+\subseteq
+\mathrm{QMA}
+\subseteq
+\mathrm{PSPACE}
+\]
+% \label{eq:qma-containments-quantum-upper-bound-chain}
+% \end{gather}
+% % Source/justification: this is the direct simulation argument for \(\mathrm{NP}\subseteq\mathrm{QCMA}\) from \autoref{def:qcma} and the classical definition of NP in \autoref{def:classical-complexity-reference-classes}.
+% \eqref{eq:qma-containments-classical-witness-chain} says that a quantum verifier with a classical witness generalizes ordinary deterministic verification with classical certificates.
+% Indeed, the quantum verifier can simulate the deterministic
+% \(
+% \mathrm{NP}
+% \)
+% verifier and check the same classical certificate.
+% Source/justification for BQP subset QCMA: QCT_Masterfile.pdf, Section 5.3.1, PDF p. 58 / printed p. 55; the empty-witness proof is the standard trivial-inclusion proof.
+% In \eqref{eq:qma-containments-quantum-upper-bound-chain}, 
+The first inclusion
+% \(
+% \mathrm{BQP}\subseteq\mathrm{QCMA}
+% \)
+uses an empty classical witness:
+Arthur simply runs the
+\(
+\mathrm{BQP}
+\)
+computation from \autoref{def:bqp} (same story as for \(
+\mathrm{P}\subseteq\mathrm{NP}
+\)).
+
+% The second inclusion
+% % \(
+% % \mathrm{QCMA}\subseteq\mathrm{QMA}
+% % \)
+% holds because a classical witness is a special case of a quantum witness in the computational basis.
+% % Source/justification for QMA subset PSPACE in this sentence: QCT_Masterfile.pdf, PDF p. 52 / printed p. 49 gives the largest-eigenvalue formulation, and PDF pp. 59--60 / printed pp. 56--57 give the upper bound QMA subset PP with PP subset PSPACE.
+The second inclusion
+% \(
+% \mathrm{QCMA}\subseteq\mathrm{QMA}
+% \)
+holds because the \(\mathrm{QMA}\) verifier can first measure Merlin's witness in the computational basis and then run the \(\mathrm{QCMA}\) verifier on the resulting classical string.
+Thus honest classical witnesses are allowed, while arbitrary quantum witnesses give only convex combinations of classical witnesses.
+% Source/justification for QMA subset PSPACE in this sentence: QCT_Masterfile.pdf, PDF p. 52 / printed p. 49 gives the largest-eigenvalue formulation, and PDF pp. 59--60 / printed pp. 56--57 give the upper bound QMA subset PP with PP subset PSPACE.
+
+
+The last inclusion is a standard upper bound, analogous in spirit to \autoref{sec:bqp-subset-pspace}.
+For each fixed input \(x\), the verifier defines an acceptance operator acting on Merlin's witness register.
+The maximum acceptance probability over all witnesses is the largest eigenvalue of this operator.
+Although the operator is exponentially large, its entries can be computed from the verifier circuit, and the largest eigenvalue can be approximated using polynomial space.
+
+% The analogy with
+% \(
+% \mathrm{NP}
+% \)
+% should not be overread.
+% \(
+% \mathrm{QMA}
+% \)
+% does not mean that Arthur can find the witness efficiently; it only means that Arthur can verify it efficiently if Merlin supplies it.
+% Similarly, the query speed-up in \autoref{sec:grover} does not prove
+% \(
+% \mathrm{NP}\subseteq\mathrm{BQP}
+% \):
+% Grover's algorithm gives a quadratic black-box search improvement, while
+% \(
+% \mathrm{BQP}
+% \)
+% has no extra witness input.
+
+% Source for Local Hamiltonian as the quantum Cook--Levin/SAT analogue: QCT_Masterfile.pdf, Section 6 introduction, PDF p. 62 / printed p. 59.
+The quantum analogue of
+\(
+\mathrm{SAT}
+\)
+is the \emph{Local Hamiltonian} problem \cite{gharibianQuantumComplexityTheory}.
+% Source for Hamiltonians, locality, energy levels, and ground-state energy: QCT_Masterfile.pdf, Definition 6.10, PDF p. 65 / printed p. 62.
+Recall from \eqref{eq:hamiltonian} and \autoref{sec:observables} that a Hamiltonian is a Hermitian operator whose eigenvalues are interpreted as energy levels.
+For a Hamiltonian
+\(
+H
+\),
+write
+\(
+\lambda_{\min}(H)
+\)
+for its smallest eigenvalue, i.e. its ground-state energy.
+
+% Source for the witness analogy: QCT_Masterfile.pdf, Lemma 6.23 and its proof sketch, PDF pp. 69--70 / printed pp. 66--67.
+The analogy is that a satisfying assignment is a classical witness for
+\(
+\mathrm{SAT}
+\),
+whereas a low-energy quantum state is a quantum witness for Local Hamiltonian.
+Arthur's task is to check whether the supplied state has small energy with respect to
+\(
+H
+\).
+
+% Source for the k-Local Hamiltonian promise problem: QCT_Masterfile.pdf, Definition 6.20, PDF p. 68 / printed p. 65.
+% The notation below uses the standard convention \(a<b\), with YES case \(\lambda_{\min}(H)\le a\), NO case \(\lambda_{\min}(H)\ge b\), and promise gap \(b-a\ge1/\operatorname{poly}(n)\).
+\begin{problem}[\(k\)-Local Hamiltonian]\label{problem:k-local-hamiltonian}
+Given a Hamiltonian
+\(
+H=\sum_j H_j
+\)
+on
+\(
+n
+\)
+Qbits, where each term
+\(
+H_j
+\)
+acts nontrivially on at most
+\(
+k
+\)
+Qbits, and two thresholds
+\(
+a<b
+\)
+with
+\(
+b-a\ge 1/\operatorname{poly}(n)
+\).
+Here the number of terms is polynomial in \(n\), each \(H_j\) is specified by polynomially many bits, and the operator norms are bounded by \(\operatorname{poly}(n)\).
+Decide whether
+\[
+\lambda_{\min}(H)\le a
+\qquad\text{or}\qquad
+\lambda_{\min}(H)\ge b
+\]
+promised that one of the two cases holds.
+\end{problem}
+
+% Source for the theorem: QCT_Masterfile.pdf, Theorem 6.22, PDF p. 69 / printed p. 66.
+% Source for the \(k=2\) refinement comment: QCT_Masterfile.pdf, paragraph immediately after Theorem 6.22, PDF p. 69 / printed p. 66.
+Kitaev's quantum Cook--Levin theorem says that
+\(
+5
+\)-Local Hamiltonian is
+\(
+\mathrm{QMA}
+\)-complete \cite{gharibianQuantumComplexityTheory}.
+With stronger results, even
+\(
+2
+\)-Local Hamiltonian is
+\(
+\mathrm{QMA}
+\)-complete.
+% Source for "QMA-complete" meaning: QCT_Masterfile.pdf, Section 6.3, PDF p. 69 / printed p. 66, which says containment in QMA is shown in Section 6.3.1 and QMA-hardness in Section 6.3.2.
+\(\mathrm{QMA}\)-complete means that the problem is in
+\(
+\mathrm{QMA}
+\),
+and every problem in
+\(
+\mathrm{QMA}
+\)
+can be reduced to it by a polynomial-time classical reduction.
+Thus Local Hamiltonian plays for
+\(
+\mathrm{QMA}
+\)
+roughly the role that
+\(
+\mathrm{SAT}
+\)
+plays for
+\(
+\mathrm{NP}
+\).
+
+\subsection{How optimistic should we be?}
+
+% Source: Nielsen--Chuang Section 3.2.4, PDF p. 185 / printed p. 151,
+% and Section 4.5.5, PDF p. 235 / printed p. 201.
+% The previous paragraphs should be read together with the algorithms from the earlier sections.
+\autoref{sec:grover} gives a provable query-complexity advantage, while \autoref{sec:shor} gives polynomial-time quantum algorithms for important arithmetic problems \cite{nielsenChuangQCQI}.
+These results suggest that quantum computation can be more efficient than classical randomized computation for some natural problems.
+
+However, they are still not unconditional complexity-class separations:
+the Shor-type algorithms from \autoref{sec:shor} put suitable decision versions of factoring and discrete logarithms in \(\mathrm{BQP}\), but they do not prove
+\(
+\mathrm{P}\subsetneq\mathrm{BQP}
+\)
+or
+\(
+\mathrm{BPP}\subsetneq\mathrm{BQP}
+\).
+
+The inclusions in \autoref{fact:bpp-bqp-pspace} explain why such a proof would be a major breakthrough:
+% \begin{itemize}
+% \item
+% Since
+% \(
+% \mathrm{BQP}
+% \subseteq
+% \mathrm{PSPACE}
+% \),
+% an unconditional proof that
+% \(
+% \mathrm{P}\subsetneq\mathrm{BQP}
+% \)
+% would imply
+% \(
+% \mathrm{P}
+% \neq
+% \mathrm{PSPACE}
+% \).
+% % Indeed, if \(\mathrm{P}=\mathrm{PSPACE}\), then
+% % \(
+% % \mathrm{BQP}\subseteq\mathrm{PSPACE}=\mathrm{P}
+% % \).
+% Hence, proving a genuine deterministic classical lower bound for a \(\mathrm{BQP}\) problem would separate two classical classes whose equality is an open problem.
+% \item
+% Similarly, an unconditional proof that quantum polynomial time is stronger than randomized classical polynomial time,
+% \(
+% \mathrm{BPP}
+% \subsetneq
+% \mathrm{BQP}
+% \)
+% would imply
+% \(
+% \mathrm{BPP}
+% \neq
+% \mathrm{PSPACE}
+% \)
+% which would also solve a major open problem in classical complexity theory.
+% \end{itemize}
+\begin{itemize}
+\item
+\(
+\mathrm{P}\subsetneq\mathrm{BQP}
+\implies
+\mathrm{P}
+\neq
+\mathrm{PSPACE}
+\)
+\item
+\(
+\mathrm{BPP}
+\subsetneq
+\mathrm{BQP}
+\implies
+\mathrm{BPP}
+\neq
+\mathrm{PSPACE}
+\)
+\end{itemize}
+
+\medskip
+There are different ways to look at this situation \cite{nielsenChuangQCQI}.
+
+% \begin{remark}[Three views]\label{rem:three-views-quantum-advantage}
+\textcolor{funblue}{Optimistic}.
+Quantum algorithms might provide new structural ideas for proving separations such as
+\(\mathrm{P}\subsetneq\mathrm{PSPACE}\),  
+or a natural separation such as 
+\(\mathrm{BPP}\subsetneq\mathrm{BQP}\). 
+
+
+\textcolor{funblue}{Pessimistic}.
+Because such separations imply major open lower bounds in classical complexity theory, 
+% proving an unconditional quantum speed-up over classical polynomial-time algorithms may be very difficult.  % i mean we know that there are speed ups, but the point is they are not speedups in the sense intractiblae->tractable... so maybei
+% proving that a natural decision problem is efficiently solvable quantumly but not by any randomized classical polynomial-time algorithm might be very difficult.
+proving 
+% rigorously 
+that quantum computers can efficiently solve natural problems that are intractable for randomized classical polynomial-time algorithms might be very difficult.
+
+\textcolor{funblue}{More pessimistic}.
+If
+\(
+\mathrm{P}=\mathrm{PSPACE}
+\),
+then
+\(
+\mathrm{BQP}=\mathrm{P}
+\)
+as decision-problem classes, so polynomial-time quantum computers would offer no asymptotic decision-problem advantage over deterministic classical computers.
+However, this equality is considered very unlikely.
+% but it shows why the inclusion
+% \(
+% \mathrm{BQP}\subseteq\mathrm{PSPACE}
+% \)
+% makes unconditional separations hard to prove.
+% \end{remark}
+
+
+
+
+
+
+
+\clearpage
+
+
+
 
 \end{document}
