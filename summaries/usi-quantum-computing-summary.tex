@@ -236,7 +236,7 @@
   pages        = {239--246},
   doi          = {10.1111/j.1746-8361.1960.tb00422.x},
   url          = {https://doi.org/10.1111/j.1746-8361.1960.tb00422.x},
-  addendum     = {English translation available at \url{https://arxiv.org/abs/1103.4537}},
+  % addendum     = {English translation available at \url{https://arxiv.org/abs/1103.4537}},
 }
 @article{kochenSpeckerHiddenVariables,
   author       = {Simon Kochen and Ernst P. Specker},
@@ -463,7 +463,7 @@
 
 \usepackage{caption, subcaption}
 
-\usepackage[backend=biber,style=numeric,sorting=none,doi=false]{biblatex}
+\usepackage[backend=biber,style=numeric,sorting=none,doi=false,eprint=false]{biblatex}
 \IfFileExists{build/\jobname.bib}{%
   \addbibresource{build/\jobname.bib}%
 }{%
@@ -720,6 +720,68 @@
     \par
   \fi
 }
+
+% --- Headers: make the running mark link back to the matching ToC entry ---
+\DeclareRobustCommand{\FB@tocheadlink}[2]{%
+  \hyper@linkstart{link}{toc:#1}#2\hyper@linkend
+}
+
+\renewcommand*{\sectionmark}[1]{%
+  \begingroup
+    \edef\FB@headhref{\@currentHref}%
+    \ifx\FB@headhref\@empty
+      \if@twoside\expandafter\@mkboth\else\expandafter\@mkdouble\fi
+      {%
+        \ifnum \c@secnumdepth<\numexpr \csname sectionnumdepth\endcsname +0\relax
+        \else
+          \if@mainmatter \MakeMarkcase{\sectionmarkformat}\fi
+        \fi
+        \MakeMarkcase{#1}%
+      }{}%
+    \else
+      \if@twoside\expandafter\@mkboth\else\expandafter\@mkdouble\fi
+      {%
+        \protect\FB@tocheadlink{\FB@headhref}{%
+          \ifnum \c@secnumdepth<\numexpr \csname sectionnumdepth\endcsname +0\relax
+          \else
+            \if@mainmatter \MakeMarkcase{\sectionmarkformat}\fi
+          \fi
+          \MakeMarkcase{#1}%
+        }%
+      }{}%
+    \fi
+  \endgroup
+}
+
+\renewcommand*{\subsectionmark}[1]{%
+  \begingroup
+    \@tempswafalse
+    \if@twoside\@tempswatrue
+    \else\ifscrlayer@autooneside\else\@tempswatrue\fi\fi
+    \edef\FB@headhref{\@currentHref}%
+    \if@tempswa
+      \ifx\FB@headhref\@empty
+        \@mkright{%
+          \ifnum \c@secnumdepth<\numexpr \csname subsectionnumdepth\endcsname +0\relax
+          \else
+            \if@mainmatter \MakeMarkcase{\subsectionmarkformat}\fi
+          \fi
+          \MakeMarkcase{#1}%
+        }%
+      \else
+        \@mkright{%
+          \protect\FB@tocheadlink{\FB@headhref}{%
+            \ifnum \c@secnumdepth<\numexpr \csname subsectionnumdepth\endcsname +0\relax
+            \else
+              \if@mainmatter \MakeMarkcase{\subsectionmarkformat}\fi
+            \fi
+            \MakeMarkcase{#1}%
+          }%
+        }%
+      \fi
+    \fi
+  \endgroup
+}
 \makeatother
 
 \usepackage[type={CC}, modifier={by}, version={4.0}]{doclicense}
@@ -813,8 +875,10 @@ This page is intentionally left blank.
 
 \clearpage
 
-\section*{Preface}
-\addcontentsline{toc}{section}{Preface}
+% \phantomsection
+\addsec{Preface}
+% \section*{Preface}
+% \addcontentsline{toc}{section}{Preface}
 
 This document contains unofficial student-made notes for the course
 \href{https://search.usi.ch/en/courses/35275103/quantum-computing}{Quantum Computing}
@@ -10976,7 +11040,7 @@ D\ket{\varphi}
 \]
 Thus every amplitude is reflected about the average amplitude.
 
-\subsubsection*{Geometric picture}
+\subsection{Geometric picture}
 
 Let
 \[
@@ -11209,7 +11273,7 @@ without knowing \(M\).
 
 
 
-\subsubsection*{Circuit}
+\subsection{Circuit}
 
 \[
 \begin{quantikz}[
@@ -13577,6 +13641,7 @@ The verifier can be quantum, and the certificate can be classical or quantum.
 Merlin--Arthur terminology is usually used here:
 Merlin sends a witness, and Arthur verifies it.
 
+
 % % Source for the MA definition: QCT_Masterfile.pdf, Definition 5.1, PDF p. 50 / printed p. 47, defines PromiseMA with constants \(2/3\) and \(1/3\).
 % % Exercise 5.2 on the same page explicitly asks for the no-promise version, i.e. MA; the definition below is obtained by dropping the invalid-input case.
 % \begin{definition}[\(\mathrm{MA}\)]\label{def:ma}
@@ -13734,7 +13799,7 @@ one designated output Qbit is measured in the computational basis.
 The requirements are:
 \begin{itemize}
 \item
-if
+Completeness (YES-case): if
 \(
 x\in L_{\mathrm{yes}}
 \),
@@ -13747,7 +13812,7 @@ that makes the verifier accept with probability at least
 3/4
 \)
 \item
-if
+Soundness (NO-case): if
 \(
 x\in L_{\mathrm{no}}
 \),
@@ -13797,8 +13862,8 @@ is defined like
 \(
 \mathrm{QMA}
 \),
-except that Merlin's witness is an ordinary polynomial-size classical bit string.
-Thus the verifier is quantum, but the certificate is classical.
+except that Merlin's witness is an ordinary polynomial-size classical bit string (i.e. a classical ``certificate'').
+% Thus the verifier is quantum, but the certificate is classical.
 \end{definition}
 
 
@@ -13864,11 +13929,11 @@ The first inclusion
 % \mathrm{BQP}\subseteq\mathrm{QCMA}
 % \)
 uses an empty classical witness:
-Arthur simply runs the
+Arthur ignores the witness register and simply runs the
 \(
 \mathrm{BQP}
 \)
-computation from \autoref{def:bqp} (same story as for \(
+verifier from \autoref{def:bqp} on the input $x$ (same story as for \(
 \mathrm{P}\subseteq\mathrm{NP}
 \)).
 
@@ -13878,19 +13943,53 @@ computation from \autoref{def:bqp} (same story as for \(
 % % \)
 % holds because a classical witness is a special case of a quantum witness in the computational basis.
 % % Source/justification for QMA subset PSPACE in this sentence: QCT_Masterfile.pdf, PDF p. 52 / printed p. 49 gives the largest-eigenvalue formulation, and PDF pp. 59--60 / printed pp. 56--57 give the upper bound QMA subset PP with PP subset PSPACE.
-The second inclusion
+
+% The second inclusion
+% % \(
+% % \mathrm{QCMA}\subseteq\mathrm{QMA}
+% % \)
+% holds because the \(\mathrm{QMA}\) verifier can first measure Merlin's witness in the computational basis and then run the \(\mathrm{QCMA}\) verifier on the resulting classical string.
+% Thus honest classical witnesses are allowed, while arbitrary quantum witnesses give only convex combinations of classical witnesses.
+% % Source/justification for QMA subset PSPACE in this sentence: QCT_Masterfile.pdf, PDF p. 52 / printed p. 49 gives the largest-eigenvalue formulation, and PDF pp. 59--60 / printed pp. 56--57 give the upper bound QMA subset PP with PP subset PSPACE.
+
+The second inclusion holds because every classical certificate \(w\) can be encoded as the computational-basis quantum state \(\ket w\). 
+The QMA verifier first measures the witness register in the computational basis, obtaining a classical string, and then runs the QCMA verifier on that string. 
+Hence honest QCMA witnesses (satisfying the completeness condition in a YES case) are valid QMA witnesses after this encoding. 
+If Merlin sends an arbitrary quantum state instead, the first measurement only produces a probability distribution over classical strings, so the acceptance probability is a convex combination of the QCMA acceptance probabilities.
+
+% The second inclusion holds because a classical witness
 % \(
-% \mathrm{QCMA}\subseteq\mathrm{QMA}
+% w %\in\{0,1\}^{p(n)}
 % \)
-holds because the \(\mathrm{QMA}\) verifier can first measure Merlin's witness in the computational basis and then run the \(\mathrm{QCMA}\) verifier on the resulting classical string.
-Thus honest classical witnesses are allowed, while arbitrary quantum witnesses give only convex combinations of classical witnesses.
-% Source/justification for QMA subset PSPACE in this sentence: QCT_Masterfile.pdf, PDF p. 52 / printed p. 49 gives the largest-eigenvalue formulation, and PDF pp. 59--60 / printed pp. 56--57 give the upper bound QMA subset PP with PP subset PSPACE.
+% is the computational-basis quantum state
+% \(
+% \ket{w}
+% \).
+% The \(\mathrm{QMA}\) verifier can first measure Merlin's witness in the computational basis and then run the \(\mathrm{QCMA}\) verifier on the resulting classical string.
+% Thus honest classical witnesses are allowed as computational-basis quantum states.
+% If Merlin instead sends an arbitrary quantum witness, the initial computational-basis measurement merely induces a probability distribution over classical strings, so the acceptance probability is a convex combination of the acceptance probabilities for classical witnesses.
 
-
-The last inclusion is a standard upper bound, analogous in spirit to \autoref{sec:bqp-subset-pspace}.
-For each fixed input \(x\), the verifier defines an acceptance operator acting on Merlin's witness register.
-The maximum acceptance probability over all witnesses is the largest eigenvalue of this operator.
-Although the operator is exponentially large, its entries can be computed from the verifier circuit, and the largest eigenvalue can be approximated using polynomial space.
+The last inclusion is %a standard upper bound, 
+analogous in spirit to \autoref{sec:bqp-subset-pspace}.
+% For each fixed input \(x\), the verifier defines an acceptance operator acting on Merlin's witness register.
+% The maximum acceptance probability over all witnesses is the largest eigenvalue of this operator.
+% Although the operator is exponentially large, its entries can be computed from the verifier circuit, and the largest eigenvalue can be approximated using polynomial space.
+For each fixed input \(x\), the verifier circuit \(V_x\) defines an acceptance operator \(A_x\) acting on Merlin's witness register.
+For every pure witness \(\ket\psi\), the acceptance probability has the form
+\(
+p_{\mathrm{acc}}(\psi) \allowbreak
+= \allowbreak
+\braket{\psi | A_x | \psi}
+\).
+Hence the best possible witness is obtained by 
+% maximizing this quadratic form:
+\(
+\max_{\ket\psi}\braket{\psi | A_x | \psi}
+=
+\lambda_{\max}(A_x)
+\),
+where \(\lambda_{\max}(A_x)\) is the largest eigenvalue of \(A_x\).
+Although \(A_x\) is exponentially large, its entries can be computed on demand from the verifier circuit \(V_x\), and \(\lambda_{\max}(A_x)\) can therefore be approximated using polynomial space.
 
 % The analogy with
 % \(
@@ -13911,6 +14010,7 @@ Although the operator is exponentially large, its entries can be computed from t
 % \)
 % has no extra witness input.
 
+\medskip
 % Source for Local Hamiltonian as the quantum Cook--Levin/SAT analogue: QCT_Masterfile.pdf, Section 6 introduction, PDF p. 62 / printed p. 59.
 The quantum analogue of
 \(
@@ -13928,21 +14028,23 @@ write
 \lambda_{\min}(H)
 \)
 for its smallest eigenvalue, i.e. its ground-state energy.
-
+%
 % Source for the witness analogy: QCT_Masterfile.pdf, Lemma 6.23 and its proof sketch, PDF pp. 69--70 / printed pp. 66--67.
 The analogy is that a satisfying assignment is a classical witness for
 \(
 \mathrm{SAT}
 \),
-whereas a low-energy quantum state is a quantum witness for Local Hamiltonian.
-Arthur's task is to check whether the supplied state has small energy with respect to
+whereas a low-energy quantum state is a quantum witness for $\mathrm{LH}$.
+Arthur's task is to check whether the supplied state has low expected energy 
+$\braket{\psi|H|\psi}$ 
+with respect to
 \(
 H
 \).
 
-% Source for the k-Local Hamiltonian promise problem: QCT_Masterfile.pdf, Definition 6.20, PDF p. 68 / printed p. 65.
+% Source for the k-$\mathrm{LH}$ promise problem: QCT_Masterfile.pdf, Definition 6.20, PDF p. 68 / printed p. 65.
 % The notation below uses the standard convention \(a<b\), with YES case \(\lambda_{\min}(H)\le a\), NO case \(\lambda_{\min}(H)\ge b\), and promise gap \(b-a\ge1/\operatorname{poly}(n)\).
-\begin{problem}[\(k\)-Local Hamiltonian]\label{problem:k-local-hamiltonian}
+\begin{problem}[\(k\)-$\mathrm{LH}$]\label{problem:k-local-hamiltonian}
 Given a Hamiltonian
 \(
 H=\sum_j H_j
@@ -13981,18 +14083,18 @@ promised that one of the two cases holds.
 % Source for the \(k=2\) refinement comment: QCT_Masterfile.pdf, paragraph immediately after Theorem 6.22, PDF p. 69 / printed p. 66.
 Kitaev's quantum Cook--Levin theorem says that
 \(
-5
-\)-Local Hamiltonian is
+k\text{-}\mathrm{LH}
+\) is
 \(
 \mathrm{QMA}
-\)-complete \cite{gharibianQuantumComplexityTheory}.
-With stronger results, even
-\(
-2
-\)-Local Hamiltonian is
-\(
-\mathrm{QMA}
-\)-complete.
+\)-complete for $k \ge 5$.
+% With stronger results, even
+% \(
+% 2
+% \)-Local Hamiltonian is
+% \(
+% \mathrm{QMA}
+% \)-complete.
 % Source for "QMA-complete" meaning: QCT_Masterfile.pdf, Section 6.3, PDF p. 69 / printed p. 66, which says containment in QMA is shown in Section 6.3.1 and QMA-hardness in Section 6.3.2.
 \(\mathrm{QMA}\)-complete means that the problem is in
 \(
@@ -14003,18 +14105,18 @@ and every problem in
 \mathrm{QMA}
 \)
 can be reduced to it by a polynomial-time classical reduction.
-Thus Local Hamiltonian plays for
+Thus $\mathrm{LH}$ plays for
 \(
 \mathrm{QMA}
 \)
-roughly the role that
+a similare role as
 \(
 \mathrm{SAT}
 \)
 plays for
 \(
 \mathrm{NP}
-\).
+\) \cite{gharibianQuantumComplexityTheory}.
 
 \subsection{How optimistic should we be?}
 
@@ -14094,7 +14196,7 @@ The inclusions in \autoref{fact:bpp-bqp-pspace} explain why such a proof would b
 \)
 \end{itemize}
 
-\medskip
+
 There are different ways to look at this situation \cite{nielsenChuangQCQI}.
 
 % \begin{remark}[Three views]\label{rem:three-views-quantum-advantage}
