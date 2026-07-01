@@ -5650,13 +5650,13 @@ For the position observable, the corresponding PVM \(E_{\vect{X}}\) on the Borel
 \[
 (E_{\vect{X}}(\omega)\psi)(\vect{x})
 =
-\chi_{\omega}(\vect{x})\,\psi(\vect{x})
+\ind_{\omega}(\vect{x})\,\psi(\vect{x})
 \]
 for each Borel set \(\omega\subseteq\R^3\),
 where 
-% \(\chi_{\omega}\)
+% \(\ind_{\omega}\)
 %  is the characteristic function of \(\omega\), i.e. 
- \(\chi_{\omega}(\vect{x})=1\) if \(\vect{x}\in\omega\) and \(\chi_{\omega}(\vect{x})=0\) otherwise.
+ \(\ind_{\omega}(\vect{x})=1\) if \(\vect{x}\in\omega\) and \(\ind_{\omega}(\vect{x})=0\) otherwise.
 So \(E_{\vect{X}}(\omega)\) simply projects a wave function onto the part supported in \(\omega\).
 Hence the Born rule becomes
 \[
@@ -5671,7 +5671,7 @@ Hence the Born rule becomes
 \int_{\R^3} \psi(\vect{x})^*\,(E_{\vect{X}}(\omega)\psi)(\vect{x})\,\dif\vect{x}
 \\
 &=
-\int_{\R^3} \psi(\vect{x})^*\,\chi_{\omega}(\vect{x})\,\psi(\vect{x})\,\dif\vect{x}
+\int_{\R^3} \psi(\vect{x})^*\,\ind_{\omega}(\vect{x})\,\psi(\vect{x})\,\dif\vect{x}
 \\
 &=
 \int_{\omega}|\psi(\vect{x})|^2\,\dif\vect{x}

@@ -534,11 +534,23 @@ line width=0.16pt}}%
 \setlength\FB@toclinkht{.80\ht\strutbox}
 \setlength\FB@toclinkdp{.40\dp\strutbox}
 
+\newcommand*\FB@recordtocdest[1]{%
+  \expandafter\gdef\csname FB@tocdest@#1\endcsname{}%
+}
+\newcommand\FB@iftocdest[3]{%
+  \ifcsname FB@tocdest@#1\endcsname
+    #2%
+  \else
+    #3%
+  \fi
+}
+
 \let\FB@orig@contentsline\contentsline
 \renewcommand*\contentsline[4]{%
   \begingroup
     \Hy@safe@activestrue
     \edef\Hy@tocdestname{#4}%
+    \FB@recordtocdest{\Hy@tocdestname}%
     \FB@orig@contentsline{#1}{%
       \Hy@raisedlink{\hyper@anchorstart{toc:\Hy@tocdestname}\hyper@anchorend}%
       \leavevmode
@@ -559,12 +571,99 @@ line width=0.16pt}}%
   \ifx\@currentHref\@empty
     \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
   \else
-    \leavevmode
-    \hyper@linkstart{link}{toc:\@currentHref}%
-      \@hangfrom{\hskip #2\relax #3}{#4}%
-    \hyper@linkend
-    \par
+    \FB@iftocdest{\@currentHref}{%
+      \leavevmode
+      \hyper@linkstart{link}{toc:\@currentHref}%
+        \@hangfrom{\hskip #2\relax #3}{#4}%
+      \hyper@linkend
+      \par
+    }{%
+      \FB@orig@sectionlinesformat{#1}{#2}{#3}{#4}%
+    }%
   \fi
+}
+
+% Running headers: make the displayed mark link back to the matching ToC entry.
+\DeclareRobustCommand{\FB@tocheadlink}[2]{%
+  \hyper@linkstart{link}{toc:#1}#2\hyper@linkend
+}
+
+\renewcommand*{\sectionmark}[1]{%
+  \begingroup
+    \edef\FB@headhref{\@currentHref}%
+    \ifx\FB@headhref\@empty
+      \if@twoside\expandafter\@mkboth\else\expandafter\@mkdouble\fi
+      {%
+        \ifnum \c@secnumdepth<\numexpr \csname sectionnumdepth\endcsname +0\relax
+        \else
+          \if@mainmatter \MakeMarkcase{\sectionmarkformat}\fi
+        \fi
+        \MakeMarkcase{#1}%
+      }{}%
+    \else
+      \FB@iftocdest{\FB@headhref}{%
+        \if@twoside\expandafter\@mkboth\else\expandafter\@mkdouble\fi
+        {%
+          \protect\FB@tocheadlink{\FB@headhref}{%
+            \ifnum \c@secnumdepth<\numexpr \csname sectionnumdepth\endcsname +0\relax
+            \else
+              \if@mainmatter \MakeMarkcase{\sectionmarkformat}\fi
+            \fi
+            \MakeMarkcase{#1}%
+          }%
+        }{}%
+      }{%
+        \if@twoside\expandafter\@mkboth\else\expandafter\@mkdouble\fi
+        {%
+          \ifnum \c@secnumdepth<\numexpr \csname sectionnumdepth\endcsname +0\relax
+          \else
+            \if@mainmatter \MakeMarkcase{\sectionmarkformat}\fi
+          \fi
+          \MakeMarkcase{#1}%
+        }{}%
+      }%
+    \fi
+  \endgroup
+}
+
+\renewcommand*{\subsectionmark}[1]{%
+  \begingroup
+    \@tempswafalse
+    \if@twoside\@tempswatrue
+    \else\ifscrlayer@autooneside\else\@tempswatrue\fi\fi
+    \edef\FB@headhref{\@currentHref}%
+    \if@tempswa
+      \ifx\FB@headhref\@empty
+        \@mkright{%
+          \ifnum \c@secnumdepth<\numexpr \csname subsectionnumdepth\endcsname +0\relax
+          \else
+            \if@mainmatter \MakeMarkcase{\subsectionmarkformat}\fi
+          \fi
+          \MakeMarkcase{#1}%
+        }%
+      \else
+        \FB@iftocdest{\FB@headhref}{%
+          \@mkright{%
+            \protect\FB@tocheadlink{\FB@headhref}{%
+              \ifnum \c@secnumdepth<\numexpr \csname subsectionnumdepth\endcsname +0\relax
+              \else
+                \if@mainmatter \MakeMarkcase{\subsectionmarkformat}\fi
+              \fi
+              \MakeMarkcase{#1}%
+            }%
+          }%
+        }{%
+          \@mkright{%
+            \ifnum \c@secnumdepth<\numexpr \csname subsectionnumdepth\endcsname +0\relax
+            \else
+              \if@mainmatter \MakeMarkcase{\subsectionmarkformat}\fi
+            \fi
+            \MakeMarkcase{#1}%
+          }%
+        }%
+      \fi
+    \fi
+  \endgroup
 }
 \makeatother
 
@@ -681,8 +780,9 @@ line width=0.16pt}}%
 
 \clearpage
 
-\section*{Preface}
-\addcontentsline{toc}{section}{Preface}
+% \section*{Preface}
+% \addcontentsline{toc}{section}{Preface}
+\addsec{Preface}
 
 This document contains unofficial student-made notes for the course
 \href{https://search.usi.ch/en/courses/35275987/probability-measure}{Probability \& Measure}
